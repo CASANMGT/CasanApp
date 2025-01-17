@@ -16,7 +16,7 @@ const Splash = () => {
   };
 
   return (
-    <div className="background-1 justify-center items-center flex">Splash</div>
+    <div className="background-1 justify-center items-center flex font-bold">Splash</div>
   );
 };
 
