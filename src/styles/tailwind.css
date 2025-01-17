@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* SCREEN */
+.container-screen {
+  @apply h-svh max-w-[480px] w-svw bg-baseLightGray shadow-2xl;
+}
+
+/* BACKGROUND */
+.background-1 {
+  @apply bg-background1 bg-cover bg-no-repeat bg-center container-screen;
+}
+
+.background-2 {
+  @apply bg-background2 bg-cover bg-fixed bg-no-repeat bg-center container-screen;
+}
+/* END BACKGROUND */
+
+/* BUTTON */
+.btn-disable {
+  @apply bg-black10 text-black70 border-black10 cursor-not-allowed;
+}
+
+.btn-primary100 {
+  @apply bg-primary100 text-white border-primary100;
+}
+
+.btn-secondary {
+  @apply bg-white border-primary100 text-primary100;
+}
+
+.btn-delete {
+  @apply bg-red/10 border-red/40 text-red;
+}
+/* END BUTTON */
+
+.center {
+  @apply flex items-center justify-center;
+}
+
+.row {
+  @apply flex flex-row items-center;
+}
+
+.between {
+  @apply flex flex-row justify-between items-center;
+}
+
+.between-y {
+  @apply flex flex-col justify-between;
+}
+
+.container-card {
+  @apply bg-white rounded-lg p-3 drop-shadow;
+}
+
+.container-button-footer {
+  @apply p-4 bg-white drop-shadow;
+}
+
+/* Hide arrows on number input for Chrome, Edge, and Safari */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide arrows on number input for Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}

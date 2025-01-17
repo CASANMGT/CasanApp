@@ -1,0 +1,26 @@
+steps:
+  # Step 1: Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/casan-frontend:latest', '.']
+
+  # Step 2: Push the image to Google Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/casan-frontend:latest']
+
+  # Step 3: Deploy the image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    args:
+      - 'gcloud'
+      - 'run'
+      - 'deploy'
+      - 'casan-frontend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/casan-frontend:latest'
+      - '--platform'
+      - 'managed'
+      - '--region'
+      - 'asia-southeast2'
+      - '--allow-unauthenticated'
+
+images:
+  - 'gcr.io/$PROJECT_ID/casan-frontend:latest'
