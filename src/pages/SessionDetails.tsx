@@ -7,12 +7,25 @@ import {
 } from "../assets";
 import { BetweenText, Button, Header, Separator } from "../components";
 import { moments, rupiah } from "../helpers";
+import { useEffect } from "react";
 
 const SessionDetails = () => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const handleBack = () => {
+      onDismiss();
+    };
+
+    window.addEventListener("popstate", handleBack);
+
+    return () => {
+      window.removeEventListener("popstate", handleBack);
+    };
+  }, [navigate]);
+
   const onDismiss = () => {
-    navigate(-1);
+    navigate("/home", { replace: true });
   };
 
   const onNext = () => {
@@ -97,7 +110,7 @@ const SessionDetails = () => {
           <BetweenText
             type="medium-content"
             labelLeft="Wwaktu Selesai"
-            labelRight="23 DEs 15:23"
+            labelRight="23 Des 15:23"
             className="bg-baseLightGray p-3"
           />
 
@@ -114,25 +127,10 @@ const SessionDetails = () => {
             labelRight="0-200W"
             className="bg-baseLightGray p-3"
           />
-
-          <BetweenText
-            type="medium-content"
-            labelLeft="Tarif Pengecasan"
-            labelRight={`Rp${rupiah(1800)}/jam`}
-            className="p-3"
-          />
-
-          <BetweenText
-            type="medium-content"
-            labelLeft="Nominal Pengisian"
-            labelRight={`Rp${rupiah(10000)}`}
-            className="bg-baseLightGray p-3 rounded-b"
-          />
         </div>
 
         {/* PAYMENT INFORMATION */}
-
-        <div className="p-3 pb-6 bg-white rounded-lg drop-shadow">
+        {/* <div className="p-3 pb-6 bg-white rounded-lg drop-shadow">
           <p className="font-medium mb-2">Informasi Transaksi</p>
 
           <div className="text-black100/70 row gap-2">
@@ -170,7 +168,6 @@ const SessionDetails = () => {
 
           <Separator className="my-6 bg-black10" />
 
-          {/* SAVE OR SHARE */}
           <div className="between gap-4">
             <Button
               type="secondary"
@@ -185,12 +182,12 @@ const SessionDetails = () => {
               onClick={onSave}
             />
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* FOOTER */}
       <div className="p-4 bg-white drop-shadow">
-        <Button label="Pergi ke Riwayat" onClick={onNext} />
+        <Button buttonType="lg" label="Pergi ke Riwayat" onClick={onNext} />
       </div>
     </div>
   );

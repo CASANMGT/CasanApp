@@ -1,20 +1,21 @@
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { replace, useNavigate } from "react-router-dom";
 import {
   IcClockGreen,
   IcFlashGreen,
   IcInfoCircleGreen,
-  IcWalletGreen,
   ILCharging,
 } from "../assets";
 import {
   AlertModal,
   BetweenText,
   Button,
+  CountdownTimer,
   Header,
+  Signal,
   StatusIndicator,
 } from "../components";
 import { rupiah } from "../helpers";
-import { useState } from "react";
 
 const Charging = () => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const Charging = () => {
     // setVisibleAlert(true);
 
     if (status === "stand-by") setStatus("charging");
-    else navigate("/session-details");
+    else navigate("/session-details", { replace: true });
   };
 
   return (
@@ -42,23 +43,26 @@ const Charging = () => {
         className="mx-4 mb-4"
       />
 
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto scrollbar-none">
         {/* INFORMATION */}
-        <div className="mx-4 bg-baseLightGray/60 rounded-lg flex justify-around py-3">
-          <InformationItem
-            icon={IcWalletGreen}
-            label="Terpakai"
-            content={`Rp${rupiah(0)}`}
-          />
+        <div className="mx-4 bg-baseLightGray/60 rounded-lg flex justify-around py-3 px-8">
           <InformationItem
             icon={IcClockGreen}
             label="Durasi"
-            content={"00:00:00"}
+            content={
+              status === "stand-by" ? (
+                "00:00:00"
+              ) : (
+                <CountdownTimer
+                  targetDate={new Date().getTime() + 30 * 60 * 1000}
+                />
+              )
+            }
           />
           <InformationItem
             icon={IcFlashGreen}
-            label="Kecepatan"
-            content={"- Watt"}
+            label="Daya"
+            content={`${status === "stand-by" ? "-" : 200} Watt`}
           />
         </div>
 
@@ -79,7 +83,7 @@ const Charging = () => {
             labelLeft="Stasiun"
             labelRight="Pasar Modern BSD City"
             className="bg-baseLightGray rounded-t p-3"
-            classNameLabelRight="text-blackBold text-base font-bold"
+            classNameLabelRight="text-blackBold font-bold"
           />
 
           <BetweenText
@@ -98,23 +102,19 @@ const Charging = () => {
 
           <BetweenText
             type="medium-content"
-            labelLeft="Voltase Maksimum"
-            labelRight="-"
+            labelLeft="Sinyal"
+            labelRight="Device A, Socket 5"
+            content={<Signal type="full" />}
             className="p-3"
-          />
-
-          <BetweenText
-            type="medium-content"
-            labelLeft="Arus"
-            labelRight="-"
-            className="bg-baseLightGray rounded-b p-3"
           />
         </div>
       </div>
 
-      <div className="p-4 bg-white drop-shadow">
+      {/* FOOTER */}
+      <div className="container-button-footer">
         <Button
           type={status === "stand-by" ? "primary" : "danger"}
+          buttonType="lg"
           label={
             status === "stand-by" ? "Mulai Pengisian" : "Selesaikan Pengisian"
           }
@@ -140,7 +140,7 @@ const Charging = () => {
 interface InformationItemProps {
   icon: any;
   label: string;
-  content: string;
+  content: any;
 }
 
 const InformationItem: React.FC<InformationItemProps> = ({

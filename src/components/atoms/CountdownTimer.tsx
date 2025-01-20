@@ -43,21 +43,11 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
   }, [targetDate]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="text-4xl font-bold text-gray-800">
-        <span className="px-2">{String(timeLeft.days).padStart(2, "0")}</span>:
-        <span className="px-2">{String(timeLeft.hours).padStart(2, "0")}</span>:
-        <span className="px-2">
-          {String(timeLeft.minutes).padStart(2, "0")}
-        </span>
-        :
-        <span className="px-2">
-          {String(timeLeft.seconds).padStart(2, "0")}
-        </span>
-      </div>
-      <p className="mt-2 text-sm text-gray-500">
-        Days : Hours : Minutes : Seconds
-      </p>
+    <div className="row text-blackBold">
+      {/* <p>{String(timeLeft.days).padStart(2, "0")}:</p> */}
+      <p>{String(timeLeft.hours).padStart(2, "0")}:</p>
+      <p>{String(timeLeft.minutes).padStart(2, "0")}:</p>
+      <p>{String(timeLeft.seconds).padStart(2, "0")}</p>
     </div>
   );
 };
