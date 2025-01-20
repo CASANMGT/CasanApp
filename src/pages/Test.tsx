@@ -27,13 +27,10 @@ const Test = () => {
       )}
 
       {true && (
-        <div className="h-screen w-screen overflow-hidden">
-          <h1 className="text-center text-3xl">Zoom Disabled</h1>
-          <input
-            type="text"
-            className="p-2 border rounded mt-5"
-            placeholder="Try zooming here!"
-          />
+        <div className="relative w-screen h-screen center">
+          <div className="w-32 h-32 bg-yellow-500 rounded-full absolute animate-flashMove">
+            {/* Flash moving from center to top-right corner */}
+          </div>
         </div>
       )}
     </div>

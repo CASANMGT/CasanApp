@@ -55,22 +55,23 @@ export default {
       },
 
       animation: {
-        pulseRing: 'pulseRing 2s infinite ease-in-out',
-        rotateGradient: 'rotateGradient 6s linear infinite',
+        pulseRing: "pulseRing 2s infinite ease-in-out",
+        rotateGradient: "rotateGradient 6s linear infinite",
         soundWave: "soundWave 1.5s ease-out infinite",
         charging: "charging 2s linear infinite",
         scan: "scan 5s linear infinite",
+        flashMove: 'flashMove 2s ease-in-out infinite',
       },
 
       keyframes: {
         pulseRing: {
-          '0%': { transform: 'scale(0.9)', opacity: 0.6 },
-          '50%': { transform: 'scale(1)', opacity: 1 },
-          '100%': { transform: 'scale(0.9)', opacity: 0.6 },
+          "0%": { transform: "scale(0.9)", opacity: 0.6 },
+          "50%": { transform: "scale(1)", opacity: 1 },
+          "100%": { transform: "scale(0.9)", opacity: 0.6 },
         },
         rotateGradient: {
-          '0%': { transform: 'rotate(0deg)' },
-          '100%': { transform: 'rotate(360deg)' },
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
         },
         soundWave: {
           "0%": { transform: "scale(0.8)", opacity: 0.8 },
@@ -92,6 +93,20 @@ export default {
           "76%": { top: "50%", opacity: 1, transform: "scale(1)" },
           "88%": { top: "25%", opacity: 1, transform: "scale(1)" },
           "100%": { top: "0", opacity: 0.3, transform: "scale(0.8)" },
+        },
+        flashMove: {
+          '0%': {
+            transform: 'translate(0, 0)', // Start at the center
+            opacity: '1',
+          },
+          '50%': {
+            transform: 'translate(100vw, -100vh)', // Move to the top-right corner (right corner of the viewport)
+            opacity: '0', // Fade out at 50%
+          },
+          '100%': {
+            transform: 'translate(100vw, -100vh)', // Stay at the corner
+            opacity: '1', // Fade back in
+          },
         },
       },
     },
