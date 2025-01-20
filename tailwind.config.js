@@ -60,7 +60,7 @@ export default {
         soundWave: "soundWave 1.5s ease-out infinite",
         charging: "charging 2s linear infinite",
         scan: "scan 5s linear infinite",
-        flashMove: 'flashMove 2s ease-in-out infinite',
+        slideDown: 'slideDown 1s ease-in-out',
       },
 
       keyframes: {
@@ -94,19 +94,9 @@ export default {
           "88%": { top: "25%", opacity: 1, transform: "scale(1)" },
           "100%": { top: "0", opacity: 0.3, transform: "scale(0.8)" },
         },
-        flashMove: {
-          '0%': {
-            transform: 'translate(0, 0)', // Start at the center
-            opacity: '1',
-          },
-          '50%': {
-            transform: 'translate(100vw, -100vh)', // Move to the top-right corner (right corner of the viewport)
-            opacity: '0', // Fade out at 50%
-          },
-          '100%': {
-            transform: 'translate(100vw, -100vh)', // Stay at the corner
-            opacity: '1', // Fade back in
-          },
+        slideDown: {
+          "0%": { transform: "translateY(-20rem)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
         },
       },
     },

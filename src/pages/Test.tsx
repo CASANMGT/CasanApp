@@ -1,8 +1,9 @@
+
 const Test = () => {
   // const targetDate = new Date("2025-01-18T00:00:00").getTime();
 
   return (
-    <div className="container-screen">
+    <>
       {/* <CountdownTimer targetDate={targetDate} />; */}
 
       {false && (
@@ -26,14 +27,8 @@ const Test = () => {
         </div>
       )}
 
-      {true && (
-        <div className="relative w-screen h-screen center">
-          <div className="w-32 h-32 bg-yellow-500 rounded-full absolute animate-flashMove">
-            {/* Flash moving from center to top-right corner */}
-          </div>
-        </div>
-      )}
-    </div>
+      {true && <></>}
+    </>
   );
 };
 

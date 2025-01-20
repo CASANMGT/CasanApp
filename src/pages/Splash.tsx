@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { ILFlashLogo, ILLogo } from "../assets";
 
 const Splash = () => {
   const navigate = useNavigate();
@@ -12,11 +13,21 @@ const Splash = () => {
     setTimeout(() => {
       navigate("home", { replace: true });
       // navigate("login", { replace: true });
-    }, 1500);
+    }, 2000);
   };
 
   return (
-    <div className="background-1 justify-center items-center flex font-bold">Splash</div>
+    <div className="container-screen !bg-primary100 center relative">
+      <div className="center">
+        <img src={ILLogo} alt="logo" className="w-[293px] h-[52.7px]" />
+
+        <img
+          src={ILFlashLogo}
+          alt="logo"
+          className="w-[76.83px] h-[104.57px] absolute transition-transform transform animate-slideDown"
+        />
+      </div>
+    </div>
   );
 };
 
