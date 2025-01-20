@@ -6,17 +6,13 @@ import {
   useNavigate,
 } from "react-router-dom";
 import {
-  IcNotificationBadgesGreen,
-  IcNotificationGreen,
-  IcPinWhite,
-  IcSearchGray,
+  IcPinWhite
 } from "../assets";
-import { AVAILABLE_PLACE } from "../common";
+import { DummyAeon, DummyTheBreeze } from "../assets/dummy";
+import { AVAILABLE_PLACE, chargingLocationProps } from "../common";
 import {
   AvailablePlaceItem,
-  Carousel,
-  ChargingLocationCard,
-  OngoingItem,
+  ChargingLocationCard
 } from "../components";
 
 const dataOngoingDummy = [1, 2, 3];
@@ -26,7 +22,32 @@ const slidesDummy = [
   { id: 3, image: "https://via.placeholder.com/300x150", title: "Slide 3" },
 ];
 
-const chargingLocationDummy: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const chargingLocationDummy: chargingLocationProps[] = [
+  {
+    image: DummyTheBreeze,
+    location: "The Breeze",
+    address:
+      "Jl. BSD Green Office Park Jl. BSD Grand Boulevard, Sampora, BSD, Kabupaten Tangerang",
+    status: "full",
+    available: 0,
+    cost: 600,
+    voltage: 48,
+    ampere: 2,
+    distance: 2,
+  },
+  {
+    image: DummyAeon,
+    location: "Aeon Mall",
+    address:
+      "Jl. BSD Raya Utama, Pagedangan, Kec. Pagedangan, Kabupaten Tangerang, Banten",
+    status: "available",
+    available: 5,
+    cost: 600,
+    voltage: 48,
+    ampere: 2,
+    distance: 2,
+  },
+];
 
 const Home = () => {
   const location: Location = useLocation();
@@ -55,7 +76,7 @@ const Home = () => {
           </div>
 
           {/* SEARCH */}
-          <div className="row gap-3 mt-2.5 mb-5">
+          {/* <div className="row gap-3 mt-2.5 mb-5">
             <div
               onClick={onSearch}
               className="row px-3 h-10 rounded-full bg-baseLightGray/70 gap-2.5 flex-1 cursor-pointer"
@@ -73,20 +94,20 @@ const Home = () => {
             >
               {true ? <IcNotificationBadgesGreen /> : <IcNotificationGreen />}
             </div>
-          </div>
+          </div> */}
 
           {/* CAROUSEL */}
-          <Carousel slides={slidesDummy} />
+          {/* <Carousel slides={slidesDummy} /> */}
 
           {/* ONGOING */}
-          <div className="bg-white rounded-lg p-3 mt-5">
+          {/* <div className="bg-white rounded-lg p-3 mt-5">
             <p className="font-medium mb-3">Sedang berlangsung</p>
             <div className="row gap-2 overflow-x-auto scrollbar-none">
               {dataOngoingDummy.map((_, index: number) => (
                 <OngoingItem key={index} />
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* FILTER */}
           <div className="row gap-3 mt-5">
@@ -103,9 +124,10 @@ const Home = () => {
 
         {/* CHARGING LIST */}
         <div className="flex flex-col overflow-auto scrollbar-none pt-3">
-          {chargingLocationDummy.map((item: number, index: number) => (
+          {chargingLocationDummy.map((item: chargingLocationProps, index: number) => (
             <ChargingLocationCard
               key={index}
+              data={item}
               onClick={() => navigate("/charging-location-details")}
             />
           ))}

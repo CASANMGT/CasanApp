@@ -1,27 +1,39 @@
+import { useState } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import {
   IcEditGreen,
   IcInfoCircleGreen,
-  IcRightCircleGreen,
   IcRightGreen,
   IcSocketCircleGreen,
 } from "../../assets";
+import { REGEX_NUMBERS, socketProps } from "../../common";
 import {
-  BetweenText,
   Button,
   Container,
   CostInformationItem,
+  NominalTopUpItem,
   Separator,
   SocketItem,
-  Tabs,
+  SubTitle,
 } from "../../components";
 import { rupiah } from "../../helpers";
 import InputHour from "./InputHour";
 import InputNominal from "./InputNominal";
-import { useState } from "react";
 
-const socketDataDummy = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const socketDataDummy: socketProps[] = [
+  { socket: 1, status: "available" },
+  { socket: 2, status: "available" },
+  { socket: 3, status: "available" },
+  { socket: 4, status: "available" },
+  { socket: 5, status: "available" },
+  { socket: 6, status: "used" },
+  { socket: 7, status: "available" },
+  { socket: 8, status: "available" },
+  { socket: 9, status: "available" },
+  { socket: 10, status: "broken" },
+];
 const dataDummy = [1, 2];
+const nominalDataDummy = ["2000", "4000", "6000", "full"];
 
 const tabsNominalHour = [
   {
@@ -70,13 +82,51 @@ const tabsCostInformation = [
 const SessionSettings = () => {
   const navigate: NavigateFunction = useNavigate();
   const [selectTabInput, setSelectTabInput] = useState<string>("1");
+  const [selectSocket, setSelectSocket] = useState<number>();
+  const [nominal, setNominal] = useState<string>();
 
   const onDismiss = () => {
     navigate(-1);
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e?.target?.value.replace(REGEX_NUMBERS, "");
+    const formatted: string = `Rp${rupiah(value)}`;
+
+    setNominal(formatted);
+  };
+
+  const validationNominal = (select: string) => {
+    let value = false;
+
+    const convert = nominal?.replace(REGEX_NUMBERS, "");
+
+    if (convert === select) value = true;
+
+    return value;
+  };
+
+  const onSelectNominal = (select: string) => {
+    let value: string = "";
+    
+    if (select === "full") value = "50000";
+    else value = select.replace(REGEX_NUMBERS, "");
+
+    const formatted: string = `Rp${rupiah(value)}`;
+
+    setNominal(formatted);
+  };
+
   const onView = () => {
     alert("coming soon");
+  };
+
+  const onEditPrice = () => {
+    alert("coming soon");
+  };
+
+  const onNext = () => {
+    navigate("/charging");
   };
 
   const onEditDuration = () => {
@@ -94,11 +144,11 @@ const SessionSettings = () => {
 
   return (
     <Container title="Pengaturan Sesi" onDismiss={onDismiss}>
-      <div className="flex flex-col overflow-auto scrollbar-none">
+      <div className="flex-1 flex-col overflow-auto scrollbar-none">
         {/* LOCATION */}
         <div className="p-4 bg-white mb-2">
           <div className="between">
-            <p className="text-blackBold ">Pasar Modern BSD City</p>
+            <p className="text-blackBold font-medium">Pasar Modern BSD City</p>
 
             <div className="row gap-2 cursor-pointer" onClick={onView}>
               <p className="text-xs text-primary100 font-medium">Lihat</p>
@@ -130,43 +180,70 @@ const SessionSettings = () => {
             </div>
 
             <div className="grid grid-cols-4 gap-3">
-              {socketDataDummy.map((_, index: number) => (
-                <SocketItem key={index} onClick={() => alert("coming soon")} />
+              {socketDataDummy.map((item, index: number) => (
+                <SocketItem
+                  key={index}
+                  data={item}
+                  isActive={selectSocket === item?.socket}
+                  onClick={() => setSelectSocket(item?.socket)}
+                />
               ))}
             </div>
           </div>
 
-          {/* CHARGING DURATION */}
-          {/* <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
-            <div className="row gap-3 mb-2">
-              <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
-                <IcSolarGreen />
-              </div>
-
-              <p className="text-blackBold font-medium">Durasi Pengisian</p>
-            </div>
+          {/* INPUT NOMINAL */}
+          <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
+            <SubTitle
+              icon={IcInfoCircleGreen}
+              label="Masukan Nominal Pengisian"
+              className="mb-3"
+            />
 
             <p className="text-xs text-black100/70 mb-[14px]">
-              Silakan masukan durasi pengisian sesuai dengan daya kebutuhan anda
+              Silakan masukan nominal pengisian yang sesuai dengan daya
+              pengisian tram
             </p>
 
+            <div className="center relative  rounded-lg bg-baseGray mb-3">
+              {/* <p className="text-base font-semibold">{`Rp${rupiah(8000)}`}</p> */}
+              <input
+                type={"text"}
+                placeholder={"0"}
+                value={nominal}
+                onChange={handleChange}
+                className="w-auto text-center p-5 w-full text-base font-semibold bg-transparent"
+              />
+              <div className="absolute p-2 bottom-0 right-0 ">
+                <IcEditGreen />
+              </div>
+            </div>
+
             <div className="grid grid-cols-2 gap-3">
-              {nominalDataDummy.map((_, index: number) => (
-                <NominalTopUpItem key={index} isActive={false} />
+              {nominalDataDummy.map((item, index: number) => (
+                <NominalTopUpItem
+                  key={index}
+                  value={item}
+                  isActive={validationNominal(item)}
+                  onClick={() => onSelectNominal(item)}
+                />
               ))}
             </div>
-          </div> */}
-
-          {/* INPUT NOMINAL OR HOUR */}
-          <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
-            <Tabs
-              tabs={tabsNominalHour}
-              onSelect={(select) => setSelectTabInput(select)}
-            />
           </div>
 
           {/* DURATION RANGE */}
-          {selectTabInput === "1" && (
+          <div className="bg-white p-3 rounded-lg mb-3 center flex-col gap-3 drop-shadow">
+            <span className="font-medium">Kisaran durasi yang didapat:</span>
+
+            <span className="text-xl text-primary100 font-semibold">
+              4 jam 3 menit
+            </span>
+
+            <p className="text-xs">
+              Durasi masih <a className="font-medium text-xs">perkiraan</a>,
+              bukan angka yang sesungguhnya.
+            </p>
+          </div>
+          {/* {selectTabInput === "1" && (
             <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
               <div className="row gap-3 mb-2">
                 <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
@@ -193,10 +270,10 @@ const SessionSettings = () => {
                 <p className="text-lg font-semibold">4 jam 3 menit</p>
               </div>
             </div>
-          )}
+          )} */}
 
           {/* COST INFORMATION */}
-          <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
+          {/* <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
             <div className="row gap-3 mb-4">
               <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
                 <IcInfoCircleGreen />
@@ -206,10 +283,10 @@ const SessionSettings = () => {
             </div>
 
             <Tabs tabs={tabsCostInformation} />
-          </div>
+          </div> */}
 
           {/* FINANCING  DETAILS*/}
-          <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
+          {/* <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
             <div className="row gap-3 mb-2">
               <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
                 <IcInfoCircleGreen />
@@ -231,12 +308,12 @@ const SessionSettings = () => {
               labelRight={`Rp${rupiah(1000)}`}
               className="p-3"
             />
-          </div>
+          </div> */}
         </div>
       </div>
 
       {/* PAYMENT METHOD */}
-      <div className="drop-shadow p-4 bg-white">
+      {/* <div className="drop-shadow p-4 bg-white">
         <div onClick={onSelectPayment} className="between cursor-pointer">
           <p className="text-xs text-primary100 font-medium">
             Pilih Metode Pemabayaran
@@ -259,6 +336,11 @@ const SessionSettings = () => {
             onClick={onPay}
           />
         </div>
+      </div> */}
+
+      {/* FOOTER */}
+      <div className="container-button-footer">
+        <Button buttonType="lg" label="Lanjutkan" onClick={onNext} />
       </div>
     </Container>
   );

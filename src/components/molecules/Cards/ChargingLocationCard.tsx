@@ -1,34 +1,32 @@
 import { IcFuelGreen, IcFuelRed, IcShareGreen } from "../../../assets";
+import { chargingLocationProps } from "../../../common";
 
 interface ChargingLocationCardProps {
   type?: "location-list";
+  data: chargingLocationProps;
   onClick: () => void;
 }
 
 const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   type,
+  data,
   onClick,
 }) => {
-  const isFull: boolean = true;
+  const isFull: boolean = data?.status === "full";
 
   return (
     <div onClick={onClick} className="mb-3 cursor-pointer">
       <div className="p-3 bg-chargingLocation bg-center rounded-t-lg">
         <div className="row gap-3">
           <img
-            src={
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4ddBLsjXELeexn4zWAEUxkClXVovj3Q_h2g&s"
-            }
+            src={data?.image}
             alt="location 1"
             className="w-[50px] h-[50px] rounded-md"
           />
 
           <div className="flex flex-col justify-between">
-            <p className="font-medium ">The Breeze</p>
-            <p className="text-2-line text-xs text-black90">
-              Jl. BSD Green Office Park Jl. BSD Grand Boulevard, Sampora, BSD,
-              Kabupaten Tangerang - Banten
-            </p>
+            <p className="font-medium ">{data?.location}</p>
+            <p className="text-2-line text-xs text-black90">{data?.address}</p>
           </div>
         </div>
 
@@ -55,7 +53,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
               </div>
             ) : (
               <div className="flex flex-row gap-1 relative">
-                <p className="text-lg font-semibold">{5}</p>
+                <p className="text-lg font-semibold">{data?.available}</p>
                 <p className="text-xs self-end mb-1 text-black50 font-medium">
                   tersedia
                 </p>
@@ -64,7 +62,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
           </div>
 
           <div className="row gap-2">
-            <p className="text-xs text-primary100 font-medium">2km dari anda</p>
+            <p className="text-xs text-primary100 font-medium">{`${data?.distance}km dari anda`}</p>
 
             <div className="p-[5px] rounded-full bg-primary10">
               <IcShareGreen />
@@ -75,8 +73,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
 
       <div className="bg-white px-3 py-4 rounded-b-lg row gap-1">
         <p className="text-xs text-primary100 font-semibold">Rp</p>
-        <p className="text-lg text-primary100 font-semibold mr-1">600/jam</p>
-        <p className="text-xs text-black50">48V, 2A</p>
+        <p className="text-lg text-primary100 font-semibold mr-1">{`${data?.cost}/jam`}</p>
+        <p className="text-xs text-black50">{`${data?.voltage}V, ${data?.ampere}A`}</p>
       </div>
     </div>
   );

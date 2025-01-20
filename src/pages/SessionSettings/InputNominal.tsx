@@ -16,7 +16,7 @@ const InputNominal = () => {
   return (
     <>
       <p className="text-xs text-black100/70 mb-[14px]">
-        Silakan masukan nominal pengisian sesuai dengan daya kebutuhan anda
+      Silakan masukan nominal pengisian yang sesuai dengan daya pengisian tram
       </p>
 
       <div className="center relative p-5 rounded-lg bg-baseGray mb-3">
@@ -35,26 +35,30 @@ const InputNominal = () => {
         ))}
       </div>
 
-      <Separator className="my-4 bg-black10" />
+      {true && (
+        <>
+          <Separator className="my-4 bg-black10" />
 
-      <div className="p-5 bg-baseGray rounded-lg mt-3">
-        <p className="w-9/12 text-xs">
-          Isi sampai full menggunakan saldo tersimpan
-        </p>
+          <div className="p-5 bg-baseGray rounded-lg mt-3">
+            <p className="w-9/12 text-xs">
+              Isi sampai full menggunakan saldo tersimpan
+            </p>
 
-        <div className="between">
-          <p className="text-blackBold text-xs font-semibold row gap-0.5">
-            Rp <p className="text-lg">{rupiah(50000)}</p>
-          </p>
+            <div className="between">
+              <p className="text-blackBold text-xs font-semibold row gap-0.5">
+                Rp <p className="text-lg">{rupiah(50000)}</p>
+              </p>
 
-          <Button
-            className="!w-[70px]"
-            buttonType="sm"
-            label="Top Up"
-            onClick={onTopUp}
-          />
-        </div>
-      </div>
+              <Button
+                className="!w-[70px]"
+                buttonType="sm"
+                label="Top Up"
+                onClick={onTopUp}
+              />
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 };
