@@ -11,6 +11,7 @@ import Separator from "./Separator";
 import Signal from "./Signal";
 import StatusIndicator from "./StatusIndicator";
 import SubTitle from "./SubTitle";
+import LoadingPage from "./LoadingPage";
 
 export {
   BetweenText,
@@ -25,6 +26,7 @@ export {
   Separator,
   Signal,
   StatusIndicator,
-  SubTitle
+  SubTitle,
+  LoadingPage
 };
 

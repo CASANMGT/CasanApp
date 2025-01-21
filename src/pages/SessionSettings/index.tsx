@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import {
   IcEditGreen,
@@ -11,12 +12,15 @@ import {
   Button,
   Container,
   CostInformationItem,
+  LoadingPage,
   NominalTopUpItem,
   Separator,
   SocketItem,
   SubTitle,
 } from "../../components";
 import { rupiah } from "../../helpers";
+import { fetchSessionSetting } from "../../services/request";
+import { AppDispatch, RootState } from "../../store";
 import InputHour from "./InputHour";
 import InputNominal from "./InputNominal";
 
@@ -81,9 +85,21 @@ const tabsCostInformation = [
 
 const SessionSettings = () => {
   const navigate: NavigateFunction = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { loading, data } = useSelector((state: RootState) => state.sessionSetting);
+
   const [selectTabInput, setSelectTabInput] = useState<string>("1");
   const [selectSocket, setSelectSocket] = useState<number>();
   const [nominal, setNominal] = useState<string>();
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = () => {
+    dispatch(fetchSessionSetting(861435073571321));
+  };
 
   const onDismiss = () => {
     navigate(-1);
@@ -108,7 +124,7 @@ const SessionSettings = () => {
 
   const onSelectNominal = (select: string) => {
     let value: string = "";
-    
+
     if (select === "full") value = "50000";
     else value = select.replace(REGEX_NUMBERS, "");
 
@@ -144,106 +160,109 @@ const SessionSettings = () => {
 
   return (
     <Container title="Pengaturan Sesi" onDismiss={onDismiss}>
-      <div className="flex-1 flex-col overflow-auto scrollbar-none">
-        {/* LOCATION */}
-        <div className="p-4 bg-white mb-2">
-          <div className="between">
-            <p className="text-blackBold font-medium">Pasar Modern BSD City</p>
+      <LoadingPage loading={loading}>
+        <div className="flex-1 flex-col overflow-auto scrollbar-none">
+          {/* LOCATION */}
+          <div className="p-4 bg-white mb-2">
+            <div className="between">
+              <p className="text-blackBold font-medium">
+                Pasar Modern BSD City
+              </p>
 
-            <div className="row gap-2 cursor-pointer" onClick={onView}>
-              <p className="text-xs text-primary100 font-medium">Lihat</p>
-              <IcRightGreen />
+              <div className="row gap-2 cursor-pointer" onClick={onView}>
+                <p className="text-xs text-primary100 font-medium">Lihat</p>
+                <IcRightGreen />
+              </div>
             </div>
-          </div>
 
-          <Separator className="my-3" />
+            <Separator className="my-3" />
 
-          <div className="between">
-            <div className="row gap-2">
-              <div className="w-[22px] h-[22px] rounded-full center bg-primary30">
-                <p className="text-[10px] text-primary100 font-semibold">A</p>
+            <div className="between">
+              <div className="row gap-2">
+                <div className="w-[22px] h-[22px] rounded-full center bg-primary30">
+                  <p className="text-[10px] text-primary100 font-semibold">A</p>
+                </div>
+
+                <p className="text-xs font-medium">Pintu Masuk Barat</p>
               </div>
 
-              <p className="text-xs font-medium">Pintu Masuk Barat</p>
-            </div>
-
-            <p className="text-xs text-black90">Nomor Alat 1544</p>
-          </div>
-        </div>
-
-        <div className="p-4">
-          {/* SELECT SOCKET */}
-          <div className="bg-white py-4 px-3 rounded-lg mb-3">
-            <div className="row gap-2 mb-2">
-              <IcSocketCircleGreen />
-              <p className="text-blackBold font-medium">Pilih Socket</p>
-            </div>
-
-            <div className="grid grid-cols-4 gap-3">
-              {socketDataDummy.map((item, index: number) => (
-                <SocketItem
-                  key={index}
-                  data={item}
-                  isActive={selectSocket === item?.socket}
-                  onClick={() => setSelectSocket(item?.socket)}
-                />
-              ))}
+              <p className="text-xs text-black90">Nomor Alat 1544</p>
             </div>
           </div>
 
-          {/* INPUT NOMINAL */}
-          <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
-            <SubTitle
-              icon={IcInfoCircleGreen}
-              label="Masukan Nominal Pengisian"
-              className="mb-3"
-            />
+          <div className="p-4">
+            {/* SELECT SOCKET */}
+            <div className="bg-white py-4 px-3 rounded-lg mb-3">
+              <div className="row gap-2 mb-2">
+                <IcSocketCircleGreen />
+                <p className="text-blackBold font-medium">Pilih Socket</p>
+              </div>
 
-            <p className="text-xs text-black100/70 mb-[14px]">
-              Silakan masukan nominal pengisian yang sesuai dengan daya
-              pengisian tram
-            </p>
+              <div className="grid grid-cols-4 gap-3">
+                {socketDataDummy.map((item, index: number) => (
+                  <SocketItem
+                    key={index}
+                    data={item}
+                    isActive={selectSocket === item?.socket}
+                    onClick={() => setSelectSocket(item?.socket)}
+                  />
+                ))}
+              </div>
+            </div>
 
-            <div className="center relative  rounded-lg bg-baseGray mb-3">
-              {/* <p className="text-base font-semibold">{`Rp${rupiah(8000)}`}</p> */}
-              <input
-                type={"text"}
-                placeholder={"0"}
-                value={nominal}
-                onChange={handleChange}
-                className="w-auto text-center p-5 w-full text-base font-semibold bg-transparent"
+            {/* INPUT NOMINAL */}
+            <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
+              <SubTitle
+                icon={IcInfoCircleGreen}
+                label="Masukan Nominal Pengisian"
+                className="mb-3"
               />
-              <div className="absolute p-2 bottom-0 right-0 ">
-                <IcEditGreen />
+
+              <p className="text-xs text-black100/70 mb-[14px]">
+                Silakan masukan nominal pengisian yang sesuai dengan daya
+                pengisian tram
+              </p>
+
+              <div className="center relative  rounded-lg bg-baseGray mb-3">
+                {/* <p className="text-base font-semibold">{`Rp${rupiah(8000)}`}</p> */}
+                <input
+                  type={"text"}
+                  placeholder={"0"}
+                  value={nominal}
+                  onChange={handleChange}
+                  className="w-auto text-center p-5 w-full text-base font-semibold bg-transparent"
+                />
+                <div className="absolute p-2 bottom-0 right-0 ">
+                  <IcEditGreen />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                {nominalDataDummy.map((item, index: number) => (
+                  <NominalTopUpItem
+                    key={index}
+                    value={item}
+                    isActive={validationNominal(item)}
+                    onClick={() => onSelectNominal(item)}
+                  />
+                ))}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              {nominalDataDummy.map((item, index: number) => (
-                <NominalTopUpItem
-                  key={index}
-                  value={item}
-                  isActive={validationNominal(item)}
-                  onClick={() => onSelectNominal(item)}
-                />
-              ))}
+            {/* DURATION RANGE */}
+            <div className="bg-white p-3 rounded-lg mb-3 center flex-col gap-3 drop-shadow">
+              <span className="font-medium">Kisaran durasi yang didapat:</span>
+
+              <span className="text-xl text-primary100 font-semibold">
+                4 jam 3 menit
+              </span>
+
+              <p className="text-xs">
+                Durasi masih <a className="font-medium text-xs">perkiraan</a>,
+                bukan angka yang sesungguhnya.
+              </p>
             </div>
-          </div>
-
-          {/* DURATION RANGE */}
-          <div className="bg-white p-3 rounded-lg mb-3 center flex-col gap-3 drop-shadow">
-            <span className="font-medium">Kisaran durasi yang didapat:</span>
-
-            <span className="text-xl text-primary100 font-semibold">
-              4 jam 3 menit
-            </span>
-
-            <p className="text-xs">
-              Durasi masih <a className="font-medium text-xs">perkiraan</a>,
-              bukan angka yang sesungguhnya.
-            </p>
-          </div>
-          {/* {selectTabInput === "1" && (
+            {/* {selectTabInput === "1" && (
             <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
               <div className="row gap-3 mb-2">
                 <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
@@ -272,8 +291,8 @@ const SessionSettings = () => {
             </div>
           )} */}
 
-          {/* COST INFORMATION */}
-          {/* <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
+            {/* COST INFORMATION */}
+            {/* <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
             <div className="row gap-3 mb-4">
               <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
                 <IcInfoCircleGreen />
@@ -285,8 +304,8 @@ const SessionSettings = () => {
             <Tabs tabs={tabsCostInformation} />
           </div> */}
 
-          {/* FINANCING  DETAILS*/}
-          {/* <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
+            {/* FINANCING  DETAILS*/}
+            {/* <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
             <div className="row gap-3 mb-2">
               <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
                 <IcInfoCircleGreen />
@@ -309,11 +328,11 @@ const SessionSettings = () => {
               className="p-3"
             />
           </div> */}
+          </div>
         </div>
-      </div>
 
-      {/* PAYMENT METHOD */}
-      {/* <div className="drop-shadow p-4 bg-white">
+        {/* PAYMENT METHOD */}
+        {/* <div className="drop-shadow p-4 bg-white">
         <div onClick={onSelectPayment} className="between cursor-pointer">
           <p className="text-xs text-primary100 font-medium">
             Pilih Metode Pemabayaran
@@ -338,10 +357,11 @@ const SessionSettings = () => {
         </div>
       </div> */}
 
-      {/* FOOTER */}
-      <div className="container-button-footer">
-        <Button buttonType="lg" label="Lanjutkan" onClick={onNext} />
-      </div>
+        {/* FOOTER */}
+        <div className="container-button-footer">
+          <Button buttonType="lg" label="Lanjutkan" onClick={onNext} />
+        </div>
+      </LoadingPage>
     </Container>
   );
 };
