@@ -43,7 +43,7 @@ const RoutesPage = () => {
         <Route path="scan" element={<Scan />} />
         <Route path="select-bank" element={<SelectBank />} />
         <Route path="select-payment-method" element={<SelectPaymentMethod />} />
-        <Route path="session-settings" element={<SessionSettings />} />
+        <Route path="session-settings/:id" element={<SessionSettings />} />
         <Route path="session-details" element={<SessionDetails />} />
         <Route path="top-up-balance" element={<TopUpBalance />} />
         <Route path="transaction-history" element={<TransactionHistory />} />

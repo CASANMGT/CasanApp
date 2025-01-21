@@ -7,11 +7,13 @@ import Header from "./Header";
 import Input from "./Input";
 import InputCode from "./InputCode";
 import Label from "./Label";
+import LoadingModal from "./LoadingModal";
+import LoadingPage from "./LoadingPage";
 import Separator from "./Separator";
 import Signal from "./Signal";
 import StatusIndicator from "./StatusIndicator";
 import SubTitle from "./SubTitle";
-import LoadingPage from "./LoadingPage";
+import Timer from "./Timer";
 
 export {
   BetweenText,
@@ -23,10 +25,12 @@ export {
   Input,
   InputCode,
   Label,
+  LoadingModal,
+  LoadingPage,
   Separator,
   Signal,
   StatusIndicator,
   SubTitle,
-  LoadingPage
+  Timer
 };
 

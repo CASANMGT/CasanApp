@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { replace, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   IcClockGreen,
   IcFlashGreen,
@@ -7,31 +8,120 @@ import {
   ILCharging,
 } from "../assets";
 import {
+  chargingStartBodyProps,
+  chargingStopBodyProps,
+  portReportBodyProps,
+} from "../common";
+import {
   AlertModal,
   BetweenText,
   Button,
-  CountdownTimer,
   Header,
   Signal,
   StatusIndicator,
+  Timer,
 } from "../components";
+import { hideLoading, showLoading } from "../features/globalSlice";
 import { rupiah } from "../helpers";
+import { resetDataChargingStart } from "../redux";
+import {
+  fetchChargingStart,
+  fetchChargingStop,
+  fetchPortReport,
+} from "../services/request";
+import { AppDispatch, RootState } from "../store";
 
 const Charging = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { formData } = useSelector((state: RootState) => state.formCharging);
+
+  const { loading, data } = useSelector(
+    (state: RootState) => state.chargingStart
+  );
+  const sessionSetting = useSelector(
+    (state: RootState) => state.sessionSetting
+  );
 
   const [visibleAlert, setVisibleAlert] = useState<boolean>(false);
   const [status, setStatus] = useState<string>("stand-by");
+  const [power, setPower] = useState<number>();
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  useEffect(() => {
+    if (loading) dispatch(showLoading());
+    else dispatch(hideLoading());
+
+    if (data) {
+      setStatus("charging");
+    }
+  }, [data, loading]);
+
+  useEffect(() => {
+    if (status === "charging") {
+      setTimeout(() => {
+        const body: portReportBodyProps = {
+          deviceID: formData?.deviceId || "",
+          port: formData?.port || 0,
+        };
+
+        dispatch(fetchPortReport(body)).then((res: any) => {
+          setPower(res?.payload || 0);
+        });
+      }, 10000);
+    }
+  }, [status]);
+
+  const getData = () => {
+    if (!formData?.deviceId || !formData?.port || formData?.price) {
+      alert("perangkat tidak ditemukan");
+      navigate("/home", { replace: true });
+    } else {
+      dispatch(resetDataChargingStart());
+    }
+  };
 
   const onDismiss = () => {
     navigate(-1);
   };
 
-  const onStart = () => {
+  const onNext = () => {
     // setVisibleAlert(true);
 
-    if (status === "stand-by") setStatus("charging");
-    else navigate("/session-details", { replace: true });
+    if (status === "stand-by") onStart();
+    else onStop();
+  };
+
+  const onStart = () => {
+    const body: chargingStartBodyProps = {
+      deviceID: formData?.deviceId || "",
+      value: formData?.price || 0,
+      port: formData?.port || 0,
+      orderNumber: "00123451",
+    };
+
+    dispatch(fetchChargingStart(body));
+  };
+
+  const onStop = () => {
+    const body: chargingStopBodyProps = {
+      deviceID: formData?.deviceId || "",
+      port: formData?.port || 0,
+      orderNumber: "00123451",
+    };
+
+    dispatch(fetchChargingStop(body)).then((res) => {
+      if (res?.payload) {
+        setStatus("stand-by");
+        navigate("/session-details", {
+          replace: true,
+        });
+      }
+    });
   };
 
   return (
@@ -45,26 +135,20 @@ const Charging = () => {
 
       <div className="flex-1 overflow-auto scrollbar-none">
         {/* INFORMATION */}
-        <div className="mx-4 bg-baseLightGray/60 rounded-lg flex justify-around py-3 px-8">
-          <InformationItem
-            icon={IcClockGreen}
-            label="Durasi"
-            content={
-              status === "stand-by" ? (
-                "00:00:00"
-              ) : (
-                <CountdownTimer
-                  targetDate={new Date().getTime() + 30 * 60 * 1000}
-                />
-              )
-            }
-          />
-          <InformationItem
-            icon={IcFlashGreen}
-            label="Daya"
-            content={`${status === "stand-by" ? "-" : 200} Watt`}
-          />
-        </div>
+        {status === "charging" && (
+          <div className="mx-4 bg-baseLightGray/60 rounded-lg flex justify-around py-3 px-8">
+            <InformationItem
+              icon={IcClockGreen}
+              label="Durasi"
+              content={<Timer />}
+            />
+            <InformationItem
+              icon={IcFlashGreen}
+              label="Daya"
+              content={`${power} Watt`}
+            />
+          </div>
+        )}
 
         {/* STATUS */}
         <StatusIndicator type={status} className="my-8" />
@@ -89,14 +173,14 @@ const Charging = () => {
           <BetweenText
             type="medium-content"
             labelLeft="Alat"
-            labelRight="Device A, Socket 5"
+            labelRight={`Device A, Socket ${formData?.port || 0}`}
             className="p-3"
           />
 
           <BetweenText
             type="medium-content"
             labelLeft="Total Transaksi"
-            labelRight={`Rp${rupiah(5000)}`}
+            labelRight={`Rp${rupiah(formData?.price || 0)}`}
             className="bg-baseLightGray p-3"
           />
 
@@ -104,7 +188,7 @@ const Charging = () => {
             type="medium-content"
             labelLeft="Sinyal"
             labelRight="Device A, Socket 5"
-            content={<Signal type="full" />}
+            content={<Signal signalValue={sessionSetting?.data?.signalValue} />}
             className="p-3"
           />
         </div>
@@ -118,7 +202,7 @@ const Charging = () => {
           label={
             status === "stand-by" ? "Mulai Pengisian" : "Selesaikan Pengisian"
           }
-          onClick={onStart}
+          onClick={onNext}
         />
       </div>
 

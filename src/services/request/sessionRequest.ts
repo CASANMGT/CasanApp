@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { SessionProps } from "../../common";
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export const fetchSessionSetting = createAsyncThunk<SessionProps, number>(
+export const fetchSessionSetting = createAsyncThunk<SessionProps, string>(
   "fetchSessionSetting",
   async (deviceId, { rejectWithValue }) => {
     try {

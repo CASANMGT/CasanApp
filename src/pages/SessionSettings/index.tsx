@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
 import {
   IcEditGreen,
   IcInfoCircleGreen,
   IcRightGreen,
   IcSocketCircleGreen,
 } from "../../assets";
-import { REGEX_NUMBERS, socketProps } from "../../common";
+import { REGEX_NUMBERS } from "../../common";
 import {
   Button,
   Container,
@@ -19,23 +19,12 @@ import {
   SubTitle,
 } from "../../components";
 import { rupiah } from "../../helpers";
+import { setFormCharging } from "../../redux";
 import { fetchSessionSetting } from "../../services/request";
 import { AppDispatch, RootState } from "../../store";
 import InputHour from "./InputHour";
 import InputNominal from "./InputNominal";
 
-const socketDataDummy: socketProps[] = [
-  { socket: 1, status: "available" },
-  { socket: 2, status: "available" },
-  { socket: 3, status: "available" },
-  { socket: 4, status: "available" },
-  { socket: 5, status: "available" },
-  { socket: 6, status: "used" },
-  { socket: 7, status: "available" },
-  { socket: 8, status: "available" },
-  { socket: 9, status: "available" },
-  { socket: 10, status: "broken" },
-];
 const dataDummy = [1, 2];
 const nominalDataDummy = ["2000", "4000", "6000", "full"];
 
@@ -84,13 +73,16 @@ const tabsCostInformation = [
 ];
 
 const SessionSettings = () => {
-  const deviceId: number = 861435073571321;
   const navigate: NavigateFunction = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const { id } = useParams<{ id: string }>();
+
+  console.log("cek id", id);
 
   const { loading, data } = useSelector(
     (state: RootState) => state.sessionSetting
   );
+  const { formData } = useSelector((state: RootState) => state.formCharging);
 
   const [selectTabInput, setSelectTabInput] = useState<string>("1");
   const [selectSocket, setSelectSocket] = useState<number>();
@@ -101,7 +93,11 @@ const SessionSettings = () => {
   }, []);
 
   const getData = () => {
-    dispatch(fetchSessionSetting(deviceId));
+    if (id) dispatch(fetchSessionSetting(id));
+    else {
+      alert("perangkat tidak ditemukan");
+      navigate("/home", { replace: true });
+    }
   };
 
   const onDismiss = () => {
@@ -121,6 +117,15 @@ const SessionSettings = () => {
     const convert = nominal?.replace(REGEX_NUMBERS, "");
 
     if (convert === select) value = true;
+
+    return value;
+  };
+
+  const validationButton = () => {
+    let value: boolean = true;
+
+    if (selectSocket !== undefined && nominal?.replace("Rp0", ""))
+      value = false;
 
     return value;
   };
@@ -145,6 +150,19 @@ const SessionSettings = () => {
   };
 
   const onNext = () => {
+    const body = {
+      deviceId: id,
+      price: Number(nominal?.replace("Rp", "").replace(/\./g, "")),
+      port: selectSocket || 0 + 1,
+    };
+
+    dispatch(
+      setFormCharging({
+        type: "formData",
+        value: body,
+      })
+    );
+
     navigate("/charging");
   };
 
@@ -189,7 +207,9 @@ const SessionSettings = () => {
                 <p className="text-xs font-medium">Pintu Masuk Barat</p>
               </div>
 
-              <p className="text-xs text-black90">{`Nomor Alat ${deviceId}`}</p>
+              <p className="text-xs text-black90">{`Nomor Alat ${
+                formData?.deviceId || "-"
+              }`}</p>
             </div>
           </div>
 
@@ -363,7 +383,12 @@ const SessionSettings = () => {
 
         {/* FOOTER */}
         <div className="container-button-footer">
-          <Button buttonType="lg" label="Lanjutkan" onClick={onNext} />
+          <Button
+            buttonType="lg"
+            label="Lanjutkan"
+            disabled={validationButton()}
+            onClick={onNext}
+          />
         </div>
       </LoadingPage>
     </Container>

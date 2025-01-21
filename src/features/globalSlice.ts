@@ -1,28 +1,26 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { globalProps } from "../common";
 
 export interface CounterState {
   value: number;
 }
 
-const initialState: CounterState = {
-  value: 0,
+const initialState: globalProps = {
+  loading: false,
 };
 
 const counterSlice = createSlice({
-  name: "counter",
+  name: "global",
   initialState,
   reducers: {
-    increment: (state) => {
-      state.value += 1;
+    showLoading: (state) => {
+      state.loading = true;
     },
-    decrement: (state) => {
-      state.value -= 1;
-    },
-    incrementByAmount: (state, action) => {
-      state.value += action.payload;
+    hideLoading: (state) => {
+      state.loading = false;
     },
   },
 });
 
-export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+export const { showLoading, hideLoading } = counterSlice.actions;
 export default counterSlice.reducer;

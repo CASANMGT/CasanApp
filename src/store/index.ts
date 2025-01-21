@@ -2,6 +2,9 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import globalReducer from "../features/globalSlice";
 import toastReducer from "../features/toastSlice";
+import chargingSessionReducer from "../redux/charging/chargingSessionSlice";
+import chargingStartReducer from "../redux/charging/chargingStartSlice";
+import formChargingReducer from "../redux/charging/formChargingSlice";
 import sessionSettingReducer from "../redux/session/sessionSettingsSlice";
 
 export const store = configureStore({
@@ -11,6 +14,11 @@ export const store = configureStore({
 
     // SESSION
     sessionSetting: sessionSettingReducer,
+
+    // CHARGING
+    formCharging: formChargingReducer,
+    chargingStart: chargingStartReducer,
+    chargingSession: chargingSessionReducer,
   },
 });
 

@@ -1,18 +1,18 @@
 interface SignalProps {
-  type: "full" | "low" | "middle";
+  signalValue: number | undefined;
 }
 
-const Signal: React.FC<SignalProps> = ({ type }) => {
+const Signal: React.FC<SignalProps> = ({ signalValue }) => {
   const getColorSignal = (position: number) => {
     let value = "";
-    if (type === "low") {
-      if (position === 1 || position === 2) value = "bg-red";
-      else value = "bg-black30";
-    } else if (type === "middle") {
+
+    if (signalValue && signalValue > 20) value = "bg-green";
+    else if (signalValue && signalValue > 10) {
       if (position <= 3) value = "bg-secondary100";
       else value = "bg-black30";
-    } else if (type === "full") {
-      value = "bg-green";
+    } else {
+      if (position === 1 || position === 2) value = "bg-red";
+      else value = "bg-black30";
     }
 
     return value;

@@ -3,7 +3,7 @@ import React from "react";
 interface BetweenTextProps {
   type?: "medium-content";
   labelLeft: string;
-  labelRight: string;
+  labelRight: string | number;
   content?: any;
   classNameLabelLeft?: string;
   classNameLabelRight?: string;

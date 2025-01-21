@@ -1,71 +1,54 @@
-import { BrowserMultiFormatReader } from "@zxing/browser";
-import { useEffect, useRef, useState } from "react";
+import { BrowserMultiFormatReader } from "@zxing/library";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { IcInfoCircleBlack } from "../assets";
 import { Header } from "../components";
 
 const Scan = () => {
   const navigate = useNavigate();
-
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [scannedCode, setScannedCode] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>();
+  const codeReader = new BrowserMultiFormatReader();
 
   useEffect(() => {
-    const codeReader = new BrowserMultiFormatReader();
-    let videoStream: MediaStream | null = null;
-
     const startScanner = async () => {
       try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoInputDevices = devices.filter(
-          (device) => device.kind === "videoinput"
-        );
-
-        if (videoInputDevices.length === 0) {
-          throw new Error("No video input devices found.");
-        }
-
-        videoStream = await navigator.mediaDevices.getUserMedia({
-          video: { deviceId: videoInputDevices[0].deviceId },
-          audio: false,
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" },
         });
 
         if (videoRef.current) {
-          videoRef.current.srcObject = videoStream;
+          videoRef.current.srcObject = stream;
           videoRef.current.play();
         }
 
-        codeReader.decodeFromVideoDevice(
-          videoInputDevices[0].deviceId,
-          videoRef.current!,
-          (result, err) => {
-            if (result) {
-              setScannedCode(result.getText());
-              navigate("/session-settings");
-            }
-            if (err) {
-              // Handle errors silently or display if needed
-              console.warn(err);
-            }
-          }
+        // Decode barcode once from video
+        const result = await codeReader.decodeOnceFromStream(
+          stream,
+          videoRef.current!
         );
-      } catch (err: any) {
-        setError(`Error starting scanner: ${err.message}`);
+
+        onNext(result.getText()); // Save the scanned result
+
+        stream.getTracks().forEach((track) => track.stop());
+      } catch (error) {
+        console.error("Error scanning barcode:", error);
       }
     };
 
+    // Start scanning when the component mounts
     startScanner();
 
     return () => {
-      if (videoStream) {
-        videoStream.getTracks().forEach((track) => track.stop());
-      }
+      codeReader.reset();
     };
   }, []);
 
   const onDismiss = () => {
     navigate(-1);
+  };
+
+  const onNext = (result: string) => {
+    navigate(`/session-settings/${result}`);
   };
 
   return (
@@ -93,17 +76,12 @@ const Scan = () => {
           <div className="absolute w-full h-0.5 bg-white animate-scan"></div>
         </div>
 
-        <div
-          onClick={() => navigate("/session-settings")}
-          className="rounded-2xl bg-black5 p-3 row gap-2 mt-[90px]"
-        >
+        <div className="rounded-2xl bg-black5 p-3 row gap-2 mt-[90px]">
           <IcInfoCircleBlack />
           <p className="text-xs font-semibold">
             Scan barcode yang ada di device
           </p>
         </div>
-
-        {error && <p className="text-red-500 absolute bottom-4">{error}</p>}
       </div>
     </div>
   );
