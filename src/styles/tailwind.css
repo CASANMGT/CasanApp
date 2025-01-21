@@ -15,6 +15,10 @@
 .background-2 {
   @apply bg-background2 bg-cover bg-fixed bg-no-repeat bg-center container-screen;
 }
+
+.background-coming-soon {
+  @apply bg-bgComingSoon bg-cover bg-fixed bg-no-repeat bg-center container-screen;
+}
 /* END BACKGROUND */
 
 /* BUTTON */

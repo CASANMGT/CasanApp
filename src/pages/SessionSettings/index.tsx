@@ -84,10 +84,13 @@ const tabsCostInformation = [
 ];
 
 const SessionSettings = () => {
+  const deviceId: number = 861435073571321;
   const navigate: NavigateFunction = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { loading, data } = useSelector((state: RootState) => state.sessionSetting);
+  const { loading, data } = useSelector(
+    (state: RootState) => state.sessionSetting
+  );
 
   const [selectTabInput, setSelectTabInput] = useState<string>("1");
   const [selectSocket, setSelectSocket] = useState<number>();
@@ -98,7 +101,7 @@ const SessionSettings = () => {
   }, []);
 
   const getData = () => {
-    dispatch(fetchSessionSetting(861435073571321));
+    dispatch(fetchSessionSetting(deviceId));
   };
 
   const onDismiss = () => {
@@ -186,7 +189,7 @@ const SessionSettings = () => {
                 <p className="text-xs font-medium">Pintu Masuk Barat</p>
               </div>
 
-              <p className="text-xs text-black90">Nomor Alat 1544</p>
+              <p className="text-xs text-black90">{`Nomor Alat ${deviceId}`}</p>
             </div>
           </div>
 
@@ -199,12 +202,13 @@ const SessionSettings = () => {
               </div>
 
               <div className="grid grid-cols-4 gap-3">
-                {socketDataDummy.map((item, index: number) => (
+                {data?.portStatus.map((item, index: number) => (
                   <SocketItem
                     key={index}
                     data={item}
-                    isActive={selectSocket === item?.socket}
-                    onClick={() => setSelectSocket(item?.socket)}
+                    position={index + 1}
+                    isActive={selectSocket === index}
+                    onClick={() => setSelectSocket(index)}
                   />
                 ))}
               </div>

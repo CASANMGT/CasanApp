@@ -6,6 +6,7 @@ export default {
       backgroundImage: {
         background1: "url('/src/assets/illustrations/splash.png')",
         background2: "url('/src/assets/illustrations/background2.png')",
+        bgComingSoon: "url('/src/assets/illustrations/bg-coming-soon.png')",
         chargingLocation:
           "url('/src/assets/illustrations/charging-location.png')",
       },

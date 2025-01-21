@@ -36,6 +36,7 @@ const RoutesPage = () => {
           path="charging-location-details"
           element={<ChargingLocationDetails />}
         />
+        <Route path="coming-soon" element={<ComingSoon />} />
         <Route path="input-pin" element={<InputPin />} />
         <Route path="location-list" element={<LocationList />} />
         <Route path="login" element={<Login />} />
