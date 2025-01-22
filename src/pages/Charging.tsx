@@ -37,6 +37,8 @@ const Charging = () => {
   const dispatch = useDispatch<AppDispatch>();
   
   const { formData } = useSelector((state: RootState) => state.formCharging);
+  console.log('cek formData', formData);
+  
 
   const { loading, data } = useSelector(
     (state: RootState) => state.chargingStart

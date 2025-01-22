@@ -152,7 +152,7 @@ const SessionSettings = () => {
     const body = {
       deviceId: id,
       price: Number(nominal?.replace("Rp", "").replace(/\./g, "")),
-      port: selectSocket || 0 + 1,
+      port: Number(selectSocket) + 1,
     };
 
     dispatch(

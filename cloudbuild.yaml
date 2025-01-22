@@ -4,13 +4,11 @@ steps:
     args:
       [
         "build",
+        "--build-arg",
+        "VITE_API_URL=${_VITE_API_URL}",
         "-t",
         "gcr.io/$PROJECT_ID/casan-frontend:latest",
         ".",
-        "--build-arg",
-        "VITE_API_URL=${_VITE_API_URL}",
-        "--build-arg",
-        "VITE_GOOGLE_MAPS_API_KEY=${_VITE_GOOGLE_MAPS_API_KEY}",Ø
       ]
 
   # Step 2: Push the image to Google Container Registry
@@ -31,8 +29,9 @@ steps:
       - "--region"
       - "asia-southeast2"
       - "--allow-unauthenticated"
-      "--set-env-vars"
-      - "VITE_API_URL=${_VITE_API_URL},VITE_GOOGLE_MAPS_API_KEY=${_VITE_GOOGLE_MAPS_API_KEY}"
 
 images:
   - "gcr.io/$PROJECT_ID/casan-frontend:latest"
+
+substitutions:
+  _VITE_API_URL: "http://35.240.182.255:9556"
