@@ -11,7 +11,6 @@ RUN yarn install
 COPY . .
 
 
-
 RUN yarn build
 
 # Step 2: Serve the React app using `serve`
