@@ -186,7 +186,7 @@ const SessionSettings = () => {
           <div className="p-4 bg-white mb-2">
             <div className="between">
               <p className="text-blackBold font-medium">
-                Pasar Modern BSD City
+                Pasar Modern Intermoda
               </p>
 
               <div className="row gap-2 cursor-pointer" onClick={onView}>
