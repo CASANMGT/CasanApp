@@ -27,6 +27,10 @@ const chargingStartSlice = createSlice({
         state.data = action.payload;
       })
       .addCase(fetchChargingStart.rejected, (state, action) => {
+        const res: any = action?.payload;
+
+        if (res) alert(res?.message || res?.error || res);
+
         state.loading = false;
         state.error = action.payload as string;
       });

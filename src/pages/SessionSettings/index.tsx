@@ -24,6 +24,7 @@ import { fetchSessionSetting } from "../../services/request";
 import { AppDispatch, RootState } from "../../store";
 import InputHour from "./InputHour";
 import InputNominal from "./InputNominal";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const dataDummy = [1, 2];
 const nominalDataDummy = ["2000", "4000", "6000", "full"];
@@ -185,7 +186,7 @@ const SessionSettings = () => {
           <div className="p-4 bg-white mb-2">
             <div className="between">
               <p className="text-blackBold font-medium">
-                Pasar Modern Intermoda
+                Pasar Modern BSD City
               </p>
 
               <div className="row gap-2 cursor-pointer" onClick={onView}>
@@ -210,6 +211,8 @@ const SessionSettings = () => {
               }`}</p>
             </div>
           </div>
+
+          <p className="text-center">{apiUrl}</p>
 
           <div className="p-4">
             {/* SELECT SOCKET */}

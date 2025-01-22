@@ -32,9 +32,10 @@ import {
 import { AppDispatch, RootState } from "../store";
 
 const Charging = () => {
+  
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-
+  
   const { formData } = useSelector((state: RootState) => state.formCharging);
 
   const { loading, data } = useSelector(
@@ -77,7 +78,7 @@ const Charging = () => {
   }, [status]);
 
   const getData = () => {
-    if (!formData?.deviceId || !formData?.port || formData?.price) {
+    if (!formData?.deviceId || !formData?.port || !formData?.price) {
       alert("perangkat tidak ditemukan");
       navigate("/home", { replace: true });
     } else {

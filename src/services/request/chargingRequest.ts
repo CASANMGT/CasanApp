@@ -19,10 +19,14 @@ export const fetchChargingStart = createAsyncThunk<
         "Content-Type": "application/json",
       },
     });
+    
 
     const data = await response.json();
+    console.log('cek data', data);
+    
     return data?.status;
   } catch (e) {
+    
     return rejectWithValue(e);
   }
 });

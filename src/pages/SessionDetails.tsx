@@ -35,7 +35,7 @@ const SessionDetails = () => {
   }, [navigate]);
 
   const getData = () => {
-    if (!formData?.deviceId || !formData?.port || formData?.price) {
+    if (!formData?.deviceId || !formData?.port || !formData?.price) {
       alert("perangkat tidak ditemukan");
       navigate("/home", { replace: true });
     } else {
