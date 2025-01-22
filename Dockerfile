@@ -10,10 +10,7 @@ RUN yarn install
 
 COPY . .
 
-ARG VITE_API_URL=default_value
-ENV VITE_API_URL=${VITE_API_URL}
-ARG VITE_GOOGLE_MAPS_API_KEY=default_value
-ENV VITE_GOOGLE_MAPS_API_KEY=${VITE_GOOGLE_MAPS_API_KEY}
+
 
 RUN yarn build
 
