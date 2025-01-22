@@ -31,6 +31,8 @@ steps:
       - "--region"
       - "asia-southeast2"
       - "--allow-unauthenticated"
+      "--set-env-vars"
+      - "VITE_API_URL=${_VITE_API_URL},VITE_GOOGLE_MAPS_API_KEY=${_VITE_GOOGLE_MAPS_API_KEY}"
 
 images:
   - "gcr.io/$PROJECT_ID/casan-frontend:latest"
