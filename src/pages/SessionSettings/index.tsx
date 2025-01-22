@@ -77,9 +77,7 @@ const SessionSettings = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { id } = useParams<{ id: string }>();
 
-  console.log("cek id", id);
-
-  const { loading, data } = useSelector(
+  const { loading, data, error } = useSelector(
     (state: RootState) => state.sessionSetting
   );
   const { formData } = useSelector((state: RootState) => state.formCharging);
@@ -187,7 +185,7 @@ const SessionSettings = () => {
           <div className="p-4 bg-white mb-2">
             <div className="between">
               <p className="text-blackBold font-medium">
-                Pasar Modern BSD City
+                Pasar Modern Intermoda
               </p>
 
               <div className="row gap-2 cursor-pointer" onClick={onView}>
@@ -274,18 +272,22 @@ const SessionSettings = () => {
             </div>
 
             {/* DURATION RANGE */}
-            <div className="bg-white p-3 rounded-lg mb-3 center flex-col gap-3 drop-shadow">
-              <span className="font-medium">Kisaran durasi yang didapat:</span>
+            {Number(nominal?.replace("Rp", "")) > 0 && (
+              <div className="bg-white p-3 rounded-lg mb-3 center flex-col gap-3 drop-shadow">
+                <span className="font-medium">
+                  Kisaran durasi yang didapat:
+                </span>
 
-              <span className="text-xl text-primary100 font-semibold">
-                4 jam 3 menit
-              </span>
+                <span className="text-xl text-primary100 font-semibold">
+                  4 jam 3 menit
+                </span>
 
-              <p className="text-xs">
-                Durasi masih <a className="font-medium text-xs">perkiraan</a>,
-                bukan angka yang sesungguhnya.
-              </p>
-            </div>
+                <p className="text-xs">
+                  Durasi masih <a className="font-medium text-xs">perkiraan</a>,
+                  bukan angka yang sesungguhnya.
+                </p>
+              </div>
+            )}
             {/* {selectTabInput === "1" && (
             <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
               <div className="row gap-3 mb-2">

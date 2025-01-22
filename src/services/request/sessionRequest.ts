@@ -8,9 +8,6 @@ export const fetchSessionSetting = createAsyncThunk<SessionProps, string>(
     try {
       const response = await fetch(`${apiUrl}/heartbeat?deviceId=${deviceId}`, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
       });
 
       const data = await response.json();
