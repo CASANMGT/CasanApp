@@ -1,0 +1,39 @@
+name: GKE CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Google Cloud SDK
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          service_account_key: ${{ secrets.GCP_KEY_JSON }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      # Step 3: Configure Docker to use GCP Artifact Registry
+      - name: Configure Docker authentication
+        run: gcloud auth configure-docker
+
+      # Step 4: Build and push Docker image
+      - name: Build and push Docker image
+        run: |
+          IMAGE_NAME=asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/casan-frontend/casan-frontend:latest
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
+
+      # Step 5: Deploy to GKE
+      - name: Deploy to GKE
+        run: |
+          kubectl config use-context gke_${{ secrets.GCP_PROJECT_ID }}_asia-southeast2-b_gke-casan-cluster
+          kubectl set image deployment/casan casan=$IMAGE_NAME
