@@ -2,14 +2,12 @@ steps:
   # Step 1: Build Docker image
   - name: "gcr.io/cloud-builders/docker"
     args:
-      [
-        "build",
-        "--build-arg",
-        "VITE_API_URL=${_VITE_API_URL}",
-        "-t",
-        "gcr.io/$PROJECT_ID/casan-frontend:latest",
-        ".",
-      ]
+      - "build"
+      - "--build-arg"
+      - "VITE_API_URL=${_VITE_API_URL}"
+      - "-t"
+      - "gcr.io/$PROJECT_ID/my-vite-app:$SHORT_SHA"
+      - "."
 
   # Step 2: Push the image to Google Container Registry
   - name: "gcr.io/cloud-builders/docker"

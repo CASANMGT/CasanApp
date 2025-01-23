@@ -6,7 +6,7 @@ export const fetchSessionSetting = createAsyncThunk<SessionProps, string>(
   "fetchSessionSetting",
   async (deviceId, { rejectWithValue }) => {
     try {
-      const response = await fetch(`http://35.240.182.255:9556/heartbeat?deviceId=${deviceId}`, {
+      const response = await fetch(`${apiUrl}/heartbeat?deviceId=${deviceId}`, {
         method: "GET",
       });
 

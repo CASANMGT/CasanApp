@@ -4,7 +4,7 @@ const Test = () => {
   return (
     <div className="container-screen center flex-col">
       <p>Test</p>
-      <p>{apiUrl}</p>
+      <p>{apiUrl || "-"}</p>
     </div>
   );
 };
