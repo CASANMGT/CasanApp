@@ -25,6 +25,9 @@ jobs:
       - name: Configure Docker authentication
         run: gcloud auth configure-docker asia-southeast2-docker.pkg.dev
 
+      - name: Login Docker
+        run: gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://asia-southeast2-docker.pkg.dev
+
       # Step 4: Build and push Docker image
       - name: Build and push Docker image
         run: |
