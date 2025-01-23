@@ -23,10 +23,7 @@ jobs:
 
       # Step 3: Configure Docker to use GCP Artifact Registry
       - name: Configure Docker authentication
-        run: gcloud auth configure-docker asia-southeast2-docker.pkg.dev
-
-      - name: Login Docker
-        run: gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://asia-southeast2-docker.pkg.dev
+        run: sudo gcloud auth configure-docker
 
       # Step 4: Build and push Docker image
       - name: Build and push Docker image
