@@ -15,7 +15,6 @@ ENV VITE_API_URL=$VITE_API_URL
 
 RUN yarn build
 
-# Step 2: Serve the React app using `serve`
 FROM node:20
 
 RUN yarn global add serve
