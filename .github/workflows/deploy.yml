@@ -21,6 +21,10 @@ jobs:
           service_account_key: ${{ secrets.GCP_KEY_JSON }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
+      - name: Authenticate to Google Cloud
+        run: gcloud auth activate-service-account --key-file=${{ secrets.GCP_KEY_JSON }}
+
+
       # Step 3: Configure Docker to use GCP Artifact Registry
       - name: Configure Docker authentication
         run: gcloud auth configure-docker asia-southeast2-docker.pkg.dev
