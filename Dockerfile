@@ -10,10 +10,7 @@ RUN yarn install
 
 COPY . .
 
-# Pass environment variables at build time (via ARG)
 ARG VITE_API_URL
-
-# Make the ARG available as ENV for the build
 ENV VITE_API_URL=$VITE_API_URL
 
 RUN yarn build

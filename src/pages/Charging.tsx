@@ -32,13 +32,11 @@ import {
 import { AppDispatch, RootState } from "../store";
 
 const Charging = () => {
-  
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  
+
   const { formData } = useSelector((state: RootState) => state.formCharging);
-  console.log('cek formData', formData);
-  
+  console.log("cek formData", formData);
 
   const { loading, data } = useSelector(
     (state: RootState) => state.chargingStart
@@ -49,7 +47,7 @@ const Charging = () => {
 
   const [visibleAlert, setVisibleAlert] = useState<boolean>(false);
   const [status, setStatus] = useState<string>("stand-by");
-  const [power, setPower] = useState<number>();
+  const [power, setPower] = useState<number>(0);
 
   useEffect(() => {
     getData();
@@ -66,12 +64,16 @@ const Charging = () => {
 
   useEffect(() => {
     if (status === "charging") {
-      setTimeout(() => {
-        const body: portReportBodyProps = {
-          deviceID: formData?.deviceId || "",
-          port: formData?.port || 0,
-        };
+      const body: portReportBodyProps = {
+        deviceID: formData?.deviceId || "",
+        port: formData?.port || 0,
+      };
 
+      dispatch(fetchPortReport(body)).then((res: any) => {
+        setPower(res?.payload || 0);
+      });
+
+      setTimeout(() => {
         dispatch(fetchPortReport(body)).then((res: any) => {
           setPower(res?.payload || 0);
         });

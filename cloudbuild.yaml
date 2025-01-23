@@ -29,6 +29,7 @@ steps:
       - "--region"
       - "asia-southeast2"
       - "--allow-unauthenticated"
+      - "--set-env-vars=VITE_API_URL=${_VITE_API_URL}"
 
 images:
   - "gcr.io/$PROJECT_ID/casan-frontend:latest"

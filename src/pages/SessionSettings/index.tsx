@@ -223,7 +223,7 @@ const SessionSettings = () => {
               </div>
 
               <div className="grid grid-cols-4 gap-3">
-                {data?.portStatus.map((item, index: number) => (
+                {data?.portStatus && data?.portStatus.map((item, index: number) => (
                   <SocketItem
                     key={index}
                     data={item}
