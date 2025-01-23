@@ -212,8 +212,6 @@ const SessionSettings = () => {
             </div>
           </div>
 
-          <p className="text-center">{apiUrl}</p>
-
           <div className="p-4">
             {/* SELECT SOCKET */}
             <div className="bg-white py-4 px-3 rounded-lg mb-3">
@@ -223,15 +221,16 @@ const SessionSettings = () => {
               </div>
 
               <div className="grid grid-cols-4 gap-3">
-                {data?.portStatus && data?.portStatus.map((item, index: number) => (
-                  <SocketItem
-                    key={index}
-                    data={item}
-                    position={index + 1}
-                    isActive={selectSocket === index}
-                    onClick={() => setSelectSocket(index)}
-                  />
-                ))}
+                {data?.portStatus &&
+                  data?.portStatus.map((item, index: number) => (
+                    <SocketItem
+                      key={index}
+                      data={item}
+                      position={index + 1}
+                      isActive={selectSocket === index}
+                      onClick={() => setSelectSocket(index)}
+                    />
+                  ))}
               </div>
             </div>
 
