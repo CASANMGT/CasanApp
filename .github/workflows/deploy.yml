@@ -21,6 +21,11 @@ jobs:
           service_account_key: ${{ secrets.GCP_KEY_JSON }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
+      - name: Check service account email from GCP_KEY_JSON
+        run: |
+          echo "${{ secrets.GCP_KEY_JSON }}" | jq -r .client_email
+
+
       - name: Authenticate to Google Cloud
         run: gcloud auth activate-service-account --key-file=${{ secrets.GCP_KEY_JSON }}
 
