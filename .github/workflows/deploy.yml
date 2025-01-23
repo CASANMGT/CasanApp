@@ -3,7 +3,7 @@ name: GKE CI/CD
 on:
   push:
     branches:
-      - main
+      - staging 
 
 jobs:
   build-and-deploy:
