@@ -9,7 +9,6 @@ env:
   GKE_CLUSTER: gke-casan-cluster    # Add your cluster name here.
   GKE_ZONE: asia-southeast2-b   # Add your cluster zone here.
   DEPLOYMENT_NAME: gke-test # Add your deployment name here.
-  IMAGE: static-site
 
 jobs:
   build-and-deploy:
