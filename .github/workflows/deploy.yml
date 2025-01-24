@@ -36,7 +36,6 @@ jobs:
           project_id: ${{ env.PROJECT_ID }}
           cluster_name: ${{ env.GKE_CLUSTER }}
           location: ${{ env.GKE_ZONE }}
-          credentials: ${{ secrets.GCP_KEY_JSON}}
 
       # Step 4: Build and push Docker image
       - name: Build and push Docker image
