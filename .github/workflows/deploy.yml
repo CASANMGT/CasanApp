@@ -29,7 +29,7 @@ jobs:
 
       # Step 3: Configure Docker to use GCP Artifact Registry
       - name: Configure Docker authentication
-        run: gcloud --quite auth configure-docker 
+        run: gcloud --quiet auth configure-docker 
 
       - uses: google-github-actions/get-gke-credentials@db150f2cc60d1716e61922b832eae71d2a45938f
         with:
