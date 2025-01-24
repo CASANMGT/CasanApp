@@ -11,7 +11,7 @@ const Splash = () => {
 
   const setUp = () => {
     setTimeout(() => {
-      navigate("home", { replace: true });
+      navigate("/coming-soon", { replace: true });
       // navigate("login", { replace: true });
     }, 2000);
   };
