@@ -47,22 +47,25 @@ jobs:
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
             IMAGE_TAG="stg-latest"
+            NAMESPACE="staging"
           elif [[ "${{ github.ref }}" == "refs/heads/production" ]]; then
             IMAGE_TAG="prd-latest"
+            NAMESPACE="production"
           fi
           IMAGE_NAME=$REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPOSITORY_NAME/casan-frontend:$IMAGE_TAG
           docker build -t $IMAGE_NAME .
           docker push $IMAGE_NAME
+
+          IMAGE_SHA=$(docker inspect --format='{{index .RepoDigests 0}}' $IMAGE_NAME)
+          echo "IMAGE_SHA=$IMAGE_SHA" >> $GITHUB_ENV
 
       # Step 5: Deploy to GKE
       - name: Deploy to GKE
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
             IMAGE_TAG="stg-latest"
-            NAMESPACE="staging"
           elif [[ "${{ github.ref }}" == "refs/heads/production" ]]; then
             IMAGE_TAG="prd-latest"
-            NAMESPACE="production"
           fi
           kubectl config use-context gke_${{ secrets.GCP_PROJECT_ID }}_$REGION-b_$CLUSTER_NAME
           kubectl set image deployment/casan-frontend casan-frontend=$REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPOSITORY_NAME/casan-frontend:$IMAGE_TAG --namespace=$NAMESPACE
