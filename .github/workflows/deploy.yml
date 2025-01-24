@@ -35,7 +35,6 @@ jobs:
         with:
           cluster_name: ${{ env.GKE_CLUSTER }}
           location: ${{ env.GKE_ZONE }}
-          credentials: ${{ secrets.GKE_SA_KEY }}
 
       # Step 4: Build and push Docker image
       - name: Build and push Docker image
