@@ -51,4 +51,4 @@ jobs:
       - name: Deploy to GKE
         run: |
           kubectl config use-context gke_${{ secrets.GCP_PROJECT_ID }}_asia-southeast2-b_gke-casan-cluster
-          kubectl set image deployment/casan-frontend casan-frontend=$IMAGE_NAME
+          kubectl set image deployment/casan casan-frontend=$IMAGE_NAME
