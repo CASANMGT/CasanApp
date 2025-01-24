@@ -59,10 +59,10 @@ jobs:
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
             IMAGE_TAG="stg-latest"
-            NAMESPACE= "staging"
+            NAMESPACE="staging"
           elif [[ "${{ github.ref }}" == "refs/heads/production" ]]; then
             IMAGE_TAG="prd-latest"
-            NAMESPACE= "production"
+            NAMESPACE="production"
           fi
           kubectl config use-context gke_${{ secrets.GCP_PROJECT_ID }}_$REGION-b_$CLUSTER_NAME
           kubectl set image deployment/casan-frontend casan-frontend=$REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPOSITORY_NAME/casan-frontend:$IMAGE_TAG --namespace=$NAMESPACE
