@@ -63,5 +63,5 @@ jobs:
             IMAGE_TAG="prd-latest"
           fi
           kubectl config use-context gke_${{ secrets.GCP_PROJECT_ID }}_$REGION-b_$CLUSTER_NAME
-          kubectl set image deployment/casan casan-frontend=$REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPOSITORY_NAME/casan-frontend:$IMAGE_TAG --namespace default
+          kubectl set image deployment/casan-frontend casan-frontend=$REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPOSITORY_NAME/casan-frontend:$IMAGE_TAG --namespace default
 
