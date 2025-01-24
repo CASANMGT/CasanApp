@@ -53,7 +53,10 @@ jobs:
             NAMESPACE="production"
           fi
           IMAGE_NAME=$REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPOSITORY_NAME/casan-frontend:$IMAGE_TAG
-          docker build -t $IMAGE_NAME .
+          docker build \
+            --build-arg VITE_API_URL=${{ secrets.VITE_API_URL }} \
+            -t $IMAGE_NAME .
+
           docker push $IMAGE_NAME
 
           IMAGE_SHA=$(docker inspect --format='{{index .RepoDigests 0}}' $IMAGE_NAME)
