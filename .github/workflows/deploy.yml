@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - staging 
+      - production
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID}}
   GKE_CLUSTER: gke-casan-cluster    # Add your cluster name here.
