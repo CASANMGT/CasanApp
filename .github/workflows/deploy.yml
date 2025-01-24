@@ -5,7 +5,7 @@ on:
     branches:
       - staging 
 env:
-  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  PROJECT_ID: ${{ secrets.GKE_PROJECT_ID }}
   GKE_CLUSTER: gke-casan_cluster    # Add your cluster name here.
   GKE_ZONE: asia-southeast2-b   # Add your cluster zone here.
   DEPLOYMENT_NAME: gke-test # Add your deployment name here.
