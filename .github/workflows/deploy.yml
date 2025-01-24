@@ -30,6 +30,7 @@ jobs:
       - name: Configure Docker authentication
         run: gcloud --quiet auth configure-docker 
 
+      # 
       - uses: google-github-actions/get-gke-credentials@db150f2cc60d1716e61922b832eae71d2a45938f
         with:
           project_id: ${{ env.PROJECT_ID }}
