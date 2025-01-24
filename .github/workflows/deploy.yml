@@ -4,11 +4,14 @@ on:
   push:
     branches:
       - staging 
+      - production
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID}}
   GKE_CLUSTER: gke-casan-cluster    # Add your cluster name here.
   GKE_ZONE: asia-southeast2-b   # Add your cluster zone here.
-  DEPLOYMENT_NAME: gke-test # Add your deployment name here.
+  REPOSITORY_NAME: casan-frontend
+  REGION: asia-southeast2
+  CLUSTER_NAME: gke-casan-cluster
 
 jobs:
   build-and-deploy:
@@ -27,7 +30,7 @@ jobs:
 
       # Step 3: Configure Docker to use GCP Artifact Registry
       - name: Configure Docker authentication
-        run: gcloud --quiet auth configure-docker asia-southeast2-docker.pkg.dev
+        run: gcloud --quiet auth configure-docker $REGION-docker.pkg.dev
 
       # 
       - uses: google-github-actions/get-gke-credentials@db150f2cc60d1716e61922b832eae71d2a45938f
@@ -43,13 +46,34 @@ jobs:
       # Step 4: Build and push Docker image
       - name: Build and push Docker image
         run: |
-          IMAGE_NAME=asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/casan-frontend/casan-frontend:latest
-          docker build -t $IMAGE_NAME .
+          if [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
+            IMAGE_TAG="stg-latest"
+            NAMESPACE="staging"
+          elif [[ "${{ github.ref }}" == "refs/heads/production" ]]; then
+            IMAGE_TAG="prd-latest"
+            NAMESPACE="production"
+          fi
+          IMAGE_NAME=$REGION-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPOSITORY_NAME/casan-frontend:$IMAGE_TAG
+          docker build \
+            --build-arg VITE_API_URL=${{ secrets.VITE_API_URL }} \
+            -t $IMAGE_NAME .
+
           docker push $IMAGE_NAME
+
+          IMAGE_SHA=$(docker inspect --format='{{index .RepoDigests 0}}' $IMAGE_NAME)
+          echo "IMAGE_SHA=$IMAGE_SHA" >> $GITHUB_ENV
 
       # Step 5: Deploy to GKE
       - name: Deploy to GKE
         run: |
-          kubectl config use-context gke_${{ secrets.GCP_PROJECT_ID }}_asia-southeast2-b_gke-casan-cluster
-          kubectl set image deployment/casan casan-frontend=asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/casan-frontend/casan-frontend:latest
+          if [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
+            IMAGE_TAG="stg-latest"
+            NAMESPACE="staging"
+          elif [[ "${{ github.ref }}" == "refs/heads/production" ]]; then
+            IMAGE_TAG="prd-latest"
+            NAMESPACE="production"
+          fi
+          kubectl config use-context gke_${{ secrets.GCP_PROJECT_ID }}_$REGION-b_$CLUSTER_NAME
+          kubectl set image deployment/casan-frontend casan-frontend=$IMAGE_SHA --namespace=$NAMESPACE
+
 
