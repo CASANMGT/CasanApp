@@ -3,44 +3,61 @@ import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { IcInfoCircleBlack } from "../assets";
 import { Header } from "../components";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store";
+import { setFromGlobal } from "../features";
 
 const Scan = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const codeReader = new BrowserMultiFormatReader();
 
   useEffect(() => {
-    const startScanner = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment" },
-        });
+    dispatch(
+      setFromGlobal({
+        type: "paymentMethod",
+        value: "",
+      })
+    );
+    
+    navigate(`/session-settings/${999}`);
+  }, []);
 
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          videoRef.current.play();
+  useEffect(() => {
+    if (false) {
+      const startScanner = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "environment" },
+          });
+
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+            videoRef.current.play();
+          }
+
+          // Decode barcode once from video
+          const result = await codeReader.decodeOnceFromStream(
+            stream,
+            videoRef.current!
+          );
+
+          onNext(result.getText()); // Save the scanned result
+
+          stream.getTracks().forEach((track) => track.stop());
+        } catch (error) {
+          console.error("Error scanning barcode:", error);
         }
+      };
 
-        // Decode barcode once from video
-        const result = await codeReader.decodeOnceFromStream(
-          stream,
-          videoRef.current!
-        );
+      // Start scanning when the component mounts
+      startScanner();
 
-        onNext(result.getText()); // Save the scanned result
-
-        stream.getTracks().forEach((track) => track.stop());
-      } catch (error) {
-        console.error("Error scanning barcode:", error);
-      }
-    };
-
-    // Start scanning when the component mounts
-    startScanner();
-
-    return () => {
-      codeReader.reset();
-    };
+      return () => {
+        codeReader.reset();
+      };
+    }
   }, []);
 
   const onDismiss = () => {

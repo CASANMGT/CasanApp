@@ -41,6 +41,8 @@ export type socketProps = {
   status: "used" | "available" | "broken";
 };
 
-export type globalProps = {
-  loading: boolean;
+export type initialStateFormProps = {
+  data: any;
+  loading?: boolean;
+  [key: string]: any;
 };

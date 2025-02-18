@@ -2,9 +2,14 @@ import { IcEditGreen } from "../../assets";
 import { NominalTopUpItem, Separator } from "../../components";
 import { rupiah } from "../../helpers";
 
-const hourDataDummy = [1, 2, 3];
+interface InputHourProps {
+  value: string;
+  onChange: (value: string) => void;
+}
 
-const InputHour = () => {
+const nominalDataDummy: string[] = ["30", "60", "90", "full"];
+
+const InputHour: React.FC<InputHourProps> = ({ value, onChange }) => {
   const onEditChargingFee = () => {
     alert("coming soon");
   };
@@ -16,14 +21,20 @@ const InputHour = () => {
       </p>
 
       <div className="grid grid-cols-2 gap-3">
-        {hourDataDummy.map((_, index: number) => (
-          <NominalTopUpItem key={index} isActive={true} />
+        {nominalDataDummy.map((item, index: number) => (
+          <NominalTopUpItem
+            key={index}
+            value={item}
+            isActive={value === item}
+            isHour
+            onClick={() => onChange(item === "full" ? "120" : item)}
+          />
         ))}
       </div>
 
-      <Separator className="my-4 bg-black10" />
+      {/* <Separator className="my-4 bg-black10" /> */}
 
-      <div>
+      {/* <div>
         <p className="text-blackBold mb-2.5 font-medium">Biaya Pengecasan</p>
 
         <div className="between py-4 px-3 bg-primary100/10 rounded-lg">
@@ -38,7 +49,7 @@ const InputHour = () => {
 
           <p className="text-lg font-semibold">Rp{rupiah(9000)}</p>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

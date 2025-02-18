@@ -2,6 +2,7 @@ import { rupiah } from "../../../helpers";
 
 interface NominalTopUpItemProps {
   isActive: boolean;
+  isHour?: boolean;
   value: string;
   onClick: () => void;
 }
@@ -9,6 +10,7 @@ interface NominalTopUpItemProps {
 const NominalTopUpItem: React.FC<NominalTopUpItemProps> = ({
   value,
   isActive,
+  isHour,
   onClick,
 }) => {
   return (
@@ -20,7 +22,11 @@ const NominalTopUpItem: React.FC<NominalTopUpItemProps> = ({
           : "border-black90 bg-white text-black90"
       }`}
     >
-      {value === "full" ? "isi sampai penuh" : `Rp${rupiah(value)}`}
+      {value === "full"
+        ? "isi sampai penuh"
+        : isHour
+        ? `${value} menit`
+        : `Rp${rupiah(value)}`}
     </div>
   );
 };

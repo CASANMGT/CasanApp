@@ -1,10 +1,11 @@
+import IcAstraPay from "./astrapay.svg?react";
 import IcCashBlack from "./cash-black.svg?react";
-import IcPlusCircleGreen from './plus-circle-green.svg?react'
 import IcChatBlack from "./chat-black.svg?react";
 import IcCheckboxActive from "./checkbox-active.svg?react";
 import IcCheckboxInactive from "./checkbox-inactive.svg?react";
 import IcClockGreen from "./clock-green.svg?react";
 import IcCopyBlack from "./copy-black.svg?react";
+import IcDana from "./dana.svg?react";
 import IcDownCircleGreen from "./down-circle-green.svg?react";
 import IcDownGray from "./down-gray.svg?react";
 import IcEditGreen from "./edit-green.svg?react";
@@ -15,6 +16,7 @@ import IcFlashGreen from "./flash-green.svg?react";
 import IcFuelBlack from "./fuel-black.svg?react";
 import IcFuelGreen from "./fuel-green.svg?react";
 import IcFuelRed from "./fuel-red.svg?react";
+import IcGopay from "./gopay.svg?react";
 import IcHistoryActive from "./history-active.svg?react";
 import IcHistoryInactive from "./history-inactive.svg?react";
 import IcHomeActive from "./home-active.svg?react";
@@ -25,6 +27,7 @@ import IcInfoCircleLgGreen from "./info-circle-lg-green.svg?react";
 import IcInfoRed from "./info-red.svg?react";
 import IcBackBlack from "./left-black.svg?react";
 import IcBackWhite from "./left-white.svg?react";
+import IcLinkAja from "./link-aja.svg?react";
 import IcLocationActive from "./location-active.svg?react";
 import IcLocationInactive from "./location-inactive.svg?react";
 import IcMenuBlack from "./menu-black.svg?react";
@@ -36,8 +39,10 @@ import IcPasswordBlack from "./password-black.svg?react";
 import IcPhoneGreen from "./phone-green.svg?react";
 import IcPinGreen from "./pin-green.svg?react";
 import IcPinWhite from "./pin-white.svg?react";
+import IcPlusCircleGreen from "./plus-circle-green.svg?react";
 import IcProfileActive from "./profile-active.svg?react";
 import IcProfileInactive from "./profile-inactive.svg?react";
+import IcQris from "./qris.svg?react";
 import IcRadioActive from "./radio-active.svg?react";
 import IcRadioInactive from "./radio-inactive.svg?react";
 import IcRightBlack from "./right-black.svg?react";
@@ -51,6 +56,7 @@ import IcSearchGray from "./search-gray.svg?react";
 import IcSettingBlack from "./setting-black.svg?react";
 import IcShareGreen2 from "./share-green-2.svg?react";
 import IcShareGreen from "./share-green.svg?react";
+import IcShopeePay from "./shopeepay.svg?react";
 import IcSocketCircleGreen from "./socket-circle-green.svg?react";
 import IcSolarGreen from "./solar-green.svg?react";
 import IcSuccessGreen from "./success-green.svg?react";
@@ -60,6 +66,7 @@ import IcWalletGreen from "./wallet-green.svg?react";
 import IcWallet from "./wallet.svg?react";
 
 export {
+  IcAstraPay,
   IcBackBlack,
   IcBackWhite,
   IcCashBlack,
@@ -68,6 +75,7 @@ export {
   IcCheckboxInactive,
   IcClockGreen,
   IcCopyBlack,
+  IcDana,
   IcDownCircleGreen,
   IcDownGray,
   IcEditGreen,
@@ -78,6 +86,7 @@ export {
   IcFuelBlack,
   IcFuelGreen,
   IcFuelRed,
+  IcGopay,
   IcHistoryActive,
   IcHistoryInactive,
   IcHomeActive,
@@ -86,6 +95,7 @@ export {
   IcInfoCircleGreen,
   IcInfoCircleLgGreen,
   IcInfoRed,
+  IcLinkAja,
   IcLocationActive,
   IcLocationInactive,
   IcMenuBlack,
@@ -97,8 +107,10 @@ export {
   IcPhoneGreen,
   IcPinGreen,
   IcPinWhite,
+  IcPlusCircleGreen,
   IcProfileActive,
   IcProfileInactive,
+  IcQris,
   IcRadioActive,
   IcRadioInactive,
   IcRightBlack,
@@ -112,13 +124,13 @@ export {
   IcSettingBlack,
   IcShareGreen,
   IcShareGreen2,
+  IcShopeePay,
   IcSocketCircleGreen,
   IcSolarGreen,
   IcSuccessGreen,
   IcVehicleBlack,
   IcWallet,
   IcWalletGreen,
-  IcWalletGreen2,
-  IcPlusCircleGreen
+  IcWalletGreen2
 };
 

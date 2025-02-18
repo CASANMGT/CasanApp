@@ -3,3 +3,4 @@ export * from "./constanta/arrays";
 export * from './types/globalType'
 export * from './types/sessionType'
 export * from './types/chargingType'
+export * from './constanta/string'

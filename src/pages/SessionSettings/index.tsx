@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
 import {
   IcEditGreen,
   IcInfoCircleGreen,
+  IcRightCircleGreen,
   IcRightGreen,
   IcSocketCircleGreen,
 } from "../../assets";
@@ -13,32 +14,48 @@ import {
   Container,
   CostInformationItem,
   LoadingPage,
-  NominalTopUpItem,
   Separator,
   SocketItem,
-  SubTitle,
+  Tabs,
 } from "../../components";
-import { rupiah } from "../../helpers";
+import {
+  getIconPaymentMethod,
+  getLabelPaymentMethod,
+  rupiah,
+} from "../../helpers";
 import { setFormCharging } from "../../redux";
 import { fetchSessionSetting } from "../../services/request";
 import { AppDispatch, RootState } from "../../store";
 import InputHour from "./InputHour";
 import InputNominal from "./InputNominal";
-const apiUrl = import.meta.env.VITE_API_URL;
 
-const dataDummy = [1, 2];
-const nominalDataDummy = ["2000", "4000", "6000", "full"];
+const costMax: number = 800; //jam
+const dataPortStatusDummy: number[] = [0, 0];
+const dataCostInformation = [
+  {
+    id: 1,
+    watt: "0-250W",
+    price: 800,
+  },
+  {
+    id: 1,
+    watt: "251-500W",
+    price: 1600,
+  },
+];
 
 const tabsNominalHour = [
   {
     id: "1",
     label: "Masukan Nominal",
-    content: <InputNominal />,
+    content: "",
+    // content: <InputNominal />,
   },
   {
     id: "2",
     label: "Masukan Jam",
-    content: <InputHour />,
+    content: "",
+    // content: <InputHour />,
   },
 ];
 
@@ -48,10 +65,11 @@ const tabsCostInformation = [
     label: "07:00 - 11:59",
     content: (
       <div className="p-3 bg-primary10 rounded-lg">
-        {dataDummy.map((_, index: number) => (
+        {dataCostInformation.map((item, index: number) => (
           <CostInformationItem
             key={index}
-            isLast={index === dataDummy.length - 1}
+            data={item}
+            isLast={index === dataCostInformation.length - 1}
           />
         ))}
       </div>
@@ -62,10 +80,11 @@ const tabsCostInformation = [
     label: "12:00 - 19:00",
     content: (
       <div className="p-3 bg-primary10 rounded-lg">
-        {dataDummy.map((_, index: number) => (
+        {dataCostInformation.map((item, index: number) => (
           <CostInformationItem
             key={index}
-            isLast={index === dataDummy.length - 1}
+            data={item}
+            isLast={index === dataCostInformation.length - 1}
           />
         ))}
       </div>
@@ -82,13 +101,16 @@ const SessionSettings = () => {
     (state: RootState) => state.sessionSetting
   );
   const { formData } = useSelector((state: RootState) => state.formCharging);
+  const global = useSelector((state: RootState) => state.global);
 
   const [selectTabInput, setSelectTabInput] = useState<string>("1");
   const [selectSocket, setSelectSocket] = useState<number>();
   const [nominal, setNominal] = useState<string>();
+  const [time, setTime] = useState<string>();
+  const [total, setTotal] = useState<string>();
 
   useEffect(() => {
-    getData();
+    // getData();
   }, []);
 
   const getData = () => {
@@ -110,6 +132,42 @@ const SessionSettings = () => {
     setNominal(formatted);
   };
 
+  const getTotalDuration = useCallback(() => {
+    const currentNominal: number = Number(
+      nominal?.replace("Rp", "").replace(/\./g, "") || 0
+    );
+    let value: string = "Rp0";
+
+    if (currentNominal > 0 && selectTabInput === "1") {
+      const totalSecond: number = (currentNominal / costMax) * 3600;
+      value = setDuration(totalSecond);
+    } else if (selectTabInput === "2" && Number(time) > 0) {
+      value = `Rp${rupiah((Number(time || 0) / 60) * costMax)}`;
+    }
+
+    return value;
+  }, [nominal, time, selectTabInput]);
+
+  const FormatPaymentMethod: () => JSX.Element = useCallback(() => {
+    if (global?.paymentMethod) {
+      const Icon = getIconPaymentMethod(global?.paymentMethod);
+      const label = getLabelPaymentMethod(global?.paymentMethod);
+      return (
+        <div className="row gap-1">
+          <Icon className="w-[22px]" />
+
+          <p className="font-medium">{label}</p>
+        </div>
+      );
+    } else {
+      return (
+        <p className="text-xs text-primary100 font-medium">
+          Pilih Metode Pemabayaran
+        </p>
+      );
+    }
+  }, [global?.paymentMethod]);
+
   const validationNominal = (select: string) => {
     let value = false;
 
@@ -123,7 +181,11 @@ const SessionSettings = () => {
   const validationButton = () => {
     let value: boolean = true;
 
-    if (selectSocket !== undefined && nominal?.replace("Rp0", ""))
+    if (
+      selectSocket !== undefined &&
+      Number(total?.replace("Rp", "").replace(/\./g, "") || 0) > 0 &&
+      global?.paymentMethod
+    )
       value = false;
 
     return value;
@@ -138,14 +200,6 @@ const SessionSettings = () => {
     const formatted: string = `Rp${rupiah(value)}`;
 
     setNominal(formatted);
-  };
-
-  const onView = () => {
-    alert("coming soon");
-  };
-
-  const onEditPrice = () => {
-    alert("coming soon");
   };
 
   const onNext = () => {
@@ -165,19 +219,6 @@ const SessionSettings = () => {
     navigate("/charging");
   };
 
-  const onEditDuration = () => {
-    alert("coming soon");
-  };
-
-  const onSelectPayment = () => {
-    navigate("/select-payment-method");
-  };
-
-  const onPay = () => {
-    navigate("/charging");
-    // navigate("/input-pin");
-  };
-
   return (
     <Container title="Pengaturan Sesi" onDismiss={onDismiss}>
       <LoadingPage loading={loading}>
@@ -189,7 +230,7 @@ const SessionSettings = () => {
                 Pasar Modern Intermoda
               </p>
 
-              <div className="row gap-2 cursor-pointer" onClick={onView}>
+              <div className="row gap-2 cursor-pointer" onClick={() => {}}>
                 <p className="text-xs text-primary100 font-medium">Lihat</p>
                 <IcRightGreen />
               </div>
@@ -207,7 +248,7 @@ const SessionSettings = () => {
               </div>
 
               <p className="text-xs text-black90">{`Nomor Alat ${
-                formData?.deviceId || "-"
+                formData?.deviceId || "1544"
               }`}</p>
             </div>
           </div>
@@ -221,8 +262,10 @@ const SessionSettings = () => {
               </div>
 
               <div className="grid grid-cols-4 gap-3">
-                {data?.portStatus &&
-                  data?.portStatus.map((item, index: number) => (
+                {/* {data?.portStatus &&
+                  data?.portStatus.map((item, index: number) => ( */}
+                {dataPortStatusDummy &&
+                  dataPortStatusDummy.map((item, index: number) => (
                     <SocketItem
                       key={index}
                       data={item}
@@ -235,7 +278,7 @@ const SessionSettings = () => {
             </div>
 
             {/* INPUT NOMINAL */}
-            <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
+            {/* <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
               <SubTitle
                 icon={IcInfoCircleGreen}
                 label="Masukan Nominal Pengisian"
@@ -248,7 +291,7 @@ const SessionSettings = () => {
               </p>
 
               <div className="center relative  rounded-lg bg-baseGray mb-3">
-                {/* <p className="text-base font-semibold">{`Rp${rupiah(8000)}`}</p> */}
+                <p className="text-base font-semibold">{`Rp${rupiah(8000)}`}</p>
                 <input
                   type={"text"}
                   placeholder={"0"}
@@ -271,10 +314,38 @@ const SessionSettings = () => {
                   />
                 ))}
               </div>
+            </div> */}
+
+            <div className="bg-white py-4 px-3 rounded-lg mb-3">
+              <Tabs
+                tabs={tabsNominalHour}
+                onSelect={(select) => setSelectTabInput(select)}
+              />
+
+              {selectTabInput === "1" ? (
+                <InputNominal
+                  value={total || ""}
+                  onChange={(value) => {
+                    setTotal(value);
+                    setNominal(value);
+                  }}
+                />
+              ) : (
+                <InputHour
+                  value={time || ""}
+                  onChange={(value) => {
+                    const formatted = `Rp${rupiah(
+                      (Number(value || 0) / 60) * costMax
+                    )}`;
+                    setTotal(formatted);
+                    setTime(value);
+                  }}
+                />
+              )}
             </div>
 
             {/* DURATION RANGE */}
-            {Number(nominal?.replace("Rp", "")) > 0 && (
+            {/* {Number(nominal?.replace("Rp", "")) > 0 && (
               <div className="bg-white p-3 rounded-lg mb-3 center flex-col gap-3 drop-shadow">
                 <span className="font-medium">
                   Kisaran durasi yang didapat:
@@ -289,8 +360,7 @@ const SessionSettings = () => {
                   bukan angka yang sesungguhnya.
                 </p>
               </div>
-            )}
-            {/* {selectTabInput === "1" && (
+            )} */}
             <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
               <div className="row gap-3 mb-2">
                 <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
@@ -301,36 +371,47 @@ const SessionSettings = () => {
               </div>
 
               <p className="text-xs text-black100/70 mb-[14px]">
-                Durasi masih perkiraan, bukan angka yang sesungguhnya.
+                Durasi masih{" "}
+                <span className="text-bold text-xs text-black">perkiraan</span>,
+                bukan angka yang sesungguhnya.
               </p>
 
               <div className="between py-4 px-3 bg-primary100/10 rounded-lg">
-                <div
-                  onClick={onEditDuration}
-                  className="row gap-2.5 cursor-pointer"
-                >
-                  <p className="text-primary100 font-medium">48V 2A</p>
+                <div>
+                  <p className="text-xs text-black70 mb-2">Spesifikasi:</p>
+                  <div
+                    onClick={() => {}}
+                    className="row gap-2.5 cursor-pointer"
+                  >
+                    <p className="text-primary100 font-medium">48V 2A</p>
 
-                  <IcEditGreen />
+                    <IcEditGreen />
+                  </div>
                 </div>
 
-                <p className="text-lg font-semibold">4 jam 3 menit</p>
+                <div className="w-2/5">
+                  <p className="text-xs text-black70 mb-2">
+                    {selectTabInput === "1"
+                      ? "Kisaran Durasi:"
+                      : "Biaya Pengecasan"}
+                  </p>
+                  <p className="text-lg font-semibold">{getTotalDuration()}</p>
+                </div>
               </div>
             </div>
-          )} */}
 
             {/* COST INFORMATION */}
-            {/* <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
-            <div className="row gap-3 mb-4">
-              <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
-                <IcInfoCircleGreen />
+            <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
+              <div className="row gap-3 mb-4">
+                <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
+                  <IcInfoCircleGreen />
+                </div>
+
+                <p className="text-blackBold font-medium">Informasi Biaya</p>
               </div>
 
-              <p className="text-blackBold font-medium">Informasi Biaya</p>
+              <Tabs tabs={tabsCostInformation} />
             </div>
-
-            <Tabs tabs={tabsCostInformation} />
-          </div> */}
 
             {/* FINANCING  DETAILS*/}
             {/* <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
@@ -360,43 +441,60 @@ const SessionSettings = () => {
         </div>
 
         {/* PAYMENT METHOD */}
-        {/* <div className="drop-shadow p-4 bg-white">
-        <div onClick={onSelectPayment} className="between cursor-pointer">
-          <p className="text-xs text-primary100 font-medium">
-            Pilih Metode Pemabayaran
-          </p>
-          <IcRightCircleGreen />
+        <div className="drop-shadow p-4 bg-white">
+          <div
+            onClick={() => navigate("/select-payment-method")}
+            className="between cursor-pointer"
+          >
+            <FormatPaymentMethod />
+
+            <IcRightCircleGreen />
+          </div>
+
+          <Separator className="my-2.5" />
+
+          <div className="between">
+            <p className="text-base text-black100/70">
+              Total: <a className="text-blackBold font-bold">{total}</a>
+            </p>
+
+            <Button
+              className="!w-[130px]"
+              label="Bayar"
+              disabled={validationButton()}
+              onClick={() => navigate("/session-details")}
+            />
+          </div>
         </div>
-
-        <Separator className="my-2.5" />
-
-        <div className="between">
-          <p className="text-base text-black100/70">
-            Total:{" "}
-            <a className="text-blackBold font-bold">{`Rp${rupiah(9000)}`}</a>
-          </p>
-
-          <Button
-            className="!w-[130px]"
-            label="Bayar"
-            disabled={false}
-            onClick={onPay}
-          />
-        </div>
-      </div> */}
 
         {/* FOOTER */}
-        <div className="container-button-footer">
+        {/* <div className="container-button-footer">
           <Button
             buttonType="lg"
             label="Lanjutkan"
             disabled={validationButton()}
             onClick={onNext}
           />
-        </div>
+        </div> */}
       </LoadingPage>
     </Container>
   );
 };
 
 export default SessionSettings;
+
+const setDuration = (second: number) => {
+  const hours = Math.floor(second / 3600);
+  const minutes = Math.floor((second % 3600) / 60);
+  const secs = second % 60;
+
+  let value: string;
+
+  if (hours) {
+    if (minutes) value = `${hours} jam ${minutes} menit`;
+    else value = `${hours} jam`;
+  } else if (minutes) value = `${minutes} menit`;
+  else value = `${secs} detik`;
+
+  return value;
+};

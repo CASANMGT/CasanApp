@@ -1,10 +1,15 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { IcInfoCircleGreen, IcSuccessGreen } from "../assets";
+import {
+  IcInfoCircleGreen,
+  IcSaveGreen,
+  IcShareGreen2,
+  IcSuccessGreen,
+} from "../assets";
 import { portReportBodyProps } from "../common";
-import { BetweenText, Button, Header, LoadingPage } from "../components";
-import { moments, setDiff } from "../helpers";
+import { BetweenText, Button, Header, LoadingPage, Separator } from "../components";
+import { moments, rupiah, setDiff } from "../helpers";
 import { fetchChargingSession } from "../services/request";
 import { AppDispatch, RootState } from "../store";
 
@@ -19,7 +24,7 @@ const SessionDetails = () => {
   );
 
   useEffect(() => {
-    getData();
+    // getData();
   }, []);
 
   useEffect(() => {
@@ -50,18 +55,6 @@ const SessionDetails = () => {
 
   const onDismiss = () => {
     navigate("/home", { replace: true });
-  };
-
-  const onNext = () => {
-    alert("coming soon");
-  };
-
-  const onShare = () => {
-    alert("coming soon");
-  };
-
-  const onSave = () => {
-    alert("coming soon");
   };
 
   return (
@@ -96,14 +89,14 @@ const SessionDetails = () => {
             <BetweenText
               type="medium-content"
               labelLeft="Nomor Alat"
-              labelRight={data?.DeviceID || "-"}
+              labelRight={data?.DeviceID || "142325"}
               className="p-3"
             />
 
             <BetweenText
               type="medium-content"
               labelLeft="Socket"
-              labelRight={`Socket ${data?.Port || "-"}`}
+              labelRight={`Socket ${data?.Port || "2"}`}
               className="bg-baseLightGray p-3 rounded-b"
             />
           </div>
@@ -128,14 +121,14 @@ const SessionDetails = () => {
             <BetweenText
               type="medium-content"
               labelLeft="Waktu Mulai"
-              labelRight={moments(data?.StartTime).format("DD MMM YYYY")}
+              labelRight={moments().format("DD MMM HH:mm")}
               className="p-3"
             />
 
             <BetweenText
               type="medium-content"
               labelLeft="Waktu Selesai"
-              labelRight={moments(data?.StopTime).format("DD MMM YYYY")}
+              labelRight={moments().format("DD MMM HH:mm")}
               className="bg-baseLightGray p-3"
             />
 
@@ -145,7 +138,7 @@ const SessionDetails = () => {
               labelRight={
                 data?.StartTime && data?.StopTime
                   ? setDiff(data?.StartTime, data?.StopTime)
-                  : "-"
+                  : "24 menit"
               }
               className="p-3"
             />
@@ -153,65 +146,79 @@ const SessionDetails = () => {
             <BetweenText
               type="medium-content"
               labelLeft="Maksimum Watt"
-              labelRight={`${data?.MaxWatt}W`}
+              labelRight={`${data?.MaxWatt || "0-250"}W`}
+              className="bg-baseLightGray p-3"
+            />
+
+            <BetweenText
+              type="medium-content"
+              labelLeft="Tarif Pengecasan"
+              labelRight="Rp800/jam"
+              className="p-3"
+            />
+
+            <BetweenText
+              type="medium-content"
+              labelLeft="Tota Tarif"
+              labelRight="Rp400"
               className="bg-baseLightGray p-3"
             />
           </div>
 
           {/* PAYMENT INFORMATION */}
-          {/* <div className="p-3 pb-6 bg-white rounded-lg drop-shadow">
-          <p className="font-medium mb-2">Informasi Transaksi</p>
+          <div className="p-3 pb-6 bg-white rounded-lg drop-shadow">
+            <p className="font-medium mb-2">Informasi Transaksi</p>
 
-          <div className="text-black100/70 row gap-2">
-            <p className="text-xs">{moments().format("DD MMMM YYYY")}</p>
-            <p className="text-xs">{moments().format("HH:mm WIB")}</p>
-            <p className="text-xs">ID1876546</p>
-          </div>
+            <div className="text-black100/70 row gap-2">
+              <p className="text-xs">{moments().format("DD MMMM YYYY")}</p>
+              <p className="text-xs">{moments().format("HH:mm WIB")}</p>
+              <p className="text-xs">ID1876546</p>
+            </div>
 
-          <Separator className="my-4 bg-black10" />
+            <Separator className="my-4 bg-black10" />
 
-          <p className="text-xs text-black100/70 mb-2">Detail Transaksi</p>
+            <p className="text-xs text-black100/70 mb-2">Detail Transaksi</p>
 
-          <BetweenText labelLeft="Metode Pembayaran" labelRight="Dana" />
+            <BetweenText labelLeft="Metode Pembayaran" labelRight="Dana" />
 
-          <Separator className="my-1.5 bg-black10" />
-          <BetweenText
-            labelLeft="Nominal Pengisian"
-            labelRight={`Rp${rupiah(10000)}`}
-          />
-
-          <Separator className="my-1.5 bg-black10" />
-          <BetweenText
-            labelLeft="Biaya Transaksi"
-            labelRight={`Rp${rupiah(1000)}`}
-          />
-
-          <Separator className="my-1.5 bg-black100" />
-          <BetweenText
-            labelLeft="Total Transaksi"
-            labelRight={`Rp${rupiah(11000)}`}
-            classNameLabelLeft="text-black100"
-            classNameLabelRight="text-black100"
-          />
-          <Separator className="mt-1.5 bg-black100" />
-
-          <Separator className="my-6 bg-black10" />
-
-          <div className="between gap-4">
-            <Button
-              type="secondary"
-              label="Bagikan Resi"
-              iconRight={IcShareGreen2}
-              onClick={onShare}
+            <Separator className="my-1.5 bg-black10" />
+            <BetweenText
+              labelLeft="Nominal Pengisian"
+              labelRight={`Rp${rupiah(400)}`}
             />
-            <Button
-              type="secondary"
-              label="Simpan Resi"
-              iconRight={IcSaveGreen}
-              onClick={onSave}
+
+            {/* <Separator className="my-1.5 bg-black10" />
+            <BetweenText
+              labelLeft="Biaya Transaksi"
+              labelRight={`Rp${rupiah(1000)}`}
+            /> */}
+
+            <Separator className="my-1.5 bg-black100" />
+            <BetweenText
+              labelLeft="Total Transaksi"
+              labelRight={`Rp${rupiah(400)}`}
+              classNameLabelLeft="text-black100"
+              classNameLabelRight="text-black100"
             />
+            <Separator className="mt-1.5 bg-black100" />
+
+            <Separator className="my-6 bg-black10" />
+
+            <div className="between gap-4">
+              <Button
+                type="secondary"
+                label="Bagikan Resi"
+                iconRight={IcShareGreen2}
+                onClick={() => {}}
+              />
+              <Button
+                type="secondary"
+                label="Simpan Resi"
+                iconRight={IcSaveGreen}
+                onClick={() => {}}
+              />
+            </div>
           </div>
-        </div> */}
         </div>
 
         {/* FOOTER */}

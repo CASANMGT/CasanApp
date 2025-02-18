@@ -32,7 +32,7 @@ const RoutesPage = () => {
     <Routes>
       <Route index element={<Splash />} />
       <Route path="coming-soon" element={<ComingSoon />} />
-      {/* <Route path="charging" element={<Charging />} />
+      <Route path="charging" element={<Charging />} />
       <Route
         path="charging-location-details"
         element={<ChargingLocationDetails />}
@@ -53,18 +53,18 @@ const RoutesPage = () => {
       />
       <Route path="vehicle" element={<Vehicle />} />
       <Route path="verification" element={<VerificationNumber />} />
-      <Route path="withdraw" element={<Withdraw />} /> */}
+      <Route path="withdraw" element={<Withdraw />} />
 
       {/* BOTTOM NAVIGATION */}
-      {/* <Route path="home" element={<Main />}>
+      <Route path="home" element={<Main />}>
         <Route path="index" element={<Home />}></Route>
         <Route path="location" element={<ComingSoon />} />
         <Route path="history" element={<ComingSoon />} />
         <Route path="profile" element={<ComingSoon />} />
-      </Route> */}
+      </Route>
 
       {/* HANDLE PATH NOT FOUND */}
-      {/* <Route path="/test" element={<Test />} /> */}
+      <Route path="/test" element={<Test />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

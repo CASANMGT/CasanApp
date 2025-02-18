@@ -1,12 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { globalProps } from "../common";
+import { initialStateFormProps } from "../common";
 
-export interface CounterState {
-  value: number;
-}
-
-const initialState: globalProps = {
+const initialState: initialStateFormProps = {
   loading: false,
+  data: null,
 };
 
 const counterSlice = createSlice({
@@ -19,8 +16,16 @@ const counterSlice = createSlice({
     hideLoading: (state) => {
       state.loading = false;
     },
+
+    setFromGlobal: (state, { payload }) => {
+      if (payload?.type !== undefined && payload?.value !== undefined) {
+        state[payload?.type] = payload.value;
+
+        if (payload?.data) state.data = payload?.data;
+      }
+    },
   },
 });
 
-export const { showLoading, hideLoading } = counterSlice.actions;
+export const { showLoading, hideLoading, setFromGlobal } = counterSlice.actions;
 export default counterSlice.reducer;

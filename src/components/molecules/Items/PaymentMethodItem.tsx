@@ -12,22 +12,26 @@ import { Separator } from "../../atoms";
 interface PaymentMethodItemProps {
   type?: "checkbox" | "radio";
   label: string;
-  balance?: number;
+  balance?: number | undefined;
   position?: number;
   isActive: boolean;
+  disabled?: boolean;
+  icon: any;
   onSelect: () => void;
 }
 
 const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({
   type,
+  icon,
   label,
   balance,
   position,
   isActive,
+  disabled,
   onSelect,
 }) => {
   const isShowBalance: boolean = useMemo(
-    () => (balance ? true : false),
+    () => (balance !== undefined ? true : false),
     [balance]
   );
 
@@ -36,13 +40,19 @@ const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({
     [position]
   );
 
+  const Icon = icon
   return (
     <>
       {isShowSeparator && <Separator className="my-4" />}
 
-      <div onClick={onSelect} className="between cursor-pointer">
+      <div
+        onClick={onSelect}
+        className={`between ${
+          disabled ? "cursor-not-allowed" : "cursor-pointer"
+        }`}
+      >
         <div className="row gap-2">
-          <IcWallet />
+          <Icon />
           <p className="font-medium">
             {label}{" "}
             {isShowBalance && (
@@ -51,17 +61,19 @@ const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({
           </p>
         </div>
 
-        {type === "checkbox" ? (
-          isActive ? (
-            <IcCheckboxActive />
+        <div className={`${disabled && "opacity-50"}`}>
+          {type === "checkbox" ? (
+            isActive ? (
+              <IcCheckboxActive />
+            ) : (
+              <IcCheckboxInactive />
+            )
+          ) : isActive ? (
+            <IcRadioActive />
           ) : (
-            <IcCheckboxInactive />
-          )
-        ) : isActive ? (
-          <IcRadioActive />
-        ) : (
-          <IcRadioInactive />
-        )}
+            <IcRadioInactive />
+          )}
+        </div>
       </div>
     </>
   );
