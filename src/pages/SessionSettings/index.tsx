@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
+import {
+  NavigateFunction,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import {
   IcEditGreen,
   IcInfoCircleGreen,
@@ -94,6 +99,7 @@ const tabsCostInformation = [
 
 const SessionSettings = () => {
   const navigate: NavigateFunction = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
   const { id } = useParams<{ id: string }>();
 
@@ -443,7 +449,11 @@ const SessionSettings = () => {
         {/* PAYMENT METHOD */}
         <div className="drop-shadow p-4 bg-white">
           <div
-            onClick={() => navigate("/select-payment-method")}
+            onClick={() =>
+              navigate("/select-payment-method", {
+                state: { nominal, time, selectSocket },
+              })
+            }
             className="between cursor-pointer"
           >
             <FormatPaymentMethod />

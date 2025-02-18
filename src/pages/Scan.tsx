@@ -14,13 +14,6 @@ const Scan = () => {
   const codeReader = new BrowserMultiFormatReader();
 
   useEffect(() => {
-    dispatch(
-      setFromGlobal({
-        type: "paymentMethod",
-        value: "",
-      })
-    );
-    
     navigate(`/session-settings/${999}`);
   }, []);
 

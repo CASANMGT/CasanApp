@@ -9,6 +9,7 @@ import {
   IcPhoneGreen,
   IcShareGreen,
 } from "../assets";
+import { DummyChargingLocation } from "../assets/dummy";
 import {
   CostInformationItem,
   DeviceListItem,
@@ -19,9 +20,46 @@ import { showToast } from "../features/toastSlice";
 import { formatPhoneNumber } from "../helpers/formatter";
 import { AppDispatch } from "../store";
 
-const costData = [1, 2];
 const operatingHoursData = [1, 2];
 const deviceListData = [1, 2, 3];
+const dataCostInformation = [
+  {
+    id: 1,
+    watt: "0-250W",
+    price: 800,
+  },
+  {
+    id: 1,
+    watt: "251-500W",
+    price: 1600,
+  },
+];
+const dataDeviceList = [
+  {
+    id: "A",
+    available: 2,
+    location: "Pintu Masuk Barat (5)",
+    signalValue: 30,
+    disabled: false,
+    isFull: false,
+  },
+  {
+    id: "B",
+    available: 5,
+    location: "Pintu Masuk Utara (5)",
+    signalValue: 30,
+    disabled: false,
+    isFull: true,
+  },
+  {
+    id: "C",
+    available: 5,
+    location: "Pintu Masuk Timur (5)",
+    signalValue: 0,
+    disabled: true,
+    isFull: false,
+  },
+];
 
 const ChargingLocationDetails = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -61,7 +99,7 @@ const ChargingLocationDetails = () => {
       {/* HEADER */}
       <div className="relative">
         <img
-          src="https://img.pikbest.com/wp/202342/charging-car-electric-station-a-glimpse-into-the-future-of-green-technology-3d-rendering_9861448.jpg!sw800"
+          src={DummyChargingLocation}
           alt="details"
           className="block mx-auto w-full h-[200px] object-cover"
         />
@@ -136,21 +174,18 @@ const ChargingLocationDetails = () => {
           <p className="font-medium">Informasi Biaya</p>
 
           <div className="bg-primary10 rounded-lg p-3 mt-2">
-            {costData.map((_, index: number) => (
+            {dataCostInformation.map((item, index: number) => (
               <CostInformationItem
                 key={index}
-                isLast={index === costData.length - 1}
+                data={item}
+                isLast={index === dataCostInformation.length - 1}
               />
             ))}
           </div>
 
           <p className="mt-4 mb-2 font-medium">Biaya Parkir</p>
 
-          <p className="text-black90 text-xs">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-            dapibus faucibus nulla, vitae tincidunt nunc euismod tempor. Quisque
-            sed eros eget ligula mattis rutrum et a justo.
-          </p>
+          <p className="text-black90 text-xs">Gratis Parkir</p>
         </div>
 
         {/* BASIC INFORMATION  */}
@@ -187,11 +222,12 @@ const ChargingLocationDetails = () => {
         <div className="bg-white p-3 rounded-lg mt-[14px] border drop-shadow">
           <p className="font-medium mb-4">Device List</p>
 
-          {deviceListData.map((_, index: number) => (
+          {dataDeviceList.map((item, index: number) => (
             <DeviceListItem
               key={index}
-              isLast={index === deviceListData.length - 1}
-              onClick={() => alert('coming soon')}
+              data={item}
+              isLast={index === dataDeviceList.length - 1}
+              onClick={() => navigate(`/session-settings/${999}`)}
             />
           ))}
 
