@@ -8,49 +8,42 @@ import { AppDispatch } from "../store";
 import { setFromGlobal } from "../features";
 
 const Scan = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const codeReader = new BrowserMultiFormatReader();
 
   useEffect(() => {
-    navigate(`/session-settings/${999}`);
-  }, []);
+    const startScanner = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" },
+        });
 
-  useEffect(() => {
-    if (false) {
-      const startScanner = async () => {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "environment" },
-          });
-
-          if (videoRef.current) {
-            videoRef.current.srcObject = stream;
-            videoRef.current.play();
-          }
-
-          // Decode barcode once from video
-          const result = await codeReader.decodeOnceFromStream(
-            stream,
-            videoRef.current!
-          );
-
-          onNext(result.getText()); // Save the scanned result
-
-          stream.getTracks().forEach((track) => track.stop());
-        } catch (error) {
-          console.error("Error scanning barcode:", error);
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play();
         }
-      };
 
-      // Start scanning when the component mounts
-      startScanner();
+        // Decode barcode once from video
+        const result = await codeReader.decodeOnceFromStream(
+          stream,
+          videoRef.current!
+        );
 
-      return () => {
-        codeReader.reset();
-      };
-    }
+        onNext(result.getText()); // Save the scanned result
+
+        stream.getTracks().forEach((track) => track.stop());
+      } catch (error) {
+        console.error("Error scanning barcode:", error);
+      }
+    };
+
+    // Start scanning when the component mounts
+    startScanner();
+
+    return () => {
+      codeReader.reset();
+    };
   }, []);
 
   const onDismiss = () => {
