@@ -13,7 +13,6 @@ import {
   IcRightGreen,
   IcSocketCircleGreen,
 } from "../../assets";
-import { REGEX_NUMBERS } from "../../common";
 import {
   Button,
   Container,
@@ -104,7 +103,7 @@ const SessionSettings = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { id } = useParams<{ id: string }>();
 
-  const { loading, data, error } = useSelector(
+  const sessionSetting = useSelector(
     (state: RootState) => state.sessionSetting
   );
   const { formData } = useSelector((state: RootState) => state.formCharging);
@@ -119,7 +118,7 @@ const SessionSettings = () => {
   const [selectedPayment, setSelectedPayment] = useState<string>();
 
   useEffect(() => {
-    // getData();
+    getData();
   }, []);
 
   const getData = () => {
@@ -182,12 +181,12 @@ const SessionSettings = () => {
     return value;
   };
 
-
   const onNext = () => {
     const body = {
       deviceId: id,
-      price: Number(nominal?.replace("Rp", "").replace(/\./g, "")),
+      price: Number(total?.replace("Rp", "").replace(/\./g, "")),
       port: Number(selectSocket) + 1,
+      paymentMethod: selectedPayment,
     };
 
     dispatch(
@@ -202,7 +201,7 @@ const SessionSettings = () => {
 
   return (
     <Container title="Pengaturan Sesi" onDismiss={onDismiss}>
-      <LoadingPage loading={loading}>
+      <LoadingPage loading={sessionSetting?.loading}>
         <div className="flex-1 flex-col overflow-auto scrollbar-none">
           {/* LOCATION */}
           <div className="p-4 bg-white mb-2">
@@ -245,16 +244,18 @@ const SessionSettings = () => {
               <div className="grid grid-cols-4 gap-3">
                 {/* {data?.portStatus &&
                   data?.portStatus.map((item, index: number) => ( */}
-                {dataPortStatusDummy &&
-                  dataPortStatusDummy.map((item, index: number) => (
-                    <SocketItem
-                      key={index}
-                      data={item}
-                      position={index + 1}
-                      isActive={selectSocket === index}
-                      onClick={() => setSelectSocket(index)}
-                    />
-                  ))}
+                {sessionSetting?.data?.portStatus &&
+                  sessionSetting?.data?.portStatus.map(
+                    (item, index: number) => (
+                      <SocketItem
+                        key={index}
+                        data={item}
+                        position={index + 1}
+                        isActive={selectSocket === index}
+                        onClick={() => setSelectSocket(index)}
+                      />
+                    )
+                  )}
               </div>
             </div>
 
@@ -364,7 +365,7 @@ const SessionSettings = () => {
               className="!w-[130px]"
               label="Bayar"
               disabled={validationButton()}
-              onClick={() => navigate("/session-details")}
+              onClick={onNext}
             />
           </div>
         </div>
