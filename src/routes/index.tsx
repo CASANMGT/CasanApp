@@ -58,9 +58,9 @@ const RoutesPage = () => {
       {/* BOTTOM NAVIGATION */}
       <Route path="home" element={<Main />}>
         <Route path="index" element={<Home />}></Route>
-        <Route path="location" element={<ComingSoon />} />
-        <Route path="history" element={<ComingSoon />} />
-        <Route path="profile" element={<ComingSoon />} />
+        <Route path="location" element={<Location />} />
+        <Route path="history" element={<History />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
 
       {/* HANDLE PATH NOT FOUND */}

@@ -3,12 +3,14 @@ import InputPhoneNumberModal from "./InputPhoneNumberModal";
 import ModalContainer from "./ModalContainer";
 import RequestOTPModal from "./RequestOTPModal";
 import AlertModal from "./AlertModal";
+import ModalPaymentMethod from "./ModalPaymentMethod";
 
 export {
     InputOTPModal,
     InputPhoneNumberModal,
     ModalContainer,
     RequestOTPModal,
-    AlertModal
+    AlertModal,
+    ModalPaymentMethod
 };
 

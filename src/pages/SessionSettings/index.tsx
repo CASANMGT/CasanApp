@@ -19,6 +19,7 @@ import {
   Container,
   CostInformationItem,
   LoadingPage,
+  ModalPaymentMethod,
   Separator,
   SocketItem,
   Tabs,
@@ -107,13 +108,15 @@ const SessionSettings = () => {
     (state: RootState) => state.sessionSetting
   );
   const { formData } = useSelector((state: RootState) => state.formCharging);
-  const global = useSelector((state: RootState) => state.global);
 
+  const [visiblePaymentMethod, setVisiblePaymentMethod] =
+    useState<boolean>(false);
   const [selectTabInput, setSelectTabInput] = useState<string>("1");
   const [selectSocket, setSelectSocket] = useState<number>();
   const [nominal, setNominal] = useState<string>();
   const [time, setTime] = useState<string>();
   const [total, setTotal] = useState<string>();
+  const [selectedPayment, setSelectedPayment] = useState<string>();
 
   useEffect(() => {
     // getData();
@@ -130,14 +133,6 @@ const SessionSettings = () => {
   const onDismiss = () => {
     navigate(-1);
   };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e?.target?.value.replace(REGEX_NUMBERS, "");
-    const formatted: string = `Rp${rupiah(value)}`;
-
-    setNominal(formatted);
-  };
-
   const getTotalDuration = useCallback(() => {
     const currentNominal: number = Number(
       nominal?.replace("Rp", "").replace(/\./g, "") || 0
@@ -155,9 +150,9 @@ const SessionSettings = () => {
   }, [nominal, time, selectTabInput]);
 
   const FormatPaymentMethod: () => JSX.Element = useCallback(() => {
-    if (global?.paymentMethod) {
-      const Icon = getIconPaymentMethod(global?.paymentMethod);
-      const label = getLabelPaymentMethod(global?.paymentMethod);
+    if (selectedPayment) {
+      const Icon = getIconPaymentMethod(selectedPayment);
+      const label = getLabelPaymentMethod(selectedPayment);
       return (
         <div className="row gap-1">
           <Icon className="w-[22px]" />
@@ -172,17 +167,7 @@ const SessionSettings = () => {
         </p>
       );
     }
-  }, [global?.paymentMethod]);
-
-  const validationNominal = (select: string) => {
-    let value = false;
-
-    const convert = nominal?.replace(REGEX_NUMBERS, "");
-
-    if (convert === select) value = true;
-
-    return value;
-  };
+  }, [selectedPayment]);
 
   const validationButton = () => {
     let value: boolean = true;
@@ -190,23 +175,13 @@ const SessionSettings = () => {
     if (
       selectSocket !== undefined &&
       Number(total?.replace("Rp", "").replace(/\./g, "") || 0) > 0 &&
-      global?.paymentMethod
+      selectedPayment
     )
       value = false;
 
     return value;
   };
 
-  const onSelectNominal = (select: string) => {
-    let value: string = "";
-
-    if (select === "full") value = "50000";
-    else value = select.replace(REGEX_NUMBERS, "");
-
-    const formatted: string = `Rp${rupiah(value)}`;
-
-    setNominal(formatted);
-  };
 
   const onNext = () => {
     const body = {
@@ -284,44 +259,6 @@ const SessionSettings = () => {
             </div>
 
             {/* INPUT NOMINAL */}
-            {/* <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
-              <SubTitle
-                icon={IcInfoCircleGreen}
-                label="Masukan Nominal Pengisian"
-                className="mb-3"
-              />
-
-              <p className="text-xs text-black100/70 mb-[14px]">
-                Silakan masukan nominal pengisian yang sesuai dengan daya
-                pengisian tram
-              </p>
-
-              <div className="center relative  rounded-lg bg-baseGray mb-3">
-                <p className="text-base font-semibold">{`Rp${rupiah(8000)}`}</p>
-                <input
-                  type={"text"}
-                  placeholder={"0"}
-                  value={nominal}
-                  onChange={handleChange}
-                  className="w-auto text-center p-5 w-full text-base font-semibold bg-transparent"
-                />
-                <div className="absolute p-2 bottom-0 right-0 ">
-                  <IcEditGreen />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                {nominalDataDummy.map((item, index: number) => (
-                  <NominalTopUpItem
-                    key={index}
-                    value={item}
-                    isActive={validationNominal(item)}
-                    onClick={() => onSelectNominal(item)}
-                  />
-                ))}
-              </div>
-            </div> */}
-
             <div className="bg-white py-4 px-3 rounded-lg mb-3">
               <Tabs
                 tabs={tabsNominalHour}
@@ -351,22 +288,6 @@ const SessionSettings = () => {
             </div>
 
             {/* DURATION RANGE */}
-            {/* {Number(nominal?.replace("Rp", "")) > 0 && (
-              <div className="bg-white p-3 rounded-lg mb-3 center flex-col gap-3 drop-shadow">
-                <span className="font-medium">
-                  Kisaran durasi yang didapat:
-                </span>
-
-                <span className="text-xl text-primary100 font-semibold">
-                  4 jam 3 menit
-                </span>
-
-                <p className="text-xs">
-                  Durasi masih <a className="font-medium text-xs">perkiraan</a>,
-                  bukan angka yang sesungguhnya.
-                </p>
-              </div>
-            )} */}
             <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
               <div className="row gap-3 mb-2">
                 <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
@@ -418,42 +339,13 @@ const SessionSettings = () => {
 
               <Tabs tabs={tabsCostInformation} />
             </div>
-
-            {/* FINANCING  DETAILS*/}
-            {/* <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
-            <div className="row gap-3 mb-2">
-              <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
-                <IcInfoCircleGreen />
-              </div>
-
-              <p className="text-blackBold font-medium">Rincian Pembiayaan</p>
-            </div>
-
-            <BetweenText
-              type="medium-content"
-              labelLeft="Tarif Dasar"
-              labelRight={`Rp${rupiah(8000)}`}
-              className="bg-baseLightGray p-3 rounded-t"
-            />
-
-            <BetweenText
-              type="medium-content"
-              labelLeft="Biaya Transaksi"
-              labelRight={`Rp${rupiah(1000)}`}
-              className="p-3"
-            />
-          </div> */}
           </div>
         </div>
 
         {/* PAYMENT METHOD */}
         <div className="drop-shadow p-4 bg-white">
           <div
-            onClick={() =>
-              navigate("/select-payment-method", {
-                state: { nominal, time, selectSocket },
-              })
-            }
+            onClick={() => setVisiblePaymentMethod(true)}
             className="between cursor-pointer"
           >
             <FormatPaymentMethod />
@@ -476,17 +368,15 @@ const SessionSettings = () => {
             />
           </div>
         </div>
-
-        {/* FOOTER */}
-        {/* <div className="container-button-footer">
-          <Button
-            buttonType="lg"
-            label="Lanjutkan"
-            disabled={validationButton()}
-            onClick={onNext}
-          />
-        </div> */}
       </LoadingPage>
+
+      {/* MODAL */}
+      <ModalPaymentMethod
+        visible={visiblePaymentMethod}
+        select={selectedPayment || ""}
+        onDismiss={() => setVisiblePaymentMethod(false)}
+        onSelect={(value) => setSelectedPayment(value)}
+      />
     </Container>
   );
 };
