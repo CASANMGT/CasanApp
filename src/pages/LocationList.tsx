@@ -2,8 +2,8 @@ import { useState } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { IcBackBlack, IcPinGreen, IcSearchGray } from "../assets";
 import { ChargingLocationCard, Label } from "../components";
-
-const dataDummy = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+import { chargingLocationProps } from "../common";
+import { DummyAeon, DummyTheBreeze } from "../assets/dummy";
 
 const LocationList = () => {
   const navigate: NavigateFunction = useNavigate();
@@ -64,11 +64,12 @@ const LocationList = () => {
 
       {/* LIST */}
       <div className="overflow-auto px-4 pt-3 scrollbar-none">
-        {dataDummy.map((_, index: number) => (
+        {dataDummy.map((item, index: number) => (
           <ChargingLocationCard
             key={index}
             type="location-list"
-            onClick={() => alert("coming soon")}
+            data={item}
+            onClick={() => navigate("/charging-location-details")}
           />
         ))}
       </div>
@@ -77,3 +78,30 @@ const LocationList = () => {
 };
 
 export default LocationList;
+
+const dataDummy: chargingLocationProps[] = [
+  {
+    image: DummyTheBreeze,
+    location: "The Breeze",
+    address:
+      "Jl. BSD Green Office Park Jl. BSD Grand Boulevard, Sampora, BSD, Kabupaten Tangerang",
+    status: "full",
+    available: 0,
+    cost: 600,
+    voltage: 48,
+    ampere: 2,
+    distance: 2,
+  },
+  {
+    image: DummyAeon,
+    location: "Aeon Mall",
+    address:
+      "Jl. BSD Raya Utama, Pagedangan, Kec. Pagedangan, Kabupaten Tangerang, Banten",
+    status: "available",
+    available: 5,
+    cost: 600,
+    voltage: 48,
+    ampere: 2,
+    distance: 2,
+  },
+];

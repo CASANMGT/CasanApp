@@ -14,12 +14,8 @@ const Location = () => {
     navigate(-1);
   };
 
-  const onMyLocaiton = () => {
-    alert("coming soon");
-  };
-
   const onShowAll = () => {
-    navigate('/location-list')
+    navigate("/location-list");
   };
 
   return (
@@ -48,7 +44,7 @@ const Location = () => {
 
         {/* MY LOCATION */}
         <div
-          onClick={onMyLocaiton}
+          onClick={() => alert("coming soon")}
           className="absolute left-4 bottom-[94px] bg-white p-2 rounded-lg drop-shadow cursor-pointe"
         >
           <IcMyLocationBlack />
