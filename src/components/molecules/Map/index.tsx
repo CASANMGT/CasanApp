@@ -1,7 +1,8 @@
 import { MapContainer, TileLayer } from "react-leaflet";
+import { LatLng } from "../../../common";
 
 interface MapProps {}
-export type LatLng = [number, number];
+
 
 export const centerPosition: LatLng = [-6.301432551514826, 106.68551902294831];
 

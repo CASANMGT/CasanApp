@@ -46,3 +46,5 @@ export type initialStateFormProps = {
   loading?: boolean;
   [key: string]: any;
 };
+
+export type LatLng = [number, number];

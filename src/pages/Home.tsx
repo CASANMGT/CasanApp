@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Location,
   NavigateFunction,
@@ -6,14 +6,14 @@ import {
   useNavigate,
 } from "react-router-dom";
 import {
-  IcPinWhite
+  IcNotificationBadgesGreen,
+  IcNotificationGreen,
+  IcPinWhite,
+  IcSearchGray,
 } from "../assets";
 import { DummyAeon, DummyTheBreeze } from "../assets/dummy";
-import { AVAILABLE_PLACE, chargingLocationProps } from "../common";
-import {
-  AvailablePlaceItem,
-  ChargingLocationCard
-} from "../components";
+import { AVAILABLE_PLACE, chargingLocationProps, LatLng } from "../common";
+import { AvailablePlaceItem, ChargingLocationCard } from "../components";
 
 const dataOngoingDummy = [1, 2, 3];
 const slidesDummy = [
@@ -54,6 +54,40 @@ const Home = () => {
   const navigate: NavigateFunction = useNavigate();
 
   const [place, setPlace] = useState<string>("Terdekat");
+  const [currentLocation, setCurrentLocation] = useState<LatLng>();
+
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
+
+  useEffect(() => {
+    getData();
+  }, [currentLocation]);
+
+  const getCurrentLocation = () => {
+    if (!window.google || !window.google.maps) {
+      console.error("Google Maps API not loaded");
+      return;
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setCurrentLocation([latitude, longitude]);
+        },
+        (_) => {
+          console.error("Can't get current location");
+        }
+      );
+    } else {
+      console.error("Geolocation not supported");
+    }
+  };
+
+  const getData = () => {
+    console.log("cek ", currentLocation);
+  };
 
   const onSearch = () => {
     alert("coming soon");
@@ -76,7 +110,7 @@ const Home = () => {
           </div>
 
           {/* SEARCH */}
-          {/* <div className="row gap-3 mt-2.5 mb-5">
+          <div className="row gap-3 mt-2.5 mb-5">
             <div
               onClick={onSearch}
               className="row px-3 h-10 rounded-full bg-baseLightGray/70 gap-2.5 flex-1 cursor-pointer"
@@ -92,9 +126,9 @@ const Home = () => {
               onClick={onNotification}
               className="h-10 w-10 rounded-full bg-baseLightGray/70 items-center justify-center flex cursor-pointer"
             >
-              {true ? <IcNotificationBadgesGreen /> : <IcNotificationGreen />}
+              {false ? <IcNotificationBadgesGreen /> : <IcNotificationGreen />}
             </div>
-          </div> */}
+          </div>
 
           {/* CAROUSEL */}
           {/* <Carousel slides={slidesDummy} /> */}
@@ -124,13 +158,15 @@ const Home = () => {
 
         {/* CHARGING LIST */}
         <div className="flex flex-col overflow-auto scrollbar-none pt-3">
-          {chargingLocationDummy.map((item: chargingLocationProps, index: number) => (
-            <ChargingLocationCard
-              key={index}
-              data={item}
-              onClick={() => navigate("/charging-location-details")}
-            />
-          ))}
+          {chargingLocationDummy.map(
+            (item: chargingLocationProps, index: number) => (
+              <ChargingLocationCard
+                key={index}
+                data={item}
+                onClick={() => navigate("/charging-location-details")}
+              />
+            )
+          )}
         </div>
       </div>
     </div>
