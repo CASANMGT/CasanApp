@@ -14,8 +14,11 @@ import NullPhotoImg from "../assets/illustrations/null-photo.png";
 import { VERSION } from "../common";
 import { Button, MenuItem, Separator } from "../components";
 import { rupiah } from "../helpers";
+import { useAuth } from "../context/AuthContext";
 
 const Profile = () => {
+  const { logout } = useAuth();
+
   const phoneNumber: string = "08120810812";
   const navigate: NavigateFunction = useNavigate();
 
@@ -41,6 +44,11 @@ const Profile = () => {
 
   const onNext = (path: string) => {
     navigate(`/${path}`);
+  };
+
+  const onLogout = () => {
+    logout()
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -152,14 +160,14 @@ const Profile = () => {
       </div>
 
       <div
-        onClick={() => {}}
+        onClick={onLogout}
         className="flex items-center justify-center mt-8 mb-4 gap-1.5 cursor-pointer"
       >
         <IcLogout />
         <span className="text-base text-red font-medium">Keluar Akun</span>
       </div>
 
-      <span>{`Version ${VERSION}`}</span>
+      <span className="ml-4 text-xs text-black90">{`Version ${VERSION}`}</span>
 
       {/* <div className="mb-[100px]" /> */}
     </div>

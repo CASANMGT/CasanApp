@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import { Header, InputCode, Separator } from "../components";
-import { fetchLogin, LoginRequest, resetDataLogin } from "../features";
+import {
+  fetchLogin,
+  hideLoading,
+  LoginRequest,
+  resetDataLogin,
+  showLoading,
+} from "../features";
 import { formatPhoneNumber } from "../helpers/formatter";
 import { AppDispatch, RootState } from "../store";
 import { useAuth } from "../context/AuthContext";
@@ -41,6 +47,9 @@ const VerificationNumber = () => {
   }, [counter]);
 
   useEffect(() => {
+    if (login?.loading) dispatch(showLoading());
+    else dispatch(hideLoading());
+
     if (login.data) {
       dispatch(resetDataLogin());
       navigate("/home/index", { replace: true });
