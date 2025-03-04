@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ILFlashLogo, ILLogo } from "../assets";
+import { useAuth } from "../context/AuthContext";
 
 const Splash = () => {
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -11,7 +13,12 @@ const Splash = () => {
 
   const setUp = () => {
     setTimeout(() => {
-      navigate("/home", { replace: true });
+      let nextPage: string;
+
+      if (isAuthenticated) nextPage = "/home";
+      else nextPage = "/login";
+
+      navigate(nextPage, { replace: true });
     }, 2000);
   };
 

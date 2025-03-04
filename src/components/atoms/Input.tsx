@@ -38,7 +38,7 @@ const Input: React.FC<InputProps> = ({
   const isError = useMemo(() => (error ? true : false), [error]);
 
   return (
-    <div>
+    <div className="flex w-full">
       <div className={`w-full px-6 border border-baseGray rounded-full flex flex-row gap-2 items-center ${isError && "border-red"}`}>
         {type === "phone" && (
           <>

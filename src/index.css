@@ -22,7 +22,8 @@ body {
 
 body {
   display: flex;
-  max-width: 480px;
+  justify-content: center;
+  /* max-width: 480px; */
   margin: 0 auto !important;
 
   @apply select-none;

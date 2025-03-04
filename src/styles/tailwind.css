@@ -4,7 +4,7 @@
 
 /* SCREEN */
 .container-screen {
-  @apply h-svh max-w-[480px] w-svw bg-baseLightGray shadow-2xl;
+  @apply h-svh w-svw bg-baseLightGray shadow-2xl sm:max-w-[480px] ;
 }
 
 /* BACKGROUND */

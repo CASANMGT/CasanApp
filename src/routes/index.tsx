@@ -26,13 +26,17 @@ import {
   VerificationNumber,
   Withdraw,
 } from "../pages";
+import ProtectedRoute from "./ProtectedRoute";
 
 const RoutesPage = () => {
   return (
     <Routes>
       <Route index element={<Splash />} />
       <Route path="coming-soon" element={<ComingSoon />} />
-      <Route path="charging" element={<Charging />} />
+      <Route
+        path="charging"
+        element={<ProtectedRoute element={<Charging />} />}
+      />
       <Route
         path="charging-location-details"
         element={<ChargingLocationDetails />}
