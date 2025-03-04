@@ -1,4 +1,5 @@
 import IcAstraPay from "./astrapay.svg?react";
+import IcLogout from './logout.svg?react'
 import IcClose from './close.svg?react'
 import IcNoInternet from './no-internet.svg?react'
 import IcCashBlack from "./cash-black.svg?react";
@@ -135,6 +136,7 @@ export {
   IcWalletGreen,
   IcWalletGreen2,
   IcNoInternet,
-  IcClose
+  IcClose,
+  IcLogout
 };
 

@@ -1,11 +1,20 @@
 import { useEffect, useState } from "react";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import { Header, InputCode, Separator } from "../components";
+import { fetchLogin, LoginRequest, resetDataLogin } from "../features";
 import { formatPhoneNumber } from "../helpers/formatter";
+import { AppDispatch, RootState } from "../store";
+import { useAuth } from "../context/AuthContext";
 
 const VerificationNumber = () => {
-  const phone: string = "081208120812";
+  const dispatch = useDispatch<AppDispatch>();
+
+  const location = useLocation();
   const navigate: NavigateFunction = useNavigate();
+  const { isAuthenticated } = useAuth();
+
+  const login = useSelector((state: RootState) => state.login);
 
   const [codes, setCodes] = useState<string[]>(["", "", "", ""]);
   const [phoneNumber, setPhoneNumber] = useState<string>("");
@@ -18,6 +27,10 @@ const VerificationNumber = () => {
   }, []);
 
   useEffect(() => {
+    if (isAuthenticated) navigate("/home", { replace: true });
+  }, []);
+
+  useEffect(() => {
     if (counter > 0) {
       const interval: number = setInterval(() => {
         onCounter();
@@ -27,8 +40,18 @@ const VerificationNumber = () => {
     }
   }, [counter]);
 
+  useEffect(() => {
+    if (login.data) {
+      dispatch(resetDataLogin());
+      navigate("/home/index", { replace: true });
+    } else if (login.error) {
+      alert(login.error);
+    }
+  }, [login]);
+
   const getData = () => {
-    const formatter: string = formatPhoneNumber(phone);
+    dispatch(resetDataLogin());
+    const formatter: string = formatPhoneNumber(location?.state?.phone);
     setPhoneNumber(formatter);
   };
 
@@ -51,7 +74,7 @@ const VerificationNumber = () => {
 
     const isValid: boolean = value.every((item) => item !== "");
 
-    if (isValid) onNext();
+    if (isValid) onNext(value);
   };
 
   const onDismiss = () => {
@@ -65,8 +88,13 @@ const VerificationNumber = () => {
     }
   };
 
-  const onNext = () => {
-    navigate("/home/index", { replace: true });
+  const onNext = (code: string[]) => {
+    const body: LoginRequest = {
+      code: code.join(""),
+      phone_number: phoneNumber.replace(/\s+/g, ""),
+    };
+
+    dispatch(fetchLogin(body));
   };
 
   return (

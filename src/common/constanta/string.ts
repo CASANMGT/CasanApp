@@ -1,3 +1,6 @@
+export const VERSION: string = "1.0.0.0";
+
+// PAYMENT METHOD
 export const QRIS: string = "qris";
 export const GOPAY: string = "gopay";
 export const DANA: string = "dana";

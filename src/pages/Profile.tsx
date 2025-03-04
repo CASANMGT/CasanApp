@@ -4,12 +4,14 @@ import {
   IcChatBlack,
   IcEditWhite,
   IcElectricityBlack,
+  IcLogout,
   IcNotificationGreen,
   IcPasswordBlack,
   IcSettingBlack,
   IcVehicleBlack,
 } from "../assets";
 import NullPhotoImg from "../assets/illustrations/null-photo.png";
+import { VERSION } from "../common";
 import { Button, MenuItem, Separator } from "../components";
 import { rupiah } from "../helpers";
 
@@ -149,7 +151,17 @@ const Profile = () => {
         />
       </div>
 
-      <div className="mb-[100px]" />
+      <div
+        onClick={() => {}}
+        className="flex items-center justify-center mt-8 mb-4 gap-1.5 cursor-pointer"
+      >
+        <IcLogout />
+        <span className="text-base text-red font-medium">Keluar Akun</span>
+      </div>
+
+      <span>{`Version ${VERSION}`}</span>
+
+      {/* <div className="mb-[100px]" /> */}
     </div>
   );
 };

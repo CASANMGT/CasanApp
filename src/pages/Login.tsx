@@ -1,13 +1,19 @@
-import { useState } from "react";
-import { IcRightGreen } from "../assets";
-import { Button, Input, Separator } from "../components";
-import { REGEX_PHONE_NUMBER_HALF } from "../common";
+import { useEffect, useState } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
+import { IcRightGreen } from "../assets";
+import { REGEX_PHONE_NUMBER_HALF } from "../common";
+import { Button, Input, Separator } from "../components";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const navigate: NavigateFunction = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const [phoneNumber, setPhoneNumber] = useState<string>("");
+
+  useEffect(() => {
+    if (isAuthenticated) navigate("/home", { replace: true });
+  }, []);
 
   const handleChange = (value: string) => {
     setPhoneNumber(value);
@@ -24,7 +30,7 @@ const Login = () => {
   };
 
   const onLogin = () => {
-    navigate("/verification", { replace: true });
+    navigate("/verification", { replace: true, state: { phone: phoneNumber } });
   };
 
   return (
@@ -50,7 +56,8 @@ const Login = () => {
           <p>
             Dengan mendaftar, Anda menyetujui{" "}
             <b className="text-primary100 cursor-pointer">Syarat & Ketentuan</b>{" "}
-            dan <b className="text-primary100 cursor-pointer">Kebijakan Privasi</b>{" "}
+            dan{" "}
+            <b className="text-primary100 cursor-pointer">Kebijakan Privasi</b>{" "}
             kami.
           </p>
         </div>
