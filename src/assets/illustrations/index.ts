@@ -4,6 +4,7 @@ import ILComingSoon from "./coming-soon.png";
 import ILFlashLogo from "./flash-logo.png";
 import ILLogoSlogan from "./logo-slogan.png";
 import ILLogo from "./logo.png";
+import ILNoImage from './no-image.png'
 
 export {
     ILCharging,
@@ -11,6 +12,7 @@ export {
     ILComingSoonLabel,
     ILFlashLogo,
     ILLogo,
-    ILLogoSlogan
+    ILLogoSlogan,
+    ILNoImage
 };
 

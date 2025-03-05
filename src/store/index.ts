@@ -1,12 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 
+import loginReducer from "../features/auth/loginSlice";
+import chargingStationReducer from "../features/chargingStations/chargingStationSlice";
 import globalReducer from "../features/globalSlice";
 import toastReducer from "../features/toastSlice";
 import chargingSessionReducer from "../redux/charging/chargingSessionSlice";
 import chargingStartReducer from "../redux/charging/chargingStartSlice";
 import formChargingReducer from "../redux/charging/formChargingSlice";
 import sessionSettingReducer from "../redux/session/sessionSettingsSlice";
-import loginReducer from "../features/auth/loginSlice";
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,9 @@ export const store = configureStore({
 
     // AUTH
     login: loginReducer,
+
+    // CHARGING STATION
+    chargingStation: chargingStationReducer,
 
     // SESSION
     sessionSetting: sessionSettingReducer,

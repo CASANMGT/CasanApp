@@ -27,3 +27,8 @@ export const setDiff = (startTime: string, endTime: string) => {
 
   return value;
 };
+
+export const timeToSeconds = (time: string): number => {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours * 3600 + minutes * 60;
+};

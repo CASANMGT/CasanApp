@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Location,
   NavigateFunction,
@@ -12,8 +13,21 @@ import {
   IcSearchGray,
 } from "../assets";
 import { DummyAeon, DummyTheBreeze } from "../assets/dummy";
-import { AVAILABLE_PLACE, chargingLocationProps, LatLng } from "../common";
-import { AvailablePlaceItem, ChargingLocationCard } from "../components";
+import {
+  AVAILABLE_PLACE,
+  chargingLocationProps,
+  ChargingStationBody,
+  DataChargingStation,
+  LatLng,
+  LIMIT_LIST,
+} from "../common";
+import {
+  AvailablePlaceItem,
+  ChargingLocationCard,
+  LoadingPage,
+} from "../components";
+import { fetchChargingStation } from "../features";
+import { AppDispatch, RootState } from "../store";
 
 const dataOngoingDummy = [1, 2, 3];
 const slidesDummy = [
@@ -52,11 +66,18 @@ const chargingLocationDummy: chargingLocationProps[] = [
 const Home = () => {
   const location: Location = useLocation();
   const navigate: NavigateFunction = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
+  const chargingStation = useSelector(
+    (state: RootState) => state.chargingStation
+  );
+
+  const [page, setPage] = useState(1);
   const [place, setPlace] = useState<string>("Terdekat");
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
 
   useEffect(() => {
+    setPage(1);
     getCurrentLocation();
   }, []);
 
@@ -85,8 +106,18 @@ const Home = () => {
     }
   };
 
-  const getData = () => {
-    console.log("cek ", currentLocation);
+  const getData = (nextPage?: number) => {
+    if (currentLocation?.length) {
+      const body: ChargingStationBody = {
+        page: nextPage || page,
+        limit: LIMIT_LIST,
+      };
+
+      body.latitude = currentLocation[0];
+      body.longitude = currentLocation[1];
+
+      dispatch(fetchChargingStation(body));
+    }
   };
 
   const onSearch = () => {
@@ -97,9 +128,17 @@ const Home = () => {
     alert("coming soon");
   };
 
+  const onLoadMore = () => {
+    const nextPage: number = page + 1;
+    setPage(nextPage);
+    getData(nextPage);
+  };
+
+  console.log("cek chargingStation", chargingStation);
+
   return (
-    <div className="overflow-hidden flex">
-      <div className="px-4 py-3 flex flex-col overflow-hidden">
+    <div className="overflow-hidden flex w-full">
+      <div className="px-4 py-3 flex flex-col w-full overflow-hidden">
         <div>
           {/* LOCATION */}
           <div className="row gap-1">
@@ -158,15 +197,26 @@ const Home = () => {
 
         {/* CHARGING LIST */}
         <div className="flex flex-col overflow-auto scrollbar-none pt-3">
-          {chargingLocationDummy.map(
-            (item: chargingLocationProps, index: number) => (
-              <ChargingLocationCard
-                key={index}
-                data={item}
-                onClick={() => navigate("/charging-location-details")}
-              />
-            )
-          )}
+          <LoadingPage
+            loading={!chargingStation?.data?.data && chargingStation?.loading}
+          >
+            {chargingStation?.data?.data &&
+              chargingStation?.data?.data.map((item, index: number) => (
+                <ChargingLocationCard
+                  key={index}
+                  data={item}
+                  loading={chargingStation?.loading}
+                  currentLocation={currentLocation}
+                  isLast={
+                    chargingStation?.data?.data &&
+                    index === chargingStation?.data?.data.length - 1 &&
+                    page * LIMIT_LIST == chargingStation?.data?.data.length
+                  }
+                  onClick={() => navigate("/charging-location-details")}
+                  onLoadMore={onLoadMore}
+                />
+              ))}
+          </LoadingPage>
         </div>
       </div>
     </div>

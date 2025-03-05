@@ -14,6 +14,8 @@ import Signal from "./Signal";
 import StatusIndicator from "./StatusIndicator";
 import SubTitle from "./SubTitle";
 import Timer from "./Timer";
+import Spinner from "./Spinner";
+
 
 export {
   BetweenText,
@@ -31,6 +33,7 @@ export {
   Signal,
   StatusIndicator,
   SubTitle,
-  Timer
+  Timer,
+  Spinner
 };
 

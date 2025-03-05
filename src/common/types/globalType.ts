@@ -48,3 +48,26 @@ export type initialStateFormProps = {
 };
 
 export type LatLng = [number, number];
+
+
+export type MetaResponseProps = {
+  limit: number;
+  page: number;
+  total: number;
+};
+
+export type LocationResponse = {
+  ID: number;
+  Name: string;
+  Address: string;
+  PlaceID: string;
+  Mark: string;
+  District: string;
+  City: string;
+  Province: string;
+  Longitude: number;
+  Latitude: number;
+  DeletedAt: any;
+  CreatedAt: string;
+  UpdatedAt: string;
+};
