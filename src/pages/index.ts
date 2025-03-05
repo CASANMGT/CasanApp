@@ -1,5 +1,5 @@
 import Charging from "./Charging";
-import ChargingLocationDetails from "./ChargingLocationDetails";
+import ChargingStationDetails from "./ChargingStationDetails";
 import History from "./History";
 import Home from "./Home";
 import InputPin from "./InputPin";
@@ -31,7 +31,7 @@ export {
     ComingSoon,
     SelectBank,
     SessionDetails,
-    ChargingLocationDetails,
+    ChargingStationDetails,
     History,
     Home,
     InputPin,

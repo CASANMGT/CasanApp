@@ -71,3 +71,9 @@ export type LocationResponse = {
   CreatedAt: string;
   UpdatedAt: string;
 };
+
+export type TabItemProps = {
+  id: string | number;
+  label: string;
+  content: any;
+};

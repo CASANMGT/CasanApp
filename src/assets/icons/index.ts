@@ -1,4 +1,5 @@
 import IcAstraPay from "./astrapay.svg?react";
+import IcCustomerServiceBlack from "./customer-service-black.svg?react";
 import IcBike from './bike.svg?react'
 import IcDownGreen from './down-green.svg?react'
 import IcLogout from './logout.svg?react'
@@ -141,6 +142,7 @@ export {
   IcClose,
   IcLogout,
   IcDownGreen,
-  IcBike
+  IcBike,
+  IcCustomerServiceBlack
 };
 

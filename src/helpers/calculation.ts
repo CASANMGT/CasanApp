@@ -16,16 +16,16 @@ export const getDistanceFromLatLonInKm = (
   let lonEnd: number | undefined;
 
   if (Array.isArray(start)) {
-    latStart = start[1];
-    lonStart = start[0];
+    latStart = start[0];
+    lonStart = start[1];
   } else {
     latStart = start.lat;
     lonStart = start.lon;
   }
 
   if (Array.isArray(end)) {
-    latEnd = end[1];
-    lonEnd = end[0];
+    latEnd = end[0];
+    lonEnd = end[1];
   } else {
     latEnd = end.lat;
     lonEnd = end.lon;
@@ -51,5 +51,5 @@ export const getDistanceFromLatLonInKm = (
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const d = R * c; // Distance in km
 
-  return isNaN(d) ? 0 : parseFloat(d.toFixed(2));
+  return isNaN(d) ? 0 : parseFloat(d.toFixed(0));
 };

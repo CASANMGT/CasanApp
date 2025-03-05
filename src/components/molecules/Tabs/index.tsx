@@ -1,15 +1,16 @@
 import { useState } from "react";
+import { TabItemProps } from "../../../common";
 
-interface TabItemProps {
-  id: string;
-  label: string;
-  content: React.ReactNode;
-}
+// interface TabItemProps {
+//   id: string;
+//   label: string;
+//   content: React.ReactNode;
+// }
 
 interface TabProps {
-  type?: "secondary";
+  type?: "secondary"|"flex";
   tabs: TabItemProps[];
-  onSelect?: (value: string) => void;
+  onSelect?: (value: string|number) => void;
 }
 
 const Tabs: React.FC<TabProps> = ({ type, tabs, onSelect }) => {

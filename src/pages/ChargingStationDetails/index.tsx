@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import {
   IcBackBlack,
   IcCopyBlack,
@@ -8,17 +9,22 @@ import {
   IcFuelRed,
   IcPhoneGreen,
   IcShareGreen,
-} from "../assets";
-import { DummyChargingLocation } from "../assets/dummy";
+  ILNoImage,
+} from "../../assets";
+import { DummyChargingLocation } from "../../assets/dummy";
+import { DataChargingStation } from "../../common";
 import {
   CostInformationItem,
   DeviceListItem,
   OperatingHoursItem,
   Separator,
-} from "../components";
-import { showToast } from "../features/toastSlice";
-import { formatPhoneNumber } from "../helpers/formatter";
-import { AppDispatch } from "../store";
+} from "../../components";
+import { showToast } from "../../features/toastSlice";
+import { formatPhoneNumber } from "../../helpers/formatter";
+import { AppDispatch } from "../../store";
+import { getDistanceFromLatLonInKm } from "../../helpers";
+import PriceInformation from "./PriceInformation";
+import BasicInformation from "./BasicInformation";
 
 const operatingHoursData = [1, 2];
 const deviceListData = [1, 2, 3];
@@ -61,9 +67,14 @@ const dataDeviceList = [
   },
 ];
 
-const ChargingLocationDetails = () => {
+const ChargingStationDetails = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate: NavigateFunction = useNavigate();
+  const location = useLocation();
+
+  const [data, setData] = useState<DataChargingStation>(location?.state?.data);
+
+  useEffect(() => {}, []);
 
   const isFull: boolean = false;
   const phoneNumber = "081208120812";
@@ -91,6 +102,24 @@ const ChargingLocationDetails = () => {
     alert("coming soon");
   };
 
+  let available: number = 0;
+  let photo: string = "";
+  const isShowMore: boolean = data?.Devices.length > 3;
+
+  const distance = getDistanceFromLatLonInKm(
+    { lat: data?.Location?.Latitude, lon: data?.Location?.Longitude },
+    location?.state?.currentLocation
+  );
+
+  if (data?.Devices && data?.Devices.length) {
+    photo = data?.Devices[0].ChargingStation?.Image;
+    available = data?.Devices.reduce(
+      (accumulator, currentValue) =>
+        accumulator + (currentValue.Sockets.length || 0),
+      0
+    );
+  }
+
   return (
     <div
       onScroll={handleScroll}
@@ -99,7 +128,7 @@ const ChargingLocationDetails = () => {
       {/* HEADER */}
       <div className="relative">
         <img
-          src={DummyChargingLocation}
+          src={photo ? photo : ILNoImage}
           alt="details"
           className="block mx-auto w-full h-[200px] object-cover"
         />
@@ -116,18 +145,15 @@ const ChargingLocationDetails = () => {
       <div className="bg-white p-4 drop-shadow">
         <div className="row gap-3">
           <img
-            src={
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4ddBLsjXELeexn4zWAEUxkClXVovj3Q_h2g&s"
-            }
+            src={photo ? photo : ILNoImage}
             alt="location 1"
             className="w-[50px] h-[50px] rounded-md"
           />
 
           <div className="flex flex-col justify-between">
-            <p className="font-medium">The Breeze</p>
+            <p className="font-medium">{data?.Location?.Mark || "-"}</p>
             <p className="text-2-line text-xs text-black90">
-              Jl. BSD Green Office Park Jl. BSD Grand Boulevard, Sampora, BSD,
-              Kabupaten Tangerang - Banten
+              {data?.Location?.Name || "-"}
             </p>
           </div>
         </div>
@@ -149,16 +175,16 @@ const ChargingLocationDetails = () => {
               </div>
             ) : (
               <div className="flex flex-row gap-1 relative">
-                <p className="text-lg font-semibold">{5}</p>
+                <p className="text-lg font-semibold">{available}</p>
                 <p className="text-xs self-end mb-1 text-black50 font-medium">
-                  /10
+                  tersedia
                 </p>
               </div>
             )}
           </div>
 
           <div className="row gap-2">
-            <p className="text-xs text-primary100 font-medium">2km dari anda</p>
+            <p className="text-xs text-primary100 font-medium">{`${distance}km dari anda`}</p>
 
             <div className="p-[5px] rounded-full bg-primary10">
               <IcShareGreen />
@@ -170,80 +196,42 @@ const ChargingLocationDetails = () => {
       {/* INFORMATION */}
       <div className="p-4">
         {/* COST INFORMATION */}
-        <div className="bg-white p-3 rounded-lg mt-[14px] border drop-shadow">
-          <p className="font-medium">Informasi Biaya</p>
 
-          <div className="bg-primary10 rounded-lg p-3 mt-2">
-            {dataCostInformation.map((item, index: number) => (
-              <CostInformationItem
-                key={index}
-                data={item}
-                isLast={index === dataCostInformation.length - 1}
-              />
-            ))}
-          </div>
-
-          <p className="mt-4 mb-2 font-medium">Biaya Parkir</p>
-
-          <p className="text-black90 text-xs">Gratis Parkir</p>
-        </div>
+        <PriceInformation data={data} />
 
         {/* BASIC INFORMATION  */}
-        <div className="bg-white p-3 rounded-lg mt-[14px] border drop-shadow">
-          <p className="font-medium mb-4"> Informasi Dasar</p>
-
-          <p className="text-xs text-black90 mb-2">Jam Operasional: </p>
-          {operatingHoursData.map((_, index: number) => (
-            <OperatingHoursItem
-              key={index}
-              isLast={index === operatingHoursData.length - 1}
-            />
-          ))}
-
-          <Separator className="my-3 " />
-
-          <div className="between ">
-            <div className="row gap-1.5">
-              <IcPhoneGreen />
-
-              <p className="text-xs text-black90">Customer Service</p>
-            </div>
-
-            <div className="row gap-1.5 cursor-pointer" onClick={onCopy}>
-              <p className="font-semibold">
-                {formatPhoneNumber(phoneNumber).replace("+62 ", "0")}
-              </p>
-              <IcCopyBlack />
-            </div>
-          </div>
-        </div>
+        <BasicInformation />
 
         {/* DEVICE LIST */}
         <div className="bg-white p-3 rounded-lg mt-[14px] border drop-shadow">
           <p className="font-medium mb-4">Device List</p>
 
-          {dataDeviceList.map((item, index: number) => (
+          {data?.Devices.map((item, index: number) => (
             <DeviceListItem
               key={index}
               data={item}
               isLast={index === dataDeviceList.length - 1}
-              onClick={() => navigate(`/session-settings/${999}`)}
+              onClick={() => {}}
             />
           ))}
 
-          <Separator className="my-3" />
+          {isShowMore && (
+            <>
+              <Separator className="my-3" />
 
-          <div className="between cursor-pointer" onClick={onSeeMore}>
-            <p className="text-primary100 text-xs font-medium">
-              Lihat lebih banyak
-            </p>
+              <div className="between cursor-pointer" onClick={onSeeMore}>
+                <p className="text-primary100 text-xs font-medium">
+                  Lihat lebih banyak
+                </p>
 
-            <IcDownCircleGreen />
-          </div>
+                <IcDownCircleGreen />
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default ChargingLocationDetails;
+export default ChargingStationDetails;

@@ -62,7 +62,7 @@ export type Admin = {
   DeletedAt: string;
 };
 
-type Device = {
+export type Device = {
   ID: number;
   Name: string;
   PileNumber: string;

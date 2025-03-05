@@ -69,7 +69,7 @@ const LocationList = () => {
             key={index}
             type="location-list"
             data={item}
-            onClick={() => navigate("/charging-location-details")}
+            onClick={() => navigate("/charging-station-details")}
           />
         ))}
       </div>

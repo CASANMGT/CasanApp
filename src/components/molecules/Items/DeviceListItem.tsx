@@ -1,4 +1,5 @@
 import { IcFuelBlack, IcFuelRed, IcRightBlack } from "../../../assets";
+import { Device } from "../../../common";
 import { Signal } from "../../atoms";
 
 type dataChargingLocation = {
@@ -12,7 +13,7 @@ type dataChargingLocation = {
 
 interface DeviceListItemProps {
   isLast: boolean;
-  data: dataChargingLocation;
+  data: Device;
   onClick: () => void;
 }
 
@@ -24,43 +25,41 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
   return (
     <div
       onClick={() => {
-        if (!data?.disabled) onClick();
+        if (!false) onClick();
       }}
-      className={`row gap-2 bg-white py-2.5 px-3.5 rounded-lg border border-${
-        data?.isFull ? "black10" : "primary30"
+      className={`row gap-2 bg-white py-2 px-3.5 rounded-lg border border-${
+        false ? "black10" : "primary30"
       } ${!isLast ? "mb-2.5" : ""} ${
-        data?.disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+        false ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
       }`}
     >
       <div className="w-[30px] h-[30px] rounded-full bg-primary30 center">
-        <p className="text-primary100 font-semibold">{data?.id}</p>
+        <p className="text-primary100 font-semibold">{data?.ID}</p>
       </div>
 
       <div className="flex flex-col flex-1">
-        <div className="between">
-          <p className="font-medium mb-1">{data?.location}</p>
+        <div className="between-x">
+          <p className="font-medium mb-1">{data?.Name}</p>
 
-          <Signal signalValue={data?.signalValue} />
+          <Signal signalValue={data?.SignalValue} />
         </div>
 
         <div className="row ">
-          <div className="ml-1">
-            {data?.isFull ? <IcFuelRed /> : <IcFuelBlack />}
-          </div>
+          <div className="ml-1">{false ? <IcFuelRed /> : <IcFuelBlack />}</div>
 
           <div
             className={`ml-1 font-medium  ${
-              data?.isFull ? "text-red" : "text-black100"
+              false ? "text-red" : "text-black100"
             }`}
           >
-            {data?.isFull ? (
+            {false ? (
               <p>
                 Penuh
                 <a className="text-xs ml-1">{"(Tunggu 30 mnt)"}</a>
               </p>
             ) : (
               <p>
-                {data?.available}{" "}
+                {data?.Sockets.length}{" "}
                 <a className="text-xs text-black70">Tersedia</a>
               </p>
             )}

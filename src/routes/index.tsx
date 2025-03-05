@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { AuthProvider } from "../context/AuthContext";
 import {
   Charging,
-  ChargingLocationDetails,
+  ChargingStationDetails,
   ComingSoon,
   History,
   Home,
@@ -40,8 +40,8 @@ const RoutesPage = () => {
           element={<ProtectedRoute element={<Charging />} />}
         />
         <Route
-          path="charging-location-details"
-          element={<ChargingLocationDetails />}
+          path="charging-station-details"
+          element={<ChargingStationDetails />}
         />
         <Route path="input-pin" element={<InputPin />} />
         <Route path="location-list" element={<LocationList />} />

@@ -17,7 +17,6 @@ import {
   AVAILABLE_PLACE,
   chargingLocationProps,
   ChargingStationBody,
-  DataChargingStation,
   LatLng,
   LIMIT_LIST,
 } from "../common";
@@ -134,8 +133,6 @@ const Home = () => {
     getData(nextPage);
   };
 
-  console.log("cek chargingStation", chargingStation);
-
   return (
     <div className="overflow-hidden flex w-full">
       <div className="px-4 py-3 flex flex-col w-full overflow-hidden">
@@ -212,7 +209,11 @@ const Home = () => {
                     index === chargingStation?.data?.data.length - 1 &&
                     page * LIMIT_LIST == chargingStation?.data?.data.length
                   }
-                  onClick={() => navigate("/charging-location-details")}
+                  onClick={() =>
+                    navigate("/charging-station-details", {
+                      state: { data: item, currentLocation },
+                    })
+                  }
                   onLoadMore={onLoadMore}
                 />
               ))}
