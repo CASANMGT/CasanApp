@@ -93,7 +93,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
           </div>
 
           <div
-            className={`between ${
+            className={`between-x ${
               type === "location-list"
                 ? "mt-4"
                 : "mt-[18px] bg-white/50 px-3 py-1 rounded"
@@ -133,7 +133,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
           </div>
         </div>
 
-        <div className="bg-white px-4 py-2.5 rounded-b-lg between">
+        <div className="bg-white px-4 py-2.5 rounded-b-lg between-x">
           <div className=" row gap-1">
             <p className="text-xs text-primary100 font-semibold">Rp</p>
             <p className="text-lg text-primary100 font-semibold mr-1">{`${price}/jam`}</p>

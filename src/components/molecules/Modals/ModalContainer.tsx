@@ -35,7 +35,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
           className={`shadow-lg ${
             isBottom
               ? "absolute left-0 right-0 bottom-0 h-3/4 flex"
-              : "bg-white rounded-lg p-6 w-96"
+              : "bg-white rounded-lg p-4 w-96"
           }`}
           onClick={(e) => e.stopPropagation()}
           initial={{ opacity: 0, scale: 0.9 }}

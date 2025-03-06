@@ -18,3 +18,8 @@ export interface SessionHeaderProps {
   encrypted: boolean;
   frameId: string;
 }
+
+export type FormSession = {
+  voltage:string|number
+  ampere: string|number;
+};

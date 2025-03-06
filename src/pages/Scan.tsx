@@ -51,7 +51,7 @@ const Scan = () => {
   };
 
   const onNext = (result: string) => {
-    navigate(`/session-settings/${result}`);
+    navigate("session-settings");
   };
 
   return (

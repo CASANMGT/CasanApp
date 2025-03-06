@@ -63,6 +63,12 @@
   @apply p-4 bg-white drop-shadow;
 }
 
+
+.dropdown-menu {
+  @apply absolute left-0 w-full py-3 px-3 mt-1 bg-white border border-baseGray rounded-xl shadow-lg transform transition-all duration-200 max-h-[200px] overflow-auto;
+}
+
+
 /* Hide arrows on number input for Chrome, Edge, and Safari */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
@@ -74,3 +80,4 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+

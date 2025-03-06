@@ -1,3 +1,4 @@
+import { clone } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -14,11 +15,18 @@ import {
   IcSocketCircleGreen,
 } from "../../assets";
 import {
+  DataChargingStation,
+  Device,
+  FormDefaultSession,
+  FormSession,
+} from "../../common";
+import {
   Button,
   Container,
   CostInformationItem,
   LoadingPage,
   ModalPaymentMethod,
+  ModalVoltageAmpere,
   Separator,
   SocketItem,
   Tabs,
@@ -27,10 +35,12 @@ import {
   getIconPaymentMethod,
   getLabelPaymentMethod,
   rupiah,
+  useForm,
 } from "../../helpers";
 import { setFormCharging } from "../../redux";
 import { fetchSessionSetting } from "../../services/request";
 import { AppDispatch, RootState } from "../../store";
+import PriceInformation from "../ChargingStationDetails/PriceInformation";
 import InputHour from "./InputHour";
 import InputNominal from "./InputNominal";
 
@@ -108,18 +118,25 @@ const SessionSettings = () => {
   );
   const { formData } = useSelector((state: RootState) => state.formCharging);
 
+  const [form, setForm] = useForm<FormSession>(FormDefaultSession);
+
   const [visiblePaymentMethod, setVisiblePaymentMethod] =
     useState<boolean>(false);
-  const [selectTabInput, setSelectTabInput] = useState<string>("1");
+  const [selectTabInput, setSelectTabInput] = useState<string | number>("1");
   const [selectSocket, setSelectSocket] = useState<number>();
   const [nominal, setNominal] = useState<string>();
   const [time, setTime] = useState<string>();
   const [total, setTotal] = useState<string>();
   const [selectedPayment, setSelectedPayment] = useState<string>();
+  const [data, setdata] = useState<DataChargingStation>(location?.state?.data);
+  const [selectedDevice, setSelectedDevice] = useState<Device>(
+    location?.state?.selectedDevice
+  );
+  const [openVA, setOpenVA] = useState<boolean>(false);
 
-  useEffect(() => {
-    getData();
-  }, []);
+  console.log("cek selectedDevice", selectedDevice);
+
+  useEffect(() => {}, []);
 
   const getData = () => {
     if (id) dispatch(fetchSessionSetting(id));
@@ -205,31 +222,33 @@ const SessionSettings = () => {
         <div className="flex-1 flex-col overflow-auto scrollbar-none">
           {/* LOCATION */}
           <div className="p-4 bg-white mb-2">
-            <div className="between">
+            <div className="between-x">
               <p className="text-blackBold font-medium">
-                Pasar Modern Intermoda
+                {data?.Location?.Mark || data?.Location?.Name || "-"}
               </p>
-
-              <div className="row gap-2 cursor-pointer" onClick={() => {}}>
-                <p className="text-xs text-primary100 font-medium">Lihat</p>
-                <IcRightGreen />
+              <div>
+                <Button
+                  type="primary-line"
+                  buttonType="sm"
+                  label="Kunjungi"
+                  iconRight={IcRightGreen}
+                  onClick={() => {}}
+                />
               </div>
             </div>
 
             <Separator className="my-3" />
 
-            <div className="between">
+            <div className="between-x">
               <div className="row gap-2">
                 <div className="w-[22px] h-[22px] rounded-full center bg-primary30">
                   <p className="text-[10px] text-primary100 font-semibold">A</p>
                 </div>
 
-                <p className="text-xs font-medium">Pintu Masuk Barat</p>
+                <p className="text-xs font-medium">{selectedDevice?.Name}</p>
               </div>
 
-              <p className="text-xs text-black90">{`Nomor Alat ${
-                formData?.deviceId || "1544"
-              }`}</p>
+              <p className="text-xs text-black90">{`Nomor Alat ${selectedDevice?.ID}`}</p>
             </div>
           </div>
 
@@ -244,18 +263,16 @@ const SessionSettings = () => {
               <div className="grid grid-cols-4 gap-3">
                 {/* {data?.portStatus &&
                   data?.portStatus.map((item, index: number) => ( */}
-                {sessionSetting?.data?.portStatus &&
-                  sessionSetting?.data?.portStatus.map(
-                    (item, index: number) => (
-                      <SocketItem
-                        key={index}
-                        data={item}
-                        position={index + 1}
-                        isActive={selectSocket === index}
-                        onClick={() => setSelectSocket(index)}
-                      />
-                    )
-                  )}
+                {selectedDevice?.Sockets &&
+                  selectedDevice?.Sockets.map((item, index: number) => (
+                    <SocketItem
+                      key={index}
+                      data={item}
+                      position={index + 1}
+                      isActive={selectSocket === index}
+                      onClick={() => setSelectSocket(index)}
+                    />
+                  ))}
               </div>
             </div>
 
@@ -304,14 +321,14 @@ const SessionSettings = () => {
                 bukan angka yang sesungguhnya.
               </p>
 
-              <div className="between py-4 px-3 bg-primary100/10 rounded-lg">
+              <div className="between-x py-4 px-3 bg-primary100/10 rounded-lg">
                 <div>
                   <p className="text-xs text-black70 mb-2">Spesifikasi:</p>
                   <div
-                    onClick={() => {}}
+                    onClick={() => setOpenVA(true)}
                     className="row gap-2.5 cursor-pointer"
                   >
-                    <p className="text-primary100 font-medium">48V 2A</p>
+                    <p className="text-primary100 font-medium">{`${form?.voltage}V ${form?.ampere}A`}</p>
 
                     <IcEditGreen />
                   </div>
@@ -329,17 +346,7 @@ const SessionSettings = () => {
             </div>
 
             {/* COST INFORMATION */}
-            <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
-              <div className="row gap-3 mb-4">
-                <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
-                  <IcInfoCircleGreen />
-                </div>
-
-                <p className="text-blackBold font-medium">Informasi Biaya</p>
-              </div>
-
-              <Tabs tabs={tabsCostInformation} />
-            </div>
+            <PriceInformation  data={data} isHideParking/>
           </div>
         </div>
 
@@ -347,7 +354,7 @@ const SessionSettings = () => {
         <div className="drop-shadow p-4 bg-white">
           <div
             onClick={() => setVisiblePaymentMethod(true)}
-            className="between cursor-pointer"
+            className="between-x cursor-pointer"
           >
             <FormatPaymentMethod />
 
@@ -356,7 +363,7 @@ const SessionSettings = () => {
 
           <Separator className="my-2.5" />
 
-          <div className="between">
+          <div className="between-x">
             <p className="text-base text-black100/70">
               Total: <a className="text-blackBold font-bold">{total}</a>
             </p>
@@ -377,6 +384,23 @@ const SessionSettings = () => {
         select={selectedPayment || ""}
         onDismiss={() => setVisiblePaymentMethod(false)}
         onSelect={(value) => setSelectedPayment(value)}
+      />
+
+      <ModalVoltageAmpere
+        visible={openVA}
+        select={{
+          voltage: form.voltage,
+          ampere: form.ampere,
+        }}
+        onDismiss={() => setOpenVA(false)}
+        onSelect={(select) => {
+          const cloneData = clone(form);
+          cloneData.voltage = select?.voltage || 0;
+          cloneData.ampere = select?.ampere || 0;
+
+          setOpenVA(false);
+          setForm("all", cloneData);
+        }}
       />
     </Container>
   );

@@ -1,7 +1,8 @@
 import { useCallback } from "react";
+import { Socket } from "../../../common";
 
 interface SocketItemProps {
-  data: number;
+  data: Socket;
   position: number;
   isActive: boolean;
   onClick: () => void;
@@ -17,7 +18,7 @@ const SocketItem: React.FC<SocketItemProps> = ({
     let value: string = "";
 
     if (isActive) value = "border-primary100 bg-primary10 cursor-pointer";
-    else if (data === 1)
+    else if (data?.IsCharging === 1)
       value = "border-primary100 bg-primary100 text-white cursor-not-allowed";
     else value = "border-black/1 bg-white cursor-pointer";
 
@@ -29,14 +30,14 @@ const SocketItem: React.FC<SocketItemProps> = ({
   const getLabelSocket = useCallback(() => {
     let value: string | number;
 
-    if (data === 1) value = "Terpakai";
+    if (data?.IsCharging === 1) value = "Terpakai";
     else value = position;
 
     return value;
   }, [data]);
 
   const onSelect = () => {
-    if (data === 0) onClick();
+    if (data?.IsCharging === 0) onClick();
   };
 
   return (

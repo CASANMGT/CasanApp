@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import { Header, InputCode, Separator } from "../components";
+import { useAuth } from "../context/AuthContext";
 import {
   fetchLogin,
   hideLoading,
@@ -11,16 +12,15 @@ import {
 } from "../features";
 import { formatPhoneNumber } from "../helpers/formatter";
 import { AppDispatch, RootState } from "../store";
-import { useAuth } from "../context/AuthContext";
 
 const VerificationNumber = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const location = useLocation();
   const navigate: NavigateFunction = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login } = useAuth();
 
-  const login = useSelector((state: RootState) => state.login);
+  const dataLogin = useSelector((state: RootState) => state.login);
 
   const [codes, setCodes] = useState<string[]>(["", "", "", ""]);
   const [phoneNumber, setPhoneNumber] = useState<string>("");
@@ -47,16 +47,17 @@ const VerificationNumber = () => {
   }, [counter]);
 
   useEffect(() => {
-    if (login?.loading) dispatch(showLoading());
+    if (dataLogin?.loading) dispatch(showLoading());
     else dispatch(hideLoading());
 
-    if (login.data) {
+    if (dataLogin.data) {
       dispatch(resetDataLogin());
+      login();
       navigate("/home/index", { replace: true });
-    } else if (login.error) {
-      alert(login.error);
+    } else if (dataLogin.error) {
+      alert(dataLogin.error);
     }
-  }, [login]);
+  }, [dataLogin]);
 
   const getData = () => {
     dispatch(resetDataLogin());

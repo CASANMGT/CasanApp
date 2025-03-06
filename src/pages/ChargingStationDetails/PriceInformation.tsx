@@ -5,6 +5,7 @@ import { DataChargingStation, TabItemProps } from "../../common";
 
 interface PriceInformationProps {
   data: DataChargingStation | undefined;
+  isHideParking?: boolean;
 }
 
 interface TransformedData {
@@ -13,7 +14,10 @@ interface TransformedData {
   content: { watt: string; price: number }[];
 }
 
-const PriceInformation: React.FC<PriceInformationProps> = ({ data }) => {
+const PriceInformation: React.FC<PriceInformationProps> = ({
+  data,
+  isHideParking,
+}) => {
   const [tabItem, setTabItem] = useState<TabItemProps[]>();
 
   useEffect(() => {
@@ -71,8 +75,12 @@ const PriceInformation: React.FC<PriceInformationProps> = ({ data }) => {
 
       <Tabs type="flex" tabs={tabItem} />
 
-      <p className="font-medium mt-3 mb-2">Biaya Parkir</p>
-      <p className="text-xs text-black90">Gratis Parkir</p>
+      {!isHideParking && (
+        <>
+          <p className="font-medium mt-3 mb-2">Biaya Parkir</p>
+          <p className="text-xs text-black90">Gratis Parkir</p>
+        </>
+      )}
     </div>
   );
 };

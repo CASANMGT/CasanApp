@@ -1,4 +1,5 @@
 import InputOTPModal from "./InputOTPModal";
+import ModalVoltageAmpere from "./ModalVoltageAmpere";
 import InputPhoneNumberModal from "./InputPhoneNumberModal";
 import ModalContainer from "./ModalContainer";
 import RequestOTPModal from "./RequestOTPModal";
@@ -11,6 +12,7 @@ export {
     ModalContainer,
     RequestOTPModal,
     AlertModal,
-    ModalPaymentMethod
+    ModalPaymentMethod,
+    ModalVoltageAmpere
 };
 

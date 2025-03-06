@@ -41,7 +41,7 @@ const RoutesPage = () => {
         />
         <Route
           path="charging-station-details"
-          element={<ChargingStationDetails />}
+          element={<ProtectedRoute element={<ChargingStationDetails />} />}
         />
         <Route path="input-pin" element={<InputPin />} />
         <Route path="location-list" element={<LocationList />} />
@@ -49,7 +49,10 @@ const RoutesPage = () => {
         <Route path="scan" element={<Scan />} />
         <Route path="select-bank" element={<SelectBank />} />
         <Route path="select-payment-method" element={<SelectPaymentMethod />} />
-        <Route path="session-settings/:id" element={<SessionSettings />} />
+        <Route
+          path="session-settings"
+          element={<ProtectedRoute element={<SessionSettings />} />}
+        />
         <Route path="session-details" element={<SessionDetails />} />
         <Route path="top-up-balance" element={<TopUpBalance />} />
         <Route path="transaction-history" element={<TransactionHistory />} />
@@ -62,7 +65,7 @@ const RoutesPage = () => {
         <Route path="withdraw" element={<Withdraw />} />
 
         {/* BOTTOM NAVIGATION */}
-        <Route path="home" element={<Main />}>
+        <Route path="home" element={<ProtectedRoute element={<Main />} />}>
           <Route path="index" element={<Home />}></Route>
           <Route path="location" element={<Location />} />
           <Route path="history" element={<History />} />

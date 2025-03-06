@@ -19,9 +19,12 @@ export type CoordinateProps = {
   lng: number;
 };
 
-export type OptionDropdownProps = {
+export type OptionsProps = {
   name: string | number;
   value: string | number;
+  target?: any;
+  disabled?: boolean;
+  data?: any;
 };
 
 export type chargingLocationProps = {

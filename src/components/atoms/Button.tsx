@@ -7,7 +7,7 @@ interface SizeButtonStyleProps {
 
 interface ButtonProps {
   className?: string;
-  type?: "primary" | "secondary" | "danger" | "light-green";
+  type?: "primary" | "secondary" | "danger" | "light-green" | "primary-line";
   buttonType?: "sm" | "md" | "lg";
   label: string;
   iconRight?: any;
@@ -31,6 +31,11 @@ const Button: React.FC<ButtonProps> = ({
     if (disabled) value = "btn-disable";
     else
       switch (type) {
+        case "primary-line":
+          value =
+            "bg-primary10 text-primary100 border-primary100  cursor-pointer";
+          break;
+
         case "secondary":
           value = "btn-secondary";
           break;

@@ -1,14 +1,15 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { IcDownGray } from "../../assets";
-import { OptionDropdownProps } from "../../common";
+import {  OptionsProps } from "../../common";
 import Separator from "./Separator";
 
 interface DropdownProps {
   className?:string
   select: string | number | undefined;
   placeholder: string;
-  options: OptionDropdownProps[];
-  onSelect: (select: OptionDropdownProps) => void;
+  disabled?: boolean;
+  options: OptionsProps[];
+  onSelect: (select: OptionsProps) => void;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -16,6 +17,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   select,
   placeholder,
   options,
+  disabled,
   onSelect,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,10 +26,28 @@ const Dropdown: React.FC<DropdownProps> = ({
     setIsOpen(!isOpen);
   };
 
+  const getValue = useCallback(() => {
+    let value: string | number | undefined;
+
+    const i =
+      select && options
+        ? options.findIndex(
+            (item) => item?.value.toString() === select.toString()
+          )
+        : -1;
+
+    if (i > -1) value = options && options[i].name;
+    else value = select;
+
+    return value;
+  }, [select, options]);
+
   const isShowOption = useMemo(
     () => (options && options.length ? true : false),
     [options]
   );
+
+  const value = getValue();
 
   return (
     <div
@@ -40,8 +60,8 @@ const Dropdown: React.FC<DropdownProps> = ({
         className="flex items-center justify-between w-full h-[48px] px-6 bg-white border border-baseGray rounded-full shadow-sm hover:bg-gray-100 focus:outline-none"
         onClick={toggleDropdown}
       >
-        {select ? (
-          <span className="font-medium">{select}</span>
+        {value ? (
+          <span className="font-medium">{value}</span>
         ) : (
           <span className="text-black100/70">{placeholder}</span>
         )}
@@ -57,24 +77,38 @@ const Dropdown: React.FC<DropdownProps> = ({
       {/* Dropdown Menu */}
       {(isOpen || !isOpen) && isShowOption && (
         <div
-          className={`absolute left-0 w-full py-3 px-6 mt-1 bg-white border border-baseGray rounded-xl shadow-lg transform transition-all duration-200 ${
-            isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+          className={`dropdown-menu ${
+            isOpen
+              ? "opacity-100 translate-y-0 z-10"
+              : "opacity-0 translate-y-2 invisible"
           }`}
         >
-          <ul>
-            {options.map((item: OptionDropdownProps, index: number) => {
-              const isLast: boolean = index === options.length - 1;
-              return (
-                <li
-                  onClick={() => onSelect(item)}
-                  className="font-medium hover:bg-gray-100"
-                >
-                  {item?.name}
-
-                  {!isLast && <Separator />}
-                </li>
-              );
-            })}
+          <ul className="flex flex-col cursor-pointer">
+            {options &&
+              options.length &&
+              options.map((item: OptionsProps, index: number) => {
+                const isLast: boolean = index === options.length - 1;
+                return (
+                  <li
+                    key={index + 1}
+                    onClick={() => {
+                      if (!item?.disabled && !disabled) {
+                        onSelect(item);
+                        setIsOpen(false);
+                      }
+                    }}
+                    className={`font-medium p-2 ${
+                      !isLast && "border-b border-b-baseLightGray"
+                    } ${
+                      item?.disabled
+                        ? "text-black50 cursor-not-allowed"
+                        : "text-black100 cursor-pointer hover:rounded-md hover:bg-gray-100"
+                    }`}
+                  >
+                    {item?.name}
+                  </li>
+                );
+              })}
           </ul>
         </div>
       )}

@@ -60,7 +60,7 @@ const loginSlice = createSlice({
         (state, action: PayloadAction<LoginResponseProps>) => {
           state.loading = false;
           state.data = action.payload;
-          localStorage.setItem("token", JSON.stringify(action.payload?.token));
+          localStorage.setItem("token", JSON.stringify(action?.payload?.token));
         }
       )
       .addCase(fetchLogin.rejected, (state, action) => {

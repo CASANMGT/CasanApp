@@ -3,28 +3,19 @@ import { useDispatch } from "react-redux";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import {
   IcBackBlack,
-  IcCopyBlack,
   IcDownCircleGreen,
   IcFuelGreen,
   IcFuelRed,
-  IcPhoneGreen,
   IcShareGreen,
   ILNoImage,
 } from "../../assets";
-import { DummyChargingLocation } from "../../assets/dummy";
 import { DataChargingStation } from "../../common";
-import {
-  CostInformationItem,
-  DeviceListItem,
-  OperatingHoursItem,
-  Separator,
-} from "../../components";
+import { DeviceListItem, Separator } from "../../components";
 import { showToast } from "../../features/toastSlice";
-import { formatPhoneNumber } from "../../helpers/formatter";
-import { AppDispatch } from "../../store";
 import { getDistanceFromLatLonInKm } from "../../helpers";
-import PriceInformation from "./PriceInformation";
+import { AppDispatch } from "../../store";
 import BasicInformation from "./BasicInformation";
+import PriceInformation from "./PriceInformation";
 
 const operatingHoursData = [1, 2];
 const deviceListData = [1, 2, 3];
@@ -211,7 +202,14 @@ const ChargingStationDetails = () => {
               key={index}
               data={item}
               isLast={index === dataDeviceList.length - 1}
-              onClick={() => {}}
+              onClick={() =>
+                navigate("/session-settings", {
+                  state: {
+                    data: data,
+                    selectedDevice: item,
+                  },
+                })
+              }
             />
           ))}
 
