@@ -25,13 +25,17 @@ const initialState: AuthState = {
 // Async thunk for user login
 export const fetchLogin = createAsyncThunk(
   "fetchLogin",
-  async (body: LoginRequest) => {
-    const res = await Api.post({
-      url: "login",
-      body,
-    });
+  async (body: LoginRequest, { rejectWithValue }) => {
+    try {
+      const res = await Api.post({
+        url: "login",
+        body,
+      });
 
-    return res?.data as LoginResponseProps;
+      return res?.data as LoginResponseProps;
+    } catch (e) {
+      return rejectWithValue(e);
+    }
   }
 );
 
@@ -64,6 +68,9 @@ const loginSlice = createSlice({
         }
       )
       .addCase(fetchLogin.rejected, (state, action) => {
+        const dataError: any = action?.payload;
+        if (dataError?.message) alert(dataError?.message);
+
         state.loading = false;
         state.error = action.error.message ?? "Login failed";
       });

@@ -1,55 +1,87 @@
 import { IcEditGreen } from "../../assets";
-import { NominalTopUpItem, Separator } from "../../components";
-import { rupiah } from "../../helpers";
+import { NOMINAL } from "../../common";
+import { Button, NominalTopUpItem, Separator } from "../../components";
+import { convertToHours } from "../../helpers";
 
 interface InputHourProps {
   value: string;
+  loading:boolean
   onChange: (value: string) => void;
+  onOpen: () => void;
+  onCalculate: () => void;
 }
 
-const nominalDataDummy: string[] = ["30", "60", "90", "full"];
+const InputHour: React.FC<InputHourProps> = ({
+  value,
+  loading,
+  onChange,
+  onOpen,
+  onCalculate,
+}) => {
+  const validation = (select: string) => {
+    let condition = false;
+    const convert = convertToHours(value);
 
-const InputHour: React.FC<InputHourProps> = ({ value, onChange }) => {
-  const onEditChargingFee = () => {
-    alert("coming soon");
+    if (String(convert) === select) condition = true;
+
+    return condition;
   };
+
+  const handleChange = (select: string) => {
+    if (select !== "full") {
+      const newValue: string = `${String(select).padStart(2, "0")}:00`;
+
+      onChange(newValue);
+    }
+  };
+
+  const splitValue: string[] = value.split(":");
 
   return (
     <>
       <p className="text-xs text-black100/70 mb-[14px]">
-        Silakan masukan waktu pengisian sesuai dengan daya kebutuhan anda
+        Silakan masukkan waktu pengisian sesuai dengan daya kebutuhan anda
       </p>
 
+      <div
+        onClick={onOpen}
+        className="h-[56px] center relative rounded-lg bg-baseGray mb-3 cursor-pointer"
+      >
+        <div className="absolute p-2 bottom-0 right-0 ">
+          <IcEditGreen />
+        </div>
+
+        <div className="flex justify-end space-x-1 text-black70 text-lg font-semibold">
+          <span className="text-base text-black100">{splitValue[0]}</span>
+          <span className="text-[10px]">Jam</span>
+          <span className="text-base text-black100">{splitValue[1]}</span>
+          <span className="text-[10px]">Menit</span>
+        </div>
+      </div>
+
       <div className="grid grid-cols-2 gap-3">
-        {nominalDataDummy.map((item, index: number) => (
+        {NOMINAL.map((item, index: number) => (
           <NominalTopUpItem
             key={index}
             value={item}
-            isActive={value === item}
+            isActive={validation(item)}
             isHour
-            onClick={() => onChange(item === "full" ? "120" : item)}
+            onClick={() => {
+              handleChange(item);
+            }}
           />
         ))}
       </div>
 
-      {/* <Separator className="my-4 bg-black10" /> */}
+      <Separator className="my-[14px]" />
 
-      {/* <div>
-        <p className="text-blackBold mb-2.5 font-medium">Biaya Pengecasan</p>
-
-        <div className="between py-4 px-3 bg-primary100/10 rounded-lg">
-          <div
-            onClick={onEditChargingFee}
-            className="row gap-2.5 cursor-pointer"
-          >
-            <p className="text-primary100 font-medium">48V 2A</p>
-
-            <IcEditGreen />
-          </div>
-
-          <p className="text-lg font-semibold">Rp{rupiah(9000)}</p>
-        </div>
-      </div> */}
+      <Button
+        type="secondary"
+        label="Hitung Biaya"
+        loading={loading}
+        disabled={!value}
+        onClick={onCalculate}
+      />
     </>
   );
 };

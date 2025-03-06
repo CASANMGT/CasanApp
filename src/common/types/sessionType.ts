@@ -20,6 +20,10 @@ export interface SessionHeaderProps {
 }
 
 export type FormSession = {
-  voltage:string|number
-  ampere: string|number;
+  voltage: string | number;
+  ampere: string | number;
+  selectedSocket: number | undefined;
+  selectedTab: string;
+  nominal: string;
+  time: string;
 };

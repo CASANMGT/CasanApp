@@ -6,10 +6,12 @@ interface ModalContainerProps {
   children: any;
   isBottom?: boolean;
   onDismiss: () => void;
+  classNameBottom?:string
 }
 
 const ModalContainer: React.FC<ModalContainerProps> = ({
   visible,
+  classNameBottom,
   children,
   isBottom,
   onDismiss,
@@ -34,7 +36,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
         <motion.div
           className={`shadow-lg ${
             isBottom
-              ? "absolute left-0 right-0 bottom-0 h-3/4 flex"
+              ? `absolute left-0 right-0 bottom-0 h-3/4 flex ${classNameBottom}`
               : "bg-white rounded-lg p-4 w-96"
           }`}
           onClick={(e) => e.stopPropagation()}

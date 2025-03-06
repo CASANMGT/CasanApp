@@ -1,19 +1,32 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
-const hours = Array.from({ length: 23 }, (_, i) =>
-  String(i + 1).padStart(2, "0")
+const hours = Array.from({ length: 24 }, (_, i) =>
+  String(i).padStart(2, "0")
 );
 const minutes = ["00", "15", "30", "45"];
 
 const ITEM_HEIGHT = 28; // Adjust based on Tailwind styles
 
-const WheelPicker: React.FC = () => {
-  const [selectedHour, setSelectedHour] = useState(hours[0]);
-  const [selectedMinute, setSelectedMinute] = useState(minutes[0]);
+interface WheelPickerProps {
+  value: [string, string];
+  onChange: (value: [string, string]) => void;
+}
 
+const WheelPicker: React.FC<WheelPickerProps> = ({ value, onChange }) => {
   const hourRef = useRef<HTMLDivElement>(null);
   const minuteRef = useRef<HTMLDivElement>(null);
   const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    console.log("cek hasil", value);
+    const index = hours.findIndex((e) => e === value[0]);
+
+    if (index > -1)
+      hourRef.current?.scrollTo({
+        top: index * ITEM_HEIGHT,
+        behavior: "smooth",
+      });
+  }, [value]);
 
   // Ensure perfect centering on scroll stop
   const handleScrollEnd = useCallback(
@@ -50,6 +63,14 @@ const WheelPicker: React.FC = () => {
     }, 200); // Adjust delay for better UX
   };
 
+  const onSelectHour = (select: string) => {
+    onChange([select, value[1]]);
+  };
+
+  const onSelectMinute = (select: string) => {
+    onChange([value[0], select]);
+  };
+
   // Render picker column
   const renderPicker = (
     items: string[],
@@ -60,7 +81,7 @@ const WheelPicker: React.FC = () => {
     <div className="w-16 h-[84px] overflow-hidden relative flex flex-col items-center">
       <div
         ref={ref}
-        className="w-full h-full overflow-y-scroll scroll-smooth snap-y snap-mandatory"
+        className="w-full h-full overflow-y-scroll scroll-smooth snap-y snap-mandatory scrollbar-none"
         onScroll={() => handleScroll(ref, items, setSelected)}
       >
         <div className="h-[28px]"></div> {/* Top Spacer for centering */}
@@ -80,11 +101,11 @@ const WheelPicker: React.FC = () => {
   );
 
   return (
-    <div className="flex justify-center gap-4 p-4 bg-white rounded-xl shadow-lg">
+    <div className="relative flex justify-center gap-4 p-4 bg-white">
       <div className="absolute top-1/2 left-0 w-full h-[28px] bg-primary10 transform -translate-y-1/2 pointer-events-none rounded-md"></div>
 
-      {renderPicker(hours, selectedHour, setSelectedHour, hourRef)}
-      {renderPicker(minutes, selectedMinute, setSelectedMinute, minuteRef)}
+      {renderPicker(hours, value[0], onSelectHour, hourRef)}
+      {renderPicker(minutes, value[1], onSelectMinute, minuteRef)}
     </div>
   );
 };

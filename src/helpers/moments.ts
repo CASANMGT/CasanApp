@@ -32,3 +32,25 @@ export const timeToSeconds = (time: string): number => {
   const [hours, minutes] = time.split(":").map(Number);
   return hours * 3600 + minutes * 60;
 };
+
+export const convertToHours = (time: string): number => {
+  if (!time) return 0;
+  
+  const [hh, mm] = time.split(":").map(Number);
+  return hh + (mm > 0 ? mm / 60 : 0);
+};
+
+export const formatDuration = (seconds: number): string => {
+  let value: string = "";
+
+  if (seconds > 0) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+
+    value = `${
+      hours ? `${hours} jam${hours > 1 ? "s" : ""} ` : ""
+    }${minutes} menit`;
+  }
+
+  return value;
+};

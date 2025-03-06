@@ -15,6 +15,8 @@ import {
   IcSocketCircleGreen,
 } from "../../assets";
 import {
+  CalculateChargeBody,
+  CalculateDurationBody,
   DataChargingStation,
   Device,
   FormDefaultSession,
@@ -23,41 +25,30 @@ import {
 import {
   Button,
   Container,
-  CostInformationItem,
   LoadingPage,
+  ModalInputHour,
   ModalPaymentMethod,
   ModalVoltageAmpere,
   Separator,
+  Signal,
   SocketItem,
   Tabs,
 } from "../../components";
+import { fetchCalculateCharge, fetchCalculateDuration } from "../../features";
 import {
+  formatDuration,
   getIconPaymentMethod,
   getLabelPaymentMethod,
   rupiah,
   useForm,
 } from "../../helpers";
 import { setFormCharging } from "../../redux";
-import { fetchSessionSetting } from "../../services/request";
 import { AppDispatch, RootState } from "../../store";
 import PriceInformation from "../ChargingStationDetails/PriceInformation";
 import InputHour from "./InputHour";
 import InputNominal from "./InputNominal";
 
 const costMax: number = 800; //jam
-const dataPortStatusDummy: number[] = [0, 0];
-const dataCostInformation = [
-  {
-    id: 1,
-    watt: "0-250W",
-    price: 800,
-  },
-  {
-    id: 1,
-    watt: "251-500W",
-    price: 1600,
-  },
-];
 
 const tabsNominalHour = [
   {
@@ -74,39 +65,6 @@ const tabsNominalHour = [
   },
 ];
 
-const tabsCostInformation = [
-  {
-    id: "1",
-    label: "07:00 - 11:59",
-    content: (
-      <div className="p-3 bg-primary10 rounded-lg">
-        {dataCostInformation.map((item, index: number) => (
-          <CostInformationItem
-            key={index}
-            data={item}
-            isLast={index === dataCostInformation.length - 1}
-          />
-        ))}
-      </div>
-    ),
-  },
-  {
-    id: "2",
-    label: "12:00 - 19:00",
-    content: (
-      <div className="p-3 bg-primary10 rounded-lg">
-        {dataCostInformation.map((item, index: number) => (
-          <CostInformationItem
-            key={index}
-            data={item}
-            isLast={index === dataCostInformation.length - 1}
-          />
-        ))}
-      </div>
-    ),
-  },
-];
-
 const SessionSettings = () => {
   const navigate: NavigateFunction = useNavigate();
   const location = useLocation();
@@ -116,15 +74,18 @@ const SessionSettings = () => {
   const sessionSetting = useSelector(
     (state: RootState) => state.sessionSetting
   );
-  const { formData } = useSelector((state: RootState) => state.formCharging);
+  const calculateCharge = useSelector(
+    (state: RootState) => state.calculateCharge
+  );
+  const calculateDuration = useSelector(
+    (state: RootState) => state.calculateDuration
+  );
 
   const [form, setForm] = useForm<FormSession>(FormDefaultSession);
 
+  const [openInputHour, setOpenInputHour] = useState<boolean>(false);
   const [visiblePaymentMethod, setVisiblePaymentMethod] =
     useState<boolean>(false);
-  const [selectTabInput, setSelectTabInput] = useState<string | number>("1");
-  const [selectSocket, setSelectSocket] = useState<number>();
-  const [nominal, setNominal] = useState<string>();
   const [time, setTime] = useState<string>();
   const [total, setTotal] = useState<string>();
   const [selectedPayment, setSelectedPayment] = useState<string>();
@@ -134,36 +95,23 @@ const SessionSettings = () => {
   );
   const [openVA, setOpenVA] = useState<boolean>(false);
 
-  console.log("cek selectedDevice", selectedDevice);
-
   useEffect(() => {}, []);
-
-  const getData = () => {
-    if (id) dispatch(fetchSessionSetting(id));
-    else {
-      alert("perangkat tidak ditemukan");
-      navigate("/home", { replace: true });
-    }
-  };
 
   const onDismiss = () => {
     navigate(-1);
   };
-  const getTotalDuration = useCallback(() => {
-    const currentNominal: number = Number(
-      nominal?.replace("Rp", "").replace(/\./g, "") || 0
-    );
-    let value: string = "Rp0";
+  const formateCalculate = useCallback(() => {
+    let value: string = "";
+    if (form.selectedTab === "2" && calculateCharge?.data) {
+      value = `Rp${rupiah(calculateCharge?.data)}`;
+    } else if (calculateDuration?.data) {
+      console.log("cek masuk", calculateDuration);
 
-    if (currentNominal > 0 && selectTabInput === "1") {
-      const totalSecond: number = (currentNominal / costMax) * 3600;
-      value = setDuration(totalSecond);
-    } else if (selectTabInput === "2" && Number(time) > 0) {
-      value = `Rp${rupiah((Number(time || 0) / 60) * costMax)}`;
+      value = formatDuration(calculateDuration?.data || 0);
     }
 
     return value;
-  }, [nominal, time, selectTabInput]);
+  }, [form?.nominal, form.time, form.selectedTab, calculateCharge?.data]);
 
   const FormatPaymentMethod: () => JSX.Element = useCallback(() => {
     if (selectedPayment) {
@@ -189,7 +137,7 @@ const SessionSettings = () => {
     let value: boolean = true;
 
     if (
-      selectSocket !== undefined &&
+      form?.selectedSocket !== undefined &&
       Number(total?.replace("Rp", "").replace(/\./g, "") || 0) > 0 &&
       selectedPayment
     )
@@ -198,11 +146,36 @@ const SessionSettings = () => {
     return value;
   };
 
+  const onCalculate = (type: "duration" | "charge") => {
+    if (type === "charge") {
+      const duration =
+        Number(form?.time[0] || 0) * 3600 + Number(form?.time[1] || 0) * 60;
+
+      const body: CalculateChargeBody = {
+        id: data.PriceSettingID,
+        vehicle_type: 1,
+        duration,
+        watt: Number(form?.voltage || 0) * Number(form?.ampere || 0),
+      };
+
+      dispatch(fetchCalculateCharge(body));
+    } else if (type === "duration") {
+      const body: CalculateDurationBody = {
+        id: data.PriceSettingID,
+        total_charge: Number(form.nominal.replace("Rp", "").replace(/\./g, "")),
+        vehicle_type: 1,
+        watt: Number(form?.voltage || 0) * Number(form?.ampere || 0),
+      };
+
+      dispatch(fetchCalculateDuration(body));
+    }
+  };
+
   const onNext = () => {
     const body = {
       deviceId: id,
       price: Number(total?.replace("Rp", "").replace(/\./g, "")),
-      port: Number(selectSocket) + 1,
+      port: Number(form?.selectedSocket) + 1,
       paymentMethod: selectedPayment,
     };
 
@@ -241,9 +214,7 @@ const SessionSettings = () => {
 
             <div className="between-x">
               <div className="row gap-2">
-                <div className="w-[22px] h-[22px] rounded-full center bg-primary30">
-                  <p className="text-[10px] text-primary100 font-semibold">A</p>
-                </div>
+                <Signal signalValue={selectedDevice?.SignalValue} />
 
                 <p className="text-xs font-medium">{selectedDevice?.Name}</p>
               </div>
@@ -261,16 +232,14 @@ const SessionSettings = () => {
               </div>
 
               <div className="grid grid-cols-4 gap-3">
-                {/* {data?.portStatus &&
-                  data?.portStatus.map((item, index: number) => ( */}
                 {selectedDevice?.Sockets &&
                   selectedDevice?.Sockets.map((item, index: number) => (
                     <SocketItem
                       key={index}
                       data={item}
                       position={index + 1}
-                      isActive={selectSocket === index}
-                      onClick={() => setSelectSocket(index)}
+                      isActive={form?.selectedSocket === index}
+                      onClick={() => setForm("selectedSocket", item)}
                     />
                   ))}
               </div>
@@ -280,27 +249,32 @@ const SessionSettings = () => {
             <div className="bg-white py-4 px-3 rounded-lg mb-3">
               <Tabs
                 tabs={tabsNominalHour}
-                onSelect={(select) => setSelectTabInput(select)}
+                onSelect={(select) => setForm("selectedTab", select)}
               />
 
-              {selectTabInput === "1" ? (
+              {form?.selectedTab === "1" ? (
                 <InputNominal
                   value={total || ""}
+                  loading={false}
                   onChange={(value) => {
                     setTotal(value);
-                    setNominal(value);
+                    setForm("nominal", value);
                   }}
+                  onCalculate={() => onCalculate("duration")}
                 />
               ) : (
                 <InputHour
-                  value={time || ""}
+                  value={form.time}
+                  loading={calculateCharge?.loading}
                   onChange={(value) => {
                     const formatted = `Rp${rupiah(
                       (Number(value || 0) / 60) * costMax
                     )}`;
                     setTotal(formatted);
-                    setTime(value);
+                    setForm("time", value);
                   }}
+                  onOpen={() => setOpenInputHour(true)}
+                  onCalculate={() => onCalculate("charge")}
                 />
               )}
             </div>
@@ -328,7 +302,7 @@ const SessionSettings = () => {
                     onClick={() => setOpenVA(true)}
                     className="row gap-2.5 cursor-pointer"
                   >
-                    <p className="text-primary100 font-medium">{`${form?.voltage}V ${form?.ampere}A`}</p>
+                    <p className="font-medium">{`${form?.voltage}V ${form?.ampere}A`}</p>
 
                     <IcEditGreen />
                   </div>
@@ -336,17 +310,17 @@ const SessionSettings = () => {
 
                 <div className="w-2/5">
                   <p className="text-xs text-black70 mb-2">
-                    {selectTabInput === "1"
+                    {form?.selectedTab === "1"
                       ? "Kisaran Durasi:"
                       : "Biaya Pengecasan"}
                   </p>
-                  <p className="text-lg font-semibold">{getTotalDuration()}</p>
+                  <p className="text-lg font-semibold">{formateCalculate()}</p>
                 </div>
               </div>
             </div>
 
             {/* COST INFORMATION */}
-            <PriceInformation  data={data} isHideParking/>
+            <PriceInformation data={data} isHideParking />
           </div>
         </div>
 
@@ -400,6 +374,16 @@ const SessionSettings = () => {
 
           setOpenVA(false);
           setForm("all", cloneData);
+        }}
+      />
+
+      <ModalInputHour
+        open={openInputHour}
+        value={form.time}
+        onDismiss={() => setOpenInputHour(false)}
+        onChange={(value) => {
+          setOpenInputHour(false);
+          setForm("time", value);
         }}
       />
     </Container>

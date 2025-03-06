@@ -16,16 +16,16 @@ const NominalTopUpItem: React.FC<NominalTopUpItemProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`center h-9 bg-gray-8 border rounded-full cursor-pointer ${
+      className={`center h-9 border rounded-full cursor-pointer ${
         isActive
           ? " border-primary100 bg-primary10 text-primary100"
-          : "border-black90 bg-white text-black90"
+          : "border-black90 bg-[#f5f5f5] text-black90"
       }`}
     >
       {value === "full"
         ? "isi sampai penuh"
         : isHour
-        ? `${value} menit`
+        ? `${value} jam`
         : `Rp${rupiah(value)}`}
     </div>
   );

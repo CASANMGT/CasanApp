@@ -3,6 +3,8 @@ import { configureStore } from "@reduxjs/toolkit";
 import loginReducer from "../features/auth/loginSlice";
 import chargingStationReducer from "../features/chargingStations/chargingStationSlice";
 import globalReducer from "../features/globalSlice";
+import calculateChargeReducer from "../features/priceRule/calculateChargeSlice";
+import calculateDurationReducer from "../features/priceRule/calculateDurationSlice";
 import toastReducer from "../features/toastSlice";
 import chargingSessionReducer from "../redux/charging/chargingSessionSlice";
 import chargingStartReducer from "../redux/charging/chargingStartSlice";
@@ -27,6 +29,10 @@ export const store = configureStore({
     formCharging: formChargingReducer,
     chargingStart: chargingStartReducer,
     chargingSession: chargingSessionReducer,
+
+    // PRICE RULE
+    calculateCharge: calculateChargeReducer,
+    calculateDuration: calculateDurationReducer,
   },
 });
 

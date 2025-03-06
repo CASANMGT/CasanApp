@@ -28,13 +28,17 @@ const initialState: ChargingStationState = {
 // Async thunk for get charging station
 export const fetchChargingStation = createAsyncThunk(
   "fetchChargingStation",
-  async (params: ChargingStationBody) => {
-    const res = await Api.get({
-      url: "stations",
-      params,
-    });
+  async (params: ChargingStationBody, { rejectWithValue }) => {
+    try {
+      const res = await Api.get({
+        url: "stations",
+        params,
+      });
 
-    return res as ChargingStationResponseProps;
+      return res as ChargingStationResponseProps;
+    } catch (e) {
+      return rejectWithValue(e);
+    }
   }
 );
 
@@ -52,7 +56,7 @@ const chargingStationSlice = createSlice({
         fetchChargingStation.fulfilled,
         (state, action: PayloadAction<ChargingStationResponseProps>) => {
           const newData = action?.payload;
-          
+
           if (
             action?.payload?.meta?.page > 1 &&
             state.data?.data &&
@@ -71,6 +75,9 @@ const chargingStationSlice = createSlice({
         }
       )
       .addCase(fetchChargingStation.rejected, (state, action) => {
+        const dataError: any = action?.payload;
+        if (dataError?.message) alert(dataError?.message);
+        
         state.loading = false;
         state.data = null;
         state.error = action.error.message ?? "failed";
