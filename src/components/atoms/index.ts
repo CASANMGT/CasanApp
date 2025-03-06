@@ -15,6 +15,7 @@ import StatusIndicator from "./StatusIndicator";
 import SubTitle from "./SubTitle";
 import Timer from "./Timer";
 import Spinner from "./Spinner";
+import WheelPicker from "./WheelPicker";
 
 
 export {
@@ -34,6 +35,7 @@ export {
   StatusIndicator,
   SubTitle,
   Timer,
-  Spinner
+  Spinner,
+  WheelPicker
 };
 
