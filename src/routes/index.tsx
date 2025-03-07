@@ -37,8 +37,9 @@ const RoutesPage = () => {
         <Route index element={<Splash />} />
         <Route path="coming-soon" element={<ComingSoon />} />
         <Route
-          path="charging"
-          element={<ProtectedRoute element={<Charging />} />}
+          path="charging/:id"
+          element={<Charging/>}
+          // element={<ProtectedRoute element={<Charging />} />}
         />
         <Route
           path="charging-station-details"

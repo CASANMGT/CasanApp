@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   IcClockGreen,
   IcFlashGreen,
@@ -33,9 +33,11 @@ import { AppDispatch, RootState } from "../store";
 
 const Charging = () => {
   const navigate = useNavigate();
+  const { id } = useParams()
   const dispatch = useDispatch<AppDispatch>();
 
   const { formData } = useSelector((state: RootState) => state.formCharging);
+  const detailSession = useSelector((state: RootState) => state.detailSession);
 
   const { loading, data } = useSelector(
     (state: RootState) => state.chargingStart
@@ -81,12 +83,7 @@ const Charging = () => {
   }, [status]);
 
   const getData = () => {
-    if (!formData?.deviceId || !formData?.port || !formData?.price) {
-      alert("perangkat tidak ditemukan");
-      navigate("/home", { replace: true });
-    } else {
-      dispatch(resetDataChargingStart());
-    }
+   
   };
 
   const onDismiss = () => {

@@ -1,4 +1,8 @@
+import { ChargingStation, Socket } from "./chargingStationsType";
+import { Device } from "./deviceType";
 import { FeeSettingsProps } from "./feeSettingsType";
+import { Transaction } from "./transactionType";
+import { DataUser } from "./userType";
 
 export interface SessionSettingProps {
   data: SessionProps | null;
@@ -39,4 +43,36 @@ export type AddSessionBody = {
   socket_id: number;
   station_id: number;
   wallet_used_amount: number;
+};
+
+export type Session = {
+  ID: number;
+  Name: string;
+  UserID: number;
+  User: DataUser;
+  ChargingStationID: number;
+  ChargingStation: ChargingStation;
+  DeviceID: number;
+  Device: Device;
+  TransactionID: number;
+  Transaction: Transaction;
+  SocketID: number;
+  Socket: Socket;
+  Method: number;
+  Status: number;
+  MaxWatt: number;
+  IsIncludeTransactionFee: boolean;
+  PriceSetting: string | null;
+  Duration: number;
+  ExpectedDuration: number;
+  RefundAmount: number;
+  UsedAmount: number;
+  StartChargingTime: string | null;
+  StopChargingTime: string | null;
+  TotalKwhUsed: number;
+  ChargingFee: string | null;
+  DeletedAt: string | null;
+  ExpiredAt: string;
+  CreatedAt: string;
+  UpdatedAt: string;
 };

@@ -6,13 +6,14 @@ import feeSettingsReducer from "../features/feeSettings/feeSettingsSlice";
 import globalReducer from "../features/globalSlice";
 import calculateChargeReducer from "../features/priceRule/calculateChargeSlice";
 import calculateDurationReducer from "../features/priceRule/calculateDurationSlice";
+import addSessionReducer from "../features/sessions/addSessionSlice.ts";
+import detailSessionReducer from "../features/sessions/detailSessionSlice.ts";
 import toastReducer from "../features/toastSlice";
+import myUserReducer from "../features/users/myUserSlice.ts";
 import chargingSessionReducer from "../redux/charging/chargingSessionSlice";
 import chargingStartReducer from "../redux/charging/chargingStartSlice";
 import formChargingReducer from "../redux/charging/formChargingSlice";
 import sessionSettingReducer from "../redux/session/sessionSettingsSlice";
-import myUserReducer from "../features/users/myUserSlice.ts";
-import addSessionReducer from "../features/sessions/addSessionSlice.ts";
 
 export const store = configureStore({
   reducer: {
@@ -45,6 +46,7 @@ export const store = configureStore({
 
     // SESSION:
     addSession: addSessionReducer,
+    detailSession: detailSessionReducer,
   },
 });
 

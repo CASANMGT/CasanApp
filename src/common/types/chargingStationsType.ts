@@ -1,3 +1,4 @@
+import { Device } from "./deviceType";
 import { LocationResponse } from "./globalType";
 
 export type ChargingStationBody = {
@@ -62,26 +63,7 @@ export type Admin = {
   DeletedAt: string;
 };
 
-export type Device = {
-  ID: number;
-  Name: string;
-  PileNumber: string;
-  IMEI: string;
-  HardwareID: string;
-  SoftwareID: string;
-  Brand: string;
-  Model: string;
-  ChargingStationID: number;
-  SignalValue: number;
-  TotalSocket: number;
-  Protocol: number;
-  VehicleType: number;
-  Sockets: Socket[];
-  ChargingStation: ChargingStation;
-  DeletedAt: string | null;
-  CreatedAt: string;
-  UpdatedAt: string;
-};
+
 
 export type Socket = {
   ID: number;
