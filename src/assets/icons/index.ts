@@ -1,13 +1,15 @@
 import IcAstraPay from "./astrapay.svg?react";
+import IcOvo from "./ovo.svg?react";
 import IcCustomerServiceBlack from "./customer-service-black.svg?react";
-import IcBike from './bike.svg?react'
-import IcDownGreen from './down-green.svg?react'
-import IcLogout from './logout.svg?react'
-import IcClose from './close.svg?react'
-import IcNoInternet from './no-internet.svg?react'
+import IcBike from "./bike.svg?react";
+import IcDownGreen from "./down-green.svg?react";
+import IcLogout from "./logout.svg?react";
+import IcClose from "./close.svg?react";
+import IcNoInternet from "./no-internet.svg?react";
 import IcCashBlack from "./cash-black.svg?react";
 import IcChatBlack from "./chat-black.svg?react";
 import IcCheckboxActive from "./checkbox-active.svg?react";
+import IcNoImage from './no-image.svg?react'
 import IcCheckboxInactive from "./checkbox-inactive.svg?react";
 import IcClockGreen from "./clock-green.svg?react";
 import IcCopyBlack from "./copy-black.svg?react";
@@ -143,6 +145,7 @@ export {
   IcLogout,
   IcDownGreen,
   IcBike,
-  IcCustomerServiceBlack
+  IcOvo,
+  IcCustomerServiceBlack,
+  IcNoImage
 };
-

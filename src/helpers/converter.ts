@@ -1,13 +1,15 @@
 import {
-    IcAstraPay,
-    IcDana,
-    IcGopay,
-    IcLinkAja,
-    IcQris,
-    IcShopeePay,
-    IcWallet,
+  IcAstraPay,
+  IcDana,
+  IcGopay,
+  IcLinkAja,
+  IcNoImage,
+  IcOvo,
+  IcQris,
+  IcShopeePay,
+  IcWallet,
 } from "../assets";
-import { ASTRAPAY, DANA, GOPAY, LINK_AJA, QRIS, SHOPEEPAY } from "../common";
+import { ASTRAPAY, DANA, GOPAY, LINK_AJA, OVO, QRIS, SHOPEEPAY } from "../common";
 
 export const getIconPaymentMethod: (type: string) => any = (type: string) => {
   let icon: any = "";
@@ -25,12 +27,18 @@ export const getIconPaymentMethod: (type: string) => any = (type: string) => {
       icon = IcDana;
       break;
 
+    case "shopee":
     case SHOPEEPAY:
       icon = IcShopeePay;
       break;
 
+    case "linkaja":
     case LINK_AJA:
       icon = IcLinkAja;
+      break;
+
+    case OVO:
+      icon = IcOvo;
       break;
 
     case ASTRAPAY:
@@ -38,7 +46,7 @@ export const getIconPaymentMethod: (type: string) => any = (type: string) => {
       break;
 
     default:
-      icon = IcWallet;
+      icon = IcNoImage;
       break;
   }
 

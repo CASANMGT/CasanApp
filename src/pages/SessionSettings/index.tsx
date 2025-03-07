@@ -23,6 +23,7 @@ import {
   FormSession,
 } from "../../common";
 import {
+  BetweenText,
   Button,
   Container,
   LoadingPage,
@@ -86,13 +87,10 @@ const SessionSettings = () => {
   const [openInputHour, setOpenInputHour] = useState<boolean>(false);
   const [visiblePaymentMethod, setVisiblePaymentMethod] =
     useState<boolean>(false);
-  const [time, setTime] = useState<string>();
   const [total, setTotal] = useState<string>();
   const [selectedPayment, setSelectedPayment] = useState<string>();
-  const [data, setdata] = useState<DataChargingStation>(location?.state?.data);
-  const [selectedDevice, setSelectedDevice] = useState<Device>(
-    location?.state?.selectedDevice
-  );
+  const [data] = useState<DataChargingStation>(location?.state?.data);
+  const [selectedDevice] = useState<Device>(location?.state?.selectedDevice);
   const [openVA, setOpenVA] = useState<boolean>(false);
 
   useEffect(() => {}, []);
@@ -100,28 +98,42 @@ const SessionSettings = () => {
   const onDismiss = () => {
     navigate(-1);
   };
+
+  const getChargingNominal = useCallback(() => {
+    let value: number = 0;
+
+    if (form.selectedTab === "1")
+      value = Number(form?.nominal.replace("Rp", "").replace(/\./g, ""));
+    else if (calculateCharge?.data) value = calculateCharge?.data || 0;
+
+    return value;
+  }, [form.selectedTab, form.nominal, calculateCharge?.data]);
+
   const formateCalculate = useCallback(() => {
     let value: string = "";
     if (form.selectedTab === "2" && calculateCharge?.data) {
       value = `Rp${rupiah(calculateCharge?.data)}`;
     } else if (calculateDuration?.data) {
-      console.log("cek masuk", calculateDuration);
-
       value = formatDuration(calculateDuration?.data || 0);
     }
 
     return value;
-  }, [form?.nominal, form.time, form.selectedTab, calculateCharge?.data]);
+  }, [
+    form?.nominal,
+    form.time,
+    form.selectedTab,
+    calculateCharge?.data,
+    calculateDuration?.data,
+  ]);
 
   const FormatPaymentMethod: () => JSX.Element = useCallback(() => {
-    if (selectedPayment) {
-      const Icon = getIconPaymentMethod(selectedPayment);
-      const label = getLabelPaymentMethod(selectedPayment);
+    if (form?.paymentMethod) {
+      const Icon = form?.paymentMethod.icon;
       return (
         <div className="row gap-1">
           <Icon className="w-[22px]" />
 
-          <p className="font-medium">{label}</p>
+          <p className="font-medium">{form?.paymentMethod.label}</p>
         </div>
       );
     } else {
@@ -131,17 +143,25 @@ const SessionSettings = () => {
         </p>
       );
     }
-  }, [selectedPayment]);
+  }, [form?.paymentMethod]);
 
-  const validationButton = () => {
+  const validation = () => {
     let value: boolean = true;
 
     if (
       form?.selectedSocket !== undefined &&
       Number(total?.replace("Rp", "").replace(/\./g, "") || 0) > 0 &&
-      selectedPayment
-    )
-      value = false;
+      form.paymentMethod
+    ) {
+      if (form.selectedTab === "1") {
+        if (calculateDuration?.data && form.nominal) value = false;
+      } else if (
+        form.selectedTab === "2" &&
+        (Number(form.time[0]) || Number(form.time[1]))
+      ) {
+        if (calculateCharge?.data) value = false;
+      }
+    }
 
     return value;
   };
@@ -188,6 +208,11 @@ const SessionSettings = () => {
 
     navigate("/charging");
   };
+
+  const chargingNominal: number = getChargingNominal();
+
+  console.log('cek form', form);
+  
 
   return (
     <Container title="Pengaturan Sesi" onDismiss={onDismiss}>
@@ -238,8 +263,8 @@ const SessionSettings = () => {
                       key={index}
                       data={item}
                       position={index + 1}
-                      isActive={form?.selectedSocket === index}
-                      onClick={() => setForm("selectedSocket", item)}
+                      isActive={form?.selectedSocket === item?.ID}
+                      onClick={() => setForm("selectedSocket", item?.ID)}
                     />
                   ))}
               </div>
@@ -321,6 +346,31 @@ const SessionSettings = () => {
 
             {/* COST INFORMATION */}
             <PriceInformation data={data} isHideParking />
+
+            {/* PAYMENT DETAILS */}
+            <div className="bg-white p-3 rounded-lg mt-3 drop-shadow">
+              <div className="row gap-3 mb-2">
+                <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
+                  <IcInfoCircleGreen />
+                </div>
+
+                <p className="text-blackBold font-medium">Rincian Pembayaran</p>
+              </div>
+
+              <BetweenText
+                type="medium-content"
+                labelLeft="Nominal Pengecasan"
+                labelRight={`Rp${rupiah(chargingNominal)}`}
+                className="bg-baseLightGray p-3 rounded-t"
+              />
+
+              <BetweenText
+                type="medium-content"
+                labelLeft="Biaya Layanan"
+                labelRight={`Rp${rupiah(0)}`}
+                className="p-3"
+              />
+            </div>
           </div>
         </div>
 
@@ -339,13 +389,16 @@ const SessionSettings = () => {
 
           <div className="between-x">
             <p className="text-base text-black100/70">
-              Total: <a className="text-blackBold font-bold">{total}</a>
+              Total:{" "}
+              <a className="text-blackBold font-bold">{`Rp${rupiah(
+                chargingNominal
+              )}`}</a>
             </p>
 
             <Button
               className="!w-[130px]"
               label="Bayar"
-              disabled={validationButton()}
+              disabled={validation()}
               onClick={onNext}
             />
           </div>
@@ -355,9 +408,9 @@ const SessionSettings = () => {
       {/* MODAL */}
       <ModalPaymentMethod
         visible={visiblePaymentMethod}
-        select={selectedPayment || ""}
+        select={form.paymentMethod}
         onDismiss={() => setVisiblePaymentMethod(false)}
-        onSelect={(value) => setSelectedPayment(value)}
+        onSelect={(select) => setForm("paymentMethod", select)}
       />
 
       <ModalVoltageAmpere
@@ -391,19 +444,3 @@ const SessionSettings = () => {
 };
 
 export default SessionSettings;
-
-const setDuration = (second: number) => {
-  const hours = Math.floor(second / 3600);
-  const minutes = Math.floor((second % 3600) / 60);
-  const secs = second % 60;
-
-  let value: string;
-
-  if (hours) {
-    if (minutes) value = `${hours} jam ${minutes} menit`;
-    else value = `${hours} jam`;
-  } else if (minutes) value = `${minutes} menit`;
-  else value = `${secs} detik`;
-
-  return value;
-};

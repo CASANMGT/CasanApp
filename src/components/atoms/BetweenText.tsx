@@ -22,7 +22,7 @@ const BetweenText: React.FC<BetweenTextProps> = ({
   const isShowContent: boolean = content ? true : false;
 
   return (
-    <div className={`between text-xs text-black100/80 ${className}`}>
+    <div className={`between-x text-xs text-black100/80 ${className}`}>
       <p className={classNameLabelLeft}>{labelLeft}</p>
       {isShowContent ? (
         <>{content}</>

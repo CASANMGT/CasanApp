@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import loginReducer from "../features/auth/loginSlice";
 import chargingStationReducer from "../features/chargingStations/chargingStationSlice";
+import feeSettingsReducer from "../features/feeSettings/feeSettingsSlice";
 import globalReducer from "../features/globalSlice";
 import calculateChargeReducer from "../features/priceRule/calculateChargeSlice";
 import calculateDurationReducer from "../features/priceRule/calculateDurationSlice";
@@ -33,6 +34,9 @@ export const store = configureStore({
     // PRICE RULE
     calculateCharge: calculateChargeReducer,
     calculateDuration: calculateDurationReducer,
+
+    // FEE SETTINGS
+    feeSettings: feeSettingsReducer,
   },
 });
 

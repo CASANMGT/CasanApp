@@ -6,5 +6,6 @@ export const FormDefaultSession: FormSession = {
   selectedSocket: undefined,
   selectedTab: "1",
   nominal: "",
-  time:"00:00"
+  time:"00:00",
+  paymentMethod: undefined
 };

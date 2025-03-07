@@ -48,7 +48,7 @@ export const formatDuration = (seconds: number): string => {
     const minutes = Math.floor((seconds % 3600) / 60);
 
     value = `${
-      hours ? `${hours} jam${hours > 1 ? "s" : ""} ` : ""
+      hours ? `${hours} jam ` : ""
     }${minutes} menit`;
   }
 

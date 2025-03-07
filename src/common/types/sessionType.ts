@@ -1,3 +1,5 @@
+import { FeeSettingsProps } from "./feeSettingsType";
+
 export interface SessionSettingProps {
   data: SessionProps | null;
   loading: boolean;
@@ -26,4 +28,5 @@ export type FormSession = {
   selectedTab: string;
   nominal: string;
   time: string;
+  paymentMethod?: FeeSettingsProps | undefined;
 };

@@ -47,7 +47,7 @@ const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({
 
       <div
         onClick={onSelect}
-        className={`between ${
+        className={`between-x ${
           disabled ? "cursor-not-allowed" : "cursor-pointer"
         }`}
       >

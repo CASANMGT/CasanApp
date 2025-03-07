@@ -7,4 +7,5 @@ export const GOPAY: string = "gopay";
 export const DANA: string = "dana";
 export const SHOPEEPAY: string = "shopeepay";
 export const LINK_AJA: string = "link-aja";
+export const OVO: string = "ovo";
 export const ASTRAPAY: string = "astrapay";
