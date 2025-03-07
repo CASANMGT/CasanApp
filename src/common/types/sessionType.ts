@@ -30,3 +30,13 @@ export type FormSession = {
   time: string;
   paymentMethod?: FeeSettingsProps | undefined;
 };
+
+export type AddSessionBody = {
+  amount: number;
+  device_id: number;
+  payment_method: string;
+  session_method: number;
+  socket_id: number;
+  station_id: number;
+  wallet_used_amount: number;
+};

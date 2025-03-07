@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IcClose, IcWallet } from "../../../assets";
 import { FeeSettingsProps } from "../../../common";
-import { fetchFeeSettings } from "../../../features";
+import { fetchFeeSettings, fetchMyUser } from "../../../features";
 import { getIconPaymentMethod } from "../../../helpers";
 import { AppDispatch, RootState } from "../../../store";
 import { Button, LoadingPage } from "../../atoms";
@@ -13,21 +13,24 @@ interface ModalPaymentMethodProps {
   visible: boolean;
   select: FeeSettingsProps | undefined;
   onDismiss: () => void;
-  onSelect: (value: FeeSettingsProps | undefined) => void;
+  onSelect: (select: FeeSettingsProps | undefined) => void;
 }
 
 const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
   visible,
+  select,
   onDismiss,
   onSelect,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const feeSettings = useSelector((state: RootState) => state.feeSettings);
+  const myUser = useSelector((state: RootState) => state.myUser);
 
   const [optionsPaymentMethod, setOptionsPaymentMethod] =
     useState<FeeSettingsProps[]>();
   const [selectedPayment, setSelectedPayment] = useState<FeeSettingsProps>();
+  const [selectedBalance, setSelectedBalance] = useState();
 
   useEffect(() => {
     if (visible) {
@@ -63,7 +66,9 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
   }, [feeSettings?.data]);
 
   const getData = () => {
+    setSelectedPayment(select);
     dispatch(fetchFeeSettings());
+    dispatch(fetchMyUser());
   };
 
   return (
@@ -80,16 +85,19 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
             </div>
           </div>
 
-          <LoadingPage loading={feeSettings?.loading} colorLoading="primary100">
+          <LoadingPage
+            loading={feeSettings?.loading || myUser?.loading}
+            colorLoading="primary100"
+          >
             <div className="overflow-auto">
               <p className="text-black70 mb-2.5">Saldo Anda</p>
               <PaymentMethodItem
                 type="checkbox"
                 label="Saldo"
-                balance={0}
+                balance={myUser?.data?.Balance}
                 isActive={false}
                 icon={IcWallet}
-                disabled={true}
+                disabled={(myUser?.data?.Balance || 0) <= 0}
                 onSelect={() => {}}
               />
 

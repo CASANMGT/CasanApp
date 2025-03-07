@@ -11,6 +11,8 @@ import chargingSessionReducer from "../redux/charging/chargingSessionSlice";
 import chargingStartReducer from "../redux/charging/chargingStartSlice";
 import formChargingReducer from "../redux/charging/formChargingSlice";
 import sessionSettingReducer from "../redux/session/sessionSettingsSlice";
+import myUserReducer from "../features/users/myUserSlice.ts";
+import addSessionReducer from "../features/sessions/addSessionSlice.ts";
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +21,9 @@ export const store = configureStore({
 
     // AUTH
     login: loginReducer,
+
+    // USER
+    myUser: myUserReducer,
 
     // CHARGING STATION
     chargingStation: chargingStationReducer,
@@ -37,6 +42,9 @@ export const store = configureStore({
 
     // FEE SETTINGS
     feeSettings: feeSettingsReducer,
+
+    // SESSION:
+    addSession: addSessionReducer,
   },
 });
 

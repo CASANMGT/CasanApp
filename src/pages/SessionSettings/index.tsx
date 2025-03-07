@@ -15,6 +15,7 @@ import {
   IcSocketCircleGreen,
 } from "../../assets";
 import {
+  AddSessionBody,
   CalculateChargeBody,
   CalculateDurationBody,
   DataChargingStation,
@@ -35,15 +36,14 @@ import {
   SocketItem,
   Tabs,
 } from "../../components";
-import { fetchCalculateCharge, fetchCalculateDuration } from "../../features";
 import {
-  formatDuration,
-  getIconPaymentMethod,
-  getLabelPaymentMethod,
-  rupiah,
-  useForm,
-} from "../../helpers";
-import { setFormCharging } from "../../redux";
+  fetchAddSession,
+  fetchCalculateCharge,
+  fetchCalculateDuration,
+  hideLoading,
+  showLoading,
+} from "../../features";
+import { formatDuration, rupiah, useForm } from "../../helpers";
 import { AppDispatch, RootState } from "../../store";
 import PriceInformation from "../ChargingStationDetails/PriceInformation";
 import InputHour from "./InputHour";
@@ -78,6 +78,7 @@ const SessionSettings = () => {
   const calculateCharge = useSelector(
     (state: RootState) => state.calculateCharge
   );
+  const addSession = useSelector((state: RootState) => state.addSession);
   const calculateDuration = useSelector(
     (state: RootState) => state.calculateDuration
   );
@@ -93,7 +94,15 @@ const SessionSettings = () => {
   const [selectedDevice] = useState<Device>(location?.state?.selectedDevice);
   const [openVA, setOpenVA] = useState<boolean>(false);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (addSession?.loading) dispatch(showLoading());
+    else dispatch(hideLoading());
+
+    if (addSession?.data) {
+      // dispatch(resetDataAddSession());
+      console.log("cek addSession", addSession?.data);
+    }
+  }, [addSession]);
 
   const onDismiss = () => {
     navigate(-1);
@@ -192,27 +201,20 @@ const SessionSettings = () => {
   };
 
   const onNext = () => {
-    const body = {
-      deviceId: id,
-      price: Number(total?.replace("Rp", "").replace(/\./g, "")),
-      port: Number(form?.selectedSocket) + 1,
-      paymentMethod: selectedPayment,
+    const body: AddSessionBody = {
+      amount: chargingNominal,
+      device_id: selectedDevice?.ID,
+      payment_method: form.paymentMethod?.key || "",
+      session_method: form.selectedTab === "1" ? 1 : 2,
+      socket_id: form?.selectedSocket || 0,
+      station_id: data?.ID,
+      wallet_used_amount: 0,
     };
 
-    dispatch(
-      setFormCharging({
-        type: "formData",
-        value: body,
-      })
-    );
-
-    navigate("/charging");
+    dispatch(fetchAddSession(body));
   };
 
   const chargingNominal: number = getChargingNominal();
-
-  console.log('cek form', form);
-  
 
   return (
     <Container title="Pengaturan Sesi" onDismiss={onDismiss}>

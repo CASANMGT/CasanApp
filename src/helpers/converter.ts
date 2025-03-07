@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode";
 import {
   IcAstraPay,
   IcDana,
@@ -9,7 +10,22 @@ import {
   IcShopeePay,
   IcWallet,
 } from "../assets";
-import { ASTRAPAY, DANA, GOPAY, LINK_AJA, OVO, QRIS, SHOPEEPAY } from "../common";
+import {
+  ASTRAPAY,
+  DANA,
+  GOPAY,
+  LINK_AJA,
+  OVO,
+  QRIS,
+  SHOPEEPAY,
+} from "../common";
+
+interface TokenPayload {
+  id: string;
+  role: string;
+  exp: number;
+  iat: number;
+}
 
 export const getIconPaymentMethod: (type: string) => any = (type: string) => {
   let icon: any = "";
@@ -89,4 +105,13 @@ export const getLabelPaymentMethod: (type: string) => string = (
   }
 
   return label;
+};
+
+export const decodeToken = (token: string): TokenPayload | null => {
+  try {
+    return jwtDecode<TokenPayload>(token);
+  } catch (error) {
+    console.error("Invalid token", error);
+    return null;
+  }
 };

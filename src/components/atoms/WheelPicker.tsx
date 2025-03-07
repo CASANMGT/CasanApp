@@ -1,8 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 
-const hours = Array.from({ length: 24 }, (_, i) =>
-  String(i).padStart(2, "0")
-);
+const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
 const minutes = ["00", "15", "30", "45"];
 
 const ITEM_HEIGHT = 28; // Adjust based on Tailwind styles
@@ -18,7 +16,6 @@ const WheelPicker: React.FC<WheelPickerProps> = ({ value, onChange }) => {
   const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    console.log("cek hasil", value);
     const index = hours.findIndex((e) => e === value[0]);
 
     if (index > -1)
