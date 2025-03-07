@@ -1,11 +1,12 @@
-import { useMemo } from "react";
-import { IcBackBlack, IcBackWhite } from "../../assets";
+import { useMemo, useState } from "react";
+import { IcBackBlack, IcBackWhite, IcClose, IcMenuBlack } from "../../assets";
 
 interface HeaderProps {
   type?: "primary" | "secondary";
   title: string;
   className?: string;
   onDismiss: () => void;
+  onPress?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -13,8 +14,12 @@ const Header: React.FC<HeaderProps> = ({
   className,
   title,
   onDismiss,
+  onPress,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   const isPrimary = useMemo(() => type === "primary", [type]);
+  const isShowRight = useMemo(() => (onPress ? true : false), [type]);
 
   return (
     <div
@@ -39,7 +44,33 @@ const Header: React.FC<HeaderProps> = ({
         <h4 className="font-semibold">{title}</h4>
       </div>
 
-      <div className="w-10 h-10 invisible" />
+      {isShowRight ? (
+        <div
+          onClick={() => setIsOpen((prev) => !prev)}
+          className="relative w-10 h-10 rounded-full center cursor-pointer bg-baseLightGray/70"
+        >
+          <div className="rotate-90">
+            <IcMenuBlack />
+          </div>
+
+          {isOpen && (
+            <div
+              onClick={onPress}
+              className={`absolute right-0 top-11 flex gap-2 p-3 rounded-lg bg-white transform transition-all duration-200 cursor-pointer ${
+                isOpen
+                  ? "opacity-100 translate-y-0 z-10"
+                  : "opacity-0 translate-y-2 invisible"
+              }`}
+            >
+              <IcClose className="text-red" />
+
+              <span className="text-red whitespace-nowrap">Batalkan Sesi</span>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="w-10 h-10 invisible" />
+      )}
     </div>
   );
 };

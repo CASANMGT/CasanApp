@@ -87,7 +87,7 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
 
           <LoadingPage
             loading={feeSettings?.loading || myUser?.loading}
-            colorLoading="primary100"
+            color="primary100"
           >
             <div className="overflow-auto">
               <p className="text-black70 mb-2.5">Saldo Anda</p>

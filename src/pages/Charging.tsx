@@ -17,13 +17,13 @@ import {
   BetweenText,
   Button,
   Header,
+  LoadingPage,
   Signal,
   StatusIndicator,
   Timer,
 } from "../components";
 import { hideLoading, showLoading } from "../features/globalSlice";
 import { rupiah } from "../helpers";
-import { resetDataChargingStart } from "../redux";
 import {
   fetchChargingStart,
   fetchChargingStop,
@@ -33,7 +33,7 @@ import { AppDispatch, RootState } from "../store";
 
 const Charging = () => {
   const navigate = useNavigate();
-  const { id } = useParams()
+  const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
   const { formData } = useSelector((state: RootState) => state.formCharging);
@@ -83,7 +83,7 @@ const Charging = () => {
   }, [status]);
 
   const getData = () => {
-   
+    // dispatch(fetchDetailSession(Number(id)));
   };
 
   const onDismiss = () => {
@@ -132,80 +132,85 @@ const Charging = () => {
         title="Halaman Pengisian"
         onDismiss={onDismiss}
         className="mx-4 mb-4"
+        onPress={()=> alert('coming soon')}
       />
 
-      <div className="flex-1 overflow-auto scrollbar-none">
-        {/* INFORMATION */}
-        {status === "charging" && (
-          <div className="mx-4 bg-baseLightGray/60 rounded-lg flex justify-around py-3 px-8">
-            <InformationItem
-              icon={IcClockGreen}
-              label="Durasi"
-              content={<Timer />}
-            />
-            <InformationItem
-              icon={IcFlashGreen}
-              label="Daya"
-              content={`${power} Watt`}
-            />
-          </div>
-        )}
+      <LoadingPage loading={detailSession?.loading} color="primary100">
+        <div className="flex-1 overflow-auto scrollbar-none">
+          {/* INFORMATION */}
+          {status === "charging" && (
+            <div className="mx-4 bg-baseLightGray/60 rounded-lg flex justify-around py-3 px-8">
+              <InformationItem
+                icon={IcClockGreen}
+                label="Durasi"
+                content={<Timer />}
+              />
+              <InformationItem
+                icon={IcFlashGreen}
+                label="Daya"
+                content={`${power} Watt`}
+              />
+            </div>
+          )}
 
-        {/* STATUS */}
-        <StatusIndicator type={status} className="my-8" />
+          {/* STATUS */}
+          <StatusIndicator type={status} className="my-8" />
 
-        {/* DETAILS */}
-        <div className="rounded-lg p-3 mb-4 bg-white drop-shadow">
-          <div className="row gap-2 mb-3">
-            <div className="w-[30px] h-[30px] center bg-primary10 rounded-full">
-              <IcInfoCircleGreen />
+          {/* DETAILS */}
+          <div className="rounded-lg p-3 mb-4 bg-white drop-shadow">
+            <div className="row gap-2 mb-3">
+              <div className="w-[30px] h-[30px] center bg-primary10 rounded-full">
+                <IcInfoCircleGreen />
+              </div>
+
+              <p>Rincian Informasi</p>
             </div>
 
-            <p>Rincian Informasi</p>
+            <BetweenText
+              labelLeft="Stasiun"
+              labelRight="Pasar Modern BSD City"
+              className="bg-baseLightGray rounded-t p-3"
+              classNameLabelRight="text-blackBold font-bold"
+            />
+
+            <BetweenText
+              type="medium-content"
+              labelLeft="Alat"
+              labelRight={`Device A, Socket ${formData?.port || 0}`}
+              className="p-3"
+            />
+
+            <BetweenText
+              type="medium-content"
+              labelLeft="Total Transaksi"
+              labelRight={`Rp${rupiah(formData?.price || 0)}`}
+              className="bg-baseLightGray p-3"
+            />
+
+            <BetweenText
+              type="medium-content"
+              labelLeft="Sinyal"
+              labelRight="Device A, Socket 5"
+              content={
+                <Signal signalValue={sessionSetting?.data?.signalValue} />
+              }
+              className="p-3"
+            />
           </div>
+        </div>
 
-          <BetweenText
-            labelLeft="Stasiun"
-            labelRight="Pasar Modern BSD City"
-            className="bg-baseLightGray rounded-t p-3"
-            classNameLabelRight="text-blackBold font-bold"
-          />
-
-          <BetweenText
-            type="medium-content"
-            labelLeft="Alat"
-            labelRight={`Device A, Socket ${formData?.port || 0}`}
-            className="p-3"
-          />
-
-          <BetweenText
-            type="medium-content"
-            labelLeft="Total Transaksi"
-            labelRight={`Rp${rupiah(formData?.price || 0)}`}
-            className="bg-baseLightGray p-3"
-          />
-
-          <BetweenText
-            type="medium-content"
-            labelLeft="Sinyal"
-            labelRight="Device A, Socket 5"
-            content={<Signal signalValue={sessionSetting?.data?.signalValue} />}
-            className="p-3"
+        {/* FOOTER */}
+        <div className="container-button-footer">
+          <Button
+            type={status === "stand-by" ? "primary" : "danger"}
+            buttonType="lg"
+            label={
+              status === "stand-by" ? "Mulai Pengisian" : "Selesaikan Pengisian"
+            }
+            onClick={onNext}
           />
         </div>
-      </div>
-
-      {/* FOOTER */}
-      <div className="container-button-footer">
-        <Button
-          type={status === "stand-by" ? "primary" : "danger"}
-          buttonType="lg"
-          label={
-            status === "stand-by" ? "Mulai Pengisian" : "Selesaikan Pengisian"
-          }
-          onClick={onNext}
-        />
-      </div>
+      </LoadingPage>
 
       {/* MODAL */}
       {visibleAlert && (
