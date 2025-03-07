@@ -1,4 +1,5 @@
 import IcAstraPay from "./astrapay.svg?react";
+import IcSuccess from './success.svg?react'
 import IcOvo from "./ovo.svg?react";
 import IcCustomerServiceBlack from "./customer-service-black.svg?react";
 import IcBike from "./bike.svg?react";
@@ -147,5 +148,6 @@ export {
   IcBike,
   IcOvo,
   IcCustomerServiceBlack,
-  IcNoImage
+  IcNoImage,
+  IcSuccess
 };

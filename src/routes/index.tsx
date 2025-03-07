@@ -12,6 +12,7 @@ import {
   Login,
   Main,
   NotFound,
+  PaymentSuccess,
   Profile,
   Scan,
   SelectBank,
@@ -52,6 +53,10 @@ const RoutesPage = () => {
         <Route
           path="session-settings"
           element={<ProtectedRoute element={<SessionSettings />} />}
+        />
+        <Route
+          path="payment-success/:id"
+          element={<ProtectedRoute element={<PaymentSuccess />} />}
         />
         <Route path="session-details" element={<SessionDetails />} />
         <Route path="top-up-balance" element={<TopUpBalance />} />

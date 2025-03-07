@@ -22,11 +22,13 @@ import SessionDetails from "./SessionDetails";
 import TopUpBalance from "./TopUpBalance";
 import SelectBank from "./SelectBank";
 import Withdraw from "./Withdraw";
+import PaymentSuccess from "./PaymentSuccess";
 import ComingSoon from "./ComingSoon";
 
 export {
     Charging,
     Vehicle,
+    PaymentSuccess,
     TopUpBalance,
     ComingSoon,
     SelectBank,

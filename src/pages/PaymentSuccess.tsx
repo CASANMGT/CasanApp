@@ -1,0 +1,35 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { IcSuccess } from "../assets";
+
+const PaymentSuccess = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setTimeout(() => {
+      onNext();
+    }, 3000);
+  }, []);
+
+  const onNext = () => {
+    navigate(`/charging`, { replace: true });
+  };
+  return (
+    <div
+      onClick={onNext}
+      className="container-screen !bg-[#10832B] center-y p-9 cursor-pointer"
+    >
+      <div className="center-y flex-1">
+        <IcSuccess />
+
+        <span className="text-xl font-bold text-white  mt-2">
+          Payment Success
+        </span>
+      </div>
+
+      <p className="text-white ">Tap anywhere to dismiss</p>
+    </div>
+  );
+};
+
+export default PaymentSuccess;

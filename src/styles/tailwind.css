@@ -43,6 +43,10 @@
   @apply flex items-center justify-center;
 }
 
+.center-y {
+  @apply flex flex-col items-center justify-center;
+}
+
 .row {
   @apply flex flex-row items-center;
 }
