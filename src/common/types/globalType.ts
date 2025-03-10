@@ -75,6 +75,11 @@ export type LocationResponse = {
   UpdatedAt: string;
 };
 
+export type ResponseSuccess = {
+  message: string;
+  status: string;
+};
+
 export type TabItemProps = {
   id: string | number;
   label: string;

@@ -1,12 +1,7 @@
 import { clone } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  NavigateFunction,
-  useLocation,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import {
   IcEditGreen,
   IcInfoCircleGreen,
@@ -41,7 +36,7 @@ import {
   fetchCalculateCharge,
   fetchCalculateDuration,
   hideLoading,
-  showLoading,
+  showLoading
 } from "../../features";
 import { formatDuration, rupiah, useForm } from "../../helpers";
 import { AppDispatch, RootState } from "../../store";
@@ -70,7 +65,6 @@ const SessionSettings = () => {
   const navigate: NavigateFunction = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
-  const { id } = useParams<{ id: string }>();
 
   const sessionSetting = useSelector(
     (state: RootState) => state.sessionSetting
@@ -89,7 +83,6 @@ const SessionSettings = () => {
   const [visiblePaymentMethod, setVisiblePaymentMethod] =
     useState<boolean>(false);
   const [total, setTotal] = useState<string>();
-  const [selectedPayment, setSelectedPayment] = useState<string>();
   const [data] = useState<DataChargingStation>(location?.state?.data);
   const [selectedDevice] = useState<Device>(location?.state?.selectedDevice);
   const [openVA, setOpenVA] = useState<boolean>(false);
@@ -99,8 +92,7 @@ const SessionSettings = () => {
     else dispatch(hideLoading());
 
     if (addSession?.data) {
-      // dispatch(resetDataAddSession());
-      console.log("cek addSession", addSession?.data);
+      navigate("/transaction-history-details");
     }
   }, [addSession]);
 

@@ -1,4 +1,4 @@
-export const rupiah = (price: string | number) => {
+export const rupiah = (price?: string | number) => {
   if (!price) return 0;
 
   const addDots = (nStr: string) => {

@@ -1,54 +1,48 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-interface CountdownTimerProps {
-  targetDate: number;
-}
+type CountdownTimerProps = {
+  initialSeconds: number;
+  label?: string;
+  onFinish?: () => void;
+};
 
-interface CalculationTimeLeftProps {
-  days: number;
-  hours: number;
-  minutes: number;
-  seconds: number;
-}
-
-const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
-  const [timeLeft, setTimeLeft] = useState<CalculationTimeLeftProps>(
-    calculateTimeLeft()
-  );
-
-  function calculateTimeLeft() {
-    const now: number = new Date().getTime();
-    const difference: number = targetDate - now;
-
-    if (difference <= 0) {
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-    }
-
-    return {
-      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-      hours: Math.floor(
-        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-      ),
-      minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-      seconds: Math.floor((difference % (1000 * 60)) / 1000),
-    };
-  }
+const CountdownTimer: React.FC<CountdownTimerProps> = ({
+  initialSeconds,
+  label,
+  onFinish,
+}) => {
+  const [seconds, setSeconds] = useState(initialSeconds);
 
   useEffect(() => {
+    if (seconds <= 0) return;
+
     const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
+      const count = seconds - 1;
+      setSeconds(count);
+
+      if (count === 0 && onFinish) onFinish();
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [targetDate]);
+  }, [seconds]);
+
+  const formatTime = (secs: number) => {
+    const hours = Math.floor(secs / 3600)
+      .toString()
+      .padStart(2, "0");
+    const minutes = Math.floor((secs % 3600) / 60)
+      .toString()
+      .padStart(2, "0");
+    const seconds = (secs % 60).toString().padStart(2, "0");
+    return `${hours}:${minutes}:${seconds}`;
+  };
+
+  const isShowLabel = useMemo(() => (label ? true : false), [label]);
 
   return (
-    <div className="row text-blackBold">
-      {/* <p>{String(timeLeft.days).padStart(2, "0")}:</p> */}
-      <p>{String(timeLeft.hours).padStart(2, "0")}:</p>
-      <p>{String(timeLeft.minutes).padStart(2, "0")}:</p>
-      <p>{String(timeLeft.seconds).padStart(2, "0")}</p>
-    </div>
+    <span className="font-medium text-blackBold">{`${
+      isShowLabel ? `${label} ` : ""
+    }${formatTime(seconds)}`}</span>
   );
 };
 

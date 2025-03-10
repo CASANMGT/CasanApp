@@ -1,14 +1,19 @@
+import { IcStandBy } from "../../assets";
+import { formatTime } from "../../helpers";
+
 interface StatusIndicatorProps {
   className?: string;
-  type: "stang-by" | "charging" | string;
+  type: number;
+  duration: number;
 }
 
 const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   type,
+  duration,
   className,
 }) => {
   const classNameAnimation: string = `absolute -left-[30px] -top-[30px] w-[280px] h-[280px] rounded-full ${
-    type === "charging"
+    type === 5
       ? "animate-soundWave bg-primary100"
       : "animate-charging bg-secondary100"
   }`;
@@ -24,10 +29,15 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
         {/* Inner Static Circle */}
         <div className="relative flex items-center justify-center w-[220px] h-[220px] bg-white rounded-full shadow-md">
           <div className="text-center">
-            <p className="text-black70 font-semibold mb-2">Status</p>
-            <p className="text-[33px] font-semibold">
-              {type === "charging" ? "Charging" : "Stand By"}
-            </p>
+            <p className="text-black70 font-semibold mb-2">Sisa Durasi</p>
+            <p className="text-[33px] font-semibold">{formatTime(duration)}</p>
+
+            <div className="flex justify-center">
+              <div className="rounded-lg bg-secondary10 h-6 px-2.5 space-x-2 flex items-center">
+                <IcStandBy />
+                <span className="text-xs text-[#E8A126]">Stand By</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

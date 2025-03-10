@@ -1,52 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   chargingSessionResponseProps,
-  chargingStartBodyProps,
-  chargingStopBodyProps,
-  portReportBodyProps,
+  portReportBodyProps
 } from "../../common";
 const apiUrl = import.meta.env.VITE_API_URL;
-
-export const fetchChargingStart = createAsyncThunk<
-  string,
-  chargingStartBodyProps
->("fetchChargingStart", async (body, { rejectWithValue }) => {
-  try {
-    const response = await fetch(`${apiUrl}/start`, {
-      method: "POST",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    const data = await response.json();
-
-    return data?.status;
-  } catch (e) {
-    return rejectWithValue(e);
-  }
-});
-
-export const fetchChargingStop = createAsyncThunk<
-  string,
-  chargingStopBodyProps
->("fetchChargingStop", async (body, { rejectWithValue }) => {
-  try {
-    const response = await fetch(`${apiUrl}/stop`, {
-      method: "POST",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    const data = await response.json();
-    return data?.status;
-  } catch (e) {
-    return rejectWithValue(e);
-  }
-});
 
 export const fetchPortReport = createAsyncThunk<number, portReportBodyProps>(
   "fetchPortReport",

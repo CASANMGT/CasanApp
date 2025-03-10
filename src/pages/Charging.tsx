@@ -1,17 +1,14 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   IcClockGreen,
   IcFlashGreen,
   IcInfoCircleGreen,
+  IcWalletGreen,
   ILCharging,
 } from "../assets";
-import {
-  chargingStartBodyProps,
-  chargingStopBodyProps,
-  portReportBodyProps,
-} from "../common";
+import { Session } from "../common";
 import {
   AlertModal,
   BetweenText,
@@ -20,15 +17,9 @@ import {
   LoadingPage,
   Signal,
   StatusIndicator,
-  Timer,
 } from "../components";
-import { hideLoading, showLoading } from "../features/globalSlice";
-import { rupiah } from "../helpers";
-import {
-  fetchChargingStart,
-  fetchChargingStop,
-  fetchPortReport,
-} from "../services/request";
+import { fetchDetailSession } from "../features";
+import { formatDuration, formatTime, rupiah } from "../helpers";
 import { AppDispatch, RootState } from "../store";
 
 const Charging = () => {
@@ -39,52 +30,32 @@ const Charging = () => {
   const { formData } = useSelector((state: RootState) => state.formCharging);
   const detailSession = useSelector((state: RootState) => state.detailSession);
 
-  const { loading, data } = useSelector(
-    (state: RootState) => state.chargingStart
-  );
   const sessionSetting = useSelector(
     (state: RootState) => state.sessionSetting
   );
 
   const [visibleAlert, setVisibleAlert] = useState<boolean>(false);
-  const [status, setStatus] = useState<string>("stand-by");
-  const [power, setPower] = useState<number>(0);
 
   useEffect(() => {
     getData();
   }, []);
 
-  useEffect(() => {
-    if (loading) dispatch(showLoading());
-    else dispatch(hideLoading());
-
-    if (data) {
-      setStatus("charging");
-    }
-  }, [data, loading]);
-
-  useEffect(() => {
-    if (status === "charging") {
-      const body: portReportBodyProps = {
-        deviceID: formData?.deviceId || "",
-        port: formData?.port || 0,
-      };
-
-      dispatch(fetchPortReport(body)).then((res: any) => {
-        setPower(res?.payload || 0);
-      });
-
-      setTimeout(() => {
-        dispatch(fetchPortReport(body)).then((res: any) => {
-          setPower(res?.payload || 0);
-        });
-      }, 10000);
-    }
-  }, [status]);
-
   const getData = () => {
-    // dispatch(fetchDetailSession(Number(id)));
+    dispatch(fetchDetailSession(Number(id)));
   };
+
+  const getTotalCharging = useCallback(() => {
+    let value: number = 0;
+
+    if (detailSession?.data?.Transaction?.Amount && status === 6)
+      value =
+        ((detailSession?.data?.Transaction?.Amount -
+          detailSession?.data?.RefundAmount) /
+          detailSession?.data?.Transaction?.Amount) *
+        100;
+
+    return value;
+  }, [detailSession?.data?.Transaction]);
 
   const onDismiss = () => {
     navigate(-1);
@@ -92,38 +63,12 @@ const Charging = () => {
 
   const onNext = () => {
     // setVisibleAlert(true);
-
-    if (status === "stand-by") onStart();
-    else onStop();
+    alert("coming soon");
   };
 
-  const onStart = () => {
-    const body: chargingStartBodyProps = {
-      deviceID: formData?.deviceId || "",
-      value: formData?.price || 0,
-      port: formData?.port || 0,
-      orderNumber: "00123451",
-    };
-
-    dispatch(fetchChargingStart(body));
-  };
-
-  const onStop = () => {
-    const body: chargingStopBodyProps = {
-      deviceID: formData?.deviceId || "",
-      port: formData?.port || 0,
-      orderNumber: "00123451",
-    };
-
-    dispatch(fetchChargingStop(body)).then((res) => {
-      if (res?.payload) {
-        setStatus("stand-by");
-        navigate("/session-details", {
-          replace: true,
-        });
-      }
-    });
-  };
+  const dataSession: Session | null = detailSession?.data;
+  const status: number | undefined = 2; //dataSession?.Status;
+  const totalCharging: number = getTotalCharging();
 
   return (
     <div className="background-1 pt-3 overflow-hidden flex flex-col justify-between">
@@ -132,29 +77,38 @@ const Charging = () => {
         title="Halaman Pengisian"
         onDismiss={onDismiss}
         className="mx-4 mb-4"
-        onPress={()=> alert('coming soon')}
+        onPress={() => alert("coming soon")}
       />
 
       <LoadingPage loading={detailSession?.loading} color="primary100">
         <div className="flex-1 overflow-auto scrollbar-none">
           {/* INFORMATION */}
-          {status === "charging" && (
-            <div className="mx-4 bg-baseLightGray/60 rounded-lg flex justify-around py-3 px-8">
-              <InformationItem
-                icon={IcClockGreen}
-                label="Durasi"
-                content={<Timer />}
-              />
-              <InformationItem
-                icon={IcFlashGreen}
-                label="Daya"
-                content={`${power} Watt`}
-              />
-            </div>
-          )}
+          <div className="mx-4 bg-baseLightGray/60 rounded-lg flex justify-around py-3 px-8">
+            <InformationItem
+              icon={IcWalletGreen}
+              label="Terpakai"
+              content={`Rp${rupiah(dataSession?.UsedAmount)}`}
+            />
+
+            <InformationItem
+              icon={IcClockGreen}
+              label="Durasi"
+              content={formatTime(dataSession?.ExpectedDuration)}
+            />
+
+            <InformationItem
+              icon={IcFlashGreen}
+              label="Daya"
+              content={status === 5 ? `${dataSession?.MaxWatt} Watt` : "-"}
+            />
+          </div>
 
           {/* STATUS */}
-          <StatusIndicator type={status} className="my-8" />
+          <StatusIndicator
+            type={status || 2}
+            duration={dataSession?.ExpectedDuration || 0}
+            className="my-8"
+          />
 
           {/* DETAILS */}
           <div className="rounded-lg p-3 mb-4 bg-white drop-shadow">
@@ -167,34 +121,28 @@ const Charging = () => {
             </div>
 
             <BetweenText
-              labelLeft="Stasiun"
-              labelRight="Pasar Modern BSD City"
+              labelLeft="Alat"
+              labelRight={`${dataSession?.ChargingStation?.Name}, Socket ${dataSession?.Socket?.Port}`}
               className="bg-baseLightGray rounded-t p-3"
               classNameLabelRight="text-blackBold font-bold"
             />
 
             <BetweenText
               type="medium-content"
-              labelLeft="Alat"
-              labelRight={`Device A, Socket ${formData?.port || 0}`}
+              labelLeft="Durasi pemesanan"
+              labelRight={
+                dataSession?.Duration
+                  ? formatDuration(dataSession?.Duration)
+                  : "-"
+              }
               className="p-3"
             />
 
             <BetweenText
               type="medium-content"
               labelLeft="Total Transaksi"
-              labelRight={`Rp${rupiah(formData?.price || 0)}`}
+              labelRight={`Rp${rupiah(dataSession?.Transaction?.Amount)}`}
               className="bg-baseLightGray p-3"
-            />
-
-            <BetweenText
-              type="medium-content"
-              labelLeft="Sinyal"
-              labelRight="Device A, Socket 5"
-              content={
-                <Signal signalValue={sessionSetting?.data?.signalValue} />
-              }
-              className="p-3"
             />
           </div>
         </div>
@@ -202,11 +150,9 @@ const Charging = () => {
         {/* FOOTER */}
         <div className="container-button-footer">
           <Button
-            type={status === "stand-by" ? "primary" : "danger"}
+            type={status === 2 ? "primary" : "danger"}
             buttonType="lg"
-            label={
-              status === "stand-by" ? "Mulai Pengisian" : "Selesaikan Pengisian"
-            }
+            label={status === 2 ? "Mulai Pengisian" : "Selesaikan Pengisian"}
             onClick={onNext}
           />
         </div>

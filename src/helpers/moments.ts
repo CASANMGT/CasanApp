@@ -35,22 +35,35 @@ export const timeToSeconds = (time: string): number => {
 
 export const convertToHours = (time: string): number => {
   if (!time) return 0;
-  
+
   const [hh, mm] = time.split(":").map(Number);
   return hh + (mm > 0 ? mm / 60 : 0);
 };
 
-export const formatDuration = (seconds: number): string => {
+export const formatDuration = (seconds?: number): string => {
   let value: string = "";
+  const s: number = seconds || 0;
 
-  if (seconds > 0) {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
+  if (s > 0) {
+    const hours = Math.floor(s / 3600);
+    const minutes = Math.floor((s % 3600) / 60);
 
-    value = `${
-      hours ? `${hours} jam ` : ""
-    }${minutes} menit`;
+    value = `${hours ? `${hours} jam ` : ""}${minutes} menit`;
   }
 
   return value;
+};
+
+export const formatTime = (seconds?: number): string => {
+  const s: number = seconds || 0;
+
+  const hrs = Math.floor(s / 3600);
+  const mins = Math.floor((s % 3600) / 60);
+  const secs = s % 60;
+
+  return [
+    hrs.toString().padStart(2, "0"),
+    mins.toString().padStart(2, "0"),
+    secs.toString().padStart(2, "0"),
+  ].join(":");
 };

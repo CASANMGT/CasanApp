@@ -1,63 +1,62 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ResponseSuccess } from "../../common";
 import { Api } from "../../services/Api";
-import { AddSessionBody, Session } from "../../common";
 
-type AddSessionState = {
-  data: Session | null;
+type CancelSessionState = {
+  data: ResponseSuccess | null;
   loading: boolean;
   error: string | null;
 };
 
-const initialState: AddSessionState = {
+const initialState: CancelSessionState = {
   data: null,
   loading: false,
   error: null,
 };
 
-// Async thunk for add session
-export const fetchAddSession = createAsyncThunk(
-  "fetchAddSession",
-  async (body: AddSessionBody, { rejectWithValue }) => {
+// Async thunk for cancel session
+export const fetchCancelSession = createAsyncThunk(
+  "fetchCancelSession",
+  async (session_id: number, { rejectWithValue }) => {
     try {
-      const res = await Api.post({
-        url: "sessions/users",
-        body,
+      const res = await Api.get({
+        url: `sessions/${session_id}/cancel`,
       });
 
-      return res?.data as Session;
+      return res?.data as ResponseSuccess;
     } catch (e) {
       return rejectWithValue(e);
     }
   }
 );
 
-const addSessionSlice = createSlice({
-  name: "addSession",
+const cancelSessionSlice = createSlice({
+  name: "cancelSession",
   initialState,
   reducers: {
-    resetDataAddSession: (state) => {
+    resetDataCancelSession: (state) => {
       state.data = null;
       state.error = null;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAddSession.pending, (state) => {
+      .addCase(fetchCancelSession.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
-        fetchAddSession.fulfilled,
-        (state, action: PayloadAction<Session>) => {
+        fetchCancelSession.fulfilled,
+        (state, action: PayloadAction<ResponseSuccess>) => {
           state.loading = false;
           state.data = action.payload;
           state.error = null;
         }
       )
-      .addCase(fetchAddSession.rejected, (state, action) => {
+      .addCase(fetchCancelSession.rejected, (state, action) => {
         const dataError: any = action?.payload;
         if (dataError?.message) alert(dataError?.message);
-
+        
         state.loading = false;
         state.data = null;
         state.error = action.error.message ?? "failed";
@@ -65,5 +64,5 @@ const addSessionSlice = createSlice({
   },
 });
 
-export const { resetDataAddSession } = addSessionSlice.actions;
-export default addSessionSlice.reducer;
+export const { resetDataCancelSession } = cancelSessionSlice.actions;
+export default cancelSessionSlice.reducer;

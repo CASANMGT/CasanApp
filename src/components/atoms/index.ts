@@ -11,12 +11,10 @@ import LoadingModal from "./LoadingModal";
 import LoadingPage from "./LoadingPage";
 import Separator from "./Separator";
 import Signal from "./Signal";
+import Spinner from "./Spinner";
 import StatusIndicator from "./StatusIndicator";
 import SubTitle from "./SubTitle";
-import Timer from "./Timer";
-import Spinner from "./Spinner";
 import WheelPicker from "./WheelPicker";
-
 
 export {
   BetweenText,
@@ -32,10 +30,9 @@ export {
   LoadingPage,
   Separator,
   Signal,
+  Spinner,
   StatusIndicator,
   SubTitle,
-  Timer,
-  Spinner,
   WheelPicker
 };
 

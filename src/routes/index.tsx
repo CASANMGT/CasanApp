@@ -38,8 +38,7 @@ const RoutesPage = () => {
         <Route path="coming-soon" element={<ComingSoon />} />
         <Route
           path="charging/:id"
-          element={<Charging/>}
-          // element={<ProtectedRoute element={<Charging />} />}
+          element={<ProtectedRoute element={<Charging />} />}
         />
         <Route
           path="charging-station-details"
@@ -64,7 +63,7 @@ const RoutesPage = () => {
         <Route path="transaction-history" element={<TransactionHistory />} />
         <Route
           path="transaction-history-details"
-          element={<TransactionHistoryDetails />}
+          element={<ProtectedRoute element={<TransactionHistoryDetails />} />}
         />
         <Route path="vehicle" element={<Vehicle />} />
         <Route path="verification" element={<VerificationNumber />} />
