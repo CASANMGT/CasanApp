@@ -89,7 +89,7 @@ export type ChargingStation = {
   AdminID: number;
   LocationID: number;
   Admin: Admin;
-  Location: Location;
+  Location: LocationResponse;
   OperationalHours: string | null;
   Devices: string | null;
   PriceSetting: PriceSetting;

@@ -8,6 +8,7 @@ export type MenuBottomNavigationProps = {
 export type AlertModalProps = {
   visible: boolean;
   image?: any;
+  icon?: any;
   title?: string;
   description?: string;
   onDismiss: () => void;
@@ -51,7 +52,6 @@ export type initialStateFormProps = {
 };
 
 export type LatLng = [number, number];
-
 
 export type MetaResponseProps = {
   limit: number;

@@ -1,4 +1,6 @@
 import IcAstraPay from "./astrapay.svg?react";
+import IcInfoCircleRed from './info-circle-red.svg?react'
+import IcMarkerSmall from './marker-small.svg?react'
 import IcTimerCircle from './timer-circle.svg?react'
 import IcSuccess from './success.svg?react'
 import IcOvo from "./ovo.svg?react";
@@ -153,5 +155,7 @@ export {
   IcNoImage,
   IcSuccess,
   IcStandBy,
-  IcTimerCircle
+  IcTimerCircle,
+  IcMarkerSmall,
+  IcInfoCircleRed
 };

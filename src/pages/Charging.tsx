@@ -5,6 +5,8 @@ import {
   IcClockGreen,
   IcFlashGreen,
   IcInfoCircleGreen,
+  IcInfoCircleRed,
+  IcMarkerSmall,
   IcWalletGreen,
   ILCharging,
 } from "../assets";
@@ -27,14 +29,10 @@ const Charging = () => {
   const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { formData } = useSelector((state: RootState) => state.formCharging);
   const detailSession = useSelector((state: RootState) => state.detailSession);
 
-  const sessionSetting = useSelector(
-    (state: RootState) => state.sessionSetting
-  );
-
   const [visibleAlert, setVisibleAlert] = useState<boolean>(false);
+  const [openCancel, setOpenCancel] = useState<boolean>(false);
 
   useEffect(() => {
     getData();
@@ -77,7 +75,7 @@ const Charging = () => {
         title="Halaman Pengisian"
         onDismiss={onDismiss}
         className="mx-4 mb-4"
-        onPress={() => alert("coming soon")}
+        onPress={() => setOpenCancel(true)}
       />
 
       <LoadingPage loading={detailSession?.loading} color="primary100">
@@ -107,8 +105,22 @@ const Charging = () => {
           <StatusIndicator
             type={status || 2}
             duration={dataSession?.ExpectedDuration || 0}
-            className="my-8"
+            className="mt-8 mb-7"
           />
+
+          <div className="flex justify-center mb-5">
+            <div className="flex items-center gap-2 bg-white rounded-full px-2.5 py-1.5">
+              <IcMarkerSmall />
+
+              <span className="font-medium text-xs">
+                {detailSession?.data?.ChargingStation?.Location?.Mark ||
+                  detailSession?.data?.ChargingStation?.Location?.Name ||
+                  "-"}
+              </span>
+
+              <Signal signalValue={detailSession?.data?.Device?.SignalValue} />
+            </div>
+          </div>
 
           {/* DETAILS */}
           <div className="rounded-lg p-3 mb-4 bg-white drop-shadow">
@@ -121,10 +133,10 @@ const Charging = () => {
             </div>
 
             <BetweenText
+              type="medium-content"
               labelLeft="Alat"
               labelRight={`${dataSession?.ChargingStation?.Name}, Socket ${dataSession?.Socket?.Port}`}
               className="bg-baseLightGray rounded-t p-3"
-              classNameLabelRight="text-blackBold font-bold"
             />
 
             <BetweenText
@@ -168,6 +180,15 @@ const Charging = () => {
           onDismiss={() => setVisibleAlert(false)}
         />
       )}
+
+      <AlertModal
+        visible={openCancel}
+        icon={IcInfoCircleRed}
+        title="Apakah kamu ingin membatalkan sesi"
+        description="Sesi Pengisian daya akan dibatalkan"
+        onDismiss={() => setOpenCancel(false)}
+        onClick={() => dispatch(fetchDetailSession(dataSession?.ID || 0))}
+      />
       {/* END */}
     </div>
   );
