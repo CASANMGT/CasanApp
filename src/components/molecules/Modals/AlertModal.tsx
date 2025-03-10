@@ -7,6 +7,8 @@ const AlertModal: React.FC<AlertModalProps> = ({
   image,
   icon,
   title,
+  labelButtonLeft,
+  labelButtonRight,
   description,
   onDismiss,
   onClick,
@@ -49,12 +51,16 @@ const AlertModal: React.FC<AlertModalProps> = ({
 
         <div className="between-x gap-2">
           <Button
-            label="Ya"
+            label={labelButtonLeft || ""}
             onClick={() => {
               if (onClick) onClick();
             }}
           />
-          <Button type="secondary" label="Tidak" onClick={onDismiss} />
+          <Button
+            type="secondary"
+            label={labelButtonRight || ""}
+            onClick={onDismiss}
+          />
         </div>
       </div>
     </ModalContainer>

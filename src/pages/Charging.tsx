@@ -35,6 +35,8 @@ const Charging = () => {
   const [visibleAlert, setVisibleAlert] = useState<boolean>(false);
   const [openCancel, setOpenCancel] = useState<boolean>(false);
   const [openDiagnosis, setOpenDiagnosis] = useState<boolean>(false);
+  const [openDiagnosisFailed, setOpenDiagnosisFailed] =
+    useState<boolean>(false);
 
   useEffect(() => {
     getData();
@@ -62,7 +64,8 @@ const Charging = () => {
   };
 
   const onNext = () => {
-    setOpenDiagnosis(true);
+    // setOpenDiagnosis(true);
+    setOpenDiagnosisFailed(true);
   };
 
   const dataSession: Session | null = detailSession?.data;
@@ -197,7 +200,20 @@ const Charging = () => {
         title="Apakah kamu ingin membatalkan sesi"
         description="Sesi Pengisian daya akan dibatalkan"
         onDismiss={() => setOpenCancel(false)}
+        labelButtonLeft="Ya"
+        labelButtonRight="Tidak"
         onClick={() => dispatch(fetchDetailSession(dataSession?.ID || 0))}
+      />
+
+      <AlertModal
+        visible={openDiagnosisFailed}
+        image={ILCharging}
+        title="Diagnosis Gagal"
+        description="Ups, coba cek lagi chargermu ya"
+        labelButtonLeft="Coba Lagi"
+        labelButtonRight="Tutup"
+        onDismiss={() => setOpenDiagnosisFailed(false)}
+        onClick={() => {}}
       />
 
       <DiagnosisModal

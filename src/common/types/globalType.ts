@@ -10,6 +10,8 @@ export type AlertModalProps = {
   image?: any;
   icon?: any;
   title?: string;
+  labelButtonLeft?: string;
+  labelButtonRight?: string;
   description?: string;
   onDismiss: () => void;
   onClick?: () => void;
