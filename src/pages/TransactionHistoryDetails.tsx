@@ -1,8 +1,8 @@
+import html2canvas from "html2canvas";
 import { capitalize } from "lodash";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import html2canvas from "html2canvas";
 import {
   IcSaveGreen,
   IcShareGreen2,
@@ -33,9 +33,9 @@ const TransactionHistoryDetails = () => {
   const detailSession = useSelector((state: RootState) => state.detailSession);
   const addSession = useSelector((state: RootState) => state.addSession);
   const cancelSession = useSelector((state: RootState) => state.cancelSession);
+  const [isRunning, setIsRunning] = useState<boolean>(false);
 
   useEffect(() => {
-    dispatch(fetchDetailSession(62));
     getData();
   }, []);
 
@@ -47,9 +47,18 @@ const TransactionHistoryDetails = () => {
     }
   }, [cancelSession?.data]);
 
-  // useEffect(() => {
-  //   if (detailSession?.data?.Transaction?.Status === 2) timeoutProgress();
-  // }, [detailSession?.data]);
+  useEffect(() => {
+    if (detailSession?.data?.Transaction?.Status === 2) {
+      setIsRunning(true);
+    } else if (isRunning && detailSession?.data?.Transaction?.Status === 1) {
+      setIsRunning(false);
+      navigate(`/payment-success/${detailSession?.data?.ID}`);
+    }
+  }, [detailSession?.data]);
+
+  useEffect(() => {
+    if (isRunning) timeoutProgress();
+  }, [isRunning]);
 
   const getData = () => {
     if (addSession?.data?.ID) {
@@ -109,7 +118,7 @@ const TransactionHistoryDetails = () => {
     document.body.removeChild(link);
   };
 
-  const status: number = 1; // detailSession?.data?.Transaction?.Status || 0;
+  const status: number = detailSession?.data?.Transaction?.Status || 0;
   let duration: number = 0;
 
   if (status === 2) {
@@ -129,12 +138,14 @@ const TransactionHistoryDetails = () => {
           {status === 1 ? (
             <IcSuccessGreen />
           ) : (
-            <IcTimerCircle className="text-orange" />
+            <IcTimerCircle
+              className={status === 3 ? "text-red" : "text-orange"}
+            />
           )}
 
-          {status === 1 ? (
+          {status === 1 || status === 3 ? (
             <span className="font-medium text-blackBold">
-              Transaksi Selesai
+              {`Transaksi ${status === 1 ? "Selesai" : "Expired"}`}
             </span>
           ) : (
             <CountdownTimer
@@ -229,48 +240,52 @@ const TransactionHistoryDetails = () => {
             className="mt-2"
           />
 
-          <Separator className="my-6 bg-black10" />
+          {status !== 3 && (
+            <>
+              <Separator className="my-6 bg-black10" />
 
-          {status === 1 ? (
-            <div className="between-x gap-6">
-              <Button
-                type="secondary"
-                label="Bagikan Resi"
-                iconRight={IcShareGreen2}
-                onClick={handleShare}
-              />
-              <Button
-                type="secondary"
-                label="Simpan Resi"
-                iconRight={IcSaveGreen}
-                onClick={handleSave}
-              />
-            </div>
-          ) : (
-            <div className="between-y gap-4">
-              <button
-                onClick={() =>
-                  window.open(
-                    detailSession?.data?.Transaction?.DeepLinkRedirectURL,
-                    "_blank"
-                  )
-                }
-                className="btn-secondary w-full h-[38px] flex gap-1 border rounded-full text-sm justify-center items-center flex drop-shadow"
-              >
-                <span>Lanjutkan Pembayaran</span>
-                <span className="font-semibold">{`Rp${rupiah(
-                  detailSession?.data?.Transaction?.DueAmount
-                )}`}</span>
-              </button>
+              {status === 1 ? (
+                <div className="between-x gap-6">
+                  <Button
+                    type="secondary"
+                    label="Bagikan Resi"
+                    iconRight={IcShareGreen2}
+                    onClick={handleShare}
+                  />
+                  <Button
+                    type="secondary"
+                    label="Simpan Resi"
+                    iconRight={IcSaveGreen}
+                    onClick={handleSave}
+                  />
+                </div>
+              ) : (
+                <div className="between-y gap-4">
+                  <button
+                    onClick={() =>
+                      window.open(
+                        detailSession?.data?.Transaction?.DeepLinkRedirectURL,
+                        "_blank"
+                      )
+                    }
+                    className="btn-secondary w-full h-[38px] flex gap-1 border rounded-full text-sm justify-center items-center flex drop-shadow"
+                  >
+                    <span>Lanjutkan Pembayaran</span>
+                    <span className="font-semibold">{`Rp${rupiah(
+                      detailSession?.data?.Transaction?.DueAmount
+                    )}`}</span>
+                  </button>
 
-              <Button
-                type="danger"
-                label="Cancel"
-                onClick={() =>
-                  dispatch(fetchCancelSession(detailSession?.data?.ID || 0))
-                }
-              />
-            </div>
+                  <Button
+                    type="danger"
+                    label="Cancel"
+                    onClick={() =>
+                      dispatch(fetchCancelSession(detailSession?.data?.ID || 0))
+                    }
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
       </LoadingPage>

@@ -1,9 +1,12 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { IcSuccess } from "../assets";
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const [isNext, setIsNext] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
@@ -12,8 +15,12 @@ const PaymentSuccess = () => {
   }, []);
 
   const onNext = () => {
-    navigate(`/charging`, { replace: true });
+    if (!isNext) {
+      setIsNext(true);
+      navigate(`/charging/${id}`, { replace: true });
+    }
   };
+
   return (
     <div
       onClick={onNext}
