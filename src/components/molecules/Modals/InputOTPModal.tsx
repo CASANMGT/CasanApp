@@ -60,7 +60,7 @@ const InputOTPModal: React.FC<AlertModalProps> = ({
   };
 
   return (
-    <ModalContainer visible={visible} onDismiss={onDismiss}>
+    <ModalContainer isOpen={visible} onDismiss={onDismiss}>
       <>
         <p className="mb-1.5 text-center">
           Lanjutkan dengan kode OTP untuk masuk

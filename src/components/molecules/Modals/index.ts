@@ -6,6 +6,7 @@ import RequestOTPModal from "./RequestOTPModal";
 import AlertModal from "./AlertModal";
 import ModalPaymentMethod from "./ModalPaymentMethod";
 import ModalInputHour from "./ModalInputHour";
+import DiagnosisModal from "./DiagnosisModal";
 
 export {
     InputOTPModal,
@@ -15,6 +16,7 @@ export {
     AlertModal,
     ModalPaymentMethod,
     ModalVoltageAmpere,
-    ModalInputHour
+    ModalInputHour,
+    DiagnosisModal
 };
 

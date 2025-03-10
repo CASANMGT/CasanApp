@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useEffect } from "react";
 
 interface ModalContainerProps {
-  visible: boolean;
+  isOpen: boolean;
   children: any;
   isBottom?: boolean;
   onDismiss: () => void;
@@ -10,7 +10,7 @@ interface ModalContainerProps {
 }
 
 const ModalContainer: React.FC<ModalContainerProps> = ({
-  visible,
+  isOpen,
   classNameBottom,
   children,
   isBottom,
@@ -25,7 +25,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  if (!visible) return null;
+  if (!isOpen) return null;
 
   return (
     <div

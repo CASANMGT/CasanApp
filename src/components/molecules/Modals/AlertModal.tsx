@@ -19,7 +19,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
   const isShowClick = onClick ? true : false;
 
   return (
-    <ModalContainer visible={visible} onDismiss={onDismiss}>
+    <ModalContainer isOpen={visible} onDismiss={onDismiss}>
       <div>
         {isShowIcon && (
           <div className="mb-6 mt-3 center">

@@ -7,7 +7,13 @@ interface SizeButtonStyleProps {
 
 interface ButtonProps {
   className?: string;
-  type?: "primary" | "secondary" | "danger" | "light-green" | "primary-line";
+  type?:
+    | "primary"
+    | "secondary"
+    | "danger"
+    | "light-green"
+    | "light-red"
+    | "primary-line";
   buttonType?: "sm" | "md" | "lg";
   label: string;
   iconRight?: any;
@@ -46,6 +52,10 @@ const Button: React.FC<ButtonProps> = ({
 
         case "light-green":
           value = "bg-lightGreen text-green border-strokeGreen  cursor-pointer";
+          break;
+
+        case "light-red":
+          value = "bg-lightRed text-red border-strokeRed  cursor-pointer";
           break;
 
         default:

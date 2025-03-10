@@ -15,6 +15,7 @@ import {
   AlertModal,
   BetweenText,
   Button,
+  DiagnosisModal,
   Header,
   LoadingPage,
   Signal,
@@ -33,6 +34,7 @@ const Charging = () => {
 
   const [visibleAlert, setVisibleAlert] = useState<boolean>(false);
   const [openCancel, setOpenCancel] = useState<boolean>(false);
+  const [openDiagnosis, setOpenDiagnosis] = useState<boolean>(false);
 
   useEffect(() => {
     getData();
@@ -60,13 +62,14 @@ const Charging = () => {
   };
 
   const onNext = () => {
-    // setVisibleAlert(true);
-    alert("coming soon");
+    setOpenDiagnosis(true);
   };
 
   const dataSession: Session | null = detailSession?.data;
   const status: number | undefined = 2; //dataSession?.Status;
   const totalCharging: number = getTotalCharging();
+
+  console.log("cek data", dataSession);
 
   return (
     <div className="background-1 pt-3 overflow-hidden flex flex-col justify-between">
@@ -156,6 +159,13 @@ const Charging = () => {
               labelRight={`Rp${rupiah(dataSession?.Transaction?.Amount)}`}
               className="bg-baseLightGray p-3"
             />
+
+            <BetweenText
+              type="medium-content"
+              labelLeft="Tarif Pengecasan"
+              labelRight={dataSession?.ChargingFee || "-"}
+              className="p-3"
+            />
           </div>
         </div>
 
@@ -188,6 +198,12 @@ const Charging = () => {
         description="Sesi Pengisian daya akan dibatalkan"
         onDismiss={() => setOpenCancel(false)}
         onClick={() => dispatch(fetchDetailSession(dataSession?.ID || 0))}
+      />
+
+      <DiagnosisModal
+        isOpen={openDiagnosis}
+        onDismiss={() => setOpenDiagnosis(false)}
+        onClick={() => setOpenDiagnosis(false)}
       />
       {/* END */}
     </div>

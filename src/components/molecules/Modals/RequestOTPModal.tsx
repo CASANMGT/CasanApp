@@ -12,7 +12,7 @@ const RequestOTPModal: React.FC<AlertModalProps> = ({
   const phone: string = "081208120812";
 
   return (
-    <ModalContainer visible={visible} onDismiss={onDismiss}>
+    <ModalContainer isOpen={visible} onDismiss={onDismiss}>
       <>
         <p className="mb-1.5 text-center">
           Lanjutkan dengan kode OTP untuk masuk

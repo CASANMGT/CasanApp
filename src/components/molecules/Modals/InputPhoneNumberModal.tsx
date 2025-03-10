@@ -21,7 +21,7 @@ const InputPhoneNumberModal: React.FC<AlertModalProps> = ({
   };
 
   return (
-    <ModalContainer visible={visible} onDismiss={onDismiss}>
+    <ModalContainer isOpen={visible} onDismiss={onDismiss}>
       <>
         <p className="mb-3 text-base font-semibold text-center">
           Masukan Nomor Telepon

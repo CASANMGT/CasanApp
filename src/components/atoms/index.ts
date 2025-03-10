@@ -14,6 +14,7 @@ import Signal from "./Signal";
 import Spinner from "./Spinner";
 import StatusIndicator from "./StatusIndicator";
 import SubTitle from "./SubTitle";
+import ProgressBar from "./ProgressBar";
 import WheelPicker from "./WheelPicker";
 
 export {
@@ -33,6 +34,7 @@ export {
   Spinner,
   StatusIndicator,
   SubTitle,
-  WheelPicker
+  WheelPicker,
+  ProgressBar
 };
 

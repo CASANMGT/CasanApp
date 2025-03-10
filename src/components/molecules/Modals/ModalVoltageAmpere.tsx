@@ -34,7 +34,7 @@ const ModalVoltageAmpere: React.FC<ModalVoltageAmpereProps> = ({
   }, [visible]);
 
   return (
-    <ModalContainer visible={visible} onDismiss={onDismiss}>
+    <ModalContainer isOpen={visible} onDismiss={onDismiss}>
       <div className="row gap-3 mb-3">
         <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
           <IcFlashCircleGreen />

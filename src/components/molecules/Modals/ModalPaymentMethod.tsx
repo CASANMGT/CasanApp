@@ -72,7 +72,7 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
   };
 
   return (
-    <ModalContainer visible={visible} isBottom onDismiss={onDismiss}>
+    <ModalContainer isOpen={visible} isBottom onDismiss={onDismiss}>
       <div className="w-full bg-white p-4 rounded-t-xl between-y">
         <div className="flex-1 flex flex-col overflow-hidden relative">
           <div className="between-x mb-6">
