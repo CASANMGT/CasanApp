@@ -2,7 +2,13 @@ import { capitalize } from "lodash";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import { IcTimerCircle } from "../assets";
+import html2canvas from "html2canvas";
+import {
+  IcSaveGreen,
+  IcShareGreen2,
+  IcSuccessGreen,
+  IcTimerCircle,
+} from "../assets";
 import {
   BetweenText,
   Button,
@@ -69,15 +75,41 @@ const TransactionHistoryDetails = () => {
     navigate(-1);
   };
 
-  const onShare = () => {
-    alert("coming soon");
+  const handleShare = () => {
+    const receiptElement = document.getElementById("receipt");
+    if (!receiptElement) return;
+
+    const receiptText = receiptElement.innerText;
+
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "Informasi Transaksi",
+          text: receiptText,
+        })
+        .then(() => console.log("Shared successfully"))
+        .catch((error) => console.error("Error sharing:", error));
+    } else {
+      alert("Sharing is not supported on this browser.");
+    }
   };
 
-  const onSave = () => {
-    alert("coming soon");
+  const handleSave = async () => {
+    const receiptElement = document.getElementById("receipt"); // Ensure the receipt has an ID
+    if (!receiptElement) return;
+
+    const canvas = await html2canvas(receiptElement);
+    const image = canvas.toDataURL("image/png");
+
+    const link = document.createElement("a");
+    link.href = image;
+    link.download = "receipt.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
-  const status: number = 2; // detailSession?.data?.Transaction?.Status || 0;
+  const status: number = 1; // detailSession?.data?.Transaction?.Status || 0;
   let duration: number = 0;
 
   if (status === 2) {
@@ -94,16 +126,29 @@ const TransactionHistoryDetails = () => {
 
       <LoadingPage loading={detailSession?.loading}>
         <div className="flex flex-col gap-2 items-center justify-center my-7 ">
-          <IcTimerCircle className="text-orange" />
+          {status === 1 ? (
+            <IcSuccessGreen />
+          ) : (
+            <IcTimerCircle className="text-orange" />
+          )}
 
-          <CountdownTimer
-            label="Berlaku"
-            initialSeconds={duration}
-            onFinish={getDetails}
-          />
+          {status === 1 ? (
+            <span className="font-medium text-blackBold">
+              Transaksi Selesai
+            </span>
+          ) : (
+            <CountdownTimer
+              label="Berlaku"
+              initialSeconds={duration}
+              onFinish={getDetails}
+            />
+          )}
         </div>
 
-        <div className="p-3 pb-6 bg-white rounded-lg mt-[28px] drop-shadow">
+        <div
+          id="receipt"
+          className="relative p-3 pb-6 bg-white rounded-lg mt-[28px] drop-shadow"
+        >
           <p className="font-medium mb-2">Informasi Transaksi</p>
           <div className="text-black100/70 row gap-2">
             <p className="text-xs">
@@ -127,15 +172,15 @@ const TransactionHistoryDetails = () => {
             labelLeft="Tipe Transaksi"
             labelRight="Pengisisan Daya"
             classNameLabelRight="font-medium text-black100"
+            className="mb-2"
           />
 
-          <Separator className="my-1.5 bg-black10" />
           <BetweenText
             labelLeft="Referensi Sesi ID"
             labelRight={detailSession?.data?.ID || "-"}
+            className="border-y border-black10 py-2"
           />
 
-          <Separator className="my-1.5 bg-black10" />
           <BetweenText
             labelLeft="Metode Pembayaran"
             labelRight={capitalize(
@@ -143,84 +188,90 @@ const TransactionHistoryDetails = () => {
                 .replace("_TU", "")
                 .toLocaleLowerCase()
             )}
+            className="my-2"
           />
 
-          <Separator className="my-1.5 bg-black10" />
           <BetweenText
             labelLeft="Nominal Pengecasan"
             labelRight={`Rp${rupiah(detailSession?.data?.Transaction?.Amount)}`}
+            className="border-y border-black10 py-2"
           />
 
-          <Separator className="my-1.5 bg-black10" />
           <BetweenText
             labelLeft="Admin Fee"
             labelRight={`Rp${rupiah(
               detailSession?.data?.Transaction?.TotalFee
             )}`}
+            className="my-2"
           />
 
-          <Separator className="my-1.5 bg-black10" />
           <BetweenText
             labelLeft="Service Fee"
             labelRight={`Rp${rupiah(detailSession?.data?.ChargingFee || 0)}`}
+            className="border-t border-black10 py-2"
           />
 
-          <Separator className="my-1.5 bg-black70" />
           <BetweenText
             labelLeft="Total Transaksi"
             labelRight={`Rp${rupiah(
               detailSession?.data?.Transaction?.DueAmount
             )}`}
+            className="border-y border-black100 py-2"
             classNameLabelLeft="text-black100"
             classNameLabelRight="text-black100 font-medium"
           />
 
-          <Separator className="my-1.5 bg-black70" />
           <BetweenText
             labelLeft="Pembayaran Casan Wallet"
             labelRight={`Rp${rupiah(
               detailSession?.data?.Transaction?.WalletUsedAmount
             )}`}
+            className="mt-2"
           />
 
           <Separator className="my-6 bg-black10" />
 
-          <div className="between-y gap-4">
-            <button
-              onClick={() =>
-                window.open(
-                  detailSession?.data?.Transaction?.DeepLinkRedirectURL,
-                  "_blank"
-                )
-              }
-              className="btn-secondary w-full h-[38px] flex gap-1 border rounded-full text-sm justify-center items-center flex drop-shadow"
-            >
-              <span>Lanjutkan Pembayaran</span>
-              <span className="font-semibold">{`Rp${rupiah(
-                detailSession?.data?.Transaction?.DueAmount
-              )}`}</span>
-            </button>
+          {status === 1 ? (
+            <div className="between-x gap-6">
+              <Button
+                type="secondary"
+                label="Bagikan Resi"
+                iconRight={IcShareGreen2}
+                onClick={handleShare}
+              />
+              <Button
+                type="secondary"
+                label="Simpan Resi"
+                iconRight={IcSaveGreen}
+                onClick={handleSave}
+              />
+            </div>
+          ) : (
+            <div className="between-y gap-4">
+              <button
+                onClick={() =>
+                  window.open(
+                    detailSession?.data?.Transaction?.DeepLinkRedirectURL,
+                    "_blank"
+                  )
+                }
+                className="btn-secondary w-full h-[38px] flex gap-1 border rounded-full text-sm justify-center items-center flex drop-shadow"
+              >
+                <span>Lanjutkan Pembayaran</span>
+                <span className="font-semibold">{`Rp${rupiah(
+                  detailSession?.data?.Transaction?.DueAmount
+                )}`}</span>
+              </button>
 
-            <Button
-              type="danger"
-              label="Cancel"
-              onClick={() =>
-                dispatch(fetchCancelSession(detailSession?.data?.ID || 0))
-              }
-            />
-            {/* <Button
-              type="secondary"
-              label="Bagikan Resi"
-              iconRight={IcShareGreen2}
-              onClick={onShare}
-            /> */}
-            {/* <Button
-              type="secondary"
-              label="Simpan Resi"
-              iconRight={IcSaveGreen}
-              onClick={onSave}
-            /> */}
-          </div>
+              <Button
+                type="danger"
+                label="Cancel"
+                onClick={() =>
+                  dispatch(fetchCancelSession(detailSession?.data?.ID || 0))
+                }
+              />
+            </div>
+          )}
         </div>
       </LoadingPage>
     </div>
