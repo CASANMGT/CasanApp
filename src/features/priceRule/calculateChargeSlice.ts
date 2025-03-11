@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Api } from "../../services/Api";
+import { Api } from "../../services/jel";
 import { CalculateChargeBody } from "../../common";
 
 type CalculateChargeState = {

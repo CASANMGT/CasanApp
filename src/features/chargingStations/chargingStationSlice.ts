@@ -4,7 +4,7 @@ import {
   DataChargingStation,
   MetaResponseProps,
 } from "../../common";
-import { Api } from "../../services/Api";
+import { Api } from "../../services/jel";
 
 type ChargingStationResponseProps = {
   status: string;

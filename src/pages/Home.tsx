@@ -1,24 +1,17 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Location,
-  NavigateFunction,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 import {
   IcNotificationBadgesGreen,
   IcNotificationGreen,
   IcPinWhite,
   IcSearchGray,
 } from "../assets";
-import { DummyAeon, DummyTheBreeze } from "../assets/dummy";
 import {
   AVAILABLE_PLACE,
-  chargingLocationProps,
   ChargingStationBody,
   LatLng,
-  LIMIT_LIST,
+  LIMIT_LIST
 } from "../common";
 import {
   AvailablePlaceItem,
@@ -28,42 +21,7 @@ import {
 import { fetchChargingStation } from "../features";
 import { AppDispatch, RootState } from "../store";
 
-const dataOngoingDummy = [1, 2, 3];
-const slidesDummy = [
-  { id: 1, image: "https://via.placeholder.com/300x150", title: "Slide 1" },
-  { id: 2, image: "https://via.placeholder.com/300x150", title: "Slide 2" },
-  { id: 3, image: "https://via.placeholder.com/300x150", title: "Slide 3" },
-];
-
-const chargingLocationDummy: chargingLocationProps[] = [
-  {
-    image: DummyTheBreeze,
-    location: "The Breeze",
-    address:
-      "Jl. BSD Green Office Park Jl. BSD Grand Boulevard, Sampora, BSD, Kabupaten Tangerang",
-    status: "full",
-    available: 0,
-    cost: 600,
-    voltage: 48,
-    ampere: 2,
-    distance: 2,
-  },
-  {
-    image: DummyAeon,
-    location: "Aeon Mall",
-    address:
-      "Jl. BSD Raya Utama, Pagedangan, Kec. Pagedangan, Kabupaten Tangerang, Banten",
-    status: "available",
-    available: 5,
-    cost: 600,
-    voltage: 48,
-    ampere: 2,
-    distance: 2,
-  },
-];
-
 const Home = () => {
-  const location: Location = useLocation();
   const navigate: NavigateFunction = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 

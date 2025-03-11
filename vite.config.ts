@@ -10,6 +10,10 @@ export default defineConfig({
     svgr(),
     VitePWA({
       registerType: "autoUpdate",
+      workbox: {
+        // Disable unnecessary hooks if they cause errors
+        cleanupOutdatedCaches: false,
+      },
       manifest: {
         name: "My Awesome App",
         short_name: "MyApp",
