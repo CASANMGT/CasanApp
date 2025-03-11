@@ -1,30 +1,35 @@
+import html2canvas from "html2canvas";
+import { capitalize } from "lodash";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   IcInfoCircleGreen,
   IcSaveGreen,
   IcShareGreen2,
   IcSuccessGreen,
 } from "../assets";
-import { portReportBodyProps } from "../common";
-import { BetweenText, Button, Header, LoadingPage, Separator } from "../components";
-import { moments, rupiah, setDiff } from "../helpers";
-import { fetchChargingSession } from "../services/request";
+import { Session } from "../common";
+import {
+  BetweenText,
+  Button,
+  Header,
+  LoadingPage,
+  Separator,
+} from "../components";
+import { fetchDetailSession } from "../features";
+import { formatDuration, moments, rupiah } from "../helpers";
 import { AppDispatch, RootState } from "../store";
 
 const SessionDetails = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { formData } = useSelector((state: RootState) => state.formCharging);
-
-  const { loading, data } = useSelector(
-    (state: RootState) => state.chargingSession
-  );
+  const detailSession = useSelector((state: RootState) => state.detailSession);
 
   useEffect(() => {
-    // getData();
+    getData();
   }, []);
 
   useEffect(() => {
@@ -40,29 +45,69 @@ const SessionDetails = () => {
   }, [navigate]);
 
   const getData = () => {
-    if (!formData?.deviceId || !formData?.port || !formData?.price) {
-      alert("perangkat tidak ditemukan");
-      navigate("/home", { replace: true });
-    } else {
-      const body: portReportBodyProps = {
-        deviceID: formData?.deviceId,
-        port: formData?.port,
-      };
-
-      dispatch(fetchChargingSession(body));
-    }
+    dispatch(fetchDetailSession(Number(id)));
   };
 
   const onDismiss = () => {
     navigate("/home", { replace: true });
   };
 
+  const handleShare = () => {
+    const receiptElement = document.getElementById("receipt");
+    if (!receiptElement) return;
+
+    const receiptText = receiptElement.innerText;
+
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "Informasi Transaksi",
+          text: receiptText,
+        })
+        .then(() => console.log("Shared successfully"))
+        .catch((error) => console.error("Error sharing:", error));
+    } else {
+      alert("Sharing is not supported on this browser.");
+    }
+  };
+
+  const handleSave = async () => {
+    const receiptElement = document.getElementById("receipt"); // Ensure the receipt has an ID
+    if (!receiptElement) return;
+
+    const canvas = await html2canvas(receiptElement);
+    const image = canvas.toDataURL("image/png");
+
+    const link = document.createElement("a");
+    link.href = image;
+    link.download = "receipt.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const onView = () => {
+    navigate("/home/order", { replace: true });
+  };
+
+  const dataSession: Session | null = detailSession?.data;
+  const status: number | undefined = dataSession?.Status;
+  const isFull =
+    (dataSession?.Transaction?.Amount || 0) -
+      (dataSession?.RefundAmount || 0) ===
+    0
+      ? true
+      : false;
+
   return (
     <div className="background-1 overflow-hidden justify-between flex flex-col">
       <Header type="secondary" title="Detail Sesi" onDismiss={onDismiss} />
 
-      <LoadingPage loading={loading}>
-        <div className="flex-1 overflow-auto scrollbar-none px-4 pb-7">
+      <LoadingPage loading={detailSession?.loading}>
+        <div
+          id="receipt"
+          className="flex-1 overflow-auto scrollbar-none px-4 pb-7"
+        >
           {/* ICON */}
           <div className="center flex-col gap-2 my-[28px]">
             <IcSuccessGreen />
@@ -82,21 +127,25 @@ const SessionDetails = () => {
             <BetweenText
               type="medium-content"
               labelLeft="Lokasi"
-              labelRight="Pasar Modern BSD City"
+              labelRight={
+                dataSession?.ChargingStation?.Location?.Mark ||
+                dataSession?.ChargingStation?.Location?.Name ||
+                "-"
+              }
               className="bg-baseLightGray p-3 rounded-t"
             />
 
             <BetweenText
               type="medium-content"
               labelLeft="Nomor Alat"
-              labelRight={data?.DeviceID || "142325"}
+              labelRight={dataSession?.DeviceID || "-"}
               className="p-3"
             />
 
             <BetweenText
               type="medium-content"
               labelLeft="Socket"
-              labelRight={`Socket ${data?.Port || "2"}`}
+              labelRight={`Socket ${dataSession?.Socket?.Port}`}
               className="bg-baseLightGray p-3 rounded-b"
             />
           </div>
@@ -114,55 +163,82 @@ const SessionDetails = () => {
             <BetweenText
               type="medium-content"
               labelLeft="ID Sesi"
-              labelRight="112113"
+              labelRight={dataSession?.ID || "-"}
               className="bg-baseLightGray p-3 rounded-t"
             />
+
+            {!isFull && (
+              <BetweenText
+                type="medium-content"
+                labelLeft="Keterangan Sesi"
+                labelRight="Dihentikan manual"
+                className="p-3"
+              />
+            )}
 
             <BetweenText
               type="medium-content"
               labelLeft="Waktu Mulai"
-              labelRight={moments().format("DD MMM HH:mm")}
+              labelRight={moments(dataSession?.StartChargingTime).format(
+                "DD MMM HH:mm"
+              )}
               className="p-3"
             />
 
             <BetweenText
               type="medium-content"
               labelLeft="Waktu Selesai"
-              labelRight={moments().format("DD MMM HH:mm")}
+              labelRight={moments(dataSession?.StopChargingTime).format(
+                "DD MMM HH:mm"
+              )}
               className="bg-baseLightGray p-3"
             />
 
             <BetweenText
               type="medium-content"
-              labelLeft="Durasi"
-              labelRight={
-                data?.StartTime && data?.StopTime
-                  ? setDiff(data?.StartTime, data?.StopTime)
-                  : "24 menit"
-              }
+              labelLeft={`Durasi ${!isFull && "Pesanan"}`}
+              labelRight={formatDuration(dataSession?.ExpectedDuration)}
               className="p-3"
             />
+
+            {!isFull && (
+              <BetweenText
+                type="medium-content"
+                labelLeft="Durasi Pemakaian"
+                labelRight={formatDuration(dataSession?.Duration)}
+                className="p-3"
+              />
+            )}
 
             <BetweenText
               type="medium-content"
               labelLeft="Maksimum Watt"
-              labelRight={`${data?.MaxWatt || "0-250"}W`}
+              labelRight={`${dataSession?.MaxWatt}W`}
               className="bg-baseLightGray p-3"
             />
 
             <BetweenText
               type="medium-content"
               labelLeft="Tarif Pengecasan"
-              labelRight="Rp800/jam"
+              labelRight={`Rp${rupiah(dataSession?.ChargingFee || 0)}/jam`}
               className="p-3"
             />
 
             <BetweenText
               type="medium-content"
-              labelLeft="Tota Tarif"
-              labelRight="Rp400"
+              labelLeft="Nominal Pesanan"
+              labelRight={`Rp${rupiah(dataSession?.Transaction?.Amount)}`}
               className="bg-baseLightGray p-3"
             />
+
+            {!isFull && (
+              <BetweenText
+                type="medium-content"
+                labelLeft="Nominal Pemakaian"
+                labelRight={`Rp${rupiah(dataSession?.UsedAmount)}`}
+                className="bg-baseLightGray p-3"
+              />
+            )}
           </div>
 
           {/* PAYMENT INFORMATION */}
@@ -170,52 +246,75 @@ const SessionDetails = () => {
             <p className="font-medium mb-2">Informasi Transaksi</p>
 
             <div className="text-black100/70 row gap-2">
-              <p className="text-xs">{moments().format("DD MMMM YYYY")}</p>
-              <p className="text-xs">{moments().format("HH:mm WIB")}</p>
-              <p className="text-xs">ID1876546</p>
+              <p className="text-xs">
+                {moments(dataSession?.Transaction?.CreatedAt).format(
+                  "DD MMMM YYYY"
+                )}
+              </p>
+              <p className="text-xs">
+                {moments(dataSession?.Transaction?.CreatedAt).format(
+                  "HH:mm WIB"
+                )}
+              </p>
+              <p className="text-xs">{`ID${dataSession?.TransactionID}`}</p>
             </div>
 
             <Separator className="my-4 bg-black10" />
 
             <p className="text-xs text-black100/70 mb-2">Detail Transaksi</p>
 
-            <BetweenText labelLeft="Metode Pembayaran" labelRight="Dana" />
-
-            <Separator className="my-1.5 bg-black10" />
             <BetweenText
-              labelLeft="Nominal Pengisian"
-              labelRight={`Rp${rupiah(400)}`}
+              labelLeft="Metode Pembayaran"
+              labelRight={capitalize(
+                (dataSession?.Transaction?.PaymentMethod || "")
+                  .replace("_TU", "")
+                  .toLocaleLowerCase()
+              )}
             />
 
-            {/* <Separator className="my-1.5 bg-black10" />
+            <Separator className="my-2 bg-black10" />
+            <BetweenText
+              labelLeft="Nominal Pengisian"
+              labelRight={`Rp${rupiah(dataSession?.Transaction?.Amount)}`}
+            />
+
+            <Separator className="my-2 bg-black10" />
             <BetweenText
               labelLeft="Biaya Transaksi"
-              labelRight={`Rp${rupiah(1000)}`}
-            /> */}
+              labelRight={`Rp${rupiah(dataSession?.Transaction?.TotalFee)}`}
+            />
 
-            <Separator className="my-1.5 bg-black100" />
+            <Separator className="my-2 bg-black100" />
             <BetweenText
               labelLeft="Total Transaksi"
-              labelRight={`Rp${rupiah(400)}`}
+              labelRight={`Rp${rupiah(dataSession?.Transaction?.DueAmount)}`}
               classNameLabelLeft="text-black100"
               classNameLabelRight="text-black100"
             />
-            <Separator className="mt-1.5 bg-black100" />
+            <Separator className="mt-2 bg-black100" />
+
+            {!isFull && (
+              <BetweenText
+                labelLeft="Pengebalian Dana"
+                labelRight={`Rp${rupiah(dataSession?.RefundAmount)}`}
+                className="mt-2"
+              />
+            )}
 
             <Separator className="my-6 bg-black10" />
 
-            <div className="between gap-4">
+            <div className="between-x gap-6">
               <Button
                 type="secondary"
                 label="Bagikan Resi"
                 iconRight={IcShareGreen2}
-                onClick={() => {}}
+                onClick={handleShare}
               />
               <Button
                 type="secondary"
                 label="Simpan Resi"
                 iconRight={IcSaveGreen}
-                onClick={() => {}}
+                onClick={handleSave}
               />
             </div>
           </div>
@@ -223,11 +322,7 @@ const SessionDetails = () => {
 
         {/* FOOTER */}
         <div className="p-4 bg-white drop-shadow">
-          <Button
-            buttonType="lg"
-            label="Pergi ke Riwayat"
-            onClick={onDismiss}
-          />
+          <Button buttonType="lg" label="Lihat Daftar Order" onClick={onView} />
         </div>
       </LoadingPage>
     </div>

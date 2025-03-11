@@ -5,6 +5,11 @@ export type MenuBottomNavigationProps = {
   isCenter?: boolean;
 };
 
+export type bodyListProps = {
+  page: number;
+  limit: number;
+};
+
 export type AlertModalProps = {
   visible: boolean;
   image?: any;

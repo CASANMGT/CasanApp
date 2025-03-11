@@ -10,7 +10,7 @@ const MENU: MenuBottomNavigationProps[] = [
   { id: "home", page: "index", label: "Home" },
   { id: "location", page: "location", label: "Location" },
   { id: "scan", page: "scan", label: "Scan Barcode", isCenter: true },
-  { id: "history", page: "history", label: "History" },
+  { id: "order", page: "order", label: "Order" },
   { id: "profile", page: "profile", label: "Profile" },
 ];
 

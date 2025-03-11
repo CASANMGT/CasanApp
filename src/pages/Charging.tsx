@@ -21,7 +21,17 @@ import {
   Signal,
   StatusIndicator,
 } from "../components";
-import { fetchDetailSession } from "../features";
+import {
+  fetchCancelSession,
+  fetchDetailSession,
+  fetchStartSession,
+  fetchStopSession,
+  hideLoading,
+  resetDataCancelSession,
+  resetDataStartSession,
+  resetDataStopSession,
+  showLoading,
+} from "../features";
 import { formatDuration, formatTime, rupiah } from "../helpers";
 import { AppDispatch, RootState } from "../store";
 
@@ -31,6 +41,9 @@ const Charging = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const detailSession = useSelector((state: RootState) => state.detailSession);
+  const startSession = useSelector((state: RootState) => state.startSession);
+  const stopSession = useSelector((state: RootState) => state.stopSession);
+  const cancelSession = useSelector((state: RootState) => state.cancelSession);
 
   const [visibleAlert, setVisibleAlert] = useState<boolean>(false);
   const [openCancel, setOpenCancel] = useState<boolean>(false);
@@ -41,6 +54,33 @@ const Charging = () => {
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    if (startSession?.data) {
+      if (detailSession?.data?.Status === 2) {
+        setOpenDiagnosis(true);
+      }
+      dispatch(resetDataStartSession());
+      getData();
+    }
+  }, [startSession?.data]);
+
+  useEffect(() => {
+    if (stopSession?.data) {
+      dispatch(resetDataStopSession());
+      onNext()
+    }
+  }, [stopSession?.data]);
+
+  useEffect(() => {
+    if (cancelSession?.loading) dispatch(showLoading());
+    else dispatch(hideLoading());
+
+    if (cancelSession?.data) {
+      dispatch(resetDataCancelSession());
+      onNext()
+    }
+  }, [cancelSession]);
 
   const getData = () => {
     dispatch(fetchDetailSession(Number(id)));
@@ -63,13 +103,20 @@ const Charging = () => {
     navigate(-1);
   };
 
+  const onStartStop = () => {
+    if (dataSession?.ID) {
+      if (status === 5) {
+        dispatch(fetchStopSession(dataSession?.ID));
+      } else dispatch(fetchStartSession(dataSession?.ID));
+    }
+  };
+
   const onNext = () => {
-    // setOpenDiagnosis(true);
-    setOpenDiagnosisFailed(true);
+    navigate(`session-details/${id}`, { replace: true });
   };
 
   const dataSession: Session | null = detailSession?.data;
-  const status: number | undefined = 2; //dataSession?.Status;
+  const status: number | undefined = dataSession?.Status;
   const totalCharging: number = getTotalCharging();
 
   console.log("cek data", dataSession);
@@ -119,12 +166,12 @@ const Charging = () => {
               <IcMarkerSmall />
 
               <span className="font-medium text-xs">
-                {detailSession?.data?.ChargingStation?.Location?.Mark ||
-                  detailSession?.data?.ChargingStation?.Location?.Name ||
+                {dataSession?.ChargingStation?.Location?.Mark ||
+                  dataSession?.ChargingStation?.Location?.Name ||
                   "-"}
               </span>
 
-              <Signal signalValue={detailSession?.data?.Device?.SignalValue} />
+              <Signal signalValue={dataSession?.Device?.SignalValue} />
             </div>
           </div>
 
@@ -178,7 +225,8 @@ const Charging = () => {
             type={status === 2 ? "primary" : "danger"}
             buttonType="lg"
             label={status === 2 ? "Mulai Pengisian" : "Selesaikan Pengisian"}
-            onClick={onNext}
+            loading={startSession?.loading || stopSession?.loading}
+            onClick={onStartStop}
           />
         </div>
       </LoadingPage>
@@ -202,7 +250,7 @@ const Charging = () => {
         onDismiss={() => setOpenCancel(false)}
         labelButtonLeft="Ya"
         labelButtonRight="Tidak"
-        onClick={() => dispatch(fetchDetailSession(dataSession?.ID || 0))}
+        onClick={() => dispatch(fetchCancelSession(Number(id)))}
       />
 
       <AlertModal
@@ -213,13 +261,13 @@ const Charging = () => {
         labelButtonLeft="Coba Lagi"
         labelButtonRight="Tutup"
         onDismiss={() => setOpenDiagnosisFailed(false)}
-        onClick={() => {}}
+        onClick={onStartStop}
       />
 
       <DiagnosisModal
         isOpen={openDiagnosis}
         onDismiss={() => setOpenDiagnosis(false)}
-        onClick={() => setOpenDiagnosis(false)}
+        onClick={() => dispatch(fetchCancelSession(Number(id)))}
       />
       {/* END */}
     </div>

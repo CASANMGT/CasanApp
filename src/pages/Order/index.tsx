@@ -1,26 +1,23 @@
-import { useState } from "react";
 import { Tabs } from "../../components";
-import CompletedHistory from "./CompletedHistory";
-import OngoingHistory from "./OngoingHistory";
+import CompletedOrder from "./CompletedOrder";
+import OngoingOrder from "./OngoingOrder";
 
 const tabs = [
-  { id: "ongoing", label: "Sedang Berlangsung", content: <OngoingHistory /> },
+  { id: "ongoing", label: "Berlangsung", content: <OngoingOrder /> },
   {
     id: "completed",
     label: "Selesai",
-    content: <CompletedHistory />,
+    content: <CompletedOrder />,
   },
 ];
 
-const History = () => {
-  const [activeTab, setActiveTab] = useState<number>(0);
-
+const Order = () => {
   return (
     <div className="container-screen flex flex-col justify-between">
       {/* HEADER */}
       <div className="bg-primary100 p-4">
         <h4 className="text-center  text-base text-white font-semibold">
-          Riwayat
+          Daftar Order
         </h4>
       </div>
 
@@ -29,4 +26,4 @@ const History = () => {
   );
 };
 
-export default History;
+export default Order;

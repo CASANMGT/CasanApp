@@ -9,6 +9,9 @@ import calculateDurationReducer from "../features/priceRule/calculateDurationSli
 import addSessionReducer from "../features/sessions/addSessionSlice.ts";
 import cancelSessionReducer from "../features/sessions/cancelSessionSlice.ts";
 import detailSessionReducer from "../features/sessions/detailSessionSlice.ts";
+import sessionListReducer from "../features/sessions/sessionListSlice.ts";
+import startSessionReducer from "../features/sessions/startSessionSlice.ts";
+import stopSessionReducer from "../features/sessions/stopSessionSlice.ts";
 import toastReducer from "../features/toastSlice";
 import myUserReducer from "../features/users/myUserSlice.ts";
 import chargingSessionReducer from "../redux/charging/chargingSessionSlice";
@@ -44,9 +47,12 @@ export const store = configureStore({
     feeSettings: feeSettingsReducer,
 
     // SESSION:
+    sessionList: sessionListReducer,
     addSession: addSessionReducer,
     detailSession: detailSessionReducer,
     cancelSession: cancelSessionReducer,
+    startSession: startSessionReducer,
+    stopSession: stopSessionReducer,
   },
 });
 

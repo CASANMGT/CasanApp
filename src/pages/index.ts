@@ -1,6 +1,6 @@
 import Charging from "./Charging";
 import ChargingStationDetails from "./ChargingStationDetails";
-import History from "./History";
+import Order from "./Order";
 import Home from "./Home";
 import InputPin from "./InputPin";
 import Location from "./Location";
@@ -34,7 +34,7 @@ export {
     SelectBank,
     SessionDetails,
     ChargingStationDetails,
-    History,
+    Order,
     Home,
     InputPin,
     Location,

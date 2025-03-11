@@ -4,7 +4,7 @@ import {
   Charging,
   ChargingStationDetails,
   ComingSoon,
-  History,
+  Order,
   Home,
   InputPin,
   Location,
@@ -58,7 +58,10 @@ const RoutesPage = () => {
           path="payment-success/:id"
           element={<ProtectedRoute element={<PaymentSuccess />} />}
         />
-        <Route path="session-details" element={<SessionDetails />} />
+        <Route
+          path="session-details/:id"
+          element={<ProtectedRoute element={<SessionDetails />} />}
+        />
         <Route path="top-up-balance" element={<TopUpBalance />} />
         <Route path="transaction-history" element={<TransactionHistory />} />
         <Route
@@ -73,7 +76,7 @@ const RoutesPage = () => {
         <Route path="home" element={<ProtectedRoute element={<Main />} />}>
           <Route path="index" element={<Home />}></Route>
           <Route path="location" element={<Location />} />
-          <Route path="history" element={<History />} />
+          <Route path="order" element={<Order />} />
           <Route path="profile" element={<Profile />} />
         </Route>
 

@@ -29,7 +29,7 @@ const Main = () => {
 
       case "/index":
       case "/location":
-      case "/history":
+      case "/order":
       case "/profile":
         setCurrentPage(currentPath.replace("/", ""));
         break;

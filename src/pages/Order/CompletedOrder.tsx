@@ -2,7 +2,7 @@ import { HistoryCard } from "../../components";
 
 const dataDummy = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-const CompletedHistory = () => {
+const CompletedOrder = () => {
   return (
     <div className="mb-[100px]">
       {dataDummy.map((_, index: number) => (
@@ -12,4 +12,4 @@ const CompletedHistory = () => {
   );
 };
 
-export default CompletedHistory;
+export default CompletedOrder;
