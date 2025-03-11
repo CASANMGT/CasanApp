@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CalculateDurationBody } from "../../common";
-import { Api } from "../../services/jel";
+import { Api } from "../../services/Api";
 
 type CalculateDurationState = {
   data: number | null;

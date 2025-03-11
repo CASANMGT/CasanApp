@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Api } from "../../services/jel";
+import { Api } from "../../services/Api";
 
 export type MyUserResponse = {
   ID: number;

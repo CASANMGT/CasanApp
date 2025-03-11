@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ResponseSuccess } from "../../common";
-import { Api } from "../../services/jel";
+import { Api } from "../../services/Api";
 
 type CancelSessionState = {
   data: ResponseSuccess | null;

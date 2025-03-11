@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Session } from "../../common";
-import { Api } from "../../services/jel";
+import { Api } from "../../services/Api";
 
 type DetailSessionState = {
   data: Session | null;
