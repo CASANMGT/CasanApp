@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 type CountdownTimerProps = {
   initialSeconds: number;
+  className?: string;
   label?: string;
   onFinish?: () => void;
 };
@@ -9,6 +10,7 @@ type CountdownTimerProps = {
 const CountdownTimer: React.FC<CountdownTimerProps> = ({
   initialSeconds,
   label,
+  className,
   onFinish,
 }) => {
   const [seconds, setSeconds] = useState(initialSeconds);
@@ -40,7 +42,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
   const isShowLabel = useMemo(() => (label ? true : false), [label]);
 
   return (
-    <span className="font-medium text-blackBold">{`${
+    <span className={`font-medium text-blackBold ${className}`}>{`${
       isShowLabel ? `${label} ` : ""
     }${formatTime(seconds)}`}</span>
   );

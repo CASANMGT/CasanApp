@@ -1,19 +1,23 @@
-import { IcStandBy } from "../../assets";
+import { IcBattery, IcStandBy } from "../../assets";
 import { formatTime } from "../../helpers";
+import CountdownTimer from "./CountdownTimer";
 
 interface StatusIndicatorProps {
   className?: string;
   type: number;
   duration: number;
+  onFinish: () => void;
 }
 
 const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   type,
   duration,
   className,
+  onFinish,
 }) => {
+  const isCharging: boolean = type === 5 || type === 6 ? true : false;
   const classNameAnimation: string = `absolute -left-[30px] -top-[30px] w-[280px] h-[280px] rounded-full ${
-    type === 5
+    isCharging
       ? "animate-soundWave bg-primary100"
       : "animate-charging bg-secondary100"
   }`;
@@ -30,12 +34,32 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
         <div className="relative flex items-center justify-center w-[220px] h-[220px] bg-white rounded-full shadow-md">
           <div className="text-center">
             <p className="text-black70 font-semibold mb-2">Sisa Durasi</p>
-            <p className="text-[33px] font-semibold">{formatTime(duration)}</p>
+            {type === 5 ? (
+              <CountdownTimer
+                initialSeconds={duration}
+                onFinish={onFinish}
+                className="text-[34px] font-semibold"
+              />
+            ) : (
+              <p className="text-[34px] font-semibold">
+                {formatTime(duration)}
+              </p>
+            )}
 
             <div className="flex justify-center">
-              <div className="rounded-lg bg-secondary10 h-6 px-2.5 space-x-2 flex items-center">
-                <IcStandBy />
-                <span className="text-xs text-[#E8A126]">Stand By</span>
+              <div
+                className={`rounded-lg h-6 px-2.5 space-x-2 flex items-center ${
+                  isCharging ? "bg-primary10" : "bg-secondary10"
+                }`}
+              >
+                {isCharging ? <IcBattery /> : <IcStandBy />}
+                <span
+                  className={`text-xs ${
+                    isCharging ? "text-primary100" : "text-[#E8A126]"
+                  }`}
+                >
+                  {isCharging ? "Charging" : "Stand By"}
+                </span>
               </div>
             </div>
           </div>

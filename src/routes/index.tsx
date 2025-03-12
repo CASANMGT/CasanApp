@@ -65,7 +65,7 @@ const RoutesPage = () => {
         <Route path="top-up-balance" element={<TopUpBalance />} />
         <Route path="transaction-history" element={<TransactionHistory />} />
         <Route
-          path="transaction-history-details"
+          path="transaction-history-details/:id"
           element={<ProtectedRoute element={<TransactionHistoryDetails />} />}
         />
         <Route path="vehicle" element={<Vehicle />} />

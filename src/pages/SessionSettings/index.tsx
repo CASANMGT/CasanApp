@@ -1,4 +1,4 @@
-import { clone } from "lodash";
+import { add, clone } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
@@ -36,7 +36,7 @@ import {
   fetchCalculateCharge,
   fetchCalculateDuration,
   hideLoading,
-  showLoading
+  showLoading,
 } from "../../features";
 import { formatDuration, rupiah, useForm } from "../../helpers";
 import { AppDispatch, RootState } from "../../store";
@@ -92,7 +92,7 @@ const SessionSettings = () => {
     else dispatch(hideLoading());
 
     if (addSession?.data) {
-      navigate("/transaction-history-details");
+      navigate(`/transaction-history-details/${addSession?.data?.ID}`);
     }
   }, [addSession]);
 

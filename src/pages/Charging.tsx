@@ -7,6 +7,7 @@ import {
   IcInfoCircleGreen,
   IcInfoCircleRed,
   IcMarkerSmall,
+  IcSuccessGreen,
   IcWalletGreen,
   ILCharging,
 } from "../assets";
@@ -50,10 +51,23 @@ const Charging = () => {
   const [openDiagnosis, setOpenDiagnosis] = useState<boolean>(false);
   const [openDiagnosisFailed, setOpenDiagnosisFailed] =
     useState<boolean>(false);
+  const [openFinished, setOpenFinished] = useState<boolean>(false);
 
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    if (detailSession?.data?.Status === 6) setOpenFinished(true);
+    else if (
+      detailSession?.data?.Status === 1 ||
+      detailSession?.data?.Status === 7 ||
+      detailSession?.data?.Status === 8
+    )
+      navigate(`/transaction-history-details/${detailSession?.data?.ID}`, {
+        replace: true,
+      });
+  }, [detailSession?.data?.Status]);
 
   useEffect(() => {
     if (startSession?.data) {
@@ -68,7 +82,7 @@ const Charging = () => {
   useEffect(() => {
     if (stopSession?.data) {
       dispatch(resetDataStopSession());
-      onNext()
+      onNext();
     }
   }, [stopSession?.data]);
 
@@ -78,7 +92,7 @@ const Charging = () => {
 
     if (cancelSession?.data) {
       dispatch(resetDataCancelSession());
-      onNext()
+      onNext();
     }
   }, [cancelSession]);
 
@@ -104,7 +118,8 @@ const Charging = () => {
   };
 
   const onStartStop = () => {
-    if (dataSession?.ID) {
+    if (status === 6) navigate("/home", { replace: true });
+    else if (dataSession?.ID) {
       if (status === 5) {
         dispatch(fetchStopSession(dataSession?.ID));
       } else dispatch(fetchStartSession(dataSession?.ID));
@@ -116,10 +131,9 @@ const Charging = () => {
   };
 
   const dataSession: Session | null = detailSession?.data;
-  const status: number | undefined = dataSession?.Status;
+  const status: number | undefined = 6; //dataSession?.Status;
+  const duration: number = 600; // dataSession?.ExpectedDuration||0
   const totalCharging: number = getTotalCharging();
-
-  console.log("cek data", dataSession);
 
   return (
     <div className="background-1 pt-3 overflow-hidden flex flex-col justify-between">
@@ -144,7 +158,7 @@ const Charging = () => {
             <InformationItem
               icon={IcClockGreen}
               label="Durasi"
-              content={formatTime(dataSession?.ExpectedDuration)}
+              content={formatTime(dataSession?.Duration)}
             />
 
             <InformationItem
@@ -157,7 +171,8 @@ const Charging = () => {
           {/* STATUS */}
           <StatusIndicator
             type={status || 2}
-            duration={dataSession?.ExpectedDuration || 0}
+            duration={duration}
+            onFinish={getData}
             className="mt-8 mb-7"
           />
 
@@ -216,15 +231,30 @@ const Charging = () => {
               labelRight={dataSession?.ChargingFee || "-"}
               className="p-3"
             />
+
+            {status === 6 && (
+              <BetweenText
+                type="medium-content"
+                labelLeft="Daya Maksimum"
+                labelRight={`${dataSession?.MaxWatt}Watt`}
+                className="bg-baseLightGray p-3"
+              />
+            )}
           </div>
         </div>
 
         {/* FOOTER */}
         <div className="container-button-footer">
           <Button
-            type={status === 2 ? "primary" : "danger"}
+            type={status === 2 || status === 6 ? "primary" : "danger"}
             buttonType="lg"
-            label={status === 2 ? "Mulai Pengisian" : "Selesaikan Pengisian"}
+            label={
+              status === 2
+                ? "Mulai Pengisian"
+                : status === 6
+                ? "Kembali"
+                : "Selesaikan Pengisian"
+            }
             loading={startSession?.loading || stopSession?.loading}
             onClick={onStartStop}
           />
@@ -262,6 +292,17 @@ const Charging = () => {
         labelButtonRight="Tutup"
         onDismiss={() => setOpenDiagnosisFailed(false)}
         onClick={onStartStop}
+      />
+
+      <AlertModal
+        visible={openFinished}
+        icon={IcSuccessGreen}
+        title="Sesi Selesai"
+        description="Sesi Pengisian daya anda telah selesai berdasarkan durasi yang anda pesan"
+        labelButtonLeft="Balik ke Beranda"
+        labelButtonRight="Lihat detail sesi"
+        onDismiss={onNext}
+        onClick={() => navigate("/home", { replace: true })}
       />
 
       <DiagnosisModal

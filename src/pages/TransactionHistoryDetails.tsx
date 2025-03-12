@@ -2,7 +2,7 @@ import html2canvas from "html2canvas";
 import { capitalize } from "lodash";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
 import {
   IcSaveGreen,
   IcShareGreen2,
@@ -28,10 +28,11 @@ import { AppDispatch, RootState } from "../store";
 
 const TransactionHistoryDetails = () => {
   const navigate: NavigateFunction = useNavigate();
+  const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
   const detailSession = useSelector((state: RootState) => state.detailSession);
-  const addSession = useSelector((state: RootState) => state.addSession);
+
   const cancelSession = useSelector((state: RootState) => state.cancelSession);
   const [isRunning, setIsRunning] = useState<boolean>(false);
 
@@ -61,10 +62,8 @@ const TransactionHistoryDetails = () => {
   }, [isRunning]);
 
   const getData = () => {
-    if (addSession?.data?.ID) {
-      dispatch(fetchDetailSession(addSession?.data?.ID));
-      dispatch(resetDataAddSession());
-    }
+    dispatch(fetchDetailSession(Number(id)));
+    dispatch(resetDataAddSession());
   };
 
   const getDetails = () => {
