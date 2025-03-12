@@ -10,7 +10,7 @@ interface OrderCardProps {
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({ position, data }) => {
-  const status: number = 6; //data?.Status
+  const status: number = data?.Status
 
   const getLabelStatus = () => {
     let value: string;
@@ -18,6 +18,10 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data }) => {
     switch (status) {
       case 1:
         value = "Menunggu Pembayaran";
+        break;
+
+      case 2:
+        value = "Menunggu Terhubung";
         break;
 
       case 5:
@@ -86,31 +90,37 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data }) => {
               {getLabelStatus()}
             </p>
 
-            {status === 6 ? (
-              <p className="text-black70">
-                {data?.StartChargingTime ? (
-                  <>
-                    {`${moments(data?.StartChargingTime).format("HH:mm")} - `}
-                    <span className="text-black100">
-                      {moments(data?.StopChargingTime).format("HH:mm")}
-                    </span>
-                  </>
+            {status !== 2 && (
+              <>
+                {status === 6 ? (
+                  <p className="text-black70">
+                    {data?.StartChargingTime ? (
+                      <>
+                        {`${moments(data?.StartChargingTime).format(
+                          "HH:mm"
+                        )} - `}
+                        <span className="text-black100">
+                          {moments(data?.StopChargingTime).format("HH:mm")}
+                        </span>
+                      </>
+                    ) : (
+                      "-"
+                    )}
+                  </p>
                 ) : (
-                  "-"
-                )}
-              </p>
-            ) : (
-              <div className="row gap-1">
-                <Icon className="w-[14px] h-auto" />
+                  <div className="row gap-1">
+                    <Icon className="w-[14px] h-auto" />
 
-                <p className="text-xs font-medium">
-                  {capitalize(
-                    (data?.Transaction?.PaymentMethod || "")
-                      .replace("_TU", "")
-                      .toLocaleLowerCase()
-                  )}
-                </p>
-              </div>
+                    <p className="text-xs font-medium">
+                      {capitalize(
+                        (data?.Transaction?.PaymentMethod || "")
+                          .replace("_TU", "")
+                          .toLocaleLowerCase()
+                      )}
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
