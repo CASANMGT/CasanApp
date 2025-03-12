@@ -25,7 +25,7 @@ const VerificationNumber = () => {
   const [codes, setCodes] = useState<string[]>(["", "", "", ""]);
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [labelTime, setLabelTime] = useState<string>("Kirim Ulang dalam 01:00");
-  const [labelError] = useState<string>("Kode verifikasi tidak valid");
+  const [labelError] = useState<string>();
   const [counter, setCounter] = useState<number>(60);
 
   useEffect(() => {

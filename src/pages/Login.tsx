@@ -30,7 +30,10 @@ const Login = () => {
   };
 
   const onLogin = () => {
-    navigate("/verification", { replace: true, state: { phone: phoneNumber } });
+    navigate("/verification", {
+      replace: true,
+      state: { phone: `0${phoneNumber}` },
+    });
   };
 
   return (
