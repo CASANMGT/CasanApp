@@ -1,4 +1,4 @@
-import { IcFuelGreen } from "../../../assets";
+import { IcFuel } from "../../../assets";
 import { rupiah } from "../../../helpers";
 import { Separator } from "../../atoms";
 
@@ -16,7 +16,7 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
       <div onClick={onClick} className="between cursor-pointer">
         <div className="row gap-2">
           <div className="w-9 h-9 center rounded-full bg-primary100/10">
-            <IcFuelGreen />
+            <IcFuel className="text-primary100"/>
           </div>
 
           <div>

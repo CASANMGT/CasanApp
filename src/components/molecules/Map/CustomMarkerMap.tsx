@@ -1,5 +1,5 @@
 import { Marker, OverlayView } from "@react-google-maps/api";
-import { IcFuelGreen } from "../../../assets";
+import { IcFuel } from "../../../assets";
 import { CoordinateProps } from "../../../common";
 import { rupiah } from "../../../helpers";
 
@@ -8,18 +8,17 @@ interface CustomMarkerMapProps {
 }
 
 const CustomMarkerMap: React.FC<CustomMarkerMapProps> = ({ center }) => {
-
   return (
     <>
       <Marker
         position={center}
         icon={{
-          path: google.maps.SymbolPath.CIRCLE, 
-          scale: 10, 
-          fillColor: "#18ACB6", 
-          fillOpacity: 0.7, 
-          strokeColor: "#18ACB6", 
-          strokeWeight: 2, 
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 10,
+          fillColor: "#18ACB6",
+          fillOpacity: 0.7,
+          strokeColor: "#18ACB6",
+          strokeWeight: 2,
         }}
       />
 
@@ -36,7 +35,7 @@ const CustomMarkerMap: React.FC<CustomMarkerMapProps> = ({ center }) => {
             </div>
 
             <div className="row gap-1 mt-1 text-black100/70">
-              <IcFuelGreen />
+              <IcFuel className="text-primary100" />
               <span className="text-xs">Tersedia</span>
               <span className="text-sm text-teal-500 font-bold ml-1">4</span>
             </div>

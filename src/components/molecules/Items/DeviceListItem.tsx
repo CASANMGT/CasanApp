@@ -1,4 +1,4 @@
-import { IcFuelBlack, IcFuelRed, IcRightBlack } from "../../../assets";
+import { IcFuel, IcRightBlack } from "../../../assets";
 import { Device } from "../../../common";
 import { Signal } from "../../atoms";
 
@@ -45,7 +45,7 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
         </div>
 
         <div className="row ">
-          <div className="ml-1">{false ? <IcFuelRed /> : <IcFuelBlack />}</div>
+          <IcFuel className={`ml-1 ${false ? "text-red" : "text-black100"}`} />
 
           <div
             className={`ml-1 font-medium  ${

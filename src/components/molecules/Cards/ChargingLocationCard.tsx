@@ -1,15 +1,13 @@
 import {
   IcBike,
   IcDownGreen,
-  IcFuelGreen,
-  IcFuelRed,
+  IcFuel,
   IcShareGreen,
-  ILNoImage,
+  ILNoImage
 } from "../../../assets";
 import {
-  chargingLocationProps,
   DataChargingStation,
-  LatLng,
+  LatLng
 } from "../../../common";
 import {
   getDistanceFromLatLonInKm,
@@ -105,7 +103,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
                   isFull ? "bg-lightRed" : "bg-primary100/10"
                 }`}
               >
-                {isFull ? <IcFuelRed /> : <IcFuelGreen />}
+                <IcFuel className={isFull ? "text-red" : "text-primary100"} />
               </div>
 
               {isFull ? (

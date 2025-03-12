@@ -4,10 +4,9 @@ import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import {
   IcBackBlack,
   IcDownCircleGreen,
-  IcFuelGreen,
-  IcFuelRed,
+  IcFuel,
   IcShareGreen,
-  ILNoImage,
+  ILNoImage
 } from "../../assets";
 import { DataChargingStation } from "../../common";
 import { DeviceListItem, Separator } from "../../components";
@@ -156,7 +155,7 @@ const ChargingStationDetails = () => {
                 isFull ? "bg-lightRed" : "bg-primary100/10"
               }`}
             >
-              {isFull ? <IcFuelRed /> : <IcFuelGreen />}
+              <IcFuel className={isFull ? "text-red" : "text-primary100"} />
             </div>
 
             {isFull ? (

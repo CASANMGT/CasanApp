@@ -15,8 +15,8 @@ const initialState: FinishSessionListState = {
 };
 
 // Async thunk for get session list
-export const fetchFinishSessionList = createAsyncThunk(
-  "fetchFinishSessionList",
+export const fetchCompleteSessionList = createAsyncThunk(
+  "fetchCompleteSessionList",
   async (params: SessionListBody, { rejectWithValue }) => {
     try {
       const res = await Api.get({
@@ -31,25 +31,25 @@ export const fetchFinishSessionList = createAsyncThunk(
   }
 );
 
-const finishSessionListSlice = createSlice({
-  name: "finishSessionList",
+const completeSessionListSlice = createSlice({
+  name: "completeSessionList",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchFinishSessionList.pending, (state) => {
+      .addCase(fetchCompleteSessionList.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
-        fetchFinishSessionList.fulfilled,
+        fetchCompleteSessionList.fulfilled,
         (state, action: PayloadAction<SessionListResponse>) => {
           state.loading = false;
           state.data = action.payload;
           state.error = null;
         }
       )
-      .addCase(fetchFinishSessionList.rejected, (state, action) => {
+      .addCase(fetchCompleteSessionList.rejected, (state, action) => {
         const dataError: any = action?.payload;
         if (dataError?.message) alert(dataError?.message);
 
@@ -60,4 +60,4 @@ const finishSessionListSlice = createSlice({
   },
 });
 
-export default finishSessionListSlice.reducer;
+export default completeSessionListSlice.reducer;

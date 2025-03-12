@@ -1,7 +1,7 @@
 import { capitalize } from "lodash";
-import { IcFuelGreen, ILNoImage } from "../../../assets";
+import { IcFuel, ILNoImage } from "../../../assets";
 import { Session } from "../../../common";
-import { getIconPaymentMethod, rupiah } from "../../../helpers";
+import { getIconPaymentMethod, moments, rupiah } from "../../../helpers";
 import { Separator } from "../../atoms";
 
 interface OrderCardProps {
@@ -10,7 +10,7 @@ interface OrderCardProps {
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({ position, data }) => {
-  const status: number = 5; //data?.Status
+  const status: number = 6; //data?.Status
 
   const getLabelStatus = () => {
     let value: string;
@@ -22,6 +22,10 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data }) => {
 
       case 5:
         value = "Sedang Mengisi";
+        break;
+
+      case 6:
+        value = "Selesai";
         break;
 
       default:
@@ -63,8 +67,14 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data }) => {
 
       <div className="between-x">
         <div className="row gap-2">
-          <div className="w-9 h-9 center rounded-full bg-primary100/10">
-            <IcFuelGreen />
+          <div
+            className={`w-9 h-9 center rounded-full ${
+              status === 6 ? "bg-black10" : "bg-primary10"
+            }`}
+          >
+            <IcFuel
+              className={status === 6 ? "text-black70" : "text-primary100"}
+            />
           </div>
 
           <div>
@@ -75,17 +85,33 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data }) => {
             >
               {getLabelStatus()}
             </p>
-            <div className="row gap-1">
-              <Icon className="w-[14px] h-auto" />
 
-              <p className="text-xs font-medium">
-                {capitalize(
-                  (data?.Transaction?.PaymentMethod || "")
-                    .replace("_TU", "")
-                    .toLocaleLowerCase()
+            {status === 6 ? (
+              <p className="text-black70">
+                {data?.StartChargingTime ? (
+                  <>
+                    {`${moments(data?.StartChargingTime).format("HH:mm")} - `}
+                    <span className="text-black100">
+                      {moments(data?.StopChargingTime).format("HH:mm")}
+                    </span>
+                  </>
+                ) : (
+                  "-"
                 )}
               </p>
-            </div>
+            ) : (
+              <div className="row gap-1">
+                <Icon className="w-[14px] h-auto" />
+
+                <p className="text-xs font-medium">
+                  {capitalize(
+                    (data?.Transaction?.PaymentMethod || "")
+                      .replace("_TU", "")
+                      .toLocaleLowerCase()
+                  )}
+                </p>
+              </div>
+            )}
           </div>
         </div>
 

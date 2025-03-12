@@ -9,7 +9,7 @@ import calculateDurationReducer from "../features/priceRule/calculateDurationSli
 import addSessionReducer from "../features/sessions/addSessionSlice.ts";
 import cancelSessionReducer from "../features/sessions/cancelSessionSlice.ts";
 import detailSessionReducer from "../features/sessions/detailSessionSlice.ts";
-import finishSessionListReducer from "../features/sessions/finishSessionListSlice.ts";
+import completeSessionListReducer from "../features/sessions/completeSessionListSlice.ts";
 import onGoingSessionListReducer from "../features/sessions/onGoingSessionListSlice.ts";
 import startSessionReducer from "../features/sessions/startSessionSlice.ts";
 import stopSessionReducer from "../features/sessions/stopSessionSlice.ts";
@@ -39,7 +39,7 @@ export const store = configureStore({
 
     // SESSION:
     onGoingSessionList: onGoingSessionListReducer,
-    finishSessionList: finishSessionListReducer,
+    completeSessionList: completeSessionListReducer,
     addSession: addSessionReducer,
     detailSession: detailSessionReducer,
     cancelSession: cancelSessionReducer,
