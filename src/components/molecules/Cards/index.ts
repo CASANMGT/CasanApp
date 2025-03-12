@@ -1,4 +1,4 @@
 import ChargingLocationCard from "./ChargingLocationCard";
-import HistoryCard from "./HistoryCard";
+import OrderCard from "./OrderCard";
 
-export { ChargingLocationCard, HistoryCard };
+export { ChargingLocationCard, OrderCard };

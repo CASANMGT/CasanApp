@@ -1,31 +1,39 @@
-import { useDispatch } from "react-redux";
-import { HistoryCard } from "../../components";
-import { AppDispatch, RootState } from "../../store";
-import { useSelector } from "react-redux";
 import { useEffect } from "react";
-
-const dataDummy = [1,2,3,4,5 ];
+import { useDispatch, useSelector } from "react-redux";
+import { SessionListBody } from "../../common";
+import { LoadingPage, OrderCard } from "../../components";
+import { fetchOnGoingSessionList } from "../../features";
+import { AppDispatch, RootState } from "../../store";
 
 const OngoingOrder = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const sessionList = useSelector((state: RootState) => state.sessionList);
+  const onGoingSessionList = useSelector(
+    (state: RootState) => state.onGoingSessionList
+  );
 
   useEffect(() => {
-    getData()
-  }, [])
+    getData();
+  }, []);
 
-  const getData=() => {
-
-  }
-  
+  const getData = () => {
+    const body: SessionListBody = {
+      page: 1,
+      limit: 10,
+      status: 0,
+    };
+    dispatch(fetchOnGoingSessionList(body));
+  };
 
   return (
-    <div className="mb-[100px]">
-        {dataDummy.map((_, index: number) => (
-          <HistoryCard key={index} position={index} />
-        ))}
-    </div>
+    <LoadingPage loading={onGoingSessionList?.loading} color="primary100">
+      <div className="mb-[100px]">
+        {onGoingSessionList?.data?.data &&
+          onGoingSessionList?.data.data.map((item, index) => (
+            <OrderCard key={index} data={item} position={index} />
+          ))}
+      </div>
+    </LoadingPage>
   );
 };
 

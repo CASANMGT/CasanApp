@@ -16,7 +16,7 @@ const TransactionHistory = () => {
   };
 
   const onDetails = () => {
-    navigate(`/transaction-history-details/${999}`);
+    navigate(`/transaction-history-details/session/${999}`);
   };
 
   return (

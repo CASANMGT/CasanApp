@@ -1,8 +1,22 @@
 import { ChargingStation, Socket } from "./chargingStationsType";
 import { Device } from "./deviceType";
 import { FeeSettingsProps } from "./feeSettingsType";
+import { MetaResponseProps } from "./globalType";
 import { Transaction } from "./transactionType";
 import { DataUser } from "./userType";
+
+export type SessionListResponse = {
+  status: string;
+  message: string;
+  data: Session[];
+  meta: MetaResponseProps;
+};
+
+export type SessionListBody = {
+  page: number;
+  limit: number;
+  status?: number;
+};
 
 export interface SessionSettingProps {
   data: SessionProps | null;

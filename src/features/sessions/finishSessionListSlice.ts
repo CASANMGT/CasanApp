@@ -1,62 +1,55 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { bodyListProps, MetaResponseProps, Session } from "../../common";
+import { SessionListBody, SessionListResponse } from "../../common";
 import { Api } from "../../services/Api";
 
-type SessionListResponseProps = {
-  status: string;
-  message: string;
-  data: Session[];
-  meta: MetaResponseProps;
-};
-
-type SessionListState = {
-  data: SessionListResponseProps | null;
+type FinishSessionListState = {
+  data: SessionListResponse | null;
   loading: boolean;
   error: string | null;
 };
 
-const initialState: SessionListState = {
+const initialState: FinishSessionListState = {
   data: null,
   loading: false,
   error: null,
 };
 
 // Async thunk for get session list
-export const fetchSessionList = createAsyncThunk(
-  "fetchSessionList",
-  async (params: bodyListProps, { rejectWithValue }) => {
+export const fetchFinishSessionList = createAsyncThunk(
+  "fetchFinishSessionList",
+  async (params: SessionListBody, { rejectWithValue }) => {
     try {
       const res = await Api.get({
         url: "sessions",
         params,
       });
 
-      return res as SessionListResponseProps;
+      return res as SessionListResponse;
     } catch (e) {
       return rejectWithValue(e);
     }
   }
 );
 
-const sessionListSlice = createSlice({
-  name: "sessionList",
+const finishSessionListSlice = createSlice({
+  name: "finishSessionList",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchSessionList.pending, (state) => {
+      .addCase(fetchFinishSessionList.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
-        fetchSessionList.fulfilled,
-        (state, action: PayloadAction<SessionListResponseProps>) => {
+        fetchFinishSessionList.fulfilled,
+        (state, action: PayloadAction<SessionListResponse>) => {
           state.loading = false;
           state.data = action.payload;
           state.error = null;
         }
       )
-      .addCase(fetchSessionList.rejected, (state, action) => {
+      .addCase(fetchFinishSessionList.rejected, (state, action) => {
         const dataError: any = action?.payload;
         if (dataError?.message) alert(dataError?.message);
 
@@ -67,4 +60,4 @@ const sessionListSlice = createSlice({
   },
 });
 
-export default sessionListSlice.reducer;
+export default finishSessionListSlice.reducer;

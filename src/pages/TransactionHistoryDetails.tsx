@@ -28,7 +28,7 @@ import { AppDispatch, RootState } from "../store";
 
 const TransactionHistoryDetails = () => {
   const navigate: NavigateFunction = useNavigate();
-  const { id } = useParams();
+  const { id, type } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
   const detailSession = useSelector((state: RootState) => state.detailSession);

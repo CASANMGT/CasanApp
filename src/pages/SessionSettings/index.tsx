@@ -1,4 +1,4 @@
-import { add, clone } from "lodash";
+import { clone } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
@@ -66,9 +66,6 @@ const SessionSettings = () => {
   const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
 
-  const sessionSetting = useSelector(
-    (state: RootState) => state.sessionSetting
-  );
   const calculateCharge = useSelector(
     (state: RootState) => state.calculateCharge
   );
@@ -92,7 +89,7 @@ const SessionSettings = () => {
     else dispatch(hideLoading());
 
     if (addSession?.data) {
-      navigate(`/transaction-history-details/${addSession?.data?.ID}`);
+      navigate(`/transaction-history-details/session/${addSession?.data?.ID}`);
     }
   }, [addSession]);
 
@@ -210,7 +207,7 @@ const SessionSettings = () => {
 
   return (
     <Container title="Pengaturan Sesi" onDismiss={onDismiss}>
-      <LoadingPage loading={sessionSetting?.loading}>
+      <LoadingPage loading={false}>
         <div className="flex-1 flex-col overflow-auto scrollbar-none">
           {/* LOCATION */}
           <div className="p-4 bg-white mb-2">
