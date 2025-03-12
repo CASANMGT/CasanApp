@@ -9,6 +9,8 @@ const PaymentSuccess = () => {
   const [isNext, setIsNext] = useState(false);
 
   useEffect(() => {
+    if (!id) navigate("home", { replace: true });
+
     setTimeout(() => {
       onNext();
     }, 3000);

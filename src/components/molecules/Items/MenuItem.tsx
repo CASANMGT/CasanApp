@@ -12,7 +12,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon, label, onClick }) => {
   const isShowIcon: boolean = icon ? true : false;
 
   return (
-    <div className="between gap-2 cursor-pointer" onClick={onClick}>
+    <div className="between-x gap-2 cursor-pointer" onClick={onClick}>
       {isShowIcon && <Icon />}
       <p className="flex-1 font-medium">{label}</p>
       <IcRightBlack />

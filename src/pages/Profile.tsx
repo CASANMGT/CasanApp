@@ -55,7 +55,7 @@ const Profile = () => {
     <div className="container-screen flex flex-col overflow-auto scrollbar-none">
       {/* HEADER */}
       <div className="bg-primary100 pt-3 px-4 pb-[82px]">
-        <div className="between">
+        <div className="between-x">
           <div className="row gap-2 flex">
             <img
               src={NullPhotoImg}
@@ -80,7 +80,7 @@ const Profile = () => {
 
       {/* BALANCE */}
       <div className="mx-4 -mt-[62px] bg-secondary100 rounded-lg">
-        <div className="bg-white rounded-lg px-2.5 py-4 between">
+        <div className="bg-white rounded-lg px-2.5 py-4 between-x">
           <div>
             <p className="text-xs">Saldo Tersimpan</p>
             <div className="font-semibold text-blackBold row gap-0.5">
@@ -169,7 +169,7 @@ const Profile = () => {
 
       <span className="ml-4 text-xs text-black90">{`Version ${VERSION}`}</span>
 
-      {/* <div className="mb-[100px]" /> */}
+      <div className="mb-[100px]" />
     </div>
   );
 };

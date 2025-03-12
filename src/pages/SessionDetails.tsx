@@ -8,6 +8,7 @@ import {
   IcSaveGreen,
   IcShareGreen2,
   IcSuccessGreen,
+  IcTimerCircle,
 } from "../assets";
 import { Session } from "../common";
 import {
@@ -110,8 +111,20 @@ const SessionDetails = () => {
         >
           {/* ICON */}
           <div className="center flex-col gap-2 my-[28px]">
-            <IcSuccessGreen />
-            <span className="text-blackBold font-medium">Sesi Selesai</span>
+            {status === 7 || status === 8 ? (
+              <IcTimerCircle className="text-red" />
+            ) : (
+              <IcSuccessGreen />
+            )}
+            <span className="text-blackBold font-medium">
+              {`Sesi ${
+                status === 7
+                  ? "Expired"
+                  : status === 8
+                  ? "Dibatalkan"
+                  : "Sesi Selesai"
+              }`}
+            </span>
           </div>
 
           {/* TOOL INFORMATION */}
@@ -167,77 +180,81 @@ const SessionDetails = () => {
               className="bg-baseLightGray p-3 rounded-t"
             />
 
-            {!isFull && (
-              <BetweenText
-                type="medium-content"
-                labelLeft="Keterangan Sesi"
-                labelRight="Dihentikan manual"
-                className="p-3"
-              />
-            )}
+            {status !== 7 && status !== 8 && (
+              <>
+                {!isFull && (
+                  <BetweenText
+                    type="medium-content"
+                    labelLeft="Keterangan Sesi"
+                    labelRight="Dihentikan manual"
+                    className="p-3"
+                  />
+                )}
 
-            <BetweenText
-              type="medium-content"
-              labelLeft="Waktu Mulai"
-              labelRight={moments(dataSession?.StartChargingTime).format(
-                "DD MMM HH:mm"
-              )}
-              className="p-3"
-            />
+                <BetweenText
+                  type="medium-content"
+                  labelLeft="Waktu Mulai"
+                  labelRight={moments(dataSession?.StartChargingTime).format(
+                    "DD MMM HH:mm"
+                  )}
+                  className="p-3"
+                />
 
-            <BetweenText
-              type="medium-content"
-              labelLeft="Waktu Selesai"
-              labelRight={moments(dataSession?.StopChargingTime).format(
-                "DD MMM HH:mm"
-              )}
-              className="bg-baseLightGray p-3"
-            />
+                <BetweenText
+                  type="medium-content"
+                  labelLeft="Waktu Selesai"
+                  labelRight={moments(dataSession?.StopChargingTime).format(
+                    "DD MMM HH:mm"
+                  )}
+                  className="bg-baseLightGray p-3"
+                />
 
-            <BetweenText
-              type="medium-content"
-              labelLeft={`Durasi ${!isFull && "Pesanan"}`}
-              labelRight={formatDuration(dataSession?.ExpectedDuration)}
-              className="p-3"
-            />
+                <BetweenText
+                  type="medium-content"
+                  labelLeft={`Durasi ${!isFull && "Pesanan"}`}
+                  labelRight={formatDuration(dataSession?.ExpectedDuration)}
+                  className="p-3"
+                />
 
-            {!isFull && (
-              <BetweenText
-                type="medium-content"
-                labelLeft="Durasi Pemakaian"
-                labelRight={formatDuration(dataSession?.Duration)}
-                className="p-3"
-              />
-            )}
+                {!isFull && (
+                  <BetweenText
+                    type="medium-content"
+                    labelLeft="Durasi Pemakaian"
+                    labelRight={formatDuration(dataSession?.Duration)}
+                    className="p-3"
+                  />
+                )}
 
-            <BetweenText
-              type="medium-content"
-              labelLeft="Maksimum Watt"
-              labelRight={`${dataSession?.MaxWatt}W`}
-              className="bg-baseLightGray p-3"
-            />
+                <BetweenText
+                  type="medium-content"
+                  labelLeft="Maksimum Watt"
+                  labelRight={`${dataSession?.MaxWatt}W`}
+                  className="bg-baseLightGray p-3"
+                />
 
-            <BetweenText
-              type="medium-content"
-              labelLeft="Tarif Pengecasan"
-              labelRight={`Rp${rupiah(dataSession?.ChargingFee || 0)}/jam`}
-              className="p-3"
-            />
+                <BetweenText
+                  type="medium-content"
+                  labelLeft="Tarif Pengecasan"
+                  labelRight={`Rp${rupiah(dataSession?.ChargingFee || 0)}/jam`}
+                  className="p-3"
+                />
 
-            <BetweenText
-              type="medium-content"
-              labelLeft="Nominal Pesanan"
-              labelRight={`Rp${rupiah(dataSession?.Transaction?.Amount)}`}
-              className="bg-baseLightGray p-3"
-            />
+                <BetweenText
+                  type="medium-content"
+                  labelLeft="Nominal Pesanan"
+                  labelRight={`Rp${rupiah(dataSession?.Transaction?.Amount)}`}
+                  className="bg-baseLightGray p-3"
+                />
 
-            {!isFull && (
-              <BetweenText
-                type="medium-content"
-                labelLeft="Nominal Pemakaian"
-                labelRight={`Rp${rupiah(dataSession?.UsedAmount)}`}
-                className="bg-baseLightGray p-3"
-              />
+                {!isFull && (
+                  <BetweenText
+                    type="medium-content"
+                    labelLeft="Nominal Pemakaian"
+                    labelRight={`Rp${rupiah(dataSession?.UsedAmount)}`}
+                    className="bg-baseLightGray p-3"
+                  />
+                )}
+              </>
             )}
           </div>
 
@@ -301,29 +318,39 @@ const SessionDetails = () => {
               />
             )}
 
-            <Separator className="my-6 bg-black10" />
+            {status !== 7 && status !== 8 && (
+              <>
+                <Separator className="my-6 bg-black10" />
 
-            <div className="between-x gap-6">
-              <Button
-                type="secondary"
-                label="Bagikan Resi"
-                iconRight={IcShareGreen2}
-                onClick={handleShare}
-              />
-              <Button
-                type="secondary"
-                label="Simpan Resi"
-                iconRight={IcSaveGreen}
-                onClick={handleSave}
-              />
-            </div>
+                <div className="between-x gap-6">
+                  <Button
+                    type="secondary"
+                    label="Bagikan Resi"
+                    iconRight={IcShareGreen2}
+                    onClick={handleShare}
+                  />
+                  <Button
+                    type="secondary"
+                    label="Simpan Resi"
+                    iconRight={IcSaveGreen}
+                    onClick={handleSave}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
 
         {/* FOOTER */}
-        <div className="p-4 bg-white drop-shadow">
-          <Button buttonType="lg" label="Lihat Daftar Order" onClick={onView} />
-        </div>
+        {status !== 7 && status !== 8 && (
+          <div className="p-4 bg-white drop-shadow">
+            <Button
+              buttonType="lg"
+              label="Lihat Daftar Order"
+              onClick={onView}
+            />
+          </div>
+        )}
       </LoadingPage>
     </div>
   );
