@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import loginReducer from "../features/auth/loginSlice";
+import chargingStationLocationsReducer from "../features/chargingStations/chargingStationLocationsSlice.ts";
 import chargingStationReducer from "../features/chargingStations/chargingStationSlice";
 import feeSettingsReducer from "../features/feeSettings/feeSettingsSlice";
 import globalReducer from "../features/globalSlice";
@@ -8,8 +9,8 @@ import calculateChargeReducer from "../features/priceRule/calculateChargeSlice";
 import calculateDurationReducer from "../features/priceRule/calculateDurationSlice";
 import addSessionReducer from "../features/sessions/addSessionSlice.ts";
 import cancelSessionReducer from "../features/sessions/cancelSessionSlice.ts";
-import detailSessionReducer from "../features/sessions/detailSessionSlice.ts";
 import completeSessionListReducer from "../features/sessions/completeSessionListSlice.ts";
+import detailSessionReducer from "../features/sessions/detailSessionSlice.ts";
 import onGoingSessionListReducer from "../features/sessions/onGoingSessionListSlice.ts";
 import startSessionReducer from "../features/sessions/startSessionSlice.ts";
 import stopSessionReducer from "../features/sessions/stopSessionSlice.ts";
@@ -29,6 +30,7 @@ export const store = configureStore({
 
     // CHARGING STATION
     chargingStation: chargingStationReducer,
+    chargingStationLocations: chargingStationLocationsReducer,
 
     // PRICE RULE
     calculateCharge: calculateChargeReducer,

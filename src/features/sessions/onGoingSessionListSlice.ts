@@ -44,8 +44,22 @@ const onGoingSessionListSlice = createSlice({
       .addCase(
         fetchOnGoingSessionList.fulfilled,
         (state, action: PayloadAction<SessionListResponse>) => {
+          const newData = action?.payload;
+
+          if (
+            action?.payload?.meta?.page > 1 &&
+            state.data?.data &&
+            state.data?.data.length
+          ) {
+            const groupingData = [
+              ...state?.data?.data,
+              ...action?.payload?.data,
+            ];
+            newData.data = groupingData;
+          }
+
           state.loading = false;
-          state.data = action.payload;
+          state.data = newData;
           state.error = null;
         }
       )

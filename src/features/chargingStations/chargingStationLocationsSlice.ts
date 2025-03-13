@@ -1,49 +1,63 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { SessionListBody, SessionListResponse } from "../../common";
+import {
+  ChargingStationBody,
+  DataChargingStation,
+  MetaResponseProps,
+} from "../../common";
 import { Api } from "../../services/Api";
 
-type FinishSessionListState = {
-  data: SessionListResponse | null;
+type ChargingStationLocationsResponseProps = {
+  status: string;
+  message: string;
+  data: DataChargingStation[];
+  meta: MetaResponseProps;
+};
+
+type ChargingStationLocationsState = {
+  data: ChargingStationLocationsResponseProps | null;
   loading: boolean;
   error: string | null;
 };
 
-const initialState: FinishSessionListState = {
+const initialState: ChargingStationLocationsState = {
   data: null,
   loading: false,
   error: null,
 };
 
-// Async thunk for get session list
-export const fetchCompleteSessionList = createAsyncThunk(
-  "fetchCompleteSessionList",
-  async (params: SessionListBody, { rejectWithValue }) => {
+// Async thunk for get charging station
+export const fetchChargingStationLocations = createAsyncThunk(
+  "fetchChargingStationLocations",
+  async (params: ChargingStationBody, { rejectWithValue }) => {
     try {
       const res = await Api.get({
-        url: "sessions",
+        url: "stations",
         params,
       });
 
-      return res as SessionListResponse;
+      return res as ChargingStationLocationsResponseProps;
     } catch (e) {
       return rejectWithValue(e);
     }
   }
 );
 
-const completeSessionListSlice = createSlice({
-  name: "completeSessionList",
+const chargingStationLocationsSlice = createSlice({
+  name: "chargingStationLocations",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchCompleteSessionList.pending, (state) => {
+      .addCase(fetchChargingStationLocations.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
-        fetchCompleteSessionList.fulfilled,
-        (state, action: PayloadAction<SessionListResponse>) => {
+        fetchChargingStationLocations.fulfilled,
+        (
+          state,
+          action: PayloadAction<ChargingStationLocationsResponseProps>
+        ) => {
           const newData = action?.payload;
 
           if (
@@ -63,7 +77,7 @@ const completeSessionListSlice = createSlice({
           state.error = null;
         }
       )
-      .addCase(fetchCompleteSessionList.rejected, (state, action) => {
+      .addCase(fetchChargingStationLocations.rejected, (state, action) => {
         const dataError: any = action?.payload;
         if (dataError?.message) alert(dataError?.message);
 
@@ -74,4 +88,4 @@ const completeSessionListSlice = createSlice({
   },
 });
 
-export default completeSessionListSlice.reducer;
+export default chargingStationLocationsSlice.reducer;
