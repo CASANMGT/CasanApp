@@ -17,7 +17,7 @@ const SocketItem: React.FC<SocketItemProps> = ({ data, isActive, onClick }) => {
       value = "border-black/1 bg-white cursor-pointer";
     else if (data?.IsCharging === 1)
       value = "border-primary100 bg-primary100 text-white cursor-not-allowed";
-    else value = "border-baseGray bg-baseGray text-black50 cursor-not-allowed";
+    else value = "border-baseGray bg-baseGray !text-black50 cursor-not-allowed";
 
     return value;
   }, [data, isActive]);
@@ -35,7 +35,7 @@ const SocketItem: React.FC<SocketItemProps> = ({ data, isActive, onClick }) => {
         break;
 
       default:
-        value = "Tidak Tersedia";
+        value = "Tidak\nTersedia";
         break;
     }
 
@@ -43,15 +43,13 @@ const SocketItem: React.FC<SocketItemProps> = ({ data, isActive, onClick }) => {
   }, [data]);
 
   const onSelect = () => {
-    console.log("cek d", data);
-
     if (data?.IsCharging === 0) onClick();
   };
 
   return (
     <div
       onClick={onSelect}
-      className={`h-[44px] center rounded-xl border text-xs text-blackBold font-medium  ${getSocketStyle()}`}
+      className={`h-[44px] center rounded-xl border text-xs text-blackBold font-medium whitespace-pre-line text-center  ${getSocketStyle()}`}
     >
       {getLabelSocket()}
     </div>

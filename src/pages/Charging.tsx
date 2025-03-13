@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -64,9 +64,12 @@ const Charging = () => {
       detailSession?.data?.Status === 7 ||
       detailSession?.data?.Status === 8
     )
-      navigate(`/transaction-history-details/session/${detailSession?.data?.ID}`, {
-        replace: true,
-      });
+      navigate(
+        `/transaction-history-details/session/${detailSession?.data?.ID}`,
+        {
+          replace: true,
+        }
+      );
   }, [detailSession?.data?.Status]);
 
   useEffect(() => {
@@ -100,19 +103,6 @@ const Charging = () => {
     dispatch(fetchDetailSession(Number(id)));
   };
 
-  const getTotalCharging = useCallback(() => {
-    let value: number = 0;
-
-    if (detailSession?.data?.Transaction?.Amount && status === 6)
-      value =
-        ((detailSession?.data?.Transaction?.Amount -
-          detailSession?.data?.RefundAmount) /
-          detailSession?.data?.Transaction?.Amount) *
-        100;
-
-    return value;
-  }, [detailSession?.data?.Transaction]);
-
   const onDismiss = () => {
     navigate(-1);
   };
@@ -131,9 +121,8 @@ const Charging = () => {
   };
 
   const dataSession: Session | null = detailSession?.data;
-  const status: number | undefined = 6; //dataSession?.Status;
-  const duration: number = 600; // dataSession?.ExpectedDuration||0
-  const totalCharging: number = getTotalCharging();
+  const status: number | undefined = dataSession?.Status;
+  const duration: number = dataSession?.ExpectedDuration || 0;
 
   return (
     <div className="background-1 pt-3 overflow-hidden flex flex-col justify-between">
