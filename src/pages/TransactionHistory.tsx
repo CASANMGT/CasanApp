@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import { IcMenuBlack } from "../assets";
 import { bodyListProps, DataTransaction } from "../common";
 import { Header, LoadingPage, TransactionHistoryItem } from "../components";
 import { fetchTransactionList } from "../features";
@@ -34,10 +33,6 @@ const TransactionHistory = () => {
     navigate(-1);
   };
 
-  const onMenu = () => {
-    alert("coming soon");
-  };
-
   const onDetails = (select: DataTransaction) => {
     const type: string = select?.Transaction?.Type === 2 ? "session" : "top-up";
 
@@ -55,18 +50,9 @@ const TransactionHistory = () => {
 
       <LoadingPage loading={transactionList?.loading}>
         {/* TITLE */}
-        <div className="px-4 py-6 between-x">
-          <div>
-            <p className="text-base font-medium">Riwayat Transacksi</p>
-            <p className="text-xs text-black100/70">Transaksi terbaru anda</p>
-          </div>
-
-          <div
-            onClick={onMenu}
-            className="w-10 h-10 center -mr-3 cursor-pointer"
-          >
-            <IcMenuBlack />
-          </div>
+        <div className="px-4 py-6">
+          <p className="text-base font-medium">Riwayat Transaksi</p>
+          <p className="text-xs text-black100/70">Transaksi terbaru anda</p>
         </div>
 
         {/* LIST */}
