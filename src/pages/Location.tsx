@@ -7,10 +7,7 @@ import {
   IcMyLocationBlack,
   IcSearchBlack,
 } from "../assets";
-import {
-  ChargingStationBody,
-  LIMIT_LIST
-} from "../common";
+import { ChargingStationBody, LIMIT_LIST } from "../common";
 import { LoadingPage, Map } from "../components";
 import { fetchChargingStationLocations } from "../features";
 import { AppDispatch, RootState } from "../store";
@@ -49,24 +46,15 @@ const Location = () => {
       <LoadingPage loading={chargingStationLocations?.loading}>
         <div className=" w-full h-full relative">
           {/* MAP */}
-          <Map />
+          <Map data={chargingStationLocations?.data?.data} />
 
           {/* SEARCH */}
-          <div className="absolute top-4 left-4 right-4 row gap-4 drop-shadow">
-            <div
-              onClick={onDismiss}
-              className="h-10 w-10 rounded-full bg-white cursor-pointer center"
-            >
-              <IcBackBlack />
-            </div>
-
-            <div
-              onClick={onShowAll}
-              className="row gap-2 flex-1 bg-white h-10 rounded-full drop-shadow px-4 cursor-pointer"
-            >
-              <p className="flex-1 text-black100/50 font-medium">Cari Lokasi</p>
-              <IcSearchBlack />
-            </div>
+          <div
+            onClick={onShowAll}
+            className="absolute top-4 left-4 right-4 row gap-2 flex-1 bg-white h-10 rounded-full drop-shadow px-4 cursor-pointer"
+          >
+            <p className="flex-1 text-black100/50 font-medium">Cari Lokasi</p>
+            <IcSearchBlack />
           </div>
 
           {/* MY LOCATION */}

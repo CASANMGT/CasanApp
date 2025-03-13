@@ -6,6 +6,7 @@ import "./index.css";
 import { store } from "./store";
 import "./styles/global.css";
 import "./styles/tailwind.css";
+import './styles/leaflet.css'
 import "leaflet/dist/leaflet.css";
 
 createRoot(document.getElementById("root")!).render(

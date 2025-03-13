@@ -1,16 +1,33 @@
+import { useEffect, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
-import { LatLng } from "../../../common";
+import { DataChargingStation, LatLng } from "../../../common";
+import { getCurrentLocation } from "../../../services/ApiAddress";
+import CustomMarkerMap from "./CustomMarkerMap";
 
-interface MapProps {}
+interface MapProps {
+  data: DataChargingStation[] | undefined;
+}
 
+const Map: React.FC<MapProps> = ({ data }) => {
+  const [currentLocation, setCurrentLocation] = useState<LatLng>();
 
-export const centerPosition: LatLng = [-6.301432551514826, 106.68551902294831];
+  useEffect(() => {
+    getData();
+  }, []);
 
-const Map: React.FC<MapProps> = () => {
+  const getData = async () => {
+    const check = await getCurrentLocation();
+    setCurrentLocation(check);
+  };
+
+  if (!currentLocation) return;
+
+  const isShowData = data && data.length ? true : false;
+
   return (
     <div className="w-full h-full">
       <MapContainer
-        center={centerPosition}
+        center={currentLocation}
         zoom={13}
         className="h-full w-full !z-0"
       >
@@ -18,6 +35,7 @@ const Map: React.FC<MapProps> = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; OpenStreetMap contributors"
         />
+        {isShowData && data?.map((item, index) => <CustomMarkerMap key={index} data={item} />)}
       </MapContainer>
     </div>
   );

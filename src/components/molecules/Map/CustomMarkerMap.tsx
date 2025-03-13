@@ -1,51 +1,94 @@
-import { Marker, OverlayView } from "@react-google-maps/api";
+import L from "leaflet";
+import { useEffect, useRef } from "react";
+import { Marker, Popup, useMap } from "react-leaflet";
 import { IcFuel } from "../../../assets";
-import { CoordinateProps } from "../../../common";
-import { rupiah } from "../../../helpers";
+import { DataChargingStation, LatLng } from "../../../common";
+import { moments, rupiah, timeToSeconds } from "../../../helpers";
 
-interface CustomMarkerMapProps {
-  center: CoordinateProps;
+interface CustomMarkerProps {
+  data: DataChargingStation;
 }
 
-const CustomMarkerMap: React.FC<CustomMarkerMapProps> = ({ center }) => {
+const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
+  const markerRef = useRef<L.Marker>(null);
+  const map = useMap();
+
+  const iconHtml = `
+    <div class="w-[18px] h-[18px] bg-primary70 border-2 border-primary100 rounded-full">
+    </div>`;
+
+  const customIcon = L.divIcon({
+    html: iconHtml,
+    className: "custom-marker",
+    iconSize: [18, 18],
+    popupAnchor: [0, 0],
+  });
+
+  useEffect(() => {
+    if (markerRef.current) {
+      markerRef.current.openPopup();
+    }
+  }, [map]);
+
+  if (!data?.Location?.Latitude || !data?.Location?.Longitude|| data?.Location?.Latitude>0) return;
+
+  const coordinate: LatLng = [
+    data?.Location?.Latitude,
+    data?.Location?.Longitude,
+  ];
+
+  const currentTime = timeToSeconds(moments().format("HH:mm"));
+  let price: number = 0;
+  let available: number = 0;
+
+    if (
+      data?.PriceSetting?.PriceBaseRules &&
+      data?.PriceSetting?.PriceBaseRules.length &&
+      data?.PriceSetting?.PriceBaseRules[0]?.PriceBaseTime &&
+      data?.PriceSetting?.PriceBaseRules[0]?.PriceBaseTime.length
+    ) {
+      const filtered = data?.PriceSetting?.PriceBaseRules[0].PriceBaseTime.filter(
+        (e) =>
+          timeToSeconds(e?.PriceTimeRule.From) >= currentTime &&
+          currentTime <= timeToSeconds(e?.PriceTimeRule.To)
+      )[0];
+  
+      price = filtered?.Value || 0;
+    }
+
+  if (data?.Devices && data?.Devices.length) {
+    available = data?.Devices.reduce(
+      (accumulator, currentValue) =>
+        accumulator + (currentValue.Sockets.length || 0),
+      0
+    );
+  }
+
+  console.log('cek coordinate', coordinate);
+  
+
   return (
-    <>
-      <Marker
-        position={center}
-        icon={{
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 10,
-          fillColor: "#18ACB6",
-          fillOpacity: 0.7,
-          strokeColor: "#18ACB6",
-          strokeWeight: 2,
-        }}
-      />
-
-      <OverlayView
-        position={center}
-        mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+    <Marker position={coordinate} icon={customIcon} ref={markerRef}>
+      <Popup
+        keepInView={true}
+        autoPan={true}
+        autoClose={false}
+        closeOnClick={false}
+        closeOnEscapeKey={false}
       >
-        <div className="relative transform -translate-x-1/2 -translate-y-full">
-          {/* Marker container */}
-          <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 bg-white drop-shadow rounded-lg border-[1.5px] border-black100/10 px-4 py-3 text-center w-fit z-10">
-            <div className="row gap-0.5 font-semibold">
-              <span className="text-xs">Rp</span>
-              <span className="text-lg">{rupiah(600)}/jam</span>
-            </div>
-
-            <div className="row gap-1 mt-1 text-black100/70">
-              <IcFuel className="text-primary100" />
-              <span className="text-xs">Tersedia</span>
-              <span className="text-sm text-teal-500 font-bold ml-1">4</span>
-            </div>
+        <div>
+          <p className="!m-0 font-semibold text-xs">
+            Rp <span className="text-xl">{`${rupiah(price)}/jam`}</span>
+          </p>
+          <div className="row gap-1 mt-2 text-xs text-black70">
+            <IcFuel className="text-primary100" />
+            <span>Tersedia</span>
+            <span className="text-primary100 font-semibold">{available}</span>
           </div>
-          {/* Arrow */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-white rotate-45 "></div>
         </div>
-      </OverlayView>
-    </>
+      </Popup>
+    </Marker>
   );
 };
 
-export default CustomMarkerMap;
+export default CustomMarker;

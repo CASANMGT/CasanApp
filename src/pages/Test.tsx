@@ -1,92 +1,66 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import L from "leaflet";
+import { useEffect, useRef } from "react";
+import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import { LatLng } from "../common";
+import { rupiah } from "../helpers";
+import { IcFuel } from "../assets";
 
-const hours = Array.from({ length: 23 }, (_, i) =>
-  String(i + 1).padStart(2, "0")
-);
-const minutes = ["00", "15", "30", "45"];
+const coordinate: LatLng = [-6.289576984935274, 106.6842171544551];
 
-const ITEM_HEIGHT = 28; // Adjust based on Tailwind styles
+const CustomMarker = () => {
+  const markerRef = useRef<L.Marker>(null);
+  const map = useMap();
 
-const WheelPicker: React.FC = () => {
-  const [selectedHour, setSelectedHour] = useState(hours[0]);
-  const [selectedMinute, setSelectedMinute] = useState(minutes[0]);
+  const iconHtml = `
+    <div class="w-[18px] h-[18px] bg-primary70 border-2 border-primary100 rounded-full">
+    </div>`;
 
-  const hourRef = useRef<HTMLDivElement>(null);
-  const minuteRef = useRef<HTMLDivElement>(null);
-  const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const customIcon = L.divIcon({
+    html: iconHtml,
+    className: "custom-marker",
+    iconSize: [18, 18],
+    popupAnchor: [0, 0],
+  });
 
-  // Ensure perfect centering on scroll stop
-  const handleScrollEnd = useCallback(
-    (
-      ref: React.RefObject<HTMLDivElement>,
-      items: string[],
-      setSelected: (val: string) => void
-    ) => {
-      if (!ref.current) return;
-
-      const scrollTop = ref.current.scrollTop;
-      const index = Math.round(scrollTop / ITEM_HEIGHT);
-      setSelected(items[Math.min(items.length - 1, Math.max(0, index))]);
-
-      // Snap to the closest item
-      ref.current.scrollTo({
-        top: index * ITEM_HEIGHT,
-        behavior: "smooth",
-      });
-    },
-    []
-  );
-
-  // Debounce scrolling to avoid continuous updates
-  const handleScroll = (
-    ref: React.RefObject<HTMLDivElement>,
-    items: string[],
-    setSelected: (val: string) => void
-  ) => {
-    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-
-    scrollTimeout.current = setTimeout(() => {
-      handleScrollEnd(ref, items, setSelected);
-    }, 200); // Adjust delay for better UX
-  };
-
-  // Render picker column
-  const renderPicker = (
-    items: string[],
-    selected: string,
-    setSelected: (val: string) => void,
-    ref: React.RefObject<HTMLDivElement>
-  ) => (
-    <div className="w-16 h-[84px] overflow-hidden relative flex flex-col items-center">
-      <div
-        ref={ref}
-        className="w-full h-full overflow-y-scroll scroll-smooth snap-y snap-mandatory"
-        onScroll={() => handleScroll(ref, items, setSelected)}
-      >
-        <div className="h-[28px]"></div> {/* Top Spacer for centering */}
-        {items.map((item) => (
-          <div
-            key={item}
-            className={`snap-center text-center py-0 text-lg transition ${
-              selected === item ? "font-medium text-primary100" : "text-black50"
-            }`}
-          >
-            {item}
-          </div>
-        ))}
-        <div className="h-[28px]"></div> {/* Bottom Spacer for centering */}
-      </div>
-    </div>
-  );
+  useEffect(() => {
+    if (markerRef.current) {
+      markerRef.current.openPopup();
+    }
+  }, [map]);
 
   return (
-    <div className="flex justify-center gap-4 p-4 bg-white rounded-xl shadow-lg">
-      <div className="absolute top-1/2 left-0 w-full h-[28px] bg-primary10 transform -translate-y-1/2 pointer-events-none rounded-md"></div>
+    <Marker position={coordinate} icon={customIcon} ref={markerRef} >
+      <Popup
+        keepInView={true}
+        autoPan={true}
+        autoClose={false}
+        closeOnClick={false}
+        closeOnEscapeKey={false}
+      >
+        <div>
+          <p className="!m-0 font-semibold text-xs">
+            Rp <span className="text-xl">{`${rupiah(500)}/jam`}</span>
+          </p>
+          <div className="row gap-1 mt-2 text-xs text-black70">
+            <IcFuel className="text-primary100" />
+            <span>Tersedia</span>
+            <span className="text-primary100 font-semibold">{4}</span>
+          </div>
+        </div>
+      </Popup>
+    </Marker>
+  );
+};
 
-      {renderPicker(hours, selectedHour, setSelectedHour, hourRef)}
-      {renderPicker(minutes, selectedMinute, setSelectedMinute, minuteRef)}
+const Test = () => {
+  return (
+    <div className="container-screen relative">
+      <MapContainer center={coordinate} zoom={13} className="h-screen w-full">
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <CustomMarker />
+      </MapContainer>
     </div>
   );
 };
 
-export default WheelPicker;
+export default Test;
