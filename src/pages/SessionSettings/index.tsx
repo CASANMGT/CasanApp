@@ -255,7 +255,11 @@ const SessionSettings = () => {
                       data={item}
                       position={index + 1}
                       isActive={form?.selectedSocket === item?.ID}
-                      onClick={() => setForm("selectedSocket", item?.ID)}
+                      onClick={() => {
+                        console.log('cek ', item);
+                        
+                        setForm("selectedSocket", item?.ID)
+                      }}
                     />
                   ))}
               </div>

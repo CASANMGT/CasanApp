@@ -32,8 +32,8 @@ const LocationList = () => {
   }, []);
 
   useEffect(() => {
-    // getDataList();
-  }, [type]);
+    if (!chargingStationLocations?.data) getDataList();
+  }, []);
 
   const getData = async () => {
     const check = await getCurrentLocation();
