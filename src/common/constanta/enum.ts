@@ -17,3 +17,8 @@ export enum TransactionStatus {
   "Challenged" = 5,
   "Failed" = 6,
 }
+
+export enum TransactionType {
+  "TopUp" = 1,
+  "Session" = 2,
+}
