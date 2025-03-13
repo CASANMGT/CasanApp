@@ -1,12 +1,13 @@
-import { useSelector } from "react-redux";
-import { LoadingPage, OrderCard } from "../../components";
-import { AppDispatch, RootState } from "../../store";
-import { SessionListBody } from "../../common";
-import { fetchCompleteSessionList } from "../../features";
-import { useDispatch } from "react-redux";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Session, SessionListBody } from "../../common";
+import { LoadingPage, OrderCard } from "../../components";
+import { fetchCompleteSessionList } from "../../features";
+import { AppDispatch, RootState } from "../../store";
 
 const CompletedOrder = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
   const completeSessionList = useSelector(
@@ -26,12 +27,32 @@ const CompletedOrder = () => {
     dispatch(fetchCompleteSessionList(body));
   };
 
+  const onNext = (select: Session) => {
+    let url: string;
+
+    if (
+      select?.Status === 2 ||
+      select?.Status === 3 ||
+      select?.Status === 4 ||
+      select?.Status === 5
+    )
+      url = "/charging";
+    else url = "/transaction-history-details/session";
+
+    navigate(`${url}/${select?.ID}`);
+  };
+
   return (
     <LoadingPage loading={completeSessionList?.loading} color="primary100">
       <div className="mb-[100px]">
         {completeSessionList?.data?.data &&
           completeSessionList?.data.data.map((item, index) => (
-            <OrderCard key={index} data={item} position={index} />
+            <OrderCard
+              key={index}
+              data={item}
+              position={index}
+              onClick={() => onNext(item)}
+            />
           ))}
       </div>
     </LoadingPage>

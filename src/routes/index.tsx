@@ -45,7 +45,7 @@ const RoutesPage = () => {
           element={<ProtectedRoute element={<ChargingStationDetails />} />}
         />
         <Route path="input-pin" element={<InputPin />} />
-        <Route path="location-list" element={<LocationList />} />
+        <Route path="location-list" element={<ProtectedRoute element={<LocationList />} />} />
         <Route path="login" element={<Login />} />
         <Route path="scan" element={<Scan />} />
         <Route path="select-bank" element={<SelectBank />} />

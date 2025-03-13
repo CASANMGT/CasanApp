@@ -37,6 +37,7 @@ const TransactionHistoryDetails = () => {
   const [isRunning, setIsRunning] = useState<boolean>(false);
 
   useEffect(() => {
+    dispatch(resetDataAddSession());
     getData();
   }, []);
 
@@ -44,7 +45,7 @@ const TransactionHistoryDetails = () => {
   useEffect(() => {
     if (cancelSession?.data) {
       dispatch(resetDataCancelSession());
-      getDetails();
+      getData();
     }
   }, [cancelSession?.data]);
 
@@ -63,17 +64,11 @@ const TransactionHistoryDetails = () => {
 
   const getData = () => {
     dispatch(fetchDetailSession(Number(id)));
-    dispatch(resetDataAddSession());
-  };
-
-  const getDetails = () => {
-    if (detailSession?.data?.ID)
-      dispatch(fetchDetailSession(detailSession?.data?.ID));
   };
 
   const timeoutProgress = () => {
     const timer = setTimeout(() => {
-      getDetails;
+      getData();
     }, 3000); // 3 second
 
     return () => clearTimeout(timer);
@@ -150,7 +145,7 @@ const TransactionHistoryDetails = () => {
             <CountdownTimer
               label="Berlaku"
               initialSeconds={duration}
-              onFinish={getDetails}
+              onFinish={getData}
             />
           )}
         </div>

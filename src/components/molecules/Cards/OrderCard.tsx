@@ -7,10 +7,11 @@ import { Separator } from "../../atoms";
 interface OrderCardProps {
   position: number;
   data: Session;
+  onClick: () => void;
 }
 
-const OrderCard: React.FC<OrderCardProps> = ({ position, data }) => {
-  const status: number = data?.Status
+const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
+  const status: number = data?.Status;
 
   const getLabelStatus = () => {
     let value: string;
@@ -46,6 +47,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data }) => {
 
   return (
     <div
+      onClick={onClick}
       className={`bg-white p-3 mx-4 mb-3 rounded-lg drop-shadow cursor-pointer ${
         position === 0 && "mt-6"
       }`}
