@@ -1,49 +1,60 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { SessionListBody, SessionListResponse } from "../../common";
+import {
+  bodyListProps,
+  DataTransaction,
+  MetaResponseProps
+} from "../../common";
 import { Api } from "../../services/Api";
 
-type OnGoingSessionListState = {
-  data: SessionListResponse | null;
+type TransactionListResponse = {
+  status: string;
+  message: string;
+  data: DataTransaction[];
+  meta: MetaResponseProps;
+};
+
+type TransactionListState = {
+  data: TransactionListResponse | null;
   loading: boolean;
   error: string | null;
 };
 
-const initialState: OnGoingSessionListState = {
+const initialState: TransactionListState = {
   data: null,
   loading: false,
   error: null,
 };
 
 // Async thunk for get session list
-export const fetchOnGoingSessionList = createAsyncThunk(
-  "fetchOnGoingSessionList",
-  async (params: SessionListBody, { rejectWithValue }) => {
+export const fetchTransactionList = createAsyncThunk(
+  "fetchTransactionList",
+  async (params: bodyListProps, { rejectWithValue }) => {
     try {
       const res = await Api.get({
-        url: "sessions",
+        url: "transactions",
         params,
       });
 
-      return res as SessionListResponse;
+      return res as TransactionListResponse;
     } catch (e) {
       return rejectWithValue(e);
     }
   }
 );
 
-const onGoingSessionListSlice = createSlice({
-  name: "onGoingSessionList",
+const transactionListSlice = createSlice({
+  name: "transactionList",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchOnGoingSessionList.pending, (state) => {
+      .addCase(fetchTransactionList.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
-        fetchOnGoingSessionList.fulfilled,
-        (state, action: PayloadAction<SessionListResponse>) => {
+        fetchTransactionList.fulfilled,
+        (state, action: PayloadAction<TransactionListResponse>) => {
           const newData = action?.payload;
 
           if (
@@ -63,7 +74,7 @@ const onGoingSessionListSlice = createSlice({
           state.error = null;
         }
       )
-      .addCase(fetchOnGoingSessionList.rejected, (state, action) => {
+      .addCase(fetchTransactionList.rejected, (state, action) => {
         const dataError: any = action?.payload;
         if (dataError?.message) alert(dataError?.message);
 
@@ -74,4 +85,4 @@ const onGoingSessionListSlice = createSlice({
   },
 });
 
-export default onGoingSessionListSlice.reducer;
+export default transactionListSlice.reducer;

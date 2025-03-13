@@ -117,7 +117,7 @@ const Charging = () => {
   };
 
   const onNext = () => {
-    navigate(`session-details/${id}`, { replace: true });
+    navigate(`/session-details/${id}`, { replace: true });
   };
 
   const dataSession: Session | null = detailSession?.data;
