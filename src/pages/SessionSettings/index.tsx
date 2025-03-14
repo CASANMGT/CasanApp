@@ -89,7 +89,7 @@ const SessionSettings = () => {
     else dispatch(hideLoading());
 
     if (addSession?.data) {
-      navigate(`/transaction-history-details/session/${addSession?.data?.ID}`);
+      navigate(`/transaction-history-details/${addSession?.data?.ID}`);
     }
   }, [addSession]);
 

@@ -34,7 +34,7 @@ const TransactionHistory = () => {
   const onDetails = (select: DataTransaction) => {
     const type: string = select?.Transaction?.Type === 2 ? "session" : "top-up";
 
-    navigate(`/transaction-history-details/${type}/${select?.Session?.ID}`);
+    navigate(`/transaction-history-details/${select?.Session?.ID}`);
   };
 
   const isShowData =

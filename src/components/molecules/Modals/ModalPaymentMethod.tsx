@@ -10,7 +10,7 @@ import { PaymentMethodItem } from "../Items";
 import ModalContainer from "./ModalContainer";
 
 interface ModalPaymentMethodProps {
-  type: "top-up";
+  type?: "top-up";
   visible: boolean;
   select: FeeSettingsProps | undefined;
   onDismiss: () => void;

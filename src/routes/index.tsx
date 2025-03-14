@@ -77,7 +77,7 @@ const RoutesPage = () => {
           element={<ProtectedRoute element={<TransactionHistory />} />}
         />
         <Route
-          path="transaction-history-details/:type/:id"
+          path="transaction-history-details/:id"
           element={<ProtectedRoute element={<TransactionHistoryDetails />} />}
         />
         <Route

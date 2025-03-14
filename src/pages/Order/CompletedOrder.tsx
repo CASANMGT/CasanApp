@@ -37,7 +37,7 @@ const CompletedOrder = () => {
       select?.Status === 5
     )
       url = "/charging";
-    else url = "/transaction-history-details/session";
+    else url = "/transaction-history-details";
 
     navigate(`${url}/${select?.ID}`);
   };

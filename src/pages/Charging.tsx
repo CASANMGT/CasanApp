@@ -65,7 +65,7 @@ const Charging = () => {
       detailSession?.data?.Status === 8
     )
       navigate(
-        `/transaction-history-details/session/${detailSession?.data?.ID}`,
+        `/transaction-history-details/${detailSession?.data?.ID}`,
         {
           replace: true,
         }
