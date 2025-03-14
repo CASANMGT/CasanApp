@@ -1,5 +1,6 @@
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import {
+  IcBalance,
   IcCashBlack,
   IcChatBlack,
   IcEditWhite,
@@ -47,7 +48,7 @@ const Profile = () => {
   };
 
   const onLogout = () => {
-    logout()
+    logout();
     navigate("/login", { replace: true });
   };
 
@@ -132,6 +133,14 @@ const Profile = () => {
 
       {/* MENU 2 */}
       <div className="mx-4 mt-4 px-3 py-4 bg-white rounded-lg">
+        <MenuItem
+          icon={IcBalance}
+          label="Riwayat Saldo"
+          onClick={() => onNext("balance-history")}
+        />
+
+        <Separator className="my-4" />
+
         <MenuItem
           icon={IcCashBlack}
           label="Riwayat Transaksi"

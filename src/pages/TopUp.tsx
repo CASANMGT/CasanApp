@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {
-  IcInfoCircleGreen,
-  IcRightCircleGreen,
-  IcSolarGreen
-} from "../assets";
+import { IcInfoCircleGreen, IcRightCircleGreen, IcSolarGreen } from "../assets";
 import { AddTransactionBody, FeeSettingsProps } from "../common";
 import {
   BetweenText,
@@ -17,16 +13,15 @@ import {
   SubTitle,
 } from "../components";
 import {
+  fetchAddTransaction,
   fetchMyUser,
   hideLoading,
   resetDataAddTransaction,
-  showLoading
+  showLoading,
 } from "../features";
 import { rupiah } from "../helpers";
 import { AppDispatch, RootState } from "../store";
 import InputNominal from "./SessionSettings/InputNominal";
-
-const nominalDataDummy = [1, 2, 3];
 
 const TopUp = () => {
   const navigate = useNavigate();
@@ -48,7 +43,7 @@ const TopUp = () => {
     if (addTransaction?.data) {
       dispatch(resetDataAddTransaction());
       fetchMyUser();
-      onDismiss();
+      navigate("/balance-history", { replace: true });
     }
   }, [addTransaction]);
 
@@ -96,8 +91,7 @@ const TopUp = () => {
       wallet_used_amount: 0,
     };
 
-    console.log("cek b", body);
-    // dispatch(fetchAddTransaction(body))
+    dispatch(fetchAddTransaction(body))
   };
 
   return (

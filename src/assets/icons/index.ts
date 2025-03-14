@@ -1,4 +1,5 @@
 import IcAstraPay from "./astrapay.svg?react";
+import IcBalance from './balance.svg?react'
 import IcBattery from "./battery.svg?react";
 import IcBike from "./bike.svg?react";
 import IcCashBlack from "./cash-black.svg?react";
@@ -155,6 +156,7 @@ export {
   IcVehicleBlack,
   IcWallet,
   IcWalletGreen,
-  IcWalletGreen2
+  IcWalletGreen2,
+  IcBalance
 };
 

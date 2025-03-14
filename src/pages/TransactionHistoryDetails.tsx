@@ -74,10 +74,6 @@ const TransactionHistoryDetails = () => {
     return () => clearTimeout(timer);
   };
 
-  const onDismiss = () => {
-    navigate(-1);
-  };
-
   const handleShare = () => {
     const receiptElement = document.getElementById("receipt");
     if (!receiptElement) return;
@@ -125,7 +121,7 @@ const TransactionHistoryDetails = () => {
 
   return (
     <div className="background-1 py-[14px] px-4">
-      <Header type="secondary" title="Detail Transaksi" onDismiss={onDismiss} />
+      <Header type="secondary" title="Detail Transaksi" onDismiss={()=> navigate(-1)} />
 
       <LoadingPage loading={detailSession?.loading}>
         <div className="flex flex-col gap-2 items-center justify-center my-7 ">

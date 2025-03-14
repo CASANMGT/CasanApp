@@ -6,8 +6,6 @@ import { Header, LoadingPage, TransactionHistoryItem } from "../components";
 import { fetchTransactionList } from "../features";
 import { AppDispatch, RootState } from "../store";
 
-const dataDummy = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
 const TransactionHistory = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate: NavigateFunction = useNavigate();

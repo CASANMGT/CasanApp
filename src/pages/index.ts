@@ -24,6 +24,8 @@ import SelectBank from "./SelectBank";
 import Withdraw from "./Withdraw";
 import PaymentSuccess from "./PaymentSuccess";
 import ComingSoon from "./ComingSoon";
+import BalanceHistory from "./BalanceHistory";
+import BalanceHistoryDetails from "./BalanceHistoryDetails";
 
 export {
     Charging,
@@ -52,5 +54,7 @@ export {
     TransactionHistoryDetails,
     VerificationNumber,
     Withdraw,
+    BalanceHistory,
+    BalanceHistoryDetails
 };
 

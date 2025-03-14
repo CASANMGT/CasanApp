@@ -27,6 +27,8 @@ import {
   Vehicle,
   VerificationNumber,
   Withdraw,
+  BalanceHistory,
+  BalanceHistoryDetails,
 } from "../pages";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -65,14 +67,22 @@ const RoutesPage = () => {
           path="session-details/:id"
           element={<ProtectedRoute element={<SessionDetails />} />}
         />
+        <Route path="top-up" element={<ProtectedRoute element={<TopUp />} />} />
         <Route
-          path="top-up"
-          element={<ProtectedRoute element={<TopUp />} />}
+          path="balance-history"
+          element={<ProtectedRoute element={<BalanceHistory />} />}
         />
-        <Route path="transaction-history" element={<TransactionHistory />} />
+        <Route
+          path="transaction-history"
+          element={<ProtectedRoute element={<TransactionHistory />} />}
+        />
         <Route
           path="transaction-history-details/:type/:id"
           element={<ProtectedRoute element={<TransactionHistoryDetails />} />}
+        />
+        <Route
+          path="balance-history-details/:id"
+          element={<ProtectedRoute element={<BalanceHistoryDetails />} />}
         />
         <Route path="vehicle" element={<Vehicle />} />
         <Route path="verification" element={<VerificationNumber />} />
