@@ -5,27 +5,22 @@ import { rupiah } from "../../helpers";
 
 interface InputNominalProps {
   value: string;
-  loading: boolean;
+  description: string;
+  loading?: boolean;
+  dataNominal:string[]
   onChange: (value: string) => void;
-  onCalculate: () => void;
+  onCalculate?: () => void;
 }
 
-const nominalDataDummy: string[] = ["400", "800", "1200", "full"];
 
 const InputNominal: React.FC<InputNominalProps> = ({
   value,
+  description,
   loading,
+  dataNominal,
   onChange,
   onCalculate,
 }) => {
-  const onEditPrice = () => {
-    alert("coming soon");
-  };
-
-  const onTopUp = () => {
-    alert("coming soon");
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e?.target?.value.replace(REGEX_NUMBERS, "");
     const formatted: string = `Rp${rupiah(value)}`;
@@ -36,7 +31,7 @@ const InputNominal: React.FC<InputNominalProps> = ({
   return (
     <>
       <p className="text-xs text-black100/70 mb-[14px]">
-        Silakan masukan nominal pengisian yang sesuai dengan daya pengisian tram
+        {description}
       </p>
 
       <div className="h-[56px] center relative  rounded-lg bg-baseGray mb-3">
@@ -54,7 +49,7 @@ const InputNominal: React.FC<InputNominalProps> = ({
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        {nominalDataDummy.map((item, index: number) => (
+        {dataNominal.map((item, index: number) => (
           <NominalTopUpItem
             key={index}
             value={item}
@@ -69,15 +64,19 @@ const InputNominal: React.FC<InputNominalProps> = ({
         ))}
       </div>
 
-      <Separator className="my-[14px]" />
+      {onCalculate && (
+        <>
+          <Separator className="my-[14px]" />
 
-      <Button
-        type="secondary"
-        label="Hitung Durasi"
-        loading={loading}
-        disabled={!Number(value.replace("Rp", "").replace(/\./g, ""))}
-        onClick={onCalculate}
-      />
+          <Button
+            type="secondary"
+            label="Hitung Durasi"
+            loading={loading}
+            disabled={!Number(value.replace("Rp", "").replace(/\./g, ""))}
+            onClick={onCalculate}
+          />
+        </>
+      )}
     </>
   );
 };

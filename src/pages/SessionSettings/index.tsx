@@ -256,9 +256,9 @@ const SessionSettings = () => {
                       position={index + 1}
                       isActive={form?.selectedSocket === item?.ID}
                       onClick={() => {
-                        console.log('cek ', item);
-                        
-                        setForm("selectedSocket", item?.ID)
+                        console.log("cek ", item);
+
+                        setForm("selectedSocket", item?.ID);
                       }}
                     />
                   ))}
@@ -275,7 +275,9 @@ const SessionSettings = () => {
               {form?.selectedTab === "1" ? (
                 <InputNominal
                   value={total || ""}
-                  loading={false}
+                  description="Silakan masukan nominal pengisian yang sesuai dengan daya pengisian tram"
+                  loading={calculateDuration?.loading}
+                  dataNominal={["400", "800", "1200", "full"]}
                   onChange={(value) => {
                     setTotal(value);
                     setForm("nominal", value);

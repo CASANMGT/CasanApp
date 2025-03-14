@@ -19,7 +19,7 @@ import TransactionHistoryDetails from "./TransactionHistoryDetails";
 import VerificationNumber from "./VerificationNumber";
 import Vehicle from "./Vehicle";
 import SessionDetails from "./SessionDetails";
-import TopUpBalance from "./TopUpBalance";
+import TopUp from "./TopUp";
 import SelectBank from "./SelectBank";
 import Withdraw from "./Withdraw";
 import PaymentSuccess from "./PaymentSuccess";
@@ -29,7 +29,7 @@ export {
     Charging,
     Vehicle,
     PaymentSuccess,
-    TopUpBalance,
+    TopUp,
     ComingSoon,
     SelectBank,
     SessionDetails,

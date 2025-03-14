@@ -21,7 +21,7 @@ import {
   SessionSettings,
   Splash,
   Test,
-  TopUpBalance,
+  TopUp,
   TransactionHistory,
   TransactionHistoryDetails,
   Vehicle,
@@ -45,7 +45,10 @@ const RoutesPage = () => {
           element={<ProtectedRoute element={<ChargingStationDetails />} />}
         />
         <Route path="input-pin" element={<InputPin />} />
-        <Route path="location-list" element={<ProtectedRoute element={<LocationList />} />} />
+        <Route
+          path="location-list"
+          element={<ProtectedRoute element={<LocationList />} />}
+        />
         <Route path="login" element={<Login />} />
         <Route path="scan" element={<Scan />} />
         <Route path="select-bank" element={<SelectBank />} />
@@ -62,7 +65,10 @@ const RoutesPage = () => {
           path="session-details/:id"
           element={<ProtectedRoute element={<SessionDetails />} />}
         />
-        <Route path="top-up-balance" element={<TopUpBalance />} />
+        <Route
+          path="top-up"
+          element={<ProtectedRoute element={<TopUp />} />}
+        />
         <Route path="transaction-history" element={<TransactionHistory />} />
         <Route
           path="transaction-history-details/:type/:id"
