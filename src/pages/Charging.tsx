@@ -59,8 +59,7 @@ const Charging = () => {
   }, []);
 
   useEffect(() => {
-    if (detailSession?.data?.Status === 6) {
-    } //setOpenFinished(true);
+    if (detailSession?.data?.Status === 6) setOpenFinished(true);
     else if (
       detailSession?.data?.Status === 1 ||
       detailSession?.data?.Status === 7 ||
