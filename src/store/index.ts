@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import loginReducer from "../features/auth/loginSlice";
+import balanceListReducer from "../features/balance/balanceListSlice.ts";
 import chargingStationLocationsReducer from "../features/chargingStations/chargingStationLocationsSlice.ts";
 import chargingStationReducer from "../features/chargingStations/chargingStationSlice";
 import feeSettingsReducer from "../features/feeSettings/feeSettingsSlice";
@@ -53,6 +54,9 @@ export const store = configureStore({
     // TRANSACTION
     transactionList: transactionListReducer,
     addTransaction: addTransactionReducer,
+
+    // BALANCE
+    balanceList: balanceListReducer,
   },
 });
 

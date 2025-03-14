@@ -137,7 +137,7 @@ const SessionSettings = () => {
     } else {
       return (
         <p className="text-xs text-primary100 font-medium">
-          Pilih Metode Pemabayaran
+          Pilih Metode Pembayaran
         </p>
       );
     }
@@ -212,9 +212,7 @@ const SessionSettings = () => {
           {/* LOCATION */}
           <div className="p-4 bg-white mb-2">
             <div className="between-x">
-              <p className="text-blackBold font-medium">
-                {data?.Location?.Mark || data?.Location?.Name || "-"}
-              </p>
+              <p className="text-blackBold font-medium">{data?.Name}</p>
               <div>
                 <Button
                   type="primary-line"
@@ -232,7 +230,9 @@ const SessionSettings = () => {
               <div className="row gap-2">
                 <Signal signalValue={selectedDevice?.SignalValue} />
 
-                <p className="text-xs font-medium">{selectedDevice?.Name}</p>
+                <p className="text-xs font-medium">
+                  {selectedDevice?.PileNumber}
+                </p>
               </div>
 
               <p className="text-xs text-black90">{`Nomor Alat ${selectedDevice?.ID}`}</p>
@@ -256,8 +256,6 @@ const SessionSettings = () => {
                       position={index + 1}
                       isActive={form?.selectedSocket === item?.ID}
                       onClick={() => {
-                        console.log("cek ", item);
-
                         setForm("selectedSocket", item?.ID);
                       }}
                     />
@@ -364,7 +362,7 @@ const SessionSettings = () => {
               <BetweenText
                 type="medium-content"
                 labelLeft="Biaya Layanan"
-                labelRight={`Rp${rupiah(0)}`}
+                labelRight={`Rp${rupiah(form.paymentMethod?.value || 0)}`}
                 className="p-3"
               />
             </div>
@@ -388,7 +386,7 @@ const SessionSettings = () => {
             <p className="text-base text-black100/70">
               Total:{" "}
               <a className="text-blackBold font-bold">{`Rp${rupiah(
-                chargingNominal
+                chargingNominal + Number(form.paymentMethod?.value || 0)
               )}`}</a>
             </p>
 

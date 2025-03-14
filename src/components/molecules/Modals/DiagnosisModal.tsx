@@ -33,7 +33,7 @@ const DiagnosisModal: React.FC<DiagnosisModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      setSeconds(1);
+      setSeconds(35);
       getData();
     }
   }, [isOpen]);

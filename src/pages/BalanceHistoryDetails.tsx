@@ -1,16 +1,23 @@
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { IcSuccessGreen } from "../assets";
+import { Balance } from "../common";
 import {
-    BetweenText,
-    Button,
-    Header,
-    LoadingPage,
-    Separator,
+  BetweenText,
+  Button,
+  Header,
+  LoadingPage,
+  Separator,
 } from "../components";
 import { moments, rupiah } from "../helpers";
 
 const BalanceHistoryDetails = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const [data] = useState<Balance>(location?.state?.data);
+
+  console.log("cek data", data);
 
   const onNext = () => {};
 
@@ -27,7 +34,7 @@ const BalanceHistoryDetails = () => {
           <IcSuccessGreen />
 
           <span className="font-medium text-blackBold">
-            {"Transacksi Selesai"}
+            {getLabelType(data?.Status)}
           </span>
         </div>
 
@@ -70,3 +77,31 @@ const BalanceHistoryDetails = () => {
 };
 
 export default BalanceHistoryDetails;
+
+const getLabelType = (status: number) => {
+  let value: string;
+
+  switch (status) {
+    case 1:
+      value = "Traksaksi Selesai";
+      break;
+
+    case 2:
+      value = "Refund Selesai";
+      break;
+
+    case 3:
+      value = "Sesi Selesai";
+      break;
+
+    case 4:
+      value = "Penarikan Selesai";
+      break;
+
+    default:
+      value = "";
+      break;
+  }
+
+  return value;
+};

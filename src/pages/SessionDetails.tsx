@@ -122,7 +122,7 @@ const SessionDetails = () => {
                   ? "Expired"
                   : status === 8
                   ? "Dibatalkan"
-                  : "Sesi Selesai"
+                  : "Selesai"
               }`}
             </span>
           </div>
@@ -140,18 +140,14 @@ const SessionDetails = () => {
             <BetweenText
               type="medium-content"
               labelLeft="Lokasi"
-              labelRight={
-                dataSession?.ChargingStation?.Location?.Mark ||
-                dataSession?.ChargingStation?.Location?.Name ||
-                "-"
-              }
+              labelRight={dataSession?.ChargingStation?.Name || "-"}
               className="bg-baseLightGray p-3 rounded-t"
             />
 
             <BetweenText
               type="medium-content"
               labelLeft="Nomor Alat"
-              labelRight={dataSession?.DeviceID || "-"}
+              labelRight={dataSession?.Device?.PileNumber || "-"}
               className="p-3"
             />
 
@@ -235,7 +231,7 @@ const SessionDetails = () => {
                 <BetweenText
                   type="medium-content"
                   labelLeft="Tarif Pengecasan"
-                  labelRight={`Rp${rupiah(dataSession?.ChargingFee || 0)}/jam`}
+                  labelRight={dataSession?.ChargingFee || "-"}
                   className="p-3"
                 />
 

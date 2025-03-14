@@ -52,24 +52,23 @@ const Charging = () => {
   const [openDiagnosisFailed, setOpenDiagnosisFailed] =
     useState<boolean>(false);
   const [openFinished, setOpenFinished] = useState<boolean>(false);
+  const [openStop, setOpenStop] = useState<boolean>(false);
 
   useEffect(() => {
     getData();
   }, []);
 
   useEffect(() => {
-    if (detailSession?.data?.Status === 6) setOpenFinished(true);
+    if (detailSession?.data?.Status === 6) {
+    } //setOpenFinished(true);
     else if (
       detailSession?.data?.Status === 1 ||
       detailSession?.data?.Status === 7 ||
       detailSession?.data?.Status === 8
     )
-      navigate(
-        `/transaction-history-details/${detailSession?.data?.ID}`,
-        {
-          replace: true,
-        }
-      );
+      navigate(`/transaction-history-details/${detailSession?.data?.ID}`, {
+        replace: true,
+      });
   }, [detailSession?.data?.Status]);
 
   useEffect(() => {
@@ -111,7 +110,7 @@ const Charging = () => {
     if (status === 6) navigate("/home", { replace: true });
     else if (dataSession?.ID) {
       if (status === 5) {
-        dispatch(fetchStopSession(dataSession?.ID));
+        setOpenStop(true);
       } else dispatch(fetchStartSession(dataSession?.ID));
     }
   };
@@ -170,9 +169,7 @@ const Charging = () => {
               <IcMarkerSmall />
 
               <span className="font-medium text-xs">
-                {dataSession?.ChargingStation?.Location?.Mark ||
-                  dataSession?.ChargingStation?.Location?.Name ||
-                  "-"}
+                {dataSession?.ChargingStation?.Name || "-"}
               </span>
 
               <Signal signalValue={dataSession?.Device?.SignalValue} />
@@ -192,7 +189,7 @@ const Charging = () => {
             <BetweenText
               type="medium-content"
               labelLeft="Alat"
-              labelRight={`${dataSession?.ChargingStation?.Name}, Socket ${dataSession?.Socket?.Port}`}
+              labelRight={`${dataSession?.Device?.PileNumber}, Socket ${dataSession?.Socket?.Port}`}
               className="bg-baseLightGray rounded-t p-3"
             />
 
@@ -270,6 +267,20 @@ const Charging = () => {
         labelButtonLeft="Ya"
         labelButtonRight="Tidak"
         onClick={() => dispatch(fetchCancelSession(Number(id)))}
+      />
+
+      <AlertModal
+        visible={openStop}
+        icon={IcInfoCircleRed}
+        title="Apakah kamu ingin menyelesaikan sesi"
+        description="Sesi Pengisian daya akan dihentikan"
+        onDismiss={() => setOpenStop(false)}
+        labelButtonLeft="Ya"
+        labelButtonRight="Tidak"
+        onClick={() => {
+          setOpenStop(false);
+          dispatch(fetchStopSession(dataSession?.ID || 0));
+        }}
       />
 
       <AlertModal

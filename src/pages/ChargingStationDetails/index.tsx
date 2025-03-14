@@ -6,7 +6,7 @@ import {
   IcDownCircleGreen,
   IcFuel,
   IcShareGreen,
-  ILNoImage
+  ILNoImage,
 } from "../../assets";
 import { DataChargingStation } from "../../common";
 import { DeviceListItem, Separator } from "../../components";
@@ -118,7 +118,7 @@ const ChargingStationDetails = () => {
       {/* HEADER */}
       <div className="relative">
         <img
-          src={photo ? photo : ILNoImage}
+          src={data?.Image ? data?.Image : ILNoImage}
           alt="details"
           className="block mx-auto w-full h-[200px] object-cover"
         />
@@ -135,20 +135,20 @@ const ChargingStationDetails = () => {
       <div className="bg-white p-4 drop-shadow">
         <div className="row gap-3">
           <img
-            src={photo ? photo : ILNoImage}
+            src={data?.Image ? data?.Image : ILNoImage}
             alt="location 1"
             className="w-[50px] h-[50px] rounded-md"
           />
 
           <div className="flex flex-col justify-between">
-            <p className="font-medium">{data?.Location?.Mark || "-"}</p>
+            <p className="font-medium">{data?.Name || "-"}</p>
             <p className="text-2-line text-xs text-black90">
-              {data?.Location?.Name || "-"}
+              {data?.Location?.Address || "-"}
             </p>
           </div>
         </div>
 
-        <div className="between mt-4">
+        <div className="between-x mt-4">
           <div className="row gap-2.5">
             <div
               className={`h-[30px] w-[30px] rounded p-2 ${
@@ -190,7 +190,7 @@ const ChargingStationDetails = () => {
         <PriceInformation data={data} />
 
         {/* BASIC INFORMATION  */}
-        <BasicInformation />
+        <BasicInformation data={data?.OperationalHours} />
 
         {/* DEVICE LIST */}
         <div className="bg-white p-3 rounded-lg mt-[14px] border drop-shadow">

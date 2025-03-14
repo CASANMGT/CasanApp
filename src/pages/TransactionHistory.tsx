@@ -31,11 +31,6 @@ const TransactionHistory = () => {
     navigate(-1);
   };
 
-  const onDetails = (select: DataTransaction) => {
-    const type: string = select?.Transaction?.Type === 2 ? "session" : "top-up";
-
-    navigate(`/transaction-history-details/${select?.Session?.ID}`);
-  };
 
   const isShowData =
     transactionList?.data?.data && transactionList?.data?.data.length
@@ -60,7 +55,7 @@ const TransactionHistory = () => {
               <TransactionHistoryItem
                 key={index}
                 data={item}
-                onClick={() => onDetails(item)}
+                onClick={() => navigate(`/transaction-history-details/${item?.Session?.ID}`)}
               />
             ))}
         </div>

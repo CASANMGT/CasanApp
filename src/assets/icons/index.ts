@@ -1,5 +1,5 @@
 import IcAstraPay from "./astrapay.svg?react";
-import IcBalance from './balance.svg?react'
+import IcBalance from "./balance.svg?react";
 import IcBattery from "./battery.svg?react";
 import IcBike from "./bike.svg?react";
 import IcCashBlack from "./cash-black.svg?react";
@@ -39,6 +39,8 @@ import IcLogout from "./logout.svg?react";
 import IcMarkerSmall from "./marker-small.svg?react";
 import IcMenuBlack from "./menu-black.svg?react";
 import IcMenuWhite from "./menu-white.svg?react";
+import IcMoneyReceive from "./money-recive.svg?react";
+import IcMoneySend from "./money-send.svg?react";
 import IcMyLocationBlack from "./my-location-black.svg?react";
 import IcNoImage from "./no-image.svg?react";
 import IcNoInternet from "./no-internet.svg?react";
@@ -81,8 +83,7 @@ import IcWallet from "./wallet.svg?react";
 export {
   IcAstraPay,
   IcBackBlack,
-  IcBackWhite,
-  IcBattery,
+  IcBackWhite, IcBalance, IcBattery,
   IcBike,
   IcCashBlack,
   IcChatBlack,
@@ -118,8 +119,8 @@ export {
   IcLogout,
   IcMarkerSmall,
   IcMenuBlack,
-  IcMenuWhite,
-  IcMyLocationBlack,
+  IcMenuWhite, IcMoneyReceive,
+  IcMoneySend, IcMyLocationBlack,
   IcNoImage,
   IcNoInternet,
   IcNotificationBadgesGreen,
@@ -156,7 +157,6 @@ export {
   IcVehicleBlack,
   IcWallet,
   IcWalletGreen,
-  IcWalletGreen2,
-  IcBalance
+  IcWalletGreen2
 };
 

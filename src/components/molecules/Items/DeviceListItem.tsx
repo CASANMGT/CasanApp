@@ -39,7 +39,7 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
 
       <div className="flex flex-col flex-1">
         <div className="between-x">
-          <p className="font-medium mb-1">{data?.Name}</p>
+          <p className="font-medium mb-1">{data?.PileNumber}</p>
 
           <Signal signalValue={data?.SignalValue} />
         </div>

@@ -37,7 +37,7 @@ const OngoingOrder = () => {
       select?.Status === 5
     )
       url = "/charging";
-    else url = "/transaction-history-details";
+    else url = "/session-details";
 
     navigate(`${url}/${select?.ID}`);
   };

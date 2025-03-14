@@ -3,12 +3,9 @@ import {
   IcDownGreen,
   IcFuel,
   IcShareGreen,
-  ILNoImage
+  ILNoImage,
 } from "../../../assets";
-import {
-  DataChargingStation,
-  LatLng
-} from "../../../common";
+import { DataChargingStation, LatLng } from "../../../common";
 import {
   getDistanceFromLatLonInKm,
   moments,
@@ -36,6 +33,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   onLoadMore,
 }) => {
   const currentTime = timeToSeconds(moments().format("HH:mm"));
+
   const isFull: boolean = false;
   const distance = getDistanceFromLatLonInKm(
     { lat: data?.Location?.Latitude, lon: data?.Location?.Longitude },
@@ -44,7 +42,6 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   let price: number = 0;
   let watt: string = "";
   let available: number = 0;
-  let photo: string = "";
 
   if (
     data?.PriceSetting?.PriceBaseRules &&
@@ -54,8 +51,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   ) {
     const filtered = data?.PriceSetting?.PriceBaseRules[0].PriceBaseTime.filter(
       (e) =>
-        timeToSeconds(e?.PriceTimeRule.From) >= currentTime &&
-        currentTime <= timeToSeconds(e?.PriceTimeRule.To)
+        currentTime > timeToSeconds(e?.PriceTimeRule.From) &&
+        currentTime < timeToSeconds(e?.PriceTimeRule.To)
     )[0];
 
     price = filtered?.Value || 0;
@@ -63,7 +60,6 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   }
 
   if (data?.Devices && data?.Devices.length) {
-    photo = data?.Devices[0].ChargingStation?.Image;
     available = data?.Devices.reduce(
       (accumulator, currentValue) =>
         accumulator + (currentValue.Sockets.length || 0),
@@ -77,15 +73,15 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
         <div className="p-3 bg-chargingLocation bg-center rounded-t-lg">
           <div className="row gap-3">
             <img
-              src={photo ? photo : ILNoImage}
+              src={data?.Image ? data?.Image : ILNoImage}
               alt="location 1"
               className="w-[50px] h-[50px] rounded-md"
             />
 
             <div className="flex flex-col justify-between">
-              <p className="font-medium ">{data?.Location?.Mark || "-"}</p>
+              <p className="font-medium ">{data?.Name || "-"}</p>
               <p className="text-2-line text-xs text-black90">
-                {data?.Location?.Name || "-"}
+                {data?.Location?.Address || "-"}
               </p>
             </div>
           </div>

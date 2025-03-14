@@ -30,7 +30,12 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
     }
   }, [map]);
 
-  if (!data?.Location?.Latitude || !data?.Location?.Longitude|| data?.Location?.Latitude>0) return;
+  if (
+    !data?.Location?.Latitude ||
+    !data?.Location?.Longitude ||
+    data?.Location?.Latitude > 0
+  )
+    return;
 
   const coordinate: LatLng = [
     data?.Location?.Latitude,
@@ -41,20 +46,20 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
   let price: number = 0;
   let available: number = 0;
 
-    if (
-      data?.PriceSetting?.PriceBaseRules &&
-      data?.PriceSetting?.PriceBaseRules.length &&
-      data?.PriceSetting?.PriceBaseRules[0]?.PriceBaseTime &&
-      data?.PriceSetting?.PriceBaseRules[0]?.PriceBaseTime.length
-    ) {
-      const filtered = data?.PriceSetting?.PriceBaseRules[0].PriceBaseTime.filter(
-        (e) =>
-          timeToSeconds(e?.PriceTimeRule.From) >= currentTime &&
-          currentTime <= timeToSeconds(e?.PriceTimeRule.To)
-      )[0];
-  
-      price = filtered?.Value || 0;
-    }
+  if (
+    data?.PriceSetting?.PriceBaseRules &&
+    data?.PriceSetting?.PriceBaseRules.length &&
+    data?.PriceSetting?.PriceBaseRules[0]?.PriceBaseTime &&
+    data?.PriceSetting?.PriceBaseRules[0]?.PriceBaseTime.length
+  ) {
+    const filtered = data?.PriceSetting?.PriceBaseRules[0].PriceBaseTime.filter(
+      (e) =>
+        timeToSeconds(e?.PriceTimeRule.From) >= currentTime &&
+        currentTime <= timeToSeconds(e?.PriceTimeRule.To)
+    )[0];
+
+    price = filtered?.Value || 0;
+  }
 
   if (data?.Devices && data?.Devices.length) {
     available = data?.Devices.reduce(
@@ -63,9 +68,6 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
       0
     );
   }
-
-  console.log('cek coordinate', coordinate);
-  
 
   return (
     <Marker position={coordinate} icon={customIcon} ref={markerRef}>
