@@ -10,6 +10,7 @@ import { PaymentMethodItem } from "../Items";
 import ModalContainer from "./ModalContainer";
 
 interface ModalPaymentMethodProps {
+  type: "top-up";
   visible: boolean;
   select: FeeSettingsProps | undefined;
   onDismiss: () => void;
@@ -17,6 +18,7 @@ interface ModalPaymentMethodProps {
 }
 
 const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
+  type,
   visible,
   select,
   onDismiss,
@@ -90,18 +92,24 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
             color="primary100"
           >
             <div className="overflow-auto">
-              <p className="text-black70 mb-2.5">Saldo Anda</p>
-              <PaymentMethodItem
-                type="checkbox"
-                label="Saldo"
-                balance={myUser?.data?.Balance}
-                isActive={false}
-                icon={IcWallet}
-                disabled={(myUser?.data?.Balance || 0) <= 0}
-                onSelect={() => {}}
-              />
+              {type !== "top-up" && (
+                <>
+                  <p className="text-black70 mb-2.5">Saldo Anda</p>
+                  <PaymentMethodItem
+                    type="checkbox"
+                    label="Saldo"
+                    balance={myUser?.data?.Balance}
+                    isActive={false}
+                    icon={IcWallet}
+                    disabled={(myUser?.data?.Balance || 0) <= 0}
+                    onSelect={() => {}}
+                  />
 
-              <p className="text-black70 mb-2.5 mt-4">EWallet</p>
+                  <div className="mb-4"/>
+                </>
+              )}
+
+              <p className="text-black70 mb-2.5">eWallet</p>
 
               {optionsPaymentMethod &&
                 optionsPaymentMethod.map((item, index: number) => (

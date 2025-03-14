@@ -15,6 +15,7 @@ import onGoingSessionListReducer from "../features/sessions/onGoingSessionListSl
 import startSessionReducer from "../features/sessions/startSessionSlice.ts";
 import stopSessionReducer from "../features/sessions/stopSessionSlice.ts";
 import toastReducer from "../features/toastSlice";
+import addTransactionReducer from "../features/transactions/addTransactionSlice.ts";
 import transactionListReducer from "../features/transactions/transactionListSlice.ts";
 import myUserReducer from "../features/users/myUserSlice.ts";
 
@@ -51,6 +52,7 @@ export const store = configureStore({
 
     // TRANSACTION
     transactionList: transactionListReducer,
+    addTransaction: addTransactionReducer,
   },
 });
 

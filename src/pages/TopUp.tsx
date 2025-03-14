@@ -1,11 +1,12 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
-  IcEditGreen,
   IcInfoCircleGreen,
   IcRightCircleGreen,
-  IcSolarGreen,
+  IcSolarGreen
 } from "../assets";
+import { AddTransactionBody, FeeSettingsProps } from "../common";
 import {
   BetweenText,
   Button,
@@ -15,19 +16,41 @@ import {
   Separator,
   SubTitle,
 } from "../components";
+import {
+  fetchMyUser,
+  hideLoading,
+  resetDataAddTransaction,
+  showLoading
+} from "../features";
 import { rupiah } from "../helpers";
+import { AppDispatch, RootState } from "../store";
 import InputNominal from "./SessionSettings/InputNominal";
-import { FeeSettingsProps } from "../common";
 
 const nominalDataDummy = [1, 2, 3];
 
 const TopUp = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const addTransaction = useSelector(
+    (state: RootState) => state?.addTransaction
+  );
 
   const [nominal, setNominal] = useState<string>();
   const [paymentMethod, setPaymentMethod] = useState<FeeSettingsProps>();
   const [visiblePaymentMethod, setVisiblePaymentMethod] =
     useState<boolean>(false);
+
+  useEffect(() => {
+    if (addTransaction?.loading) dispatch(showLoading());
+    else dispatch(hideLoading());
+
+    if (addTransaction?.data) {
+      dispatch(resetDataAddTransaction());
+      fetchMyUser();
+      onDismiss();
+    }
+  }, [addTransaction]);
 
   const onDismiss = () => {
     navigate(-1);
@@ -66,7 +89,15 @@ const TopUp = () => {
   };
 
   const onPay = () => {
-    alert("coming soon");
+    const body: AddTransactionBody = {
+      amount: Number(nominal?.replace("Rp", "").replace(/\./g, "") || 0),
+      payment_method: paymentMethod?.key || "",
+      type: 1,
+      wallet_used_amount: 0,
+    };
+
+    console.log("cek b", body);
+    // dispatch(fetchAddTransaction(body))
   };
 
   return (
@@ -149,6 +180,7 @@ const TopUp = () => {
 
       {/* MODAL */}
       <ModalPaymentMethod
+        type={"top-up"}
         visible={visiblePaymentMethod}
         select={paymentMethod}
         onDismiss={() => setVisiblePaymentMethod(false)}

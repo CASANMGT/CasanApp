@@ -1,6 +1,14 @@
 import { Session } from "./sessionType";
 import { DataUser } from "./userType";
 
+export type AddTransactionBody = {
+  amount: number;
+  payment_method: string;
+  type: number;
+  user_id?: number;
+  wallet_used_amount: number;
+};
+
 export type DataTransaction = {
   Transaction: Transaction;
   Session: Session;
