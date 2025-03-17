@@ -310,7 +310,7 @@ const SessionDetails = () => {
 
             {!isFull && (
               <BetweenText
-                labelLeft="Pengebalian Dana"
+                labelLeft="Pengembalian Dana"
                 labelRight={`Rp${rupiah(dataSession?.RefundAmount)}`}
                 className="mt-2"
               />

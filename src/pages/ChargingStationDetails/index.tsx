@@ -15,55 +15,13 @@ import { getDistanceFromLatLonInKm, openGoogleMaps } from "../../helpers";
 import { AppDispatch } from "../../store";
 import BasicInformation from "./BasicInformation";
 import PriceInformation from "./PriceInformation";
-import { forEach } from "lodash";
-
-const operatingHoursData = [1, 2];
-const deviceListData = [1, 2, 3];
-const dataCostInformation = [
-  {
-    id: 1,
-    watt: "0-250W",
-    price: 800,
-  },
-  {
-    id: 1,
-    watt: "251-500W",
-    price: 1600,
-  },
-];
-const dataDeviceList = [
-  {
-    id: "A",
-    available: 2,
-    location: "Pintu Masuk Barat (5)",
-    signalValue: 30,
-    disabled: false,
-    isFull: false,
-  },
-  {
-    id: "B",
-    available: 5,
-    location: "Pintu Masuk Utara (5)",
-    signalValue: 30,
-    disabled: false,
-    isFull: true,
-  },
-  {
-    id: "C",
-    available: 5,
-    location: "Pintu Masuk Timur (5)",
-    signalValue: 0,
-    disabled: true,
-    isFull: false,
-  },
-];
 
 const ChargingStationDetails = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate: NavigateFunction = useNavigate();
   const location = useLocation();
 
-  const [data, setData] = useState<DataChargingStation>(location?.state?.data);
+  const [data] = useState<DataChargingStation>(location?.state?.data);
 
   useEffect(() => {}, []);
 
@@ -227,7 +185,7 @@ const ChargingStationDetails = () => {
               key={index}
               data={item}
               position={index + 1}
-              isLast={index === dataDeviceList.length - 1}
+              isLast={index === data?.Devices.length - 1}
               onClick={() =>
                 navigate("/session-settings", {
                   state: {

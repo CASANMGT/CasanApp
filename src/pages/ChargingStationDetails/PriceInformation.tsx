@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { rupiah } from "../../helpers";
-import { Separator, Tabs } from "../../components";
 import { DataChargingStation, TabItemProps } from "../../common";
+import { Separator, Tabs } from "../../components";
+import { rupiah } from "../../helpers";
 
 interface PriceInformationProps {
   data: DataChargingStation | undefined;
@@ -27,7 +27,10 @@ const PriceInformation: React.FC<PriceInformationProps> = ({
     ) {
       const newData: TransformedData[] = [];
 
-      data?.PriceSetting?.PriceBaseRules.forEach((rule) => {
+      data?.PriceSetting?.PriceBaseRules.forEach((rule, index) => {
+        const isLast: boolean =
+          index === data?.PriceSetting?.PriceBaseRules.length - 1;
+
         rule.PriceBaseTime.forEach((timeSlot) => {
           // Find if the time slot already exists in newData
           let existingSlot = newData.find(
@@ -44,7 +47,7 @@ const PriceInformation: React.FC<PriceInformationProps> = ({
           }
 
           existingSlot.content.push({
-            watt: `${rule.From}-${rule.To}`,
+            watt: isLast ? `>${rule.From - 1}` : `${rule.From}-${rule.To}`,
             price: timeSlot.Value,
           });
         });

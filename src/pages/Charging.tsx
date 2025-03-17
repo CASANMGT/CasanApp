@@ -11,7 +11,7 @@ import {
   IcWalletGreen,
   ILCharging,
 } from "../assets";
-import { Session } from "../common";
+import { CalculateDurationBody, Session } from "../common";
 import {
   AlertModal,
   BetweenText,
@@ -23,6 +23,7 @@ import {
   StatusIndicator,
 } from "../components";
 import {
+  fetchCalculateDuration,
   fetchCancelSession,
   fetchDetailSession,
   fetchStartSession,
@@ -70,7 +71,22 @@ const Charging = () => {
         replace: true,
         state: { isGoOrder: true },
       });
-  }, [detailSession?.data?.Status]);
+    else if (detailSession?.data?.Status === 2) {
+      if (
+        detailSession?.data?.ChargingStationID &&
+        detailSession?.data?.MaxWatt
+      ) {
+        const body: CalculateDurationBody = {
+          id: detailSession?.data?.ChargingStationID,
+          total_charge: Number(detailSession?.data?.Transaction?.Amount),
+          vehicle_type: 1,
+          watt: Number(detailSession?.data?.MaxWatt),
+        };
+
+        dispatch(fetchCalculateDuration(body));
+      }
+    }
+  }, [detailSession?.data]);
 
   useEffect(() => {
     if (startSession?.data) {
@@ -135,7 +151,11 @@ const Charging = () => {
         title="Halaman Pengisian"
         onDismiss={onDismiss}
         className="mx-4 mb-4"
-        onPress={() => setOpenCancel(true)}
+        onPress={
+          detailSession?.data?.Status !== 5
+            ? () => setOpenCancel(true)
+            : undefined
+        }
       />
 
       <LoadingPage loading={detailSession?.loading} color="primary100">
