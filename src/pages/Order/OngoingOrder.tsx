@@ -30,7 +30,8 @@ const OngoingOrder = () => {
   const onNext = (select: Session) => {
     let url: string;
 
-    if (
+    if (select?.Status === 1) url = "/transaction-history-details";
+    else if (
       select?.Status === 2 ||
       select?.Status === 3 ||
       select?.Status === 4 ||

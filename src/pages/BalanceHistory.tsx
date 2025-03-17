@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { bodyListProps } from "../common";
 import { Header, LoadingPage, TransactionHistoryItem } from "../components";
+import { useAuth } from "../context/AuthContext";
 import { fetchBalanceList } from "../features";
 import { AppDispatch, RootState } from "../store";
 
@@ -11,10 +12,18 @@ const BalanceHistory = () => {
   const navigate = useNavigate();
 
   const balanceList = useSelector((state: RootState) => state.balanceList);
+  const { logout } = useAuth();
 
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    if (balanceList?.error) {
+      const cloneData: any = balanceList?.error;
+      if (cloneData?.response && cloneData?.response?.status === 401) logout();
+    }
+  }, [balanceList?.error]);
 
   const getData = () => {
     const body: bodyListProps = {

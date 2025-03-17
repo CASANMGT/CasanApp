@@ -12,12 +12,14 @@ type LoginResponseProps = {
 
 type AuthState = {
   data: LoginResponseProps | null;
+  token: string | null;
   loading: boolean;
   error: string | null;
 };
 
 const initialState: AuthState = {
   data: null,
+  token: null,
   loading: false,
   error: null,
 };
@@ -45,6 +47,7 @@ const loginSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.data = null;
+      state.token = null;
       localStorage.removeItem("token");
     },
 
@@ -62,9 +65,13 @@ const loginSlice = createSlice({
       .addCase(
         fetchLogin.fulfilled,
         (state, action: PayloadAction<LoginResponseProps>) => {
+          const token = action?.payload?.token;
+          
           state.loading = false;
           state.data = action.payload;
-          localStorage.setItem("token", JSON.stringify(action?.payload?.token));
+          state.token = token;
+
+          localStorage.setItem("token", JSON.stringify(token));
         }
       )
       .addCase(fetchLogin.rejected, (state, action) => {

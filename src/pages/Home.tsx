@@ -11,7 +11,7 @@ import {
   AVAILABLE_PLACE,
   ChargingStationBody,
   LatLng,
-  LIMIT_LIST
+  LIMIT_LIST,
 } from "../common";
 import {
   AvailablePlaceItem,
@@ -54,8 +54,16 @@ const Home = () => {
           const { latitude, longitude } = position.coords;
           setCurrentLocation([latitude, longitude]);
         },
-        (_) => {
-          console.error("Can't get current location");
+        (err) => {
+          if (err.code === err.PERMISSION_DENIED) {
+            console.log("User denied the request for Geolocation.");
+          } else if (err.code === err.POSITION_UNAVAILABLE) {
+            console.log("Location information is unavailable.");
+          } else if (err.code === err.TIMEOUT) {
+            console.log("The request to get user location timed out.");
+          } else {
+            console.log("An unknown error occurred.");
+          }
         }
       );
     } else {
@@ -64,17 +72,17 @@ const Home = () => {
   };
 
   const getData = (nextPage?: number) => {
-    if (currentLocation?.length) {
-      const body: ChargingStationBody = {
-        page: nextPage || page,
-        limit: LIMIT_LIST,
-      };
+    const body: ChargingStationBody = {
+      page: nextPage || page,
+      limit: LIMIT_LIST,
+    };
 
+    if (currentLocation?.length) {
       body.latitude = currentLocation[0];
       body.longitude = currentLocation[1];
-
-      dispatch(fetchChargingStation(body));
     }
+
+    dispatch(fetchChargingStation(body));
   };
 
   const onSearch = () => {

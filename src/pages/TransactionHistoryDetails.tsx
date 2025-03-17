@@ -2,7 +2,12 @@ import html2canvas from "html2canvas";
 import { capitalize } from "lodash";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
+import {
+  NavigateFunction,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import {
   IcSaveGreen,
   IcShareGreen2,
@@ -20,19 +25,21 @@ import {
 import {
   fetchCancelSession,
   fetchDetailSession,
+  hideLoading,
   resetDataAddSession,
   resetDataCancelSession,
+  showLoading,
 } from "../features";
 import { moments, rupiah } from "../helpers";
 import { AppDispatch, RootState } from "../store";
 
 const TransactionHistoryDetails = () => {
   const navigate: NavigateFunction = useNavigate();
+  const location = useLocation();
   const { id, type } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
   const detailSession = useSelector((state: RootState) => state.detailSession);
-
   const cancelSession = useSelector((state: RootState) => state.cancelSession);
   const [isRunning, setIsRunning] = useState<boolean>(false);
 
@@ -43,11 +50,17 @@ const TransactionHistoryDetails = () => {
 
   // Manage response cancel session
   useEffect(() => {
+    if (cancelSession?.loading) dispatch(showLoading());
+    else
+      setTimeout(() => {
+        dispatch(hideLoading());
+      }, 1000);
+
     if (cancelSession?.data) {
       dispatch(resetDataCancelSession());
       getData();
     }
-  }, [cancelSession?.data]);
+  }, [cancelSession]);
 
   useEffect(() => {
     if (detailSession?.data?.Transaction?.Status === 2) {
@@ -119,9 +132,14 @@ const TransactionHistoryDetails = () => {
     duration = diff > 0 ? diff : 0;
   }
 
+  const onDismiss = () => {
+    if (location?.state?.isGoOrder) navigate("/home/order");
+    else navigate(-1);
+  };
+
   return (
     <div className="background-1 py-[14px] px-4">
-      <Header type="secondary" title="Detail Transaksi" onDismiss={()=> navigate(-1)} />
+      <Header type="secondary" title="Detail Transaksi" onDismiss={onDismiss} />
 
       <LoadingPage loading={detailSession?.loading}>
         <div className="flex flex-col gap-2 items-center justify-center my-7 ">

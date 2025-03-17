@@ -6,7 +6,13 @@ export const formatPhoneNumber = (phone: string) => {
   let value: string = "";
 
   if (phone) {
-    if (phone.slice(0, 3) == "+62") {
+    if (phone.slice(0, 3) === "021") {
+      const length: number = phone.length;
+      const first: string = phone.slice(0, 3);
+      const second: string = phone.slice(3, 6);
+      const third = phone.slice(6, length);
+      return `${first} ${second} ${third}`;
+    } else if (phone.slice(0, 3) == "+62") {
       const length: number = phone.length;
       const first: string = phone.slice(0, 3);
       const second: string = phone.slice(3, 6);
@@ -25,4 +31,8 @@ export const formatPhoneNumber = (phone: string) => {
   }
 
   return value;
+};
+
+export const formatSpaceNumber = (number: string) => {
+  return number.replace(/\d{4}(?=.)/g, "$& ");
 };

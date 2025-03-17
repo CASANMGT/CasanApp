@@ -19,7 +19,7 @@ const PaymentSuccess = () => {
   const onNext = () => {
     if (!isNext) {
       setIsNext(true);
-      navigate(`/charging/${id}`, { replace: true });
+      navigate(`/charging/${id}`, { replace: true,state:{isGoOrder:true} });
     }
   };
 

@@ -6,17 +6,18 @@ import { rupiah } from "../../helpers";
 interface InputNominalProps {
   value: string;
   description: string;
+  balance?: number;
   loading?: boolean;
-  dataNominal:string[]
+  dataNominal: string[];
   onChange: (value: string) => void;
   onCalculate?: () => void;
 }
-
 
 const InputNominal: React.FC<InputNominalProps> = ({
   value,
   description,
   loading,
+  balance,
   dataNominal,
   onChange,
   onCalculate,
@@ -30,9 +31,7 @@ const InputNominal: React.FC<InputNominalProps> = ({
 
   return (
     <>
-      <p className="text-xs text-black100/70 mb-[14px]">
-        {description}
-      </p>
+      <p className="text-xs text-black100/70 mb-[14px]">{description}</p>
 
       <div className="h-[56px] center relative  rounded-lg bg-baseGray mb-3">
         <div className="absolute p-2 bottom-0 right-0 ">
@@ -54,11 +53,16 @@ const InputNominal: React.FC<InputNominalProps> = ({
             key={index}
             value={item}
             isActive={
-              Number(item) ===
+              Number(item === "full" ? balance : item) ===
               Number(value.replace("Rp", "").replace(/\./g, ""))
             }
             onClick={() => {
-              if (item !== "full") onChange(`Rp${rupiah(item)}`);
+              let value = "";
+              if (item === "full" && balance && balance > 0)
+                value = balance.toString();
+              else value = item;
+
+              onChange(`Rp${rupiah(value)}`);
             }}
           />
         ))}

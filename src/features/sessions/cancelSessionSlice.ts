@@ -23,7 +23,7 @@ export const fetchCancelSession = createAsyncThunk(
         url: `sessions/${session_id}/cancel`,
       });
 
-      return res?.data as ResponseSuccess;
+      return res as ResponseSuccess;
     } catch (e) {
       return rejectWithValue(e);
     }

@@ -14,14 +14,26 @@ import {
 import NullPhotoImg from "../assets/illustrations/null-photo.png";
 import { VERSION } from "../common";
 import { Button, MenuItem, Separator } from "../components";
-import { rupiah } from "../helpers";
+import { formatPhoneNumber, rupiah } from "../helpers";
 import { useAuth } from "../context/AuthContext";
+import { useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { fetchMyUser } from "../features";
 
 const Profile = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const { logout } = useAuth();
+
+  const myUser = useSelector((state: RootState) => state.myUser);
 
   const phoneNumber: string = "08120810812";
   const navigate: NavigateFunction = useNavigate();
+
+  useEffect(() => {
+    dispatch(fetchMyUser());
+  }, []);
 
   const onEdit = () => {
     alert("coming soon");
@@ -65,7 +77,7 @@ const Profile = () => {
             />
 
             <span className="text-xl text-white font-semibold">
-              {phoneNumber}
+              {formatPhoneNumber(myUser?.data?.Phone || "")}
             </span>
             <IcEditWhite onClick={onEdit} className="cursor-pointer" />
           </div>
@@ -86,7 +98,7 @@ const Profile = () => {
             <p className="text-xs">Saldo Tersimpan</p>
             <div className="font-semibold text-blackBold row gap-0.5">
               <p className="text-xs">Rp</p>
-              <p className="text-lg">{rupiah(50000)}</p>
+              <p className="text-lg">{rupiah(myUser?.data?.Balance)}</p>
             </div>
 
             <div className="row gap-1.5 mt-3">

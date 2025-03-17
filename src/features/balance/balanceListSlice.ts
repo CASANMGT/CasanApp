@@ -1,9 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  Balance,
-  bodyListProps,
-  MetaResponseProps
-} from "../../common";
+import { Balance, bodyListProps, MetaResponseProps } from "../../common";
 import { Api } from "../../services/Api";
 
 type BalanceListResponse = {
@@ -80,7 +76,7 @@ const balanceListSlice = createSlice({
 
         state.loading = false;
         state.data = null;
-        state.error = action.error.message ?? "failed";
+        state.error = action.error?.message ?? "failed";
       });
   },
 });

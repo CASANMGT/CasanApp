@@ -2,7 +2,7 @@ import html2canvas from "html2canvas";
 import { capitalize } from "lodash";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   IcInfoCircleGreen,
   IcSaveGreen,
@@ -25,6 +25,7 @@ import { AppDispatch, RootState } from "../store";
 const SessionDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
 
   const detailSession = useSelector((state: RootState) => state.detailSession);
@@ -50,7 +51,8 @@ const SessionDetails = () => {
   };
 
   const onDismiss = () => {
-    navigate("/home", { replace: true });
+    if (location?.state?.isGoHome) navigate("/home", { replace: true });
+    else navigate(-1);
   };
 
   const handleShare = () => {

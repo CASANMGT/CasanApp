@@ -1,6 +1,7 @@
 import { IcCustomerServiceBlack } from "../../assets";
 import { CUSTOMER_SERVICES, DaysOfWeek, OperationalHour } from "../../common";
 import { Button, Separator } from "../../components";
+import { formatPhoneNumber, openWhatsApp } from "../../helpers";
 
 interface BasicInformationProps {
   data: OperationalHour[];
@@ -26,7 +27,9 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ data }) => {
       <div className="between-x">
         <div className="row gap-2">
           <IcCustomerServiceBlack />
-          <span className="font-medium">{CUSTOMER_SERVICES}</span>
+          <span className="font-medium">
+            {formatPhoneNumber(CUSTOMER_SERVICES)}
+          </span>
         </div>
 
         <div>
@@ -34,7 +37,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ data }) => {
             type="light-green"
             buttonType="sm"
             label="Contact Us ->"
-            onClick={() => alert("coming soon")}
+            onClick={() => openWhatsApp(CUSTOMER_SERVICES)}
             // className="!h-[24px] text-xs"
           />
         </div>

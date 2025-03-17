@@ -17,9 +17,35 @@ const BalanceHistoryDetails = () => {
 
   const [data] = useState<Balance>(location?.state?.data);
 
-  console.log("cek data", data);
 
-  const onNext = () => {};
+  const onNext = () => {
+    let nextPage: string;
+    let id: number = 0;
+
+    switch (data?.Status) {
+      case 1:
+        nextPage = "Traksaksi Selesai";
+        break;
+
+      case 2:
+        nextPage = "Refund Selesai";
+        break;
+
+      case 3:
+        nextPage = "Sesi Selesai";
+        break;
+
+      case 4:
+        nextPage = "Penarikan Selesai";
+        break;
+
+      default:
+        nextPage = "";
+        break;
+    }
+
+    navigate(`/${nextPage}${id ? `/${id}` : ""}`);
+  };
 
   return (
     <div className="background-1 py-[14px] px-4">
@@ -42,9 +68,13 @@ const BalanceHistoryDetails = () => {
           <p className="font-medium mb-2">Informasi Transaksi</p>
 
           <div className="text-black100/70 row gap-2">
-            <p className="text-xs">{moments().format("DD MMMM YYYY")}</p>
-            <p className="text-xs">{moments().format("HH:mm WIB")}</p>
-            <p className="text-xs">{`ID${999}`}</p>
+            <p className="text-xs">
+              {moments(data?.CreatedAt).format("DD MMMM YYYY")}
+            </p>
+            <p className="text-xs">
+              {moments(data?.CreatedAt).format("HH:mm WIB")}
+            </p>
+            <p className="text-xs">{`ID${data?.ID}`}</p>
           </div>
 
           <Separator className="my-4 bg-black10" />
@@ -54,14 +84,14 @@ const BalanceHistoryDetails = () => {
           <BetweenText
             type="medium-content"
             labelLeft="Tipe Transaksi"
-            labelRight="Top-up"
+            labelRight={getLabelType(data?.Status, true)}
             classNameLabelRight="font-medium text-black100"
             className="mb-2"
           />
 
           <BetweenText
             labelLeft="Nominal Casan Wallet"
-            labelRight={`Rp${rupiah(99999)}`}
+            labelRight={`Rp${rupiah(data?.Amount)}`}
             className="border-y border-black100 py-2"
             classNameLabelLeft="text-black100"
             classNameLabelRight="text-black100 font-medium"
@@ -78,20 +108,20 @@ const BalanceHistoryDetails = () => {
 
 export default BalanceHistoryDetails;
 
-const getLabelType = (status: number) => {
+const getLabelType = (status: number, isType?: boolean) => {
   let value: string;
 
   switch (status) {
     case 1:
-      value = "Traksaksi Selesai";
+      value = isType ? "Top-Up" : "Traksaksi Selesai";
       break;
 
     case 2:
-      value = "Refund Selesai";
+      value = isType ? "Refund" : "Refund Selesai";
       break;
 
     case 3:
-      value = "Sesi Selesai";
+      value = isType ? "Bayar Sesi" : "Sesi Selesai";
       break;
 
     case 4:

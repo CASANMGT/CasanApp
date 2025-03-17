@@ -17,6 +17,7 @@ import {
   Device,
   FormDefaultSession,
   FormSession,
+  Socket,
 } from "../../common";
 import {
   BetweenText,
@@ -31,10 +32,12 @@ import {
   SocketItem,
   Tabs,
 } from "../../components";
+import { useAuth } from "../../context/AuthContext";
 import {
   fetchAddSession,
   fetchCalculateCharge,
   fetchCalculateDuration,
+  fetchMyUser,
   hideLoading,
   showLoading,
 } from "../../features";
@@ -49,13 +52,13 @@ const costMax: number = 800; //jam
 const tabsNominalHour = [
   {
     id: "1",
-    label: "Masukan Nominal",
+    label: "Masukkan Nominal",
     content: "",
     // content: <InputNominal />,
   },
   {
     id: "2",
-    label: "Masukan Jam",
+    label: "Masukkan Jam",
     content: "",
     // content: <InputHour />,
   },
@@ -65,6 +68,7 @@ const SessionSettings = () => {
   const navigate: NavigateFunction = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
+  const { isAuthenticated } = useAuth();
 
   const calculateCharge = useSelector(
     (state: RootState) => state.calculateCharge
@@ -73,6 +77,7 @@ const SessionSettings = () => {
   const calculateDuration = useSelector(
     (state: RootState) => state.calculateDuration
   );
+  const myUser = useSelector((state: RootState) => state.myUser);
 
   const [form, setForm] = useForm<FormSession>(FormDefaultSession);
 
@@ -83,6 +88,10 @@ const SessionSettings = () => {
   const [data] = useState<DataChargingStation>(location?.state?.data);
   const [selectedDevice] = useState<Device>(location?.state?.selectedDevice);
   const [openVA, setOpenVA] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (isAuthenticated) dispatch(fetchMyUser());
+  }, []);
 
   useEffect(() => {
     if (addSession?.loading) dispatch(showLoading());
@@ -166,8 +175,9 @@ const SessionSettings = () => {
 
   const onCalculate = (type: "duration" | "charge") => {
     if (type === "charge") {
+      const splitTime = form.time.split(":");
       const duration =
-        Number(form?.time[0] || 0) * 3600 + Number(form?.time[1] || 0) * 60;
+        Number(splitTime[0] || 0) * 3600 + Number(splitTime[1] || 0) * 60;
 
       const body: CalculateChargeBody = {
         id: data.PriceSettingID,
@@ -205,6 +215,11 @@ const SessionSettings = () => {
 
   const chargingNominal: number = getChargingNominal();
 
+  const dataSocket: Socket[] | null =
+    selectedDevice?.Sockets && selectedDevice?.Sockets.length
+      ? selectedDevice?.Sockets.sort((a, b) => a?.Port - b?.Port)
+      : null;
+
   return (
     <Container title="Pengaturan Sesi" onDismiss={onDismiss}>
       <LoadingPage loading={false}>
@@ -231,7 +246,7 @@ const SessionSettings = () => {
                 <Signal signalValue={selectedDevice?.SignalValue} />
 
                 <p className="text-xs font-medium">
-                  {selectedDevice?.PileNumber}
+                  {`${selectedDevice?.Name} - ${selectedDevice?.PileNumber}`}
                 </p>
               </div>
 
@@ -248,8 +263,8 @@ const SessionSettings = () => {
               </div>
 
               <div className="grid grid-cols-4 gap-3">
-                {selectedDevice?.Sockets &&
-                  selectedDevice?.Sockets.map((item, index: number) => (
+                {dataSocket &&
+                  dataSocket.map((item, index: number) => (
                     <SocketItem
                       key={index}
                       data={item}
@@ -276,6 +291,7 @@ const SessionSettings = () => {
                   description="Silakan masukan nominal pengisian yang sesuai dengan daya pengisian tram"
                   loading={calculateDuration?.loading}
                   dataNominal={["400", "800", "1200", "full"]}
+                  balance={myUser?.data?.Balance || 0}
                   onChange={(value) => {
                     setTotal(value);
                     setForm("nominal", value);

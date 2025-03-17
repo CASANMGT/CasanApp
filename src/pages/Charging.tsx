@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   IcClockGreen,
   IcFlashGreen,
@@ -38,6 +38,7 @@ import { AppDispatch, RootState } from "../store";
 
 const Charging = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -67,6 +68,7 @@ const Charging = () => {
     )
       navigate(`/transaction-history-details/${detailSession?.data?.ID}`, {
         replace: true,
+        state: { isGoOrder: true },
       });
   }, [detailSession?.data?.Status]);
 
@@ -102,20 +104,24 @@ const Charging = () => {
   };
 
   const onDismiss = () => {
-    navigate(-1);
+    if (location?.state?.isGoOrder) navigate("/home/order");
+    else navigate(-1);
   };
 
   const onStartStop = () => {
     if (status === 6) navigate("/home", { replace: true });
     else if (dataSession?.ID) {
       if (status === 5) {
-        setOpenStop(true);
+        dispatch(fetchStopSession(dataSession?.ID || 0));
       } else dispatch(fetchStartSession(dataSession?.ID));
     }
   };
 
   const onNext = () => {
-    navigate(`/session-details/${id}`, { replace: true });
+    navigate(`/session-details/${id}`, {
+      replace: true,
+      state: { isGoHome: true },
+    });
   };
 
   const dataSession: Session | null = detailSession?.data;
@@ -290,7 +296,7 @@ const Charging = () => {
         labelButtonLeft="Coba Lagi"
         labelButtonRight="Tutup"
         onDismiss={() => setOpenDiagnosisFailed(false)}
-        onClick={onStartStop}
+        onClick={() => dispatch(fetchStopSession(dataSession?.ID || 0))}
       />
 
       <AlertModal

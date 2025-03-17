@@ -11,10 +11,11 @@ import {
 import { DataChargingStation } from "../../common";
 import { DeviceListItem, Separator } from "../../components";
 import { showToast } from "../../features/toastSlice";
-import { getDistanceFromLatLonInKm } from "../../helpers";
+import { getDistanceFromLatLonInKm, openGoogleMaps } from "../../helpers";
 import { AppDispatch } from "../../store";
 import BasicInformation from "./BasicInformation";
 import PriceInformation from "./PriceInformation";
+import { forEach } from "lodash";
 
 const operatingHoursData = [1, 2];
 const deviceListData = [1, 2, 3];
@@ -79,6 +80,30 @@ const ChargingStationDetails = () => {
     const newOpacity = Math.min(position / maxScroll, 1); // Calculate opacity
   };
 
+  const getTotalAvailable = () => {
+    let total: number = 0;
+
+    data?.Devices.forEach((element) => {
+      if (element?.Sockets && element?.Sockets.length) {
+        element?.Sockets.forEach((e) => {
+          if (
+            element?.SignalValue > 0 &&
+            e?.SessionStatus !== 1 &&
+            e?.SessionStatus !== 2 &&
+            e?.SessionStatus !== 3 &&
+            e?.SessionStatus !== 4 &&
+            e?.SessionStatus !== 5 &&
+            e?.IsCharging === 0
+          ) {
+            total++;
+          }
+        });
+      }
+    });
+
+    return total;
+  };
+
   const onDismiss = () => {
     navigate(-1);
   };
@@ -103,11 +128,7 @@ const ChargingStationDetails = () => {
 
   if (data?.Devices && data?.Devices.length) {
     photo = data?.Devices[0].ChargingStation?.Image;
-    available = data?.Devices.reduce(
-      (accumulator, currentValue) =>
-        accumulator + (currentValue.Sockets.length || 0),
-      0
-    );
+    available = getTotalAvailable();
   }
 
   return (
@@ -173,7 +194,12 @@ const ChargingStationDetails = () => {
             )}
           </div>
 
-          <div className="row gap-2">
+          <div
+            onClick={() =>
+              openGoogleMaps(data?.Location.Latitude, data?.Location?.Longitude)
+            }
+            className="row gap-2 cursor-pointer"
+          >
             <p className="text-xs text-primary100 font-medium">{`${distance}km dari anda`}</p>
 
             <div className="p-[5px] rounded-full bg-primary10">
@@ -200,6 +226,7 @@ const ChargingStationDetails = () => {
             <DeviceListItem
               key={index}
               data={item}
+              position={index + 1}
               isLast={index === dataDeviceList.length - 1}
               onClick={() =>
                 navigate("/session-settings", {
