@@ -6,6 +6,7 @@ export type Balance = {
   User: DataUser;
   Amount: number;
   Status: number;
+  SeasonID: number | null;
   CreatedAt: string;
   UpdatedAt: string;
 };

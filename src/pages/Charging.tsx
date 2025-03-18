@@ -61,31 +61,7 @@ const Charging = () => {
   }, []);
 
   useEffect(() => {
-    if (detailSession?.data?.Status === 6) setOpenFinished(true);
-    else if (
-      detailSession?.data?.Status === 1 ||
-      detailSession?.data?.Status === 7 ||
-      detailSession?.data?.Status === 8
-    )
-      navigate(`/transaction-history-details/${detailSession?.data?.ID}`, {
-        replace: true,
-        state: { isGoOrder: true },
-      });
-    else if (detailSession?.data?.Status === 2) {
-      if (
-        detailSession?.data?.ChargingStationID &&
-        detailSession?.data?.MaxWatt
-      ) {
-        const body: CalculateDurationBody = {
-          id: detailSession?.data?.ChargingStationID,
-          total_charge: Number(detailSession?.data?.Transaction?.Amount),
-          vehicle_type: 1,
-          watt: Number(detailSession?.data?.MaxWatt),
-        };
-
-        dispatch(fetchCalculateDuration(body));
-      }
-    }
+    if (detailSession?.data?.Status === 5) timeoutProgress();
   }, [detailSession?.data]);
 
   useEffect(() => {
@@ -116,7 +92,45 @@ const Charging = () => {
   }, [cancelSession]);
 
   const getData = () => {
-    dispatch(fetchDetailSession(Number(id)));
+    dispatch(fetchDetailSession(Number(id))).then((res) => {
+      const resSession: Session = res?.payload as Session;
+      const currentStatus = resSession?.Status;
+
+      if (currentStatus === 6) {
+        setOpenFinished(true);
+      } else if (
+        currentStatus === 1 ||
+        currentStatus === 7 ||
+        currentStatus === 8
+      ) {
+        navigate(`/transaction-history-details/${detailSession?.data?.ID}`, {
+          replace: true,
+          state: { isGoOrder: true },
+        });
+      } else if (
+        currentStatus === 2 &&
+        resSession?.ChargingStationID &&
+        resSession?.MaxWatt
+      ) {
+        const body: CalculateDurationBody = {
+          id: resSession?.ChargingStationID,
+          total_charge: Number(resSession?.Transaction?.Amount),
+          vehicle_type: 1,
+          watt: Number(resSession?.MaxWatt),
+        };
+
+        dispatch(fetchCalculateDuration(body));
+      }
+    });
+  };
+
+  // over loop if status is charging
+  const timeoutProgress = () => {
+    const timer = setTimeout(() => {
+      getData();
+    }, 2000); // 2 second
+
+    return () => clearTimeout(timer);
   };
 
   const onDismiss = () => {
@@ -143,6 +157,8 @@ const Charging = () => {
   const dataSession: Session | null = detailSession?.data;
   const status: number | undefined = dataSession?.Status;
   const duration: number = dataSession?.ExpectedDuration || 0;
+  //  TODO:
+  // (Duration - ExpectedDuration) - now
 
   return (
     <div className="background-1 pt-3 overflow-hidden flex flex-col justify-between">

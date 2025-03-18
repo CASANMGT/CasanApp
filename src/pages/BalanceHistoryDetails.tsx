@@ -17,26 +17,21 @@ const BalanceHistoryDetails = () => {
 
   const [data] = useState<Balance>(location?.state?.data);
 
-
   const onNext = () => {
     let nextPage: string;
-    let id: number = 0;
 
     switch (data?.Status) {
       case 1:
-        nextPage = "Traksaksi Selesai";
+        nextPage = "transaction-history-details";
         break;
 
       case 2:
-        nextPage = "Refund Selesai";
+        nextPage = "withdraw-details";
         break;
 
       case 3:
-        nextPage = "Sesi Selesai";
-        break;
-
       case 4:
-        nextPage = "Penarikan Selesai";
+        nextPage = "session-details";
         break;
 
       default:
@@ -44,7 +39,7 @@ const BalanceHistoryDetails = () => {
         break;
     }
 
-    navigate(`/${nextPage}${id ? `/${id}` : ""}`);
+    navigate(`/${nextPage}/${data?.SeasonID || 0}`);
   };
 
   return (
