@@ -22,7 +22,7 @@ const CompletedOrder = () => {
     const body: SessionListBody = {
       page: 1,
       limit: 10,
-      status: 1,
+      is_finish: 1,
     };
     dispatch(fetchCompleteSessionList(body));
   };

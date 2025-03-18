@@ -15,7 +15,7 @@ export type SessionListResponse = {
 export type SessionListBody = {
   page: number;
   limit: number;
-  status?: number;
+  is_finish?: number;
 };
 
 export interface SessionSettingProps {

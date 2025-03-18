@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IcFlashCircleGreen,
-  IcInfoCircleLgGreen,
+  IcInfoCircle,
   IcScooterGreen,
 } from "../assets";
 import { OptionDropdownProps } from "../common";
@@ -36,7 +36,7 @@ const Vehicle = () => {
       <div className="flex-1 overflow-auto scrollbar-none p-4">
         {/* INFORMATION */}
         <div className="bg-baseLightGray/60 rounded-lg p-3 row gap-2 mb-4">
-          <IcInfoCircleLgGreen />
+          <IcInfoCircle  className="text-primary100"/>
 
           <p className="text-xs text-black90">
             Isi Informasi Kendaraan untuk membantu memperkirakan biaya dan waktu

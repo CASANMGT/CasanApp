@@ -1,5 +1,5 @@
 export const VERSION: string = "1.0.0";
-export const CUSTOMER_SERVICES:string='08178777877'
+export const CUSTOMER_SERVICES:string='085143489403'
 export const INVALID_TOKEN = "Invalid token"
 
 // PAYMENT METHOD

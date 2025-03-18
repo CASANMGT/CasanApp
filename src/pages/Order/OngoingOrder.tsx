@@ -22,7 +22,7 @@ const OngoingOrder = () => {
     const body: SessionListBody = {
       page: 1,
       limit: 10,
-      status: 0,
+      is_finish: 0,
     };
     dispatch(fetchOnGoingSessionList(body));
   };

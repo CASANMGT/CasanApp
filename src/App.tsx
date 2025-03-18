@@ -8,6 +8,7 @@ import { LoadingModal } from "./components";
 import RoutesPage from "./routes";
 import { RootState } from "./store";
 import { AuthProvider } from "./context/AuthContext";
+import PopupAlert from "./components/atoms/PopupAlert";
 
 dayjs.extend(relativeTime);
 dayjs.locale("id");
@@ -36,6 +37,8 @@ function App() {
         />
 
         {loading && <LoadingModal />}
+
+        <PopupAlert />
       </div>
   );
 }

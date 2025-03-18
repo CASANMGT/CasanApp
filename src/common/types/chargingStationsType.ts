@@ -6,6 +6,7 @@ export type ChargingStationBody = {
   limit: number;
   longitude?: number;
   latitude?: number;
+  is_admin:boolean
 };
 
 export type AddEditChargingStation = {

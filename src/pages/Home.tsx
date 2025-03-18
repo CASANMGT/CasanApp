@@ -75,6 +75,7 @@ const Home = () => {
     const body: ChargingStationBody = {
       page: nextPage || page,
       limit: LIMIT_LIST,
+      is_admin: false,
     };
 
     if (currentLocation?.length) {

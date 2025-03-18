@@ -32,6 +32,7 @@ import {
   SocketItem,
   Tabs,
 } from "../../components";
+import { useAlert } from "../../context/AlertContext";
 import { useAuth } from "../../context/AuthContext";
 import {
   fetchAddSession,
@@ -69,6 +70,7 @@ const SessionSettings = () => {
   const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated } = useAuth();
+  const { showAlert } = useAlert();
 
   const calculateCharge = useSelector(
     (state: RootState) => state.calculateCharge
@@ -152,25 +154,39 @@ const SessionSettings = () => {
     }
   }, [form?.paymentMethod]);
 
-  const validation = () => {
-    let value: boolean = true;
+  const onValidation = () => {
+    let message = {
+      title: "",
+      body: "",
+    };
 
-    if (
-      form?.selectedSocket !== undefined &&
-      Number(total?.replace("Rp", "").replace(/\./g, "") || 0) > 0 &&
-      form.paymentMethod
-    ) {
-      if (form.selectedTab === "1") {
-        if (calculateDuration?.data && form.nominal) value = false;
-      } else if (
-        form.selectedTab === "2" &&
-        (Number(form.time[0]) || Number(form.time[1]))
-      ) {
-        if (calculateCharge?.data) value = false;
+    if (form?.selectedSocket == undefined) {
+      message.title = "Pilih Socket Terlebih Dahulu";
+      message.body =
+        "Silakan pilih Socket sesuai yang akan anda gunakan untuk pengisian";
+    } else if (form.selectedTab === "1") {
+      if (!form?.nominal) {
+        message.title = "Nominal Belum Terpilih";
+        message.body = "Masukkan Nominal Terlebih Dahulu";
+      } else if (!calculateDuration?.data) {
+        message.title = "Durasi Belum Dihitung";
+        message.body = "Silakan Hitung Durasi Terlebih Dahulu";
       }
+    } else if (form.selectedTab === "2") {
+      if (form.time === "00:00") {
+        message.title = "Jam Belum Terpilih";
+        message.body = "Masukkan Jam Terlebih Dahulu";
+      } else if (!calculateCharge?.data) {
+        message.title = "Nominal Belum Dihitung";
+        message.body = "Silakan Hitung Nominal Terlebih Dahulu";
+      }
+    } else if (!form.paymentMethod) {
+      message.title = "Pilih Metode Pembayaran";
+      message.body = "Silakan pilih metode pembayaran";
     }
-
-    return value;
+    
+    if (!message?.title) onNext();
+    else showAlert(message);
   };
 
   const onCalculate = (type: "duration" | "charge") => {
@@ -409,8 +425,7 @@ const SessionSettings = () => {
             <Button
               className="!w-[130px]"
               label="Bayar"
-              disabled={validation()}
-              onClick={onNext}
+              onClick={onValidation}
             />
           </div>
         </div>

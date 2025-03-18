@@ -6,13 +6,16 @@ import "./index.css";
 import { store } from "./store";
 import "./styles/global.css";
 import "./styles/tailwind.css";
-import './styles/leaflet.css'
+import "./styles/leaflet.css";
 import "leaflet/dist/leaflet.css";
+import { AlertProvider } from "./context/AlertContext";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
-      <App />
+      <AlertProvider>
+        <App />
+      </AlertProvider>
     </Provider>
   </StrictMode>
 );
