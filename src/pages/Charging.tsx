@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { data, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   IcClockGreen,
   IcFlashGreen,
@@ -34,7 +34,7 @@ import {
   resetDataStopSession,
   showLoading,
 } from "../features";
-import { formatDuration, formatTime, rupiah } from "../helpers";
+import { formatDuration, formatTime, moments, rupiah } from "../helpers";
 import { AppDispatch, RootState } from "../store";
 
 const Charging = () => {
@@ -156,9 +156,9 @@ const Charging = () => {
 
   const dataSession: Session | null = detailSession?.data;
   const status: number | undefined = dataSession?.Status;
-  const duration: number = dataSession?.ExpectedDuration || 0;
-  //  TODO:
-  // (Duration - ExpectedDuration) - now
+  const duration: number = moments(dataSession?.StartChargingTime)
+    .add(dataSession?.ExpectedDuration || 0, "seconds")
+    .diff(moments(), "seconds");
 
   return (
     <div className="background-1 pt-3 overflow-hidden flex flex-col justify-between">
