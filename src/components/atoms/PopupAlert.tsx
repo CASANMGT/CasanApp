@@ -20,7 +20,7 @@ const PopupAlert = () => {
   };
 
   return (
-    <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 shadow-lg flex items-start">
+    <div className="fixed bottom-[60px] left-1/2 -translate-x-1/2 z-50 shadow-lg flex items-start">
       <div className="w-[358px] row bg-white py-3 px-4 rounded-lg shadow-lg transition-all transform duration-300 animate-fade-in">
         <div className="w-8 h-8 center rounded-full bg-lightRed mr-4">
           <IcInfoCircle className="text-red w-6" />

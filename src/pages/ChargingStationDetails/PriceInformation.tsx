@@ -70,7 +70,7 @@ const PriceInformation: React.FC<PriceInformationProps> = ({
     }
   }, [data]);
 
-  if (!data || !tabItem) return null;
+  if (!data || !tabItem || !tabItem.length) return null;
 
   return (
     <div className="rounded-lg p-3 bg-white drop-shadow">
