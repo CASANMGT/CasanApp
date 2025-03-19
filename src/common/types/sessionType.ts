@@ -47,6 +47,7 @@ export type FormSession = {
   nominal: string;
   time: string;
   paymentMethod?: FeeSettingsProps | undefined;
+  phoneNumber: string;
 };
 
 export type AddSessionBody = {

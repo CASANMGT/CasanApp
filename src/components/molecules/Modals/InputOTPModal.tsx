@@ -1,20 +1,41 @@
 import { useEffect, useState } from "react";
-import { IcRightGreen } from "../../../assets";
-import { AlertModalProps } from "../../../common";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchLogin,
+  hideLoading,
+  LoginRequest,
+  resetDataLogin,
+  showLoading,
+} from "../../../features";
 import { formatPhoneNumber } from "../../../helpers";
-import { Button, InputCode, Separator } from "../../atoms";
+import { AppDispatch, RootState } from "../../../store";
+import { InputCode, Separator } from "../../atoms";
 import ModalContainer from "./ModalContainer";
+import { useAuth } from "../../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-const InputOTPModal: React.FC<AlertModalProps> = ({
-  visible,
+interface InputOTPProps {
+  open: boolean;
+  phoneNumber: string;
+  onDismiss: () => void;
+}
+
+const InputOTPModal: React.FC<InputOTPProps> = ({
+  open,
+  phoneNumber,
   onDismiss,
-  onClick,
 }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+  const { login } = useAuth();
+
+  const dataLogin = useSelector((state: RootState) => state.login);
+
   const phone: string = "081208120812";
 
   const [codes, setCodes] = useState<string[]>(["", "", "", ""]);
   const [labelTime, setLabelTime] = useState<string>("Kirim Ulang dalam 01:00");
-  const [labelError] = useState<string>("Kode verifikasi tidak valid");
+  const [labelError] = useState<string>("");
   const [counter, setCounter] = useState<number>(60);
 
   useEffect(() => {
@@ -26,6 +47,18 @@ const InputOTPModal: React.FC<AlertModalProps> = ({
       return () => clearInterval(interval);
     }
   }, [counter]);
+
+  useEffect(() => {
+    if (dataLogin?.loading) dispatch(showLoading());
+    else dispatch(hideLoading());
+
+    if (dataLogin?.data) {
+      dispatch(resetDataLogin());
+      login();
+      navigate("/session-settings");
+      onDismiss()
+    }
+  }, [dataLogin]);
 
   const onCounter = () => {
     const remaining: number = counter - 1;
@@ -56,11 +89,16 @@ const InputOTPModal: React.FC<AlertModalProps> = ({
   };
 
   const onNext = () => {
-    alert("coming soon");
+    const body: LoginRequest = {
+      code: codes.join(""),
+      phone_number: phoneNumber.replace(/\s+/g, ""),
+    };
+
+    dispatch(fetchLogin(body));
   };
 
   return (
-    <ModalContainer isOpen={visible} onDismiss={onDismiss}>
+    <ModalContainer isOpen={open} onDismiss={onDismiss}>
       <>
         <p className="mb-1.5 text-center">
           Lanjutkan dengan kode OTP untuk masuk

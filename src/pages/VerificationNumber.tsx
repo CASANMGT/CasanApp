@@ -54,8 +54,6 @@ const VerificationNumber = () => {
       dispatch(resetDataLogin());
       login();
       navigate("/home/index", { replace: true });
-    } else if (dataLogin.error) {
-      alert(dataLogin.error);
     }
   }, [dataLogin]);
 

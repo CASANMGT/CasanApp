@@ -1,10 +1,11 @@
 import { Route, Routes } from "react-router-dom";
 import { AuthProvider } from "../context/AuthContext";
 import {
+  BalanceHistory,
+  BalanceHistoryDetails,
   Charging,
   ChargingStationDetails,
   ComingSoon,
-  Order,
   Home,
   InputPin,
   Location,
@@ -12,6 +13,7 @@ import {
   Login,
   Main,
   NotFound,
+  Order,
   PaymentSuccess,
   Profile,
   Scan,
@@ -27,8 +29,6 @@ import {
   Vehicle,
   VerificationNumber,
   Withdraw,
-  BalanceHistory,
-  BalanceHistoryDetails,
 } from "../pages";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -44,7 +44,7 @@ const RoutesPage = () => {
         />
         <Route
           path="charging-station-details"
-          element={<ProtectedRoute element={<ChargingStationDetails />} />}
+          element={<ChargingStationDetails />}
         />
         <Route path="input-pin" element={<InputPin />} />
         <Route
@@ -55,10 +55,7 @@ const RoutesPage = () => {
         <Route path="scan" element={<Scan />} />
         <Route path="select-bank" element={<SelectBank />} />
         <Route path="select-payment-method" element={<SelectPaymentMethod />} />
-        <Route
-          path="session-settings"
-          element={<ProtectedRoute element={<SessionSettings />} />}
-        />
+        <Route path="session-settings" element={<SessionSettings />} />
         <Route
           path="payment-success/:id"
           element={<ProtectedRoute element={<PaymentSuccess />} />}
@@ -89,11 +86,20 @@ const RoutesPage = () => {
         <Route path="withdraw" element={<Withdraw />} />
 
         {/* BOTTOM NAVIGATION */}
-        <Route path="home" element={<ProtectedRoute element={<Main />} />}>
+        <Route path="home" element={<Main />}>
           <Route path="index" element={<Home />}></Route>
-          <Route path="location" element={<Location />} />
-          <Route path="order" element={<Order />} />
-          <Route path="profile" element={<Profile />} />
+          <Route
+            path="location"
+            element={<ProtectedRoute element={<Location />} />}
+          />
+          <Route
+            path="order"
+            element={<ProtectedRoute element={<Order />} />}
+          />
+          <Route
+            path="profile"
+            element={<ProtectedRoute element={<Profile />} />}
+          />
         </Route>
 
         {/* HANDLE PATH NOT FOUND */}

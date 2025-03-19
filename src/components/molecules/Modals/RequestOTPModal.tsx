@@ -1,25 +1,30 @@
 import { IcRightGreen } from "../../../assets";
-import { AlertModalProps } from "../../../common";
 import { formatPhoneNumber } from "../../../helpers";
 import { Button, Separator } from "../../atoms";
 import ModalContainer from "./ModalContainer";
 
-const RequestOTPModal: React.FC<AlertModalProps> = ({
-  visible,
+interface RequestOTPProps {
+  open: boolean;
+  phoneNumber: string;
+  onDismiss: () => void;
+  onClick: () => void;
+}
+
+const RequestOTPModal: React.FC<RequestOTPProps> = ({
+  open,
+  phoneNumber,
   onDismiss,
   onClick,
 }) => {
-  const phone: string = "081208120812";
-
   return (
-    <ModalContainer isOpen={visible} onDismiss={onDismiss}>
+    <ModalContainer isOpen={open} onDismiss={onDismiss}>
       <>
         <p className="mb-1.5 text-center">
           Lanjutkan dengan kode OTP untuk masuk
         </p>
 
         <p className="text-center text-base font-semibold">
-          {formatPhoneNumber(phone)}
+          {formatPhoneNumber(phoneNumber)}
         </p>
 
         <Button
@@ -32,7 +37,8 @@ const RequestOTPModal: React.FC<AlertModalProps> = ({
           <p>
             Dengan mendaftar, Anda menyetujui{" "}
             <b className="text-primary100 cursor-pointer">Syarat & Ketentuan</b>{" "}
-            dan <b className="text-primary100 cursor-pointer">Kebijakan Privasi</b>{" "}
+            dan{" "}
+            <b className="text-primary100 cursor-pointer">Kebijakan Privasi</b>{" "}
             kami.
           </p>
         </div>

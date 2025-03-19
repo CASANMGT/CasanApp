@@ -46,6 +46,7 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
   return (
     <div
       onClick={() => {
+        // onClick();
         if (!isFull && total > 0) onClick();
       }}
       className={`row gap-2 bg-white py-2 px-3.5 rounded-lg border border-${

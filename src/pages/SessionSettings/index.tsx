@@ -23,10 +23,13 @@ import {
   BetweenText,
   Button,
   Container,
+  InputOTPModal,
+  InputPhoneNumberModal,
   LoadingPage,
   ModalInputHour,
   ModalPaymentMethod,
   ModalVoltageAmpere,
+  RequestOTPModal,
   Separator,
   Signal,
   SocketItem,
@@ -90,6 +93,10 @@ const SessionSettings = () => {
   const [data] = useState<DataChargingStation>(location?.state?.data);
   const [selectedDevice] = useState<Device>(location?.state?.selectedDevice);
   const [openVA, setOpenVA] = useState<boolean>(false);
+  const [openInputPhoneNumber, setOpenInputPhoneNumber] =
+    useState<boolean>(false);
+  const [openRequestOTP, setOpenRequestOTP] = useState<boolean>(false);
+  const [openInputOTP, setOpenInputOTP] = useState<boolean>(false);
 
   useEffect(() => {
     if (isAuthenticated) dispatch(fetchMyUser());
@@ -155,6 +162,7 @@ const SessionSettings = () => {
   }, [form?.paymentMethod]);
 
   const onValidation = () => {
+    return setOpenInputPhoneNumber(true);
     let message = {
       title: "",
       body: "",
@@ -184,9 +192,11 @@ const SessionSettings = () => {
       message.title = "Pilih Metode Pembayaran";
       message.body = "Silakan pilih metode pembayaran";
     }
-    
-    if (!message?.title) onNext();
-    else showAlert(message);
+
+    if (!message?.title) {
+      if (isAuthenticated) onNext();
+      else setOpenInputHour(true);
+    } else showAlert(message);
   };
 
   const onCalculate = (type: "duration" | "charge") => {
@@ -465,6 +475,35 @@ const SessionSettings = () => {
           setForm("time", value);
         }}
       />
+
+      <InputPhoneNumberModal
+        open={openInputPhoneNumber}
+        value={form.phoneNumber}
+        onDismiss={() => setOpenInputPhoneNumber(false)}
+        onChange={(value) => setForm("phoneNumber", value)}
+        onClick={() => {
+          setOpenInputPhoneNumber(false);
+          setOpenRequestOTP(true);
+        }}
+      />
+
+      <RequestOTPModal
+        open={openRequestOTP}
+        phoneNumber={`0${form.phoneNumber}`}
+        onDismiss={() => setOpenRequestOTP(false)}
+        onClick={() => {
+          setOpenRequestOTP(false);
+          setOpenInputOTP(true);
+        }}
+      />
+
+      <InputOTPModal
+        open={openInputOTP}
+        phoneNumber={`0${form.phoneNumber}`}
+        onDismiss={() => setOpenInputOTP(false)}
+      />
+
+      {/* END MODALS */}
     </Container>
   );
 };

@@ -25,10 +25,6 @@ const Login = () => {
     return value;
   };
 
-  const onGuest = () => {
-    alert("coming soon");
-  };
-
   const onLogin = () => {
     navigate("/verification", {
       replace: true,
@@ -71,7 +67,11 @@ const Login = () => {
           type={"secondary"}
           label="Lanjut Sebagai Tamu"
           iconRight={IcRightGreen}
-          onClick={onGuest}
+          onClick={() => {
+            console.log("cek 1");
+
+            navigate("/home", { replace: true });
+          }}
         />
       </div>
     </div>
