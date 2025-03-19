@@ -91,11 +91,16 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
   const onNext = (code: string[]) => {
     const body: LoginRequest = {
       code: code.join(""),
-      phone_number: phoneNumber.replace(/\s+/g, ""),
+      phone_number: formatPhone.replace(/\s+/g, ""),
     };
 
-    dispatch(fetchLogin(body));
+    console.log('cek b', body);
+    
+
+    // dispatch(fetchLogin(body));
   };
+
+  const formatPhone: string = formatPhoneNumber(phone);
 
   return (
     <ModalContainer isOpen={open} onDismiss={onDismiss}>
@@ -105,7 +110,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
         </p>
 
         <p className="text-center text-base font-semibold mb-3">
-          {formatPhoneNumber(phone)}
+          {formatPhone}
         </p>
 
         <InputCode values={codes} error={labelError} onChange={onChangeText} />
