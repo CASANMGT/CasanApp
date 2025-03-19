@@ -8,6 +8,7 @@ import { AppDispatch, RootState } from "../../../store";
 import { Button, LoadingPage } from "../../atoms";
 import { PaymentMethodItem } from "../Items";
 import ModalContainer from "./ModalContainer";
+import { useAuth } from "../../../context/AuthContext";
 
 interface ModalPaymentMethodProps {
   type?: "top-up";
@@ -25,6 +26,7 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
   onSelect,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const { isAuthenticated } = useAuth();
 
   const feeSettings = useSelector((state: RootState) => state.feeSettings);
   const myUser = useSelector((state: RootState) => state.myUser);
@@ -70,7 +72,8 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
   const getData = () => {
     setSelectedPayment(select);
     dispatch(fetchFeeSettings());
-    dispatch(fetchMyUser());
+
+    if (isAuthenticated) dispatch(fetchMyUser());
   };
 
   return (
@@ -98,14 +101,14 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
                   <PaymentMethodItem
                     type="checkbox"
                     label="Saldo"
-                    balance={myUser?.data?.Balance}
+                    balance={myUser?.data?.Balance || 0}
                     isActive={false}
                     icon={IcWallet}
                     disabled={(myUser?.data?.Balance || 0) <= 0}
                     onSelect={() => {}}
                   />
 
-                  <div className="mb-4"/>
+                  <div className="mb-4" />
                 </>
               )}
 

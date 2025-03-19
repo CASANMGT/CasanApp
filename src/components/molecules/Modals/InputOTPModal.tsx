@@ -94,10 +94,9 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
       phone_number: formatPhone.replace(/\s+/g, ""),
     };
 
-    console.log('cek b', body);
     
 
-    // dispatch(fetchLogin(body));
+    dispatch(fetchLogin(body));
   };
 
   const formatPhone: string = formatPhoneNumber(phone);
