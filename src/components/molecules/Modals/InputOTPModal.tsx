@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
 import {
   fetchLogin,
   hideLoading,
@@ -11,8 +13,6 @@ import { formatPhoneNumber } from "../../../helpers";
 import { AppDispatch, RootState } from "../../../store";
 import { InputCode, Separator } from "../../atoms";
 import ModalContainer from "./ModalContainer";
-import { useAuth } from "../../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 
 interface InputOTPProps {
   open: boolean;
@@ -56,7 +56,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
       dispatch(resetDataLogin());
       login();
       navigate("/session-settings");
-      onDismiss()
+      onDismiss();
     }
   }, [dataLogin]);
 
@@ -78,7 +78,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
 
     const isValid: boolean = value.every((item) => item !== "");
 
-    if (isValid) onNext();
+    if (isValid) onNext(value);
   };
 
   const onRequestCode = () => {
@@ -88,9 +88,9 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
     }
   };
 
-  const onNext = () => {
+  const onNext = (code: string[]) => {
     const body: LoginRequest = {
-      code: codes.join(""),
+      code: code.join(""),
       phone_number: phoneNumber.replace(/\s+/g, ""),
     };
 
