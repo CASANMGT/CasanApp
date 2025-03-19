@@ -162,7 +162,6 @@ const SessionSettings = () => {
   }, [form?.paymentMethod]);
 
   const onValidation = () => {
-    return setOpenInputPhoneNumber(true);
     let message = {
       title: "",
       body: "",
