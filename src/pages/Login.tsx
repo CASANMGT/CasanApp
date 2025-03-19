@@ -67,11 +67,7 @@ const Login = () => {
           type={"secondary"}
           label="Lanjut Sebagai Tamu"
           iconRight={IcRightGreen}
-          onClick={() => {
-            console.log("cek 1");
-
-            navigate("/home", { replace: true });
-          }}
+          onClick={() => navigate("/home", { replace: true })}
         />
       </div>
     </div>
