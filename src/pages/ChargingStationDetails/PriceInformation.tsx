@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { DataChargingStation, TabItemProps } from "../../common";
+import {
+  ChargingStation,
+  TabItemProps
+} from "../../common";
 import { Separator, Tabs } from "../../components";
 import { rupiah } from "../../helpers";
 
 interface PriceInformationProps {
-  data: DataChargingStation | undefined;
+  data: ChargingStation | undefined;
   isHideParking?: boolean;
 }
 

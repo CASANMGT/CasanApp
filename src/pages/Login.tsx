@@ -61,14 +61,14 @@ const Login = () => {
           </p>
         </div>
 
-        {/* <Separator className="my-3" />
+        <Separator className="my-3" />
 
         <Button
           type={"secondary"}
           label="Lanjut Sebagai Tamu"
           iconRight={IcRightGreen}
           onClick={() => navigate("/home", { replace: true })}
-        /> */}
+        />
       </div>
     </div>
   );

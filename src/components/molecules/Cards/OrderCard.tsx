@@ -61,7 +61,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
 
         <div className="flex flex-col justify-between">
           <p className="font-medium ">
-            {data?.Name || "-"}
+            {data?.ChargingStation?.Name || "-"}
           </p>
           <p className="text-2-line text-xs text-black90">
             {data?.ChargingStation?.Location?.Address || "-"}

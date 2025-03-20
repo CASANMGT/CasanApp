@@ -55,7 +55,7 @@ const RoutesPage = () => {
         <Route path="scan" element={<Scan />} />
         <Route path="select-bank" element={<SelectBank />} />
         <Route path="select-payment-method" element={<SelectPaymentMethod />} />
-        <Route path="session-settings" element={<SessionSettings />} />
+        <Route path="session-settings/:id?" element={<SessionSettings />} />
         <Route
           path="payment-success/:id"
           element={<ProtectedRoute element={<PaymentSuccess />} />}

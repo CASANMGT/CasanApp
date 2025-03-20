@@ -31,7 +31,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
 
   const dataLogin = useSelector((state: RootState) => state.login);
 
-  const phone: string = "081208120812";
+  
 
   const [codes, setCodes] = useState<string[]>(["", "", "", ""]);
   const [labelTime, setLabelTime] = useState<string>("Kirim Ulang dalam 01:00");
@@ -99,7 +99,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
     dispatch(fetchLogin(body));
   };
 
-  const formatPhone: string = formatPhoneNumber(phone);
+  const formatPhone: string = formatPhoneNumber(phoneNumber);
 
   return (
     <ModalContainer isOpen={open} onDismiss={onDismiss}>

@@ -1,7 +1,12 @@
 import { clone } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
+import {
+  NavigateFunction,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import {
   IcEditGreen,
   IcInfoCircleGreen,
@@ -13,7 +18,7 @@ import {
   AddSessionBody,
   CalculateChargeBody,
   CalculateDurationBody,
-  DataChargingStation,
+  ChargingStation,
   Device,
   FormDefaultSession,
   FormSession,
@@ -41,6 +46,7 @@ import {
   fetchAddSession,
   fetchCalculateCharge,
   fetchCalculateDuration,
+  fetchDeviceById,
   fetchMyUser,
   hideLoading,
   showLoading,
@@ -74,6 +80,7 @@ const SessionSettings = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated } = useAuth();
   const { showAlert } = useAlert();
+  const { id } = useParams<{ id?: string }>();
 
   const calculateCharge = useSelector(
     (state: RootState) => state.calculateCharge
@@ -83,6 +90,7 @@ const SessionSettings = () => {
     (state: RootState) => state.calculateDuration
   );
   const myUser = useSelector((state: RootState) => state.myUser);
+  const deviceById = useSelector((state: RootState) => state.deviceById);
 
   const [form, setForm] = useForm<FormSession>(FormDefaultSession);
 
@@ -90,8 +98,10 @@ const SessionSettings = () => {
   const [visiblePaymentMethod, setVisiblePaymentMethod] =
     useState<boolean>(false);
   const [total, setTotal] = useState<string>();
-  const [data] = useState<DataChargingStation>(location?.state?.data);
-  const [selectedDevice] = useState<Device>(location?.state?.selectedDevice);
+  const [data, setData] = useState<ChargingStation>(location?.state?.data);
+  const [selectedDevice, setSelectedDevice] = useState<Device>(
+    location?.state?.selectedDevice
+  );
   const [openVA, setOpenVA] = useState<boolean>(false);
   const [openInputPhoneNumber, setOpenInputPhoneNumber] =
     useState<boolean>(false);
@@ -100,7 +110,19 @@ const SessionSettings = () => {
 
   useEffect(() => {
     if (isAuthenticated) dispatch(fetchMyUser());
+    if (id) dispatch(fetchDeviceById(id));
   }, []);
+
+  useEffect(() => {
+    if (
+      id &&
+      deviceById?.data?.data &&
+      deviceById?.data?.data?.ChargingStation
+    ) {
+      setData(deviceById?.data?.data?.ChargingStation);
+      setSelectedDevice(deviceById?.data?.data);
+    }
+  }, [deviceById]);
 
   useEffect(() => {
     if (addSession?.loading) dispatch(showLoading());
@@ -194,7 +216,7 @@ const SessionSettings = () => {
 
     if (!message?.title) {
       if (isAuthenticated) onNext();
-      else setOpenInputHour(true);
+      else setOpenInputPhoneNumber(true);
     } else showAlert(message);
   };
 
@@ -240,14 +262,18 @@ const SessionSettings = () => {
 
   const chargingNominal: number = getChargingNominal();
 
-  const dataSocket: Socket[] | null =
-    selectedDevice?.Sockets && selectedDevice?.Sockets.length
-      ? selectedDevice?.Sockets.sort((a, b) => a?.Port - b?.Port)
-      : null;
+  let dataSocket: Socket[] | null = null;
+
+  if (selectedDevice?.Sockets && selectedDevice?.Sockets.length) {
+    try {
+      const cloneData: Socket[] = clone(selectedDevice?.Sockets);
+      dataSocket = cloneData.sort((a, b) => a?.Port - b?.Port);
+    } catch (error) {}
+  }
 
   return (
     <Container title="Pengaturan Sesi" onDismiss={onDismiss}>
-      <LoadingPage loading={false}>
+      <LoadingPage loading={deviceById?.loading}>
         <div className="flex-1 flex-col overflow-auto scrollbar-none">
           {/* LOCATION */}
           <div className="p-4 bg-white mb-2">

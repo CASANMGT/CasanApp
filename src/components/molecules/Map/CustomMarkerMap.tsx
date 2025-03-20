@@ -2,11 +2,11 @@ import L from "leaflet";
 import { useEffect, useRef } from "react";
 import { Marker, Popup, useMap } from "react-leaflet";
 import { IcFuel } from "../../../assets";
-import { DataChargingStation, LatLng } from "../../../common";
+import { ChargingStation, LatLng } from "../../../common";
 import { moments, rupiah, timeToSeconds } from "../../../helpers";
 
 interface CustomMarkerProps {
-  data: DataChargingStation;
+  data: ChargingStation;
 }
 
 const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {

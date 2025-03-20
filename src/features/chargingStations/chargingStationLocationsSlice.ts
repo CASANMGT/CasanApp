@@ -1,15 +1,15 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
+  ChargingStation,
   ChargingStationBody,
-  DataChargingStation,
-  MetaResponseProps,
+  MetaResponseProps
 } from "../../common";
 import { Api } from "../../services/Api";
 
 type ChargingStationLocationsResponseProps = {
   status: string;
   message: string;
-  data: DataChargingStation[];
+  data: ChargingStation[];
   meta: MetaResponseProps;
 };
 

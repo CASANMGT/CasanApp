@@ -5,7 +5,7 @@ import {
   IcShareGreen,
   ILNoImage,
 } from "../../../assets";
-import { DataChargingStation, LatLng } from "../../../common";
+import { ChargingStation, LatLng } from "../../../common";
 import {
   getDistanceFromLatLonInKm,
   moments,
@@ -15,7 +15,7 @@ import { Button } from "../../atoms";
 
 interface ChargingLocationCardProps {
   type?: "location-list";
-  data: DataChargingStation;
+  data: ChargingStation;
   currentLocation: LatLng | undefined;
   isLast: boolean | undefined;
   loading: boolean;

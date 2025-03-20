@@ -6,7 +6,7 @@ export type ChargingStationBody = {
   limit: number;
   longitude?: number;
   latitude?: number;
-  is_admin:boolean
+  is_admin: boolean;
 };
 
 export type AddEditChargingStation = {
@@ -64,8 +64,6 @@ export type Admin = {
   DeletedAt: string;
 };
 
-
-
 export type Socket = {
   ID: number;
   Port: number;
@@ -74,26 +72,6 @@ export type Socket = {
   StopChargingTime: string | null;
   IsCharging: number;
   SessionStatus: number;
-  DeletedAt: string | null;
-  CreatedAt: string;
-  UpdatedAt: string;
-};
-
-export type ChargingStation = {
-  ID: number;
-  Name: string;
-  Image: string;
-  Phone: string;
-  IsParkingFee: boolean;
-  IsClosed: boolean;
-  PriceSettingID: number;
-  AdminID: number;
-  LocationID: number;
-  Admin: Admin;
-  Location: LocationResponse;
-  OperationalHours: string | null;
-  Devices: string | null;
-  PriceSetting: PriceSetting;
   DeletedAt: string | null;
   CreatedAt: string;
   UpdatedAt: string;
@@ -142,7 +120,7 @@ export interface TimeSlot {
   DeletedAt: string | null;
 }
 
-export type DataChargingStation = {
+export type ChargingStation = {
   ID: number;
   Name: string;
   Image: string;
@@ -155,7 +133,7 @@ export type DataChargingStation = {
   Admin: Admin;
   Location: LocationResponse;
   OperationalHours: OperationalHour[];
-  Devices: Device[];
+  Devices: Device[] | null;
   PriceSetting: PriceSetting;
   DeletedAt: string | null;
   CreatedAt: string;

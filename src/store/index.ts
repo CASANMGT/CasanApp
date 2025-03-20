@@ -4,6 +4,7 @@ import loginReducer from "../features/auth/loginSlice";
 import balanceListReducer from "../features/balance/balanceListSlice.ts";
 import chargingStationLocationsReducer from "../features/chargingStations/chargingStationLocationsSlice.ts";
 import chargingStationReducer from "../features/chargingStations/chargingStationSlice";
+import deviceByIdReducer from "../features/device/deviceByIdSlice.ts";
 import feeSettingsReducer from "../features/feeSettings/feeSettingsSlice";
 import globalReducer from "../features/globalSlice";
 import calculateChargeReducer from "../features/priceRule/calculateChargeSlice";
@@ -57,6 +58,9 @@ export const store = configureStore({
 
     // BALANCE
     balanceList: balanceListReducer,
+
+    // DEVICE
+    deviceById: deviceByIdReducer,
   },
 });
 

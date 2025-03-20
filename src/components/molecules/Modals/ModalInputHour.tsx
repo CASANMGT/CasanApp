@@ -45,7 +45,7 @@ const ModalInputHour: React.FC<ModalInputHourProps> = ({
 
   return (
     <ModalContainer
-      visible={open}
+      isOpen={open}
       isBottom
       onDismiss={onDismiss}
       classNameBottom="!h-[400px]"

@@ -128,7 +128,7 @@ const Charging = () => {
   const timeoutProgress = () => {
     const timer = setTimeout(() => {
       getData();
-    }, 2000); // 2 second
+    }, 15000); // 2 second
 
     return () => clearTimeout(timer);
   };
@@ -174,7 +174,10 @@ const Charging = () => {
         }
       />
 
-      <LoadingPage loading={detailSession?.loading} color="primary100">
+      <LoadingPage
+        loading={!detailSession?.data && detailSession?.loading}
+        color="primary100"
+      >
         <div className="flex-1 overflow-auto scrollbar-none">
           {/* INFORMATION */}
           <div className="mx-4 bg-baseLightGray/60 rounded-lg flex justify-around py-3 px-8">

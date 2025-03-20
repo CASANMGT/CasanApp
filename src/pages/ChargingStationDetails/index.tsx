@@ -8,7 +8,7 @@ import {
   IcShareGreen,
   ILNoImage,
 } from "../../assets";
-import { DataChargingStation } from "../../common";
+import { ChargingStation } from "../../common";
 import { DeviceListItem, Separator } from "../../components";
 import { showToast } from "../../features/toastSlice";
 import { getDistanceFromLatLonInKm, openGoogleMaps } from "../../helpers";
@@ -21,7 +21,7 @@ const ChargingStationDetails = () => {
   const navigate: NavigateFunction = useNavigate();
   const location = useLocation();
 
-  const [data] = useState<DataChargingStation>(location?.state?.data);
+  const [data] = useState<ChargingStation>(location?.state?.data);
 
   useEffect(() => {}, []);
 
@@ -41,23 +41,24 @@ const ChargingStationDetails = () => {
   const getTotalAvailable = () => {
     let total: number = 0;
 
-    data?.Devices.forEach((element) => {
-      if (element?.Sockets && element?.Sockets.length) {
-        element?.Sockets.forEach((e) => {
-          if (
-            element?.SignalValue > 0 &&
-            e?.SessionStatus !== 1 &&
-            e?.SessionStatus !== 2 &&
-            e?.SessionStatus !== 3 &&
-            e?.SessionStatus !== 4 &&
-            e?.SessionStatus !== 5 &&
-            e?.IsCharging === 0
-          ) {
-            total++;
-          }
-        });
-      }
-    });
+    data?.Devices &&
+      data?.Devices.forEach((element) => {
+        if (element?.Sockets && element?.Sockets.length) {
+          element?.Sockets.forEach((e) => {
+            if (
+              element?.SignalValue > 0 &&
+              e?.SessionStatus !== 1 &&
+              e?.SessionStatus !== 2 &&
+              e?.SessionStatus !== 3 &&
+              e?.SessionStatus !== 4 &&
+              e?.SessionStatus !== 5 &&
+              e?.IsCharging === 0
+            ) {
+              total++;
+            }
+          });
+        }
+      });
 
     return total;
   };
@@ -77,7 +78,8 @@ const ChargingStationDetails = () => {
 
   let available: number = 0;
   let photo: string = "";
-  const isShowMore: boolean = data?.Devices.length > 3;
+  const isShowMore: boolean =
+    data?.Devices && data?.Devices.length > 3 ? true : false;
 
   const distance = getDistanceFromLatLonInKm(
     { lat: data?.Location?.Latitude, lon: data?.Location?.Longitude },
@@ -180,22 +182,25 @@ const ChargingStationDetails = () => {
         <div className="bg-white p-3 rounded-lg mt-[14px] border drop-shadow">
           <p className="font-medium mb-4">Device List</p>
 
-          {data?.Devices.map((item, index: number) => (
-            <DeviceListItem
-              key={index}
-              data={item}
-              position={index + 1}
-              isLast={index === data?.Devices.length - 1}
-              onClick={() =>
-                navigate("/session-settings", {
-                  state: {
-                    data: data,
-                    selectedDevice: item,
-                  },
-                })
-              }
-            />
-          ))}
+          {data?.Devices &&
+            data?.Devices.map((item, index: number) => (
+              <DeviceListItem
+                key={index}
+                data={item}
+                position={index + 1}
+                isLast={
+                  index === ((data?.Devices && data?.Devices.length) || 0) - 1
+                }
+                onClick={() =>
+                  navigate("/session-settings", {
+                    state: {
+                      data: data,
+                      selectedDevice: item,
+                    },
+                  })
+                }
+              />
+            ))}
 
           {isShowMore && (
             <>

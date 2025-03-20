@@ -77,7 +77,7 @@ export default ModalVoltageAmpere;
 const optionsVoltage: OptionsProps[] = [
   { name: "48V", value: 48 },
   { name: "60V", value: 60 },
-  { name: "70V", value: 70 },
+  { name: "72V", value: 72 },
 ];
 
 const optionsAmpere: OptionsProps[] = Array.from({ length: 20 }, (_, i) => {

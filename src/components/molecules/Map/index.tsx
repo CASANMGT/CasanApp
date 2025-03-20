@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
-import { DataChargingStation, LatLng } from "../../../common";
+import { ChargingStation, LatLng } from "../../../common";
 import { getCurrentLocation } from "../../../services/ApiAddress";
 import CustomMarkerMap from "./CustomMarkerMap";
 
 interface MapProps {
-  data: DataChargingStation[] | undefined;
+  data: ChargingStation[] | undefined;
 }
 
 const Map: React.FC<MapProps> = ({ data }) => {
@@ -35,7 +35,10 @@ const Map: React.FC<MapProps> = ({ data }) => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; OpenStreetMap contributors"
         />
-        {isShowData && data?.map((item, index) => <CustomMarkerMap key={index} data={item} />)}
+        {isShowData &&
+          data?.map((item, index) => (
+            <CustomMarkerMap key={index} data={item} />
+          ))}
       </MapContainer>
     </div>
   );

@@ -1,15 +1,15 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
+  ChargingStation,
   ChargingStationBody,
-  DataChargingStation,
-  MetaResponseProps,
+  MetaResponseProps
 } from "../../common";
 import { Api } from "../../services/Api";
 
 type ChargingStationResponseProps = {
   status: string;
   message: string;
-  data: DataChargingStation[];
+  data: ChargingStation[];
   meta: MetaResponseProps;
 };
 
@@ -77,7 +77,7 @@ const chargingStationSlice = createSlice({
       .addCase(fetchChargingStation.rejected, (state, action) => {
         const dataError: any = action?.payload;
         if (dataError?.message) alert(dataError?.message);
-        
+
         state.loading = false;
         state.data = null;
         state.error = action.error.message ?? "failed";
