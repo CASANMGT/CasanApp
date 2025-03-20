@@ -5,6 +5,7 @@ import { Header, InputCode, Separator } from "../components";
 import { useAuth } from "../context/AuthContext";
 import {
   fetchLogin,
+  fetchSendOTP,
   hideLoading,
   LoginRequest,
   resetDataLogin,
@@ -64,6 +65,11 @@ const VerificationNumber = () => {
     dispatch(resetDataLogin());
     const formatter: string = formatPhoneNumber(location?.state?.phone);
     setPhoneNumber(formatter);
+    getOTP(formatter);
+  };
+
+  const getOTP = (phone: string) => {
+    dispatch(fetchSendOTP(phone.replace(/\s+/g, "")));
   };
 
   /* format counter timer */
@@ -94,6 +100,8 @@ const VerificationNumber = () => {
   };
 
   const onRequestCode = () => {
+    getOTP(phoneNumber);
+    
     if (counter === 0) {
       setCounter(60);
       setLabelTime("Kirim Ulang dalam 01:00");

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import {
   fetchLogin,
+  fetchSendOTP,
   hideLoading,
   LoginRequest,
   resetDataLogin,
@@ -61,6 +62,10 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
     }
   }, [dataLogin]);
 
+  const getOTP = () => {
+    dispatch(fetchSendOTP(phoneNumber.replace(/\s+/g, "")));
+  };
+
   const onCounter = () => {
     const remaining: number = counter - 1;
     const m: number = Math.floor(remaining / 60);
@@ -84,6 +89,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
   };
 
   const onRequestCode = () => {
+    getOTP();
     if (counter === 0) {
       setCounter(60);
       setLabelTime("Kirim Ulang dalam 01:00");

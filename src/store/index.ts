@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import loginReducer from "../features/auth/loginSlice";
+import sendOTPReducer from "../features/auth/sendOTPSlice.ts";
 import balanceListReducer from "../features/balance/balanceListSlice.ts";
 import chargingStationLocationsReducer from "../features/chargingStations/chargingStationLocationsSlice.ts";
 import chargingStationReducer from "../features/chargingStations/chargingStationSlice";
@@ -28,6 +29,7 @@ export const store = configureStore({
 
     // AUTH
     login: loginReducer,
+    sendOTP: sendOTPReducer,
 
     // USER
     myUser: myUserReducer,

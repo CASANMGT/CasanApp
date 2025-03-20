@@ -1,6 +1,5 @@
-import { IcRightGreen } from "../../../assets";
 import { formatPhoneNumber } from "../../../helpers";
-import { Button, Separator } from "../../atoms";
+import { Button } from "../../atoms";
 import ModalContainer from "./ModalContainer";
 
 interface RequestOTPProps {

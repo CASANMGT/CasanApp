@@ -49,6 +49,7 @@ import {
   fetchCalculateDuration,
   fetchDeviceById,
   fetchMyUser,
+  fetchSendOTP,
   hideLoading,
   setFromGlobal,
   showLoading,
@@ -544,6 +545,7 @@ const SessionSettings = () => {
         phoneNumber={`0${form.phoneNumber}`}
         onDismiss={() => setOpenRequestOTP(false)}
         onClick={() => {
+          dispatch(fetchSendOTP(`0${form.phoneNumber}`.replace(/\s+/g, "")));
           setOpenRequestOTP(false);
           setOpenInputOTP(true);
         }}
