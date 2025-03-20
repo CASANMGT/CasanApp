@@ -1,76 +1,16 @@
-import { useState } from "react";
-import { useSwipeable } from "react-swipeable";
+import React, { useEffect } from "react";
 
-type Tab = {
-  label: string;
-  content: React.ReactNode;
-};
-
-type TabsProps = {
-  tabs: Tab[];
-};
-
-const Tabs: React.FC<TabsProps> = ({ tabs }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const handleNext = () => {
-    setActiveIndex((prev) => (prev < tabs.length - 1 ? prev + 1 : prev));
-  };
-
-  const handlePrev = () => {
-    setActiveIndex((prev) => (prev > 0 ? prev - 1 : prev));
-  };
-
-  const swipeHandlers = useSwipeable({
-    onSwipedLeft: handleNext,
-    onSwipedRight: handlePrev,
-    preventScrollOnSwipe: true,
-    trackMouse: true,
-  });
-
-  return (
-    <div className="w-full max-w-lg mx-auto bg-baseLightGray">
-      {/* Tab Headers */}
-      <div className="flex bg-primary100 p-4">
-        {tabs.map((tab, index) => (
-          <button
-            key={index}
-            className={`flex-1 py-2 px-1 text-center text-sm font-medium transition-colors
-              ${
-                activeIndex === index
-                  ? "border-b-2 border-white text-white font-semibold"
-                  : "text-white/80 hover:text-white"
-              }`}
-            onClick={() => setActiveIndex(index)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab Content with Swipe Support */}
-      <div
-        {...swipeHandlers}
-        className="overflow-auto scrollbar-none"
-      >
-        {tabs[activeIndex].content}
-      </div>
-    </div>
-  );
+const isNumber = (value: any): boolean => {
+  return !isNaN(Number(value));
 };
 
 const Test = () => {
-  const tabData = [
-    { label: "Home", content: <p>🏠 Welcome to Home</p> },
-    { label: "Profile", content: <p>👤 User Profile</p> },
-    { label: "Settings", content: <p>⚙️ Settings Panel</p> },
-  ];
+  useEffect(() => {
+    const check = isNumber('1')
+    console.log("cek c", check);
+  }, []);
 
-  return (
-    <div className="container-screen bg-red">
-      <Tabs tabs={tabData} />
-    </div>
-  );
+  return <div>Test</div>;
 };
 
 export default Test;

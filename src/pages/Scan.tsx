@@ -1,11 +1,10 @@
 import { BrowserMultiFormatReader } from "@zxing/library";
+import { isNumber } from "lodash";
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { IcInfoCircleBlack } from "../assets";
+import { ERROR_MESSAGE } from "../common";
 import { Header } from "../components";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../store";
-import { setFromGlobal } from "../features";
 
 const Scan = () => {
   const navigate = useNavigate();
@@ -51,7 +50,9 @@ const Scan = () => {
   };
 
   const onNext = (result: string) => {
-    navigate("session-settings");
+    const check = isNumber(result);
+    if (check) navigate(`/session-settings/${result}`);
+    else alert(ERROR_MESSAGE);
   };
 
   return (
