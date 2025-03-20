@@ -43,7 +43,7 @@ const RequestOTPModal: React.FC<RequestOTPProps> = ({
           </p>
         </div>
 
-        <Separator className="my-3" />
+        {/* <Separator className="my-3" />
 
         <Button
           type="secondary"
@@ -51,7 +51,7 @@ const RequestOTPModal: React.FC<RequestOTPProps> = ({
           iconRight={IcRightGreen}
           onClick={onDismiss}
           className="my-3"
-        />
+        /> */}
       </>
     </ModalContainer>
   );

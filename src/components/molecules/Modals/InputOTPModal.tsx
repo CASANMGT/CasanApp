@@ -31,9 +31,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
 
   const dataLogin = useSelector((state: RootState) => state.login);
 
-  
-
-  const [codes, setCodes] = useState<string[]>(["", "", "", ""]);
+  const [codes, setCodes] = useState<string[]>(["", "", "", "", "", ""]);
   const [labelTime, setLabelTime] = useState<string>("Kirim Ulang dalam 01:00");
   const [labelError] = useState<string>("");
   const [counter, setCounter] = useState<number>(60);
@@ -93,8 +91,6 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
       code: code.join(""),
       phone_number: formatPhone.replace(/\s+/g, ""),
     };
-
-    
 
     dispatch(fetchLogin(body));
   };

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { IcInfoCircleBlack } from "../assets";
 import { ERROR_MESSAGE } from "../common";
 import { Header } from "../components";
+import { isValidURL, openURL } from "../helpers";
 
 const Scan = () => {
   const navigate = useNavigate();
@@ -50,8 +51,8 @@ const Scan = () => {
   };
 
   const onNext = (result: string) => {
-    const check = isNumber(result);
-    if (check) navigate(`/session-settings/${result}`);
+    const check = isValidURL(result);
+    if (check) openURL(result);
     else alert(ERROR_MESSAGE);
   };
 
