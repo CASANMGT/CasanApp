@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Session, SessionListBody } from "../../common";
-import { LoadingPage, OrderCard } from "../../components";
+import { EmptyList, LoadingPage, OrderCard } from "../../components";
 import { fetchOnGoingSessionList } from "../../features";
 import { AppDispatch, RootState } from "../../store";
 
@@ -44,9 +44,13 @@ const OngoingOrder = () => {
   };
 
   return (
-    <LoadingPage loading={onGoingSessionList?.loading} color="primary100">
+    <LoadingPage
+      loading={onGoingSessionList?.loading && !onGoingSessionList?.data}
+      color="primary100"
+    >
       <div className="mb-[100px]">
         {onGoingSessionList?.data?.data &&
+        onGoingSessionList?.data?.data.length ? (
           onGoingSessionList?.data.data.map((item, index) => (
             <OrderCard
               key={index}
@@ -54,7 +58,10 @@ const OngoingOrder = () => {
               position={index}
               onClick={() => onNext(item)}
             />
-          ))}
+          ))
+        ) : (
+          <EmptyList description="No Data" />
+        )}
       </div>
     </LoadingPage>
   );

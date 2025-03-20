@@ -10,7 +10,7 @@ type TabsProps = {
   tabs: Tab[];
 };
 
-const Tabs: React.FC<TabsProps> = ({ tabs }) => {
+const TabSwipe: React.FC<TabsProps> = ({ tabs }) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleNext = () => {
@@ -29,7 +29,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
   });
 
   return (
-    <div className="w-full max-w-lg mx-auto bg-baseLightGray">
+    <div className="flex-1 flex flex-col overflow-hidden bg-baseLightGray">
       {/* Tab Headers */}
       <div className="flex bg-primary100 p-4">
         {tabs.map((tab, index) => (
@@ -49,28 +49,11 @@ const Tabs: React.FC<TabsProps> = ({ tabs }) => {
       </div>
 
       {/* Tab Content with Swipe Support */}
-      <div
-        {...swipeHandlers}
-        className="overflow-auto scrollbar-none"
-      >
+      <div {...swipeHandlers} className="overflow-auto scrollbar-none">
         {tabs[activeIndex].content}
       </div>
     </div>
   );
 };
 
-const Test = () => {
-  const tabData = [
-    { label: "Home", content: <p>🏠 Welcome to Home</p> },
-    { label: "Profile", content: <p>👤 User Profile</p> },
-    { label: "Settings", content: <p>⚙️ Settings Panel</p> },
-  ];
-
-  return (
-    <div className="container-screen bg-red">
-      <Tabs tabs={tabData} />
-    </div>
-  );
-};
-
-export default Test;
+export default TabSwipe;

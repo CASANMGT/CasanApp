@@ -1,11 +1,10 @@
-import { Tabs } from "../../components";
+import { TabSwipe } from "../../components";
 import CompletedOrder from "./CompletedOrder";
 import OngoingOrder from "./OngoingOrder";
 
 const tabs = [
-  { id: "ongoing", label: "Berlangsung", content: <OngoingOrder /> },
+  { label: "Berlangsung", content: <OngoingOrder /> },
   {
-    id: "completed",
     label: "Selesai",
     content: <CompletedOrder />,
   },
@@ -21,7 +20,7 @@ const Order = () => {
         </h4>
       </div>
 
-      <Tabs type="secondary" tabs={tabs} />
+      <TabSwipe tabs={tabs} />
     </div>
   );
 };
