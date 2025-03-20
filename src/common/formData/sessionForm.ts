@@ -8,5 +8,6 @@ export const FormDefaultSession: FormSession = {
   nominal: "",
   time: "00:00",
   paymentMethod: undefined,
+  balance:0,
   phoneNumber: "",
 };

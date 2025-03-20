@@ -1,13 +1,15 @@
 import { IcEditGreen } from "../../assets";
-import { REGEX_NUMBERS } from "../../common";
+import { FormSession, REGEX_NUMBERS } from "../../common";
 import { Button, NominalTopUpItem, Separator } from "../../components";
-import { rupiah } from "../../helpers";
+import { FormAction, rupiah } from "../../helpers";
+import DurationRange from "./DurationRange";
 
 interface InputNominalProps {
   value: string;
   description: string;
   balance?: number;
   loading?: boolean;
+  form?: FormSession;
   dataNominal: string[];
   onChange: (value: string) => void;
   onCalculate?: () => void;
@@ -19,6 +21,7 @@ const InputNominal: React.FC<InputNominalProps> = ({
   loading,
   balance,
   dataNominal,
+  form,
   onChange,
   onCalculate,
 }) => {
@@ -71,6 +74,8 @@ const InputNominal: React.FC<InputNominalProps> = ({
       {onCalculate && (
         <>
           <Separator className="my-[14px]" />
+
+          {form && <DurationRange form={form} />}
 
           <Button
             type="secondary"

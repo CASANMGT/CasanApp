@@ -14,16 +14,20 @@ interface ModalPaymentMethodProps {
   type?: "top-up";
   visible: boolean;
   select: FeeSettingsProps | undefined;
+  selectBalance: number;
   onDismiss: () => void;
   onSelect: (select: FeeSettingsProps | undefined) => void;
+  onSelectBalance: (value: number) => void;
 }
 
 const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
   type,
   visible,
   select,
+  selectBalance,
   onDismiss,
   onSelect,
+  onSelectBalance,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated } = useAuth();
@@ -76,6 +80,8 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
     if (isAuthenticated) dispatch(fetchMyUser());
   };
 
+  const myBalance = myUser?.data?.Balance || 1000; //dummy
+
   return (
     <ModalContainer isOpen={visible} isBottom onDismiss={onDismiss}>
       <div className="w-full bg-white p-4 rounded-t-xl between-y">
@@ -98,14 +104,18 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
               {type !== "top-up" && (
                 <>
                   <p className="text-black70 mb-2.5">Saldo Anda</p>
+                  {/* DUMMY  value 1000*/}
                   <PaymentMethodItem
                     type="checkbox"
                     label="Saldo"
-                    balance={myUser?.data?.Balance || 0}
-                    isActive={false}
+                    balance={myBalance}
+                    isActive={selectBalance > 0}
                     icon={IcWallet}
-                    disabled={(myUser?.data?.Balance || 0) <= 0}
-                    onSelect={() => {}}
+                    disabled={myBalance <= 0}
+                    onSelect={() => {
+                      let value = selectBalance > 0 ? 0 : myBalance;
+                      onSelectBalance(value);
+                    }}
                   />
 
                   <div className="mb-4" />

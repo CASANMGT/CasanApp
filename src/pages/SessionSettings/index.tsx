@@ -13,6 +13,7 @@ import {
   IcRightCircleGreen,
   IcRightGreen,
   IcSocketCircleGreen,
+  IcWallet,
 } from "../../assets";
 import {
   AddSessionBody,
@@ -49,6 +50,7 @@ import {
   fetchDeviceById,
   fetchMyUser,
   hideLoading,
+  setFromGlobal,
   showLoading,
 } from "../../features";
 import { formatDuration, rupiah, useForm } from "../../helpers";
@@ -82,10 +84,11 @@ const SessionSettings = () => {
   const { showAlert } = useAlert();
   const { id } = useParams<{ id?: string }>();
 
+  const global = useSelector((state: RootState) => state.global);
+  const addSession = useSelector((state: RootState) => state.addSession);
   const calculateCharge = useSelector(
     (state: RootState) => state.calculateCharge
   );
-  const addSession = useSelector((state: RootState) => state.addSession);
   const calculateDuration = useSelector(
     (state: RootState) => state.calculateDuration
   );
@@ -167,11 +170,23 @@ const SessionSettings = () => {
   const FormatPaymentMethod: () => JSX.Element = useCallback(() => {
     if (form?.paymentMethod) {
       const Icon = form?.paymentMethod.icon;
+      const isSelectBalance: boolean = form?.balance > 0;
+
       return (
         <div className="row gap-1">
-          <Icon className="w-[22px]" />
+          {isSelectBalance && (
+            <div className="row gap-1">
+              <IcWallet className="w-[22px]" />
 
-          <p className="font-medium">{form?.paymentMethod.label}</p>
+              <p className="font-medium">{"Saldo Casan"}</p>
+            </div>
+          )}
+
+          <div className="row gap-1">
+            <Icon className="w-[22px]" />
+
+            <p className="font-medium">{form?.paymentMethod.label}</p>
+          </div>
         </div>
       );
     } else {
@@ -343,6 +358,7 @@ const SessionSettings = () => {
                   loading={calculateDuration?.loading}
                   dataNominal={["400", "800", "1200", "full"]}
                   balance={myUser?.data?.Balance || 0}
+                  form={form}
                   onChange={(value) => {
                     setTotal(value);
                     setForm("nominal", value);
@@ -353,6 +369,7 @@ const SessionSettings = () => {
                 <InputHour
                   value={form.time}
                   loading={calculateCharge?.loading}
+                  form={form}
                   onChange={(value) => {
                     const formatted = `Rp${rupiah(
                       (Number(value || 0) / 60) * costMax
@@ -367,44 +384,50 @@ const SessionSettings = () => {
             </div>
 
             {/* DURATION RANGE */}
-            <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
-              <div className="row gap-3 mb-2">
-                <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
-                  <IcInfoCircleGreen />
+            {false && (
+              <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
+                <div className="row gap-3 mb-2">
+                  <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
+                    <IcInfoCircleGreen />
+                  </div>
+
+                  <p className="text-blackBold font-medium">Kisaran Durasi</p>
                 </div>
 
-                <p className="text-blackBold font-medium">Kisaran Durasi</p>
-              </div>
+                <p className="text-xs text-black100/70 mb-[14px]">
+                  Durasi masih{" "}
+                  <span className="text-bold text-xs text-black">
+                    perkiraan
+                  </span>
+                  , bukan angka yang sesungguhnya.
+                </p>
 
-              <p className="text-xs text-black100/70 mb-[14px]">
-                Durasi masih{" "}
-                <span className="text-bold text-xs text-black">perkiraan</span>,
-                bukan angka yang sesungguhnya.
-              </p>
+                <div className="between-x py-4 px-3 bg-primary100/10 rounded-lg">
+                  <div>
+                    <p className="text-xs text-black70 mb-2">Spesifikasi:</p>
+                    <div
+                      onClick={() => setOpenVA(true)}
+                      className="row gap-2.5 cursor-pointer"
+                    >
+                      <p className="font-medium">{`${form?.voltage}V ${form?.ampere}A`}</p>
 
-              <div className="between-x py-4 px-3 bg-primary100/10 rounded-lg">
-                <div>
-                  <p className="text-xs text-black70 mb-2">Spesifikasi:</p>
-                  <div
-                    onClick={() => setOpenVA(true)}
-                    className="row gap-2.5 cursor-pointer"
-                  >
-                    <p className="font-medium">{`${form?.voltage}V ${form?.ampere}A`}</p>
+                      <IcEditGreen />
+                    </div>
+                  </div>
 
-                    <IcEditGreen />
+                  <div className="w-2/5">
+                    <p className="text-xs text-black70 mb-2">
+                      {form?.selectedTab === "1"
+                        ? "Kisaran Durasi:"
+                        : "Biaya Pengecasan"}
+                    </p>
+                    <p className="text-lg font-semibold">
+                      {formateCalculate()}
+                    </p>
                   </div>
                 </div>
-
-                <div className="w-2/5">
-                  <p className="text-xs text-black70 mb-2">
-                    {form?.selectedTab === "1"
-                      ? "Kisaran Durasi:"
-                      : "Biaya Pengecasan"}
-                  </p>
-                  <p className="text-lg font-semibold">{formateCalculate()}</p>
-                </div>
               </div>
-            </div>
+            )}
 
             {/* COST INFORMATION */}
             <PriceInformation data={data} isHideParking />
@@ -470,23 +493,27 @@ const SessionSettings = () => {
       <ModalPaymentMethod
         visible={visiblePaymentMethod}
         select={form.paymentMethod}
+        selectBalance={form?.balance}
         onDismiss={() => setVisiblePaymentMethod(false)}
         onSelect={(select) => setForm("paymentMethod", select)}
+        onSelectBalance={(select) => setForm("balance", select)}
       />
 
       <ModalVoltageAmpere
-        visible={openVA}
+        visible={global?.openVA}
         select={{
           voltage: form.voltage,
           ampere: form.ampere,
         }}
-        onDismiss={() => setOpenVA(false)}
+        onDismiss={() =>
+          dispatch(setFromGlobal({ type: "openVA", value: false }))
+        }
         onSelect={(select) => {
           const cloneData = clone(form);
           cloneData.voltage = select?.voltage || 0;
           cloneData.ampere = select?.ampere || 0;
 
-          setOpenVA(false);
+          dispatch(setFromGlobal({ type: "openVA", value: false }));
           setForm("all", cloneData);
         }}
       />

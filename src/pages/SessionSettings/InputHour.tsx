@@ -1,11 +1,13 @@
 import { IcEditGreen } from "../../assets";
-import { NOMINAL } from "../../common";
+import { FormSession, NOMINAL } from "../../common";
 import { Button, NominalTopUpItem, Separator } from "../../components";
 import { convertToHours } from "../../helpers";
+import DurationRange from "./DurationRange";
 
 interface InputHourProps {
   value: string;
   loading:boolean
+  form: FormSession;
   onChange: (value: string) => void;
   onOpen: () => void;
   onCalculate: () => void;
@@ -14,6 +16,7 @@ interface InputHourProps {
 const InputHour: React.FC<InputHourProps> = ({
   value,
   loading,
+  form,
   onChange,
   onOpen,
   onCalculate,
@@ -75,11 +78,13 @@ const InputHour: React.FC<InputHourProps> = ({
 
       <Separator className="my-[14px]" />
 
+      <DurationRange form={form} />
+
       <Button
         type="secondary"
         label="Hitung Biaya"
         loading={loading}
-        disabled={!value}
+        disabled={value === "00:00"}
         onClick={onCalculate}
       />
     </>

@@ -48,6 +48,7 @@ export type FormSession = {
   time: string;
   paymentMethod?: FeeSettingsProps | undefined;
   phoneNumber: string;
+  balance: number;
 };
 
 export type AddSessionBody = {
