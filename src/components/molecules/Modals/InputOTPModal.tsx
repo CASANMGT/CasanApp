@@ -33,7 +33,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
 
   const [codes, setCodes] = useState<string[]>(["", "", "", "", "", ""]);
   const [labelTime, setLabelTime] = useState<string>("Kirim Ulang dalam 01:00");
-  const [labelError] = useState<string>("");
+  const [labelError, setLabelError] = useState<string>();
   const [counter, setCounter] = useState<number>(60);
 
   useEffect(() => {
@@ -55,6 +55,9 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
       login();
       navigate("/session-settings");
       onDismiss();
+    } else if (dataLogin?.error) {
+      dispatch(resetDataLogin());
+      setLabelError("kode verifikasi tidak valid");
     }
   }, [dataLogin]);
 
@@ -73,6 +76,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
 
   const onChangeText = (value: string[]) => {
     setCodes(value);
+    setLabelError("");
 
     const isValid: boolean = value.every((item) => item !== "");
 

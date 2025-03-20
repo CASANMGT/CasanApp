@@ -1,16 +1,18 @@
-import React, { useEffect } from "react";
-
-const isNumber = (value: any): boolean => {
-  return !isNaN(Number(value));
-};
+import { useState } from "react";
+import { Input } from "../components";
 
 const Test = () => {
-  useEffect(() => {
-    const check = isNumber('1')
-    console.log("cek c", check);
-  }, []);
-
-  return <div>Test</div>;
+  const [value, setValue] = useState("");
+  return (
+    <div>
+      <Input
+      type='number'
+        value={value}
+        placeholder="Masukan..."
+        onChange={(e) => setValue(e)}
+      />
+    </div>
+  );
 };
 
 export default Test;

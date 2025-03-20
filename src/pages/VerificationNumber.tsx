@@ -25,7 +25,7 @@ const VerificationNumber = () => {
   const [codes, setCodes] = useState<string[]>(["", "", "", "", "", ""]);
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [labelTime, setLabelTime] = useState<string>("Kirim Ulang dalam 01:00");
-  const [labelError] = useState<string>();
+  const [labelError, setLabelError] = useState<string>();
   const [counter, setCounter] = useState<number>(60);
 
   useEffect(() => {
@@ -54,6 +54,9 @@ const VerificationNumber = () => {
       dispatch(resetDataLogin());
       login();
       navigate("/home/index", { replace: true });
+    } else if (dataLogin?.error) {
+      dispatch(resetDataLogin());
+      setLabelError("kode verifikasi tidak valid");
     }
   }, [dataLogin]);
 
@@ -79,6 +82,7 @@ const VerificationNumber = () => {
 
   const onChangeText = (value: string[]) => {
     setCodes(value);
+    setLabelError("");
 
     const isValid: boolean = value.every((item) => item !== "");
 

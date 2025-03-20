@@ -39,7 +39,7 @@ const InputNominal: React.FC<InputNominalProps> = ({
         </div>
 
         <input
-          type={"text"}
+          type={"number"}
           placeholder={"0"}
           value={value}
           onChange={handleChange}

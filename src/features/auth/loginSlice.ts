@@ -76,10 +76,8 @@ const loginSlice = createSlice({
       )
       .addCase(fetchLogin.rejected, (state, action) => {
         const dataError: any = action?.payload;
-        if (dataError?.message) alert(dataError?.message);
-
         state.loading = false;
-        state.error = action.error.message ?? "Login failed";
+        state.error = dataError.message ?? "Login failed";
       });
   },
 });
