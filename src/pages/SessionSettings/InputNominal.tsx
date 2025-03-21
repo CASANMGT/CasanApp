@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { IcEditGreen } from "../../assets";
 import { FormSession, REGEX_NUMBERS } from "../../common";
 import { Button, NominalTopUpItem, Separator } from "../../components";
@@ -42,7 +43,8 @@ const InputNominal: React.FC<InputNominalProps> = ({
         </div>
 
         <input
-          type={"number"}
+          type={"text"}
+          inputMode='numeric'
           placeholder={"0"}
           value={value}
           onChange={handleChange}

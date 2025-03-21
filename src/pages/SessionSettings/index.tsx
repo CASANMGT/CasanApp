@@ -151,6 +151,18 @@ const SessionSettings = () => {
     return value;
   }, [form.selectedTab, form.nominal, calculateCharge?.data]);
 
+  const getTotalPrice = useCallback(() => {
+    let value: number = 0;
+
+    if (form?.paymentMethod?.priceType === "percentage") {
+      const calculate =
+        (chargingNominal * Number(form?.paymentMethod?.value || 0)) / 100;
+      value = chargingNominal + calculate;
+    } else value = chargingNominal + Number(form.paymentMethod?.value || 0);
+
+    return value;
+  }, [form.paymentMethod, form.selectedTab, form.nominal, calculateCharge?.data]);
+
   const formateCalculate = useCallback(() => {
     let value: string = "";
     if (form.selectedTab === "2" && calculateCharge?.data) {
@@ -277,6 +289,7 @@ const SessionSettings = () => {
   };
 
   const chargingNominal: number = getChargingNominal();
+  const totalPrice: number = getTotalPrice();
 
   let dataSocket: Socket[] | null = null;
 
@@ -477,7 +490,7 @@ const SessionSettings = () => {
             <p className="text-base text-black100/70">
               Total:{" "}
               <a className="text-blackBold font-bold">{`Rp${rupiah(
-                chargingNominal + Number(form.paymentMethod?.value || 0)
+                totalPrice
               )}`}</a>
             </p>
 

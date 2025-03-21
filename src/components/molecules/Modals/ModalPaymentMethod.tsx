@@ -80,7 +80,7 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
     if (isAuthenticated) dispatch(fetchMyUser());
   };
 
-  const myBalance = myUser?.data?.Balance || 1000; //dummy
+  const myBalance = myUser?.data?.Balance || 0;
 
   return (
     <ModalContainer isOpen={visible} isBottom onDismiss={onDismiss}>
