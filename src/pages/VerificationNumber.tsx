@@ -23,7 +23,7 @@ const VerificationNumber = () => {
 
   const dataLogin = useSelector((state: RootState) => state.login);
 
-  const [codes, setCodes] = useState<string[]>(["", "", "", "", "", ""]);
+  const [codes, setCodes] = useState<string[]>(["", "", "", ""]);
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [labelTime, setLabelTime] = useState<string>("Kirim Ulang dalam 01:00");
   const [labelError, setLabelError] = useState<string>();
@@ -101,7 +101,7 @@ const VerificationNumber = () => {
 
   const onRequestCode = () => {
     getOTP(phoneNumber);
-    
+
     if (counter === 0) {
       setCounter(60);
       setLabelTime("Kirim Ulang dalam 01:00");

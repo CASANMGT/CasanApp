@@ -237,7 +237,7 @@ const SessionSettings = () => {
         message.title = "Nominal Belum Dihitung";
         message.body = "Silakan Hitung Nominal Terlebih Dahulu";
       }
-    } else if (!form.paymentMethod) {
+    } else if (!form.paymentMethod?.key) {
       message.title = "Pilih Metode Pembayaran";
       message.body = "Silakan pilih metode pembayaran";
     }

@@ -32,7 +32,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
 
   const dataLogin = useSelector((state: RootState) => state.login);
 
-  const [codes, setCodes] = useState<string[]>(["", "", "", "", "", ""]);
+  const [codes, setCodes] = useState<string[]>(["", "", "", ""]);
   const [labelTime, setLabelTime] = useState<string>("Kirim Ulang dalam 01:00");
   const [labelError, setLabelError] = useState<string>();
   const [counter, setCounter] = useState<number>(60);
