@@ -4,7 +4,8 @@ import ILComingSoon from "./coming-soon.png";
 import ILFlashLogo from "./flash-logo.png";
 import ILLogoSlogan from "./logo-slogan.png";
 import ILLogo from "./logo.png";
-import ILNoImage from './no-image.png'
+import ILNoImage from "./no-image.png";
+import ILOrderEmpty from "./order-empty.png";
 
 export {
     ILCharging,
@@ -13,6 +14,7 @@ export {
     ILFlashLogo,
     ILLogo,
     ILLogoSlogan,
-    ILNoImage
+    ILNoImage,
+    ILOrderEmpty
 };
 

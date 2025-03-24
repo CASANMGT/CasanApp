@@ -5,6 +5,7 @@ import { Session, SessionListBody } from "../../common";
 import { EmptyList, LoadingPage, OrderCard } from "../../components";
 import { fetchCompleteSessionList } from "../../features";
 import { AppDispatch, RootState } from "../../store";
+import { ILOrderEmpty } from "../../assets";
 
 const CompletedOrder = () => {
   const navigate = useNavigate();
@@ -60,7 +61,11 @@ const CompletedOrder = () => {
             />
           ))
         ) : (
-          <EmptyList description="No Data" />
+          <EmptyList
+            image={ILOrderEmpty}
+            title="Belum ada riwayat"
+            description="Ayo pakai Casan untuk mengisi daya."
+          />
         )}
       </div>
     </LoadingPage>
