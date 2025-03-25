@@ -54,7 +54,12 @@ import {
   setFromGlobal,
   showLoading,
 } from "../../features";
-import { formatDuration, rupiah, useForm } from "../../helpers";
+import {
+  formatDuration,
+  formatPhoneNumber,
+  rupiah,
+  useForm,
+} from "../../helpers";
 import { AppDispatch, RootState } from "../../store";
 import PriceInformation from "../ChargingStationDetails/PriceInformation";
 import InputHour from "./InputHour";
@@ -133,7 +138,10 @@ const SessionSettings = () => {
     else dispatch(hideLoading());
 
     if (addSession?.data) {
-      navigate(`/transaction-history-details/${addSession?.data?.ID}`);
+      navigate(`/transaction-history-details/${addSession?.data?.ID}`, {
+        replace: true,
+        state: { isGoOrder: true },
+      });
     }
   }, [addSession]);
 
@@ -161,7 +169,12 @@ const SessionSettings = () => {
     } else value = chargingNominal + Number(form.paymentMethod?.value || 0);
 
     return value;
-  }, [form.paymentMethod, form.selectedTab, form.nominal, calculateCharge?.data]);
+  }, [
+    form.paymentMethod,
+    form.selectedTab,
+    form.nominal,
+    calculateCharge?.data,
+  ]);
 
   const formateCalculate = useCallback(() => {
     let value: string = "";
@@ -558,7 +571,9 @@ const SessionSettings = () => {
         phoneNumber={`0${form.phoneNumber}`}
         onDismiss={() => setOpenRequestOTP(false)}
         onClick={() => {
-          dispatch(fetchSendOTP(`0${form.phoneNumber}`.replace(/\s+/g, "")));
+          const formatPhone: string = formatPhoneNumber(`0${form.phoneNumber}`);
+
+          dispatch(fetchSendOTP(formatPhone.replace(/\s+/g, "")));
           setOpenRequestOTP(false);
           setOpenInputOTP(true);
         }}

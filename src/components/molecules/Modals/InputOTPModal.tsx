@@ -63,7 +63,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
   }, [dataLogin]);
 
   const getOTP = () => {
-    dispatch(fetchSendOTP(phoneNumber.replace(/\s+/g, "")));
+    dispatch(fetchSendOTP(formatPhone.replace(/\s+/g, "")));
   };
 
   const onCounter = () => {
