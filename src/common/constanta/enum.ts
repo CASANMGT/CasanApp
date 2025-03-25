@@ -23,6 +23,12 @@ export enum TransactionType {
   "Session" = 2,
 }
 
+export enum DeviceStatus {
+  "StandBy" = 0,
+  "Charging" = 1,
+  "Disconnect" = 3,
+}
+
 export enum BalanceStatus {
   "TopUpBalance" = 1,
   "RefundSession" = 2,

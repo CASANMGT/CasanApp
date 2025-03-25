@@ -97,7 +97,7 @@ const Charging = () => {
       const currentStatus = resSession?.Status;
 
       if (currentStatus === 6) {
-        setOpenFinished(true);
+        // setOpenFinished(true); dummy
       } else if (
         currentStatus === 1 ||
         currentStatus === 7 ||
@@ -203,7 +203,7 @@ const Charging = () => {
           {/* STATUS */}
           <StatusIndicator
             type={status || 2}
-            duration={duration}
+            duration={duration > 0 ? duration : 0}
             onFinish={getData}
             className="mt-8 mb-7"
           />
