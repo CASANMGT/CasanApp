@@ -43,7 +43,7 @@ const Home = () => {
   useEffect(() => {
     setPage(1);
     getCurrentLocation();
-    getOngoing();
+    if (isAuthenticated) getOngoing();
   }, []);
 
   useEffect(() => {
@@ -162,18 +162,20 @@ const Home = () => {
           {/* <Carousel slides={slidesDummy} /> */}
 
           {/* ONGOING */}
-          {isShowOngoing && <div className="bg-white rounded-lg p-3 mt-5">
-            <p className="font-medium mb-3">Sedang berlangsung</p>
-            <div className="row gap-2 overflow-x-auto scrollbar-none">
-              {onGoingSessionList?.data?.data.map((item, index: number) => (
-                <OngoingItem
-                  key={index}
-                  data={item}
-                  onClick={() => navigate(`/charging/${item?.ID}`)}
-                />
-              ))}
+          {isShowOngoing && (
+            <div className="bg-white rounded-lg p-3 mt-5">
+              <p className="font-medium mb-3">Sedang berlangsung</p>
+              <div className="row gap-2 overflow-x-auto scrollbar-none">
+                {onGoingSessionList?.data?.data.map((item, index: number) => (
+                  <OngoingItem
+                    key={index}
+                    data={item}
+                    onClick={() => navigate(`/charging/${item?.ID}`)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>}
+          )}
 
           {/* FILTER */}
           <div className="row gap-3 mt-5">

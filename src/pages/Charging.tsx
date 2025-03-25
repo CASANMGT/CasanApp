@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { data, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   IcClockGreen,
   IcFlashGreen,
@@ -97,7 +97,7 @@ const Charging = () => {
       const currentStatus = resSession?.Status;
 
       if (currentStatus === 6) {
-        // setOpenFinished(true); dummy
+        setOpenFinished(true);
       } else if (
         currentStatus === 1 ||
         currentStatus === 7 ||
@@ -241,8 +241,8 @@ const Charging = () => {
               type="medium-content"
               labelLeft="Durasi pemesanan"
               labelRight={
-                dataSession?.Duration
-                  ? formatDuration(dataSession?.Duration)
+                dataSession?.ExpectedDuration
+                  ? formatDuration(dataSession?.ExpectedDuration)
                   : "-"
               }
               className="p-3"
