@@ -295,7 +295,7 @@ const SessionSettings = () => {
       session_method: form.selectedTab === "1" ? 1 : 2,
       socket_id: form?.selectedSocket || 0,
       station_id: data?.ID,
-      wallet_used_amount: 0,
+      wallet_used_amount: form?.balance,
     };
 
     dispatch(fetchAddSession(body));
