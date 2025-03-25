@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import {
@@ -12,21 +12,28 @@ import {
   ChargingStationBody,
   LatLng,
   LIMIT_LIST,
+  SessionListBody,
 } from "../common";
 import {
   AvailablePlaceItem,
   ChargingLocationCard,
   LoadingPage,
+  OngoingItem,
 } from "../components";
-import { fetchChargingStation } from "../features";
+import { useAuth } from "../context/AuthContext";
+import { fetchChargingStation, fetchOnGoingSessionList } from "../features";
 import { AppDispatch, RootState } from "../store";
 
 const Home = () => {
   const navigate: NavigateFunction = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const { isAuthenticated } = useAuth();
 
   const chargingStation = useSelector(
     (state: RootState) => state.chargingStation
+  );
+  const onGoingSessionList = useSelector(
+    (state: RootState) => state.onGoingSessionList
   );
 
   const [page, setPage] = useState(1);
@@ -36,6 +43,7 @@ const Home = () => {
   useEffect(() => {
     setPage(1);
     getCurrentLocation();
+    getOngoing();
   }, []);
 
   useEffect(() => {
@@ -86,6 +94,15 @@ const Home = () => {
     dispatch(fetchChargingStation(body));
   };
 
+  const getOngoing = () => {
+    const body: SessionListBody = {
+      page: 1,
+      limit: 10,
+      is_finish: 0,
+    };
+    dispatch(fetchOnGoingSessionList(body));
+  };
+
   const onSearch = () => {
     alert("coming soon");
   };
@@ -99,6 +116,14 @@ const Home = () => {
     setPage(nextPage);
     getData(nextPage);
   };
+
+  const isShowOngoing: boolean = useMemo(
+    () =>
+      onGoingSessionList?.data?.data && onGoingSessionList?.data?.data.length
+        ? true
+        : false,
+    [onGoingSessionList?.data]
+  );
 
   return (
     <div className="overflow-hidden flex w-full">
@@ -137,14 +162,18 @@ const Home = () => {
           {/* <Carousel slides={slidesDummy} /> */}
 
           {/* ONGOING */}
-          {/* <div className="bg-white rounded-lg p-3 mt-5">
+          {isShowOngoing && <div className="bg-white rounded-lg p-3 mt-5">
             <p className="font-medium mb-3">Sedang berlangsung</p>
             <div className="row gap-2 overflow-x-auto scrollbar-none">
-              {dataOngoingDummy.map((_, index: number) => (
-                <OngoingItem key={index} />
+              {onGoingSessionList?.data?.data.map((item, index: number) => (
+                <OngoingItem
+                  key={index}
+                  data={item}
+                  onClick={() => navigate(`/charging/${item?.ID}`)}
+                />
               ))}
             </div>
-          </div> */}
+          </div>}
 
           {/* FILTER */}
           <div className="row gap-3 mt-5">

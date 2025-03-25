@@ -1,22 +1,27 @@
-import { IcRightBlack } from "../../../assets";
+import { IcRightBlack, ILNoImage } from "../../../assets";
+import { Session } from "../../../common";
 
-interface OngoingItemProps {}
+interface OngoingItemProps {
+  data: Session;
+  onClick: () => void;
+}
 
-const OngoingItem: React.FC<OngoingItemProps> = () => {
+const OngoingItem: React.FC<OngoingItemProps> = ({ data, onClick }) => {
   return (
-    <div className="between min-w-[210px] border border-black10 rounded-lg py-2 px-3 cursor-pointer">
+    <div
+      onClick={onClick}
+      className="between min-w-[210px] border border-black10 rounded-lg py-2 px-3 cursor-pointer"
+    >
       <div className="row gap-2">
         <img
-          src={
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4ddBLsjXELeexn4zWAEUxkClXVovj3Q_h2g&s"
-          }
+          src={data?.ChargingStation?.Image || ILNoImage}
           alt="location 1"
           className="w-9 h-9 rounded-md"
         />
 
         <div>
-          <p className="text-xs text-black70">Pasar Modern</p>
-          <p className="font-medium">Pintu Barat</p>
+          <p className="text-xs text-black70">{data?.Device?.Name}</p>
+          <p className="font-medium">{data?.Device?.PileNumber.slice(-4)}</p>
         </div>
       </div>
 
