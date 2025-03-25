@@ -34,7 +34,7 @@ const Login = () => {
 
   return (
     <div className="background-1 px-4 pt-[105px]">
-      <div className="px-3 pt-8 pb-4 bg-white rounded-lg center flex-col drop-shadow-md">
+      <div className="px-3 pt-8 pb-4 bg-white dark:bg-darkMode rounded-lg center flex-col drop-shadow-md">
         <h4 className="font-semibold">Selamat Datang</h4>
         <span className="mb-3">Silakan Login Dengan No Handphone</span>
         <Input

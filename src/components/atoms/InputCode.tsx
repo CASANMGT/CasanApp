@@ -54,7 +54,7 @@ const InputCode: React.FC<InputCodeProps> = ({
         {values.map((value, index: number) => (
           <input
             key={index}
-            className={`w-10 h-10 border border-baseGray rounded-lg center text-center text-2xl font-bold focus:outline-primary100 ${
+            className={`w-10 h-10 border border-baseGray rounded-lg center text-center text-2xl font-bold focus:outline-primary100 bg-white dark:bg-darkMode ${
               isError ? "border-red" : ""
             }`}
             id={`input-box-${index}`}

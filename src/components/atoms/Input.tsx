@@ -53,7 +53,7 @@ const Input: React.FC<InputProps> = ({
           value={value}
           autoFocus={autoFocus}
           onChange={handleChange}
-          className="h-full w-full px-0 py-3 bg-transparent text-sm text-black100 focus:outline-none  "
+          className="h-full w-full px-0 py-3 bg-transparent text-sm text-black100 dark:text-white focus:outline-none  "
         />
       </div>
 
