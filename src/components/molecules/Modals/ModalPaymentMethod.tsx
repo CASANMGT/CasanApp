@@ -38,7 +38,9 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
   const [optionsPaymentMethod, setOptionsPaymentMethod] =
     useState<FeeSettingsProps[]>();
   const [selectedPayment, setSelectedPayment] = useState<FeeSettingsProps>();
-  const [selectedBalance, setSelectedBalance] = useState();
+  const [selectedBalance, setSelectedBalance] = useState<number>(
+    selectBalance || 0
+  );
 
   useEffect(() => {
     if (visible) {
@@ -109,12 +111,12 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
                     type="checkbox"
                     label="Saldo"
                     balance={myBalance}
-                    isActive={selectBalance > 0}
+                    isActive={selectedBalance > 0}
                     icon={IcWallet}
                     disabled={myBalance <= 0}
                     onSelect={() => {
-                      let value = selectBalance > 0 ? 0 : myBalance;
-                      onSelectBalance(value);
+                      let value = selectedBalance > 0 ? 0 : myBalance;
+                      setSelectedBalance(value);
                     }}
                   />
 
@@ -146,9 +148,10 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
           <Button
             buttonType="lg"
             label="Pilih"
-            disabled={!selectedPayment}
+            disabled={!selectedPayment && !selectedBalance}
             onClick={() => {
               onSelect(selectedPayment);
+              onSelectBalance(selectedBalance);
               onDismiss();
             }}
           />
