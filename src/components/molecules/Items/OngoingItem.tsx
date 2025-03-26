@@ -20,8 +20,10 @@ const OngoingItem: React.FC<OngoingItemProps> = ({ data, onClick }) => {
         />
 
         <div>
-          <p className="text-xs text-black70">{data?.Device?.Name}</p>
-          <p className="font-medium">{data?.Device?.PileNumber.slice(-4)}</p>
+          <p className="text-xs text-black70">{data?.ChargingStation?.Name}</p>
+          <p className="font-medium">{`${
+            data?.Device.Name
+          } - ${data?.Device?.PileNumber.slice(-4)}`}</p>
         </div>
       </div>
 
