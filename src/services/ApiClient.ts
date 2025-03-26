@@ -1,6 +1,6 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 // const API_URL = import.meta.env.VITE_API_URL;
-const API_URL = 'https://staging-api.casan.id/api';
+const API_URL = "https://staging-api.casan.id/api";
 
 const ApiClient = axios.create({
   baseURL: API_URL,

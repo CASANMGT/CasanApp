@@ -43,21 +43,21 @@ const ModalVoltageAmpere: React.FC<ModalVoltageAmpereProps> = ({
         <span className="text-blackBold font-medium">Spesifikasi Alat</span>
       </div>
 
-      <Dropdown
-        select={voltage}
-        placeholder="Voltage"
-        options={optionsVoltage}
-        onSelect={(select) => setVoltage(select.value)}
-        className="mb-3"
-      />
+      <div className="flex flex-row gap-3">
+        <Dropdown
+          select={voltage}
+          placeholder="Voltage"
+          options={optionsVoltage}
+          onSelect={(select) => setVoltage(select.value)}
+        />
 
-      <Dropdown
-        select={ampere}
-        placeholder="Ampere"
-        options={optionsAmpere}
-        onSelect={(select) => setAmpere(select.value)}
-        className="mb-3"
-      />
+        <Dropdown
+          select={ampere}
+          placeholder="Ampere"
+          options={optionsAmpere}
+          onSelect={(select) => setAmpere(select.value)}
+        />
+      </div>
 
       <Button
         label="Simpan"
@@ -67,6 +67,7 @@ const ModalVoltageAmpere: React.FC<ModalVoltageAmpereProps> = ({
             ampere,
           });
         }}
+        className="mt-4"
       />
     </ModalContainer>
   );

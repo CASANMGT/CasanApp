@@ -8,12 +8,10 @@ import {
   useParams,
 } from "react-router-dom";
 import {
-  IcEditGreen,
   IcInfoCircleGreen,
   IcRightCircleGreen,
   IcRightGreen,
   IcSocketCircleGreen,
-  IcWallet,
 } from "../../assets";
 import {
   AddSessionBody,
@@ -23,6 +21,8 @@ import {
   Device,
   FormDefaultSession,
   FormSession,
+  INVALID_TOKEN,
+  NOMINAL_SESSION,
   Socket,
 } from "../../common";
 import {
@@ -33,6 +33,7 @@ import {
   InputPhoneNumberModal,
   LoadingPage,
   ModalInputHour,
+  ModalInputNominal,
   ModalPaymentMethod,
   ModalVoltageAmpere,
   RequestOTPModal,
@@ -54,12 +55,7 @@ import {
   setFromGlobal,
   showLoading,
 } from "../../features";
-import {
-  formatDuration,
-  formatPhoneNumber,
-  rupiah,
-  useForm,
-} from "../../helpers";
+import { formatPhoneNumber, rupiah, useForm } from "../../helpers";
 import { AppDispatch, RootState } from "../../store";
 import PriceInformation from "../ChargingStationDetails/PriceInformation";
 import InputHour from "./InputHour";
@@ -86,7 +82,7 @@ const SessionSettings = () => {
   const navigate: NavigateFunction = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const { showAlert } = useAlert();
   const { id } = useParams<{ id?: string }>();
 
@@ -95,23 +91,18 @@ const SessionSettings = () => {
   const calculateCharge = useSelector(
     (state: RootState) => state.calculateCharge
   );
-  const calculateDuration = useSelector(
-    (state: RootState) => state.calculateDuration
-  );
   const myUser = useSelector((state: RootState) => state.myUser);
   const deviceById = useSelector((state: RootState) => state.deviceById);
 
   const [form, setForm] = useForm<FormSession>(FormDefaultSession);
 
-  const [openInputHour, setOpenInputHour] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [visiblePaymentMethod, setVisiblePaymentMethod] =
     useState<boolean>(false);
-  const [total, setTotal] = useState<string>();
   const [data, setData] = useState<ChargingStation>(location?.state?.data);
   const [selectedDevice, setSelectedDevice] = useState<Device>(
     location?.state?.selectedDevice
   );
-  const [openVA, setOpenVA] = useState<boolean>(false);
   const [openInputPhoneNumber, setOpenInputPhoneNumber] =
     useState<boolean>(false);
   const [openRequestOTP, setOpenRequestOTP] = useState<boolean>(false);
@@ -145,6 +136,23 @@ const SessionSettings = () => {
     }
   }, [addSession]);
 
+  useEffect(() => {
+    if (myUser?.error === INVALID_TOKEN) {
+      logout();
+      navigate("/login", { replace: true });
+    }
+  }, [myUser?.error]);
+
+  useEffect(() => {
+    if (form.time !== "00:00") onCalculate("charge");
+  }, [form.time]);
+
+  useEffect(() => {
+    if (form.nominal && form.nominal !== "Rp0") {
+      onCalculate("duration");
+    }
+  }, [form.nominal]);
+
   const onDismiss = () => {
     navigate(-1);
   };
@@ -176,54 +184,6 @@ const SessionSettings = () => {
     calculateCharge?.data,
   ]);
 
-  const formateCalculate = useCallback(() => {
-    let value: string = "";
-    if (form.selectedTab === "2" && calculateCharge?.data) {
-      value = `Rp${rupiah(calculateCharge?.data)}`;
-    } else if (calculateDuration?.data) {
-      value = formatDuration(calculateDuration?.data || 0);
-    }
-
-    return value;
-  }, [
-    form?.nominal,
-    form.time,
-    form.selectedTab,
-    calculateCharge?.data,
-    calculateDuration?.data,
-  ]);
-
-  const FormatPaymentMethod: () => JSX.Element = useCallback(() => {
-    if (form?.paymentMethod) {
-      const Icon = form?.paymentMethod.icon;
-      const isSelectBalance: boolean = form?.balance > 0;
-
-      return (
-        <div className="row gap-1">
-          {isSelectBalance && (
-            <div className="row gap-1">
-              <IcWallet className="w-[22px]" />
-
-              <p className="font-medium">{"Saldo Casan"}</p>
-            </div>
-          )}
-
-          <div className="row gap-1">
-            <Icon className="w-[22px]" />
-
-            <p className="font-medium">{form?.paymentMethod.label}</p>
-          </div>
-        </div>
-      );
-    } else {
-      return (
-        <p className="text-xs text-primary100 font-medium">
-          Pilih Metode Pembayaran
-        </p>
-      );
-    }
-  }, [form?.paymentMethod]);
-
   const onValidation = () => {
     let message = {
       title: "",
@@ -234,29 +194,16 @@ const SessionSettings = () => {
       message.title = "Pilih Socket Terlebih Dahulu";
       message.body =
         "Silakan pilih Socket sesuai yang akan anda gunakan untuk pengisian";
-    } else if (form.selectedTab === "1") {
-      if (!form?.nominal) {
-        message.title = "Nominal Belum Terpilih";
-        message.body = "Masukkan Nominal Terlebih Dahulu";
-      } else if (!calculateDuration?.data) {
-        message.title = "Durasi Belum Dihitung";
-        message.body = "Silakan Hitung Durasi Terlebih Dahulu";
-      }
-    } else if (form.selectedTab === "2") {
-      if (form.time === "00:00") {
-        message.title = "Jam Belum Terpilih";
-        message.body = "Masukkan Jam Terlebih Dahulu";
-      } else if (!calculateCharge?.data) {
-        message.title = "Nominal Belum Dihitung";
-        message.body = "Silakan Hitung Nominal Terlebih Dahulu";
-      }
-    } else if (!form.paymentMethod?.key) {
-      message.title = "Pilih Metode Pembayaran";
-      message.body = "Silakan pilih metode pembayaran";
+    } else if (form.selectedTab === "1" && !form?.nominal) {
+      message.title = "Nominal Belum Terpilih";
+      message.body = "Masukkan Nominal Terlebih Dahulu";
+    } else if (form.selectedTab === "2" && form.time === "00:00") {
+      message.title = "Jam Belum Terpilih";
+      message.body = "Masukkan Jam Terlebih Dahulu";
     }
 
     if (!message?.title) {
-      if (isAuthenticated) onNext();
+      if (isAuthenticated) setVisiblePaymentMethod(true);
       else setOpenInputPhoneNumber(true);
     } else showAlert(message);
   };
@@ -288,17 +235,22 @@ const SessionSettings = () => {
   };
 
   const onNext = () => {
-    const body: AddSessionBody = {
-      amount: chargingNominal,
-      device_id: selectedDevice?.ID,
-      payment_method: form.paymentMethod?.key || "BALANCE_FU",
-      session_method: form.selectedTab === "1" ? 1 : 2,
-      socket_id: form?.selectedSocket || 0,
-      station_id: data?.ID,
-      wallet_used_amount: form?.balance,
-    };
+    setLoading(true);
 
-    dispatch(fetchAddSession(body));
+    setTimeout(() => {
+      const body: AddSessionBody = {
+        amount: chargingNominal,
+        device_id: selectedDevice?.ID,
+        payment_method: form.paymentMethod?.key || "BALANCE_FU",
+        session_method: form.selectedTab === "1" ? 1 : 2,
+        socket_id: form?.selectedSocket || 0,
+        station_id: data?.ID,
+        wallet_used_amount: form?.balance,
+      };
+
+      setLoading(false);
+      dispatch(fetchAddSession(body));
+    }, 500);
   };
 
   const chargingNominal: number = getChargingNominal();
@@ -312,6 +264,15 @@ const SessionSettings = () => {
       dataSocket = cloneData.sort((a, b) => a?.Port - b?.Port);
     } catch (error) {}
   }
+
+  const onHideModal = (type: string) => {
+    dispatch(
+      setFromGlobal({
+        type,
+        value: false,
+      })
+    );
+  };
 
   return (
     <Container title="Pengaturan Sesi" onDismiss={onDismiss}>
@@ -380,84 +341,20 @@ const SessionSettings = () => {
 
               {form?.selectedTab === "1" ? (
                 <InputNominal
-                  value={total || ""}
-                  description="Silakan masukan nominal pengisian yang sesuai dengan daya pengisian tram"
-                  loading={calculateDuration?.loading}
-                  dataNominal={["400", "800", "1200", "full"]}
-                  balance={myUser?.data?.Balance || 0}
                   form={form}
-                  onChange={(value) => {
-                    setTotal(value);
-                    setForm("nominal", value);
-                  }}
-                  onCalculate={() => onCalculate("duration")}
+                  description="Silakan masukkan nominal pengisian yang sesuai dengan kebutuhan anda"
+                  dataNominal={NOMINAL_SESSION}
+                  balance={myUser?.data?.Balance || 0}
+                  onChange={(value) => setForm("nominal", value)}
                 />
               ) : (
                 <InputHour
                   value={form.time}
-                  loading={calculateCharge?.loading}
                   form={form}
-                  onChange={(value) => {
-                    const formatted = `Rp${rupiah(
-                      (Number(value || 0) / 60) * costMax
-                    )}`;
-                    setTotal(formatted);
-                    setForm("time", value);
-                  }}
-                  onOpen={() => setOpenInputHour(true)}
-                  onCalculate={() => onCalculate("charge")}
+                  onChange={(value) => setForm("time", value)}
                 />
               )}
             </div>
-
-            {/* DURATION RANGE */}
-            {false && (
-              <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
-                <div className="row gap-3 mb-2">
-                  <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
-                    <IcInfoCircleGreen />
-                  </div>
-
-                  <p className="text-blackBold font-medium">Kisaran Durasi</p>
-                </div>
-
-                <p className="text-xs text-black100/70 mb-[14px]">
-                  Durasi masih{" "}
-                  <span className="text-bold text-xs text-black">
-                    perkiraan
-                  </span>
-                  , bukan angka yang sesungguhnya.
-                </p>
-
-                <div className="between-x py-4 px-3 bg-primary100/10 rounded-lg">
-                  <div>
-                    <p className="text-xs text-black70 mb-2">Spesifikasi:</p>
-                    <div
-                      onClick={() => setOpenVA(true)}
-                      className="row gap-2.5 cursor-pointer"
-                    >
-                      <p className="font-medium">{`${form?.voltage}V ${form?.ampere}A`}</p>
-
-                      <IcEditGreen />
-                    </div>
-                  </div>
-
-                  <div className="w-2/5">
-                    <p className="text-xs text-black70 mb-2">
-                      {form?.selectedTab === "1"
-                        ? "Kisaran Durasi:"
-                        : "Biaya Pengecasan"}
-                    </p>
-                    <p className="text-lg font-semibold">
-                      {formateCalculate()}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* COST INFORMATION */}
-            <PriceInformation data={data} isHideParking />
 
             {/* PAYMENT DETAILS */}
             <div className="bg-white p-3 rounded-lg mt-3 drop-shadow">
@@ -483,22 +380,27 @@ const SessionSettings = () => {
                 className="p-3"
               />
             </div>
+
+            <div
+              onClick={() => {}}
+              className="row gap-3 mt-[22px] mb-5 cursor-pointer"
+            >
+              <span className="text-primary100 font-medium">
+                Informasi biaya
+              </span>
+              <div className="w-[22px] h-[22px] rounded-full bg-primary10 center">
+                <IcRightCircleGreen />
+              </div>
+            </div>
+
+            {/* COST INFORMATION */}
+            {/* DUMMY */}
+            {false && <PriceInformation data={data} isHideParking />}
           </div>
         </div>
 
         {/* PAYMENT METHOD */}
         <div className="drop-shadow p-4 bg-white">
-          <div
-            onClick={() => setVisiblePaymentMethod(true)}
-            className="between-x cursor-pointer"
-          >
-            <FormatPaymentMethod />
-
-            <IcRightCircleGreen />
-          </div>
-
-          <Separator className="my-2.5" />
-
           <div className="between-x">
             <p className="text-base text-black100/70">
               Total:{" "}
@@ -509,6 +411,7 @@ const SessionSettings = () => {
 
             <Button
               className="!w-[130px]"
+              loading={loading}
               label="Bayar"
               onClick={onValidation}
             />
@@ -521,8 +424,13 @@ const SessionSettings = () => {
         visible={visiblePaymentMethod}
         select={form.paymentMethod}
         selectBalance={form?.balance}
+        total={totalPrice}
         onDismiss={() => setVisiblePaymentMethod(false)}
-        onSelect={(select) => setForm("paymentMethod", select)}
+        onSelect={(select) => {
+          onDismiss();
+          setForm("paymentMethod", select);
+          onNext();
+        }}
         onSelectBalance={(select) => setForm("balance", select)}
       />
 
@@ -532,25 +440,34 @@ const SessionSettings = () => {
           voltage: form.voltage,
           ampere: form.ampere,
         }}
-        onDismiss={() =>
-          dispatch(setFromGlobal({ type: "openVA", value: false }))
-        }
+        onDismiss={() => onHideModal("openVA")}
         onSelect={(select) => {
           const cloneData = clone(form);
           cloneData.voltage = select?.voltage || 0;
           cloneData.ampere = select?.ampere || 0;
 
-          dispatch(setFromGlobal({ type: "openVA", value: false }));
+          onHideModal("openVA");
           setForm("all", cloneData);
         }}
       />
 
+      <ModalInputNominal
+        open={global?.openInputNominal}
+        value={form.nominal}
+        balance={myUser?.data?.Balance || 0}
+        onDismiss={() => onHideModal("openInputNominal")}
+        onChangeText={(value) => {
+          onHideModal("openInputNominal");
+          setForm("nominal", value);
+        }}
+      />
+
       <ModalInputHour
-        open={openInputHour}
+        open={global?.openInputHour}
         value={form.time}
-        onDismiss={() => setOpenInputHour(false)}
+        onDismiss={() => onHideModal("openInputHour")}
         onChange={(value) => {
-          setOpenInputHour(false);
+          onHideModal("openInputHour");
           setForm("time", value);
         }}
       />

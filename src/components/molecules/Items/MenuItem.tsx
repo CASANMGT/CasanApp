@@ -1,4 +1,4 @@
-import { IcRightBlack } from "../../../assets";
+import { IcRight } from "../../../assets";
 
 interface MenuItemProps {
   icon: any;
@@ -15,7 +15,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon, label, onClick }) => {
     <div className="between-x gap-2 cursor-pointer" onClick={onClick}>
       {isShowIcon && <Icon />}
       <p className="flex-1 font-medium">{label}</p>
-      <IcRightBlack />
+      <IcRight  className="text-black100"/>
     </div>
   );
 };

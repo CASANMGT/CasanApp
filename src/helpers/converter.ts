@@ -7,8 +7,7 @@ import {
   IcNoImage,
   IcOvo,
   IcQris,
-  IcShopeePay,
-  IcWallet,
+  IcShopeePay
 } from "../assets";
 import {
   ASTRAPAY,
@@ -99,8 +98,12 @@ export const getLabelPaymentMethod: (type: string) => string = (
       label = "AstraPay";
       break;
 
+    case "balance_fu":
+      label = "Saldo Casan";
+      break;
+
     default:
-      label = "Saldo";
+      label = "-";
       break;
   }
 

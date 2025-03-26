@@ -1,22 +1,24 @@
+import AlertModal from "./AlertModal";
+import DiagnosisModal from "./DiagnosisModal";
 import InputOTPModal from "./InputOTPModal";
-import ModalVoltageAmpere from "./ModalVoltageAmpere";
 import InputPhoneNumberModal from "./InputPhoneNumberModal";
 import ModalContainer from "./ModalContainer";
-import RequestOTPModal from "./RequestOTPModal";
-import AlertModal from "./AlertModal";
-import ModalPaymentMethod from "./ModalPaymentMethod";
 import ModalInputHour from "./ModalInputHour";
-import DiagnosisModal from "./DiagnosisModal";
+import ModalInputNominal from "./ModalInputNominal";
+import ModalPaymentMethod from "./ModalPaymentMethod";
+import ModalVoltageAmpere from "./ModalVoltageAmpere";
+import RequestOTPModal from "./RequestOTPModal";
 
 export {
+    AlertModal,
+    DiagnosisModal,
     InputOTPModal,
     InputPhoneNumberModal,
     ModalContainer,
-    RequestOTPModal,
-    AlertModal,
+    ModalInputHour,
+    ModalInputNominal,
     ModalPaymentMethod,
     ModalVoltageAmpere,
-    ModalInputHour,
-    DiagnosisModal
+    RequestOTPModal
 };
 

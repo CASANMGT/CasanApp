@@ -2,19 +2,21 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IcClose, IcWallet } from "../../../assets";
 import { FeeSettingsProps } from "../../../common";
+import { useAlert } from "../../../context/AlertContext";
+import { useAuth } from "../../../context/AuthContext";
 import { fetchFeeSettings, fetchMyUser } from "../../../features";
 import { getIconPaymentMethod } from "../../../helpers";
 import { AppDispatch, RootState } from "../../../store";
 import { Button, LoadingPage } from "../../atoms";
 import { PaymentMethodItem } from "../Items";
 import ModalContainer from "./ModalContainer";
-import { useAuth } from "../../../context/AuthContext";
 
 interface ModalPaymentMethodProps {
   type?: "top-up";
   visible: boolean;
   select: FeeSettingsProps | undefined;
   selectBalance: number;
+  total?: number;
   onDismiss: () => void;
   onSelect: (select: FeeSettingsProps | undefined) => void;
   onSelectBalance: (value: number) => void;
@@ -25,12 +27,14 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
   visible,
   select,
   selectBalance,
+  total,
   onDismiss,
   onSelect,
   onSelectBalance,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated } = useAuth();
+  const { showAlert } = useAlert();
 
   const feeSettings = useSelector((state: RootState) => state.feeSettings);
   const myUser = useSelector((state: RootState) => state.myUser);
@@ -80,6 +84,30 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
     dispatch(fetchFeeSettings());
 
     if (isAuthenticated) dispatch(fetchMyUser());
+  };
+
+  const onValidation = () => {
+    let message = {
+      title: "",
+      body: "",
+    };
+
+    if (!selectedBalance && !selectedPayment) {
+      message.title = "Pilih Metode Pembayaran";
+      message.body = "Pilih Metode Pembayaranb terlebih dahulu";
+    } else if (
+      selectBalance &&
+      selectBalance < (total || 0) &&
+      !selectedPayment
+    ) {
+      message.title = "Saldo tidak cukup";
+      message.body = "Saldo Casan anda tidak mencukupi";
+    }
+
+    if (!message?.title) {
+      onSelect(selectedPayment);
+      onSelectBalance(selectedBalance);
+    } else showAlert(message);
   };
 
   const myBalance = myUser?.data?.Balance || 0;
@@ -145,16 +173,7 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
 
         {/* FOOTER */}
         <div className="">
-          <Button
-            buttonType="lg"
-            label="Pilih"
-            disabled={!selectedPayment && !selectedBalance}
-            onClick={() => {
-              onSelect(selectedPayment);
-              onSelectBalance(selectedBalance);
-              onDismiss();
-            }}
-          />
+          <Button buttonType="lg" label="Pilih" onClick={onValidation} />
         </div>
       </div>
     </ModalContainer>

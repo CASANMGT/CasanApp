@@ -19,7 +19,12 @@ import {
   Separator,
 } from "../components";
 import { fetchDetailSession } from "../features";
-import { formatDuration, moments, rupiah } from "../helpers";
+import {
+  formatDuration,
+  getLabelPaymentMethod,
+  moments,
+  rupiah,
+} from "../helpers";
 import { AppDispatch, RootState } from "../store";
 
 const SessionDetails = () => {
@@ -280,7 +285,7 @@ const SessionDetails = () => {
 
             <BetweenText
               labelLeft="Metode Pembayaran"
-              labelRight={capitalize(
+              labelRight={getLabelPaymentMethod(
                 (dataSession?.Transaction?.PaymentMethod || "")
                   .replace("_TU", "")
                   .toLocaleLowerCase()
@@ -308,7 +313,7 @@ const SessionDetails = () => {
             />
             <Separator className="mt-2 bg-black100" />
 
-            {!isFull && (
+            {status === 8 && (
               <BetweenText
                 labelLeft="Pengembalian Dana"
                 labelRight={`Rp${rupiah(dataSession?.RefundAmount)}`}

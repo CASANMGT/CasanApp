@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { INVALID_TOKEN } from "../../common";
 import { Api } from "../../services/Api";
 
 export type MyUserResponse = {
@@ -62,11 +63,14 @@ const myUserSlice = createSlice({
       )
       .addCase(fetchMyUser.rejected, (state, action) => {
         const dataError: any = action?.payload;
-        if (dataError?.message) alert(dataError?.message);
+
+        if (dataError?.message) {
+          if (dataError?.message !== INVALID_TOKEN) alert(dataError?.message);
+        }
 
         state.loading = false;
         state.data = null;
-        state.error = action.error.message ?? "failed";
+        state.error = dataError?.message || "";
       });
   },
 });

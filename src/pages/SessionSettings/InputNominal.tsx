@@ -1,55 +1,59 @@
-import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { IcEditGreen } from "../../assets";
-import { FormSession, REGEX_NUMBERS } from "../../common";
-import { Button, NominalTopUpItem, Separator } from "../../components";
-import { FormAction, rupiah } from "../../helpers";
-import DurationRange from "./DurationRange";
+import { FormSession } from "../../common";
+import { NominalTopUpItem, Separator } from "../../components";
+import { setFromGlobal } from "../../features";
+import { formatDuration, rupiah } from "../../helpers";
+import { AppDispatch, RootState } from "../../store";
+import { useSelector } from "react-redux";
 
 interface InputNominalProps {
-  value: string;
+  form: FormSession;
   description: string;
   balance?: number;
-  loading?: boolean;
-  form?: FormSession;
   dataNominal: string[];
   onChange: (value: string) => void;
-  onCalculate?: () => void;
 }
 
 const InputNominal: React.FC<InputNominalProps> = ({
-  value,
+  form,
   description,
-  loading,
   balance,
   dataNominal,
-  form,
   onChange,
-  onCalculate,
 }) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e?.target?.value.replace(REGEX_NUMBERS, "");
-    const formatted: string = `Rp${rupiah(value)}`;
+  const dispatch = useDispatch<AppDispatch>();
 
-    onChange(formatted);
-  };
+  const calculateDuration = useSelector(
+    (state: RootState) => state.calculateDuration
+  );
 
   return (
     <>
       <p className="text-xs text-black100/70 mb-[14px]">{description}</p>
 
-      <div className="h-[56px] center relative  rounded-lg bg-baseGray mb-3">
-        <div className="absolute p-2 bottom-0 right-0 ">
-          <IcEditGreen />
-        </div>
+      <div className="center-y rounded-lg bg-baseGray mb-3 px-5 pt-4 pb-[14px]">
+        <span
+          onClick={() =>
+            dispatch(setFromGlobal({ type: "openInputNominal", value: true }))
+          }
+          className={`text-base font-medium cursor-pointer ${
+            form.nominal ? "" : "text-black30"
+          }`}
+        >
+          {form.nominal ? form.nominal : "Masukan Nominal"}
+        </span>
 
-        <input
-          type={"text"}
-          inputMode='numeric'
-          placeholder={"0"}
-          value={value}
-          onChange={handleChange}
-          className="z-10 w-auto text-center p-5 w-full text-base font-semibold bg-transparent"
-        />
+        <Separator className="bg-black10 my-3" />
+
+        <p className="text-xs text-black70">
+          Kisaran Durasi{" "}
+          <span className="font-semibold text-primary100">
+            {calculateDuration?.data
+              ? formatDuration(calculateDuration?.data || 0)
+              : "0"}
+          </span>
+        </p>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -59,7 +63,7 @@ const InputNominal: React.FC<InputNominalProps> = ({
             value={item}
             isActive={
               Number(item === "full" ? balance : item) ===
-              Number(value.replace("Rp", "").replace(/\./g, ""))
+              Number(form.nominal.replace("Rp", "").replace(/\./g, ""))
             }
             onClick={() => {
               let value = "";
@@ -73,21 +77,30 @@ const InputNominal: React.FC<InputNominalProps> = ({
         ))}
       </div>
 
-      {onCalculate && (
-        <>
-          <Separator className="my-[14px]" />
+      <Separator className="my-4" />
 
-          {form && <DurationRange form={form} />}
+      <div className="between-x p-3 rounded-lg bg-primary10 ">
+        <span className="text-xs text-black70">Spesifikasi:</span>
+        <div className="row font-medium">
+          <span className="text-xs">{`${form.voltage}V`}</span>
+          <span className="text-xs ml-1.5 mr-3">{`${form.ampere}A`}</span>
+          <span className="text-xs mr-2.5">100W</span>
+          <div
+            onClick={() =>
+              dispatch(setFromGlobal({ type: "openVA", value: true }))
+            }
+            className="cursor-pointer"
+          >
+            <IcEditGreen />
+          </div>
+        </div>
+      </div>
 
-          <Button
-            type="secondary"
-            label="Hitung Durasi"
-            loading={loading}
-            disabled={!Number(value.replace("Rp", "").replace(/\./g, ""))}
-            onClick={onCalculate}
-          />
-        </>
-      )}
+      <p className="mt-3 text-black90 text-xs">
+        *Durasi masih{" "}
+        <span className="text-black100 font-medium text-xs">perkiraan</span>,
+        bukan angka yang sesungguhnya.
+      </p>
     </>
   );
 };

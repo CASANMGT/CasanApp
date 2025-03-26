@@ -48,7 +48,9 @@ export const formatDuration = (seconds?: number): string => {
     const hours = Math.floor(s / 3600);
     const minutes = Math.floor((s % 3600) / 60);
 
-    value = `${hours ? `${hours} jam ` : ""}${minutes} menit`;
+    value = `${hours ? `${hours} Jam ` : ""}`;
+
+    if(minutes>0) value +=`${minutes} Menit`
   }
 
   return value;

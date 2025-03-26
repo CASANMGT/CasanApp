@@ -32,7 +32,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
       onClick={onDismiss}
       className="z-10 fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
     >
-      <div className={isBottom ? "relative h-svh max-w-[480px] w-svw " : ""}>
+      <div className={isBottom ? "relative h-svh w-svw sm:max-w-[480px] w-svw " : ""}>
         <motion.div
           className={` shadow-lg ${
             isBottom

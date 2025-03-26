@@ -1,4 +1,4 @@
-import { IcFuel, IcRightBlack } from "../../../assets";
+import { IcFuel, IcRight } from "../../../assets";
 import { Device, StringNumber } from "../../../common";
 import { formatSpaceNumber } from "../../../helpers";
 import { Signal } from "../../atoms";
@@ -93,7 +93,7 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
         </div>
       </div>
 
-      <IcRightBlack />
+      <IcRight  className="text-black100"/>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { IcClose } from "../../../assets";
-import { NOMINAL } from "../../../common";
+import { HOUR_SESSION } from "../../../common";
 import { convertToHours } from "../../../helpers";
 import { Button, Separator, WheelPicker } from "../../atoms";
 import { NominalTopUpItem } from "../Items";
@@ -72,7 +72,7 @@ const ModalInputHour: React.FC<ModalInputHourProps> = ({
           <Separator className="my-4" />
 
           <div className="grid grid-cols-2 gap-3 ">
-            {NOMINAL.map((item, index: number) => (
+            {HOUR_SESSION.map((item, index: number) => (
               <NominalTopUpItem
                 key={index}
                 value={item}

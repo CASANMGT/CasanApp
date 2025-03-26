@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { IcBackBlack, IcBackWhite, IcClose, IcMenuBlack } from "../../assets";
 
 interface HeaderProps {
@@ -18,8 +18,8 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const isPrimary = useMemo(() => type === "primary", [type]);
-  const isShowRight = useMemo(() => (onPress ? true : false), [type]);
+  const isPrimary = type === "primary";
+  const isShowRight = onPress ? true : false;
 
   return (
     <div

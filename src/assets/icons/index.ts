@@ -57,7 +57,7 @@ import IcProfileInactive from "./profile-inactive.svg?react";
 import IcQris from "./qris.svg?react";
 import IcRadioActive from "./radio-active.svg?react";
 import IcRadioInactive from "./radio-inactive.svg?react";
-import IcRightBlack from "./right-black.svg?react";
+import IcRight from "./right.svg?react";
 import IcRightCircleGreen from "./right-circle-green.svg?react";
 import IcRightGreen from "./right-green.svg?react";
 import IcSaveGreen from "./save-green.svg?react";
@@ -140,7 +140,7 @@ export {
   IcQris,
   IcRadioActive,
   IcRadioInactive,
-  IcRightBlack,
+  IcRight,
   IcRightCircleGreen,
   IcRightGreen,
   IcSaveGreen,

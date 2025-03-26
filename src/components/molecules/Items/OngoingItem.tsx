@@ -1,4 +1,4 @@
-import { IcRightBlack, ILNoImage } from "../../../assets";
+import { IcRight, ILNoImage } from "../../../assets";
 import { Session } from "../../../common";
 
 interface OngoingItemProps {
@@ -27,7 +27,7 @@ const OngoingItem: React.FC<OngoingItemProps> = ({ data, onClick }) => {
         </div>
       </div>
 
-      <IcRightBlack />
+      <IcRight  className="text-black100"/>
     </div>
   );
 };

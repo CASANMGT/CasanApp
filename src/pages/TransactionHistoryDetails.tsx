@@ -1,5 +1,4 @@
 import html2canvas from "html2canvas";
-import { capitalize } from "lodash";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -30,7 +29,7 @@ import {
   resetDataCancelSession,
   showLoading,
 } from "../features";
-import { moments, rupiah } from "../helpers";
+import { getLabelPaymentMethod, moments, rupiah } from "../helpers";
 import { AppDispatch, RootState } from "../store";
 
 const TransactionHistoryDetails = () => {
@@ -202,7 +201,7 @@ const TransactionHistoryDetails = () => {
 
           <BetweenText
             labelLeft="Metode Pembayaran"
-            labelRight={capitalize(
+            labelRight={getLabelPaymentMethod(
               (detailSession?.data?.Transaction?.PaymentMethod || "")
                 .replace("_TU", "")
                 .toLocaleLowerCase()
