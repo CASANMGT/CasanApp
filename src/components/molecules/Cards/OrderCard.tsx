@@ -128,7 +128,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
         </div>
 
         <span className="font-semibold">
-          Rp{rupiah(data?.Transaction?.DueAmount)}
+          Rp{rupiah(data?.Transaction?.Amount)}
         </span>
       </div>
     </div>

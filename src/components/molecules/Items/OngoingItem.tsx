@@ -10,7 +10,7 @@ const OngoingItem: React.FC<OngoingItemProps> = ({ data, onClick }) => {
   return (
     <div
       onClick={onClick}
-      className="between min-w-[210px] border border-black10 rounded-lg py-2 px-3 cursor-pointer"
+      className="between-x min-w-[210px] border border-black10 rounded-lg py-2 px-3 cursor-pointer"
     >
       <div className="row gap-2">
         <img

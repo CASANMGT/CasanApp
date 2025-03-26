@@ -34,7 +34,8 @@ function App() {
   }, [darkMode]);
 
   return (
-    <div className="relative bg-white dark:bg-[#22303C] text-black100 dark:text-white">
+    <div className="relative">
+    {/* <div className="relative bg-white dark:bg-[#22303C] text-black100 dark:text-white"> */}
       <BrowserRouter>
         <RoutesPage />
       </BrowserRouter>

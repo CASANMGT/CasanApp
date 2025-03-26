@@ -125,8 +125,8 @@ const VerificationNumber = () => {
         onDismiss={onDismiss}
       />
 
-      <div className="mt-[60px] rounded-lg bg-white dark:bg-darkMode drop-shadow-md px-3 pt-8 pb-4 flex flex-col items-center">
-        <p className="opacity-80 text-white">Silakan masukkan kode yang dikirimkan ke</p>
+      <div className="mt-[60px] rounded-lg bg-white drop-shadow-md px-3 pt-8 pb-4 flex flex-col items-center">
+        <p className="opacity-80 ">Silakan masukkan kode yang dikirimkan ke</p>
         <h4 className="font-semibold mb-4">{phoneNumber}</h4>
 
         <InputCode values={codes} error={labelError} onChange={onChangeText} />

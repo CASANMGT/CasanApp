@@ -291,7 +291,7 @@ const SessionSettings = () => {
     const body: AddSessionBody = {
       amount: chargingNominal,
       device_id: selectedDevice?.ID,
-      payment_method: form.paymentMethod?.key || "",
+      payment_method: form.paymentMethod?.key || "BALANCE_FU",
       session_method: form.selectedTab === "1" ? 1 : 2,
       socket_id: form?.selectedSocket || 0,
       station_id: data?.ID,
