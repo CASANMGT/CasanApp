@@ -82,9 +82,11 @@ const InputNominal: React.FC<InputNominalProps> = ({
       <div className="between-x p-3 rounded-lg bg-primary10 ">
         <span className="text-xs text-black70">Spesifikasi:</span>
         <div className="row font-medium">
-          <span className="text-xs">{`${form.voltage}V`}</span>
-          <span className="text-xs ml-1.5 mr-3">{`${form.ampere}A`}</span>
-          <span className="text-xs mr-2.5">100W</span>
+          <span className="text-xs">{form.voltage?.name}</span>
+          <span className="text-xs ml-1.5 mr-3">{form.ampere?.name}</span>
+          <span className="text-xs mr-2.5">{`${(
+            Number(form?.voltage?.value || 0) * Number(form?.ampere?.value || 0)
+          ).toFixed(0)}W`}</span>
           <div
             onClick={() =>
               dispatch(setFromGlobal({ type: "openVA", value: true }))

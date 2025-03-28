@@ -7,13 +7,13 @@ import ModalContainer from "./ModalContainer";
 interface ModalVoltageAmpereProps {
   visible: boolean;
   select: {
-    voltage: string | number;
-    ampere: string | number;
+    voltage: OptionsProps | undefined;
+    ampere: OptionsProps | undefined;
   };
   onDismiss: () => void;
   onSelect: (select: {
-    voltage: string | number | undefined;
-    ampere: string | number | undefined;
+    voltage: OptionsProps | undefined;
+    ampere: OptionsProps | undefined;
   }) => void;
 }
 
@@ -23,8 +23,8 @@ const ModalVoltageAmpere: React.FC<ModalVoltageAmpereProps> = ({
   onDismiss,
   onSelect,
 }) => {
-  const [voltage, setVoltage] = useState<string | number>();
-  const [ampere, setAmpere] = useState<string | number>();
+  const [voltage, setVoltage] = useState<OptionsProps>();
+  const [ampere, setAmpere] = useState<OptionsProps>();
 
   useEffect(() => {
     if (visible) {
@@ -45,17 +45,17 @@ const ModalVoltageAmpere: React.FC<ModalVoltageAmpereProps> = ({
 
       <div className="flex flex-row gap-3">
         <Dropdown
-          select={voltage}
+          select={voltage?.name}
           placeholder="Voltage"
           options={optionsVoltage}
-          onSelect={(select) => setVoltage(select.value)}
+          onSelect={(select) => setVoltage(select)}
         />
 
         <Dropdown
-          select={ampere}
+          select={ampere?.name}
           placeholder="Ampere"
           options={optionsAmpere}
-          onSelect={(select) => setAmpere(select.value)}
+          onSelect={(select) => setAmpere(select)}
         />
       </div>
 
@@ -76,9 +76,9 @@ const ModalVoltageAmpere: React.FC<ModalVoltageAmpereProps> = ({
 export default ModalVoltageAmpere;
 
 const optionsVoltage: OptionsProps[] = [
-  { name: "48V", value: 48 },
-  { name: "60V", value: 60 },
-  { name: "72V", value: 72 },
+  { name: "48V", value: 54.6 },
+  { name: "60V", value: 67.2 },
+  { name: "72V", value: 84 },
 ];
 
 const optionsAmpere: OptionsProps[] = Array.from({ length: 20 }, (_, i) => {

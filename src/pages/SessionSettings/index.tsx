@@ -444,8 +444,8 @@ const SessionSettings = () => {
         onDismiss={() => onHideModal("openVA")}
         onSelect={(select) => {
           const cloneData = clone(form);
-          cloneData.voltage = select?.voltage || 0;
-          cloneData.ampere = select?.ampere || 0;
+          cloneData.voltage = select?.voltage || undefined;
+          cloneData.ampere = select?.ampere || undefined;
 
           onHideModal("openVA");
           setForm("all", cloneData);

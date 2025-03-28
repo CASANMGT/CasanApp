@@ -1,8 +1,8 @@
 import { FormSession } from "../types/sessionType";
 
 export const FormDefaultSession: FormSession = {
-  voltage: 48,
-  ampere: 2,
+  voltage: { name: "48V", value: 54.6 },
+  ampere: { name: "2A", value: 2 },
   selectedSocket: undefined,
   selectedTab: "1",
   nominal: "",

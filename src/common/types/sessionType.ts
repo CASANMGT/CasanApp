@@ -1,7 +1,7 @@
 import { ChargingStation, Socket } from "./chargingStationsType";
 import { Device } from "./deviceType";
 import { FeeSettingsProps } from "./feeSettingsType";
-import { MetaResponseProps } from "./globalType";
+import { MetaResponseProps, OptionsProps } from "./globalType";
 import { Transaction } from "./transactionType";
 import { DataUser } from "./userType";
 
@@ -40,8 +40,8 @@ export interface SessionHeaderProps {
 }
 
 export type FormSession = {
-  voltage: string | number;
-  ampere: string | number;
+  voltage: OptionsProps | undefined;
+  ampere: OptionsProps | undefined;
   selectedSocket: number | undefined;
   selectedTab: string;
   nominal: string;
