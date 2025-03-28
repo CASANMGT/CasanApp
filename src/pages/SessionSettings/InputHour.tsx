@@ -6,6 +6,7 @@ import { setFromGlobal } from "../../features";
 import {
   convertToHours,
   formatDuration,
+  formatMinutesToHHMM,
   rupiah,
   timeToSeconds,
 } from "../../helpers";
@@ -26,16 +27,17 @@ const InputHour: React.FC<InputHourProps> = ({ value, form, onChange }) => {
 
   const validation = (select: string) => {
     let condition = false;
-    const convert = convertToHours(value);
+    const convert: number = convertToHours(value);
+    const current: number = Number(select || 1) / 60;
 
-    if (String(convert) === select) condition = true;
+    if (convert === current) condition = true;
 
     return condition;
   };
 
   const handleChange = (select: string) => {
     if (select !== "full") {
-      const newValue: string = `${String(select).padStart(2, "0")}:00`;
+      const newValue: string = formatMinutesToHHMM(Number(select));
 
       onChange(newValue);
     }
@@ -104,7 +106,7 @@ const InputHour: React.FC<InputHourProps> = ({ value, form, onChange }) => {
       </div>
 
       <p className="mt-3 text-black90 text-xs">
-        *Durasi masih{" "}
+        *Harga masih{" "}
         <span className="text-black100 font-medium text-xs">perkiraan</span>,
         bukan angka yang sesungguhnya.
       </p>

@@ -225,7 +225,7 @@ const TransactionHistoryDetails = () => {
 
           <BetweenText
             labelLeft="Service Fee"
-            labelRight={`Rp${rupiah(detailSession?.data?.ChargingFee || 0)}`}
+            labelRight={detailSession?.data?.ChargingFee || "-"}
             className="border-t border-black10 py-2"
           />
 

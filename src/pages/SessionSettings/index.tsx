@@ -218,7 +218,11 @@ const SessionSettings = () => {
         id: data.PriceSettingID,
         vehicle_type: 1,
         duration,
-        watt: Number(form?.voltage || 0) * Number(form?.ampere || 0),
+        watt: Number(
+          (
+            Number(form?.voltage?.value || 0) * Number(form?.ampere?.value || 0)
+          ).toFixed(0)
+        ),
       };
 
       dispatch(fetchCalculateCharge(body));

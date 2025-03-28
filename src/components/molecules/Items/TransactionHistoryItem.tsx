@@ -18,7 +18,9 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
   const getLabelType = () => {
     let value: string;
 
-    switch (cloneData?.Transaction?.Status || cloneData?.Status) {
+    switch (
+      isTransaction ? cloneData?.Transaction?.Status : cloneData?.Status
+    ) {
       case 1:
         value =
           isTransaction && cloneData?.Transaction?.Type === 2
@@ -48,16 +50,16 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
 
   const getLabelStatus = () => {
     let value: string;
-    switch (cloneData?.Session?.Status) {
-      case 1:
+    switch (cloneData?.Transaction?.Status) {
+      case 2:
         value = "Belum Bayar";
         break;
 
-      case 7:
+      case 3:
         value = "Expired";
         break;
 
-      case 6:
+      case 1:
         value = "Selesai";
         break;
 
@@ -71,16 +73,16 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
 
   const getColorStatus = () => {
     let value: string;
-    switch (cloneData?.Session?.Status) {
-      case 1:
+    switch (cloneData?.Transaction?.Status) {
+      case 2:
         value = "red";
         break;
 
-      case 7:
+      case 3:
         value = "black50";
         break;
 
-      case 6:
+      case 1:
         value = "green";
         break;
 
@@ -108,7 +110,7 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
 
           <div>
             <p className="font-medium">
-              {getLabelType()}
+              {"Pengisian Daya"}
 
               {isTransaction && (
                 <span className={`text-[10px] ml-1 text-${getColorStatus()}`}>
@@ -128,9 +130,7 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
                   {" "}
                   <p className="text-xs text-black100/40">at</p>
                   <p className="text-xs">
-                    {cloneData?.Session?.ChargingStation?.Location?.Mark ||
-                      cloneData?.Session?.ChargingStation?.Location?.Name ||
-                      "-"}
+                    {cloneData?.Session?.ChargingStation?.Name || "-"}
                   </p>
                 </>
               )}

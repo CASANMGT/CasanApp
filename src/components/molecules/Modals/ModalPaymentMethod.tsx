@@ -94,7 +94,7 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
 
     if (!selectedBalance && !selectedPayment) {
       message.title = "Pilih Metode Pembayaran";
-      message.body = "Pilih Metode Pembayaranb terlebih dahulu";
+      message.body = "Pilih Metode Pembayaran terlebih dahulu";
     } else if (
       selectedBalance &&
       selectedBalance < (total || 0) &&

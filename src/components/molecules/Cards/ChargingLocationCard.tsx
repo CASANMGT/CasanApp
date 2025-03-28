@@ -9,6 +9,7 @@ import { ChargingStation, LatLng } from "../../../common";
 import {
   getDistanceFromLatLonInKm,
   moments,
+  rupiah,
   timeToSeconds,
 } from "../../../helpers";
 import { Button } from "../../atoms";
@@ -130,7 +131,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
         <div className="bg-white px-4 py-2.5 rounded-b-lg between-x">
           <div className=" row gap-1">
             <p className="text-xs text-primary100 font-semibold">Rp</p>
-            <p className="text-lg text-primary100 font-semibold mr-1">{`${price}/jam`}</p>
+            <p className="text-lg text-primary100 font-semibold mr-1">{`${rupiah(price)}/jam`}</p>
             <p className="text-xs text-black50">{watt}</p>
           </div>
 

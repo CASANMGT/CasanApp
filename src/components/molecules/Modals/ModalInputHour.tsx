@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IcClose } from "../../../assets";
 import { HOUR_SESSION } from "../../../common";
-import { convertToHours } from "../../../helpers";
+import { convertToHours, formatMinutesToHHMM } from "../../../helpers";
 import { Button, Separator, WheelPicker } from "../../atoms";
 import { NominalTopUpItem } from "../Items";
 import ModalContainer from "./ModalContainer";
@@ -31,15 +31,17 @@ const ModalInputHour: React.FC<ModalInputHourProps> = ({
   const validation = (select: string) => {
     let condition = false;
     const convert = convertToHours(`${selectTime[0]}:${selectTime[1]}`);
+    const current: number = Number(select || 1) / 60;
 
-    if (String(convert) === select) condition = true;
+    if (convert === current) condition = true;
 
     return condition;
   };
 
   const handleChange = (select: string) => {
     if (select !== "full") {
-      setSelectTime([String(select).padStart(2, "0"), "00"]);
+      const newValue: string[] = formatMinutesToHHMM(Number(select)).split(":");
+      setSelectTime([newValue[0], newValue[1]]);
     }
   };
 

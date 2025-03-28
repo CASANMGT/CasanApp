@@ -25,7 +25,7 @@ const NominalTopUpItem: React.FC<NominalTopUpItemProps> = ({
       {value === "full"
         ? "isi sampai penuh"
         : isHour
-        ? `${value} jam`
+        ? `${value} menit`
         : `Rp${rupiah(value)}`}
     </div>
   );

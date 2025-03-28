@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import { bodyListProps, DataTransaction } from "../common";
+import { bodyListProps } from "../common";
 import { Header, LoadingPage, TransactionHistoryItem } from "../components";
 import { fetchTransactionList } from "../features";
 import { AppDispatch, RootState } from "../store";
@@ -31,7 +31,6 @@ const TransactionHistory = () => {
     navigate(-1);
   };
 
-
   const isShowData =
     transactionList?.data?.data && transactionList?.data?.data.length
       ? true
@@ -55,7 +54,9 @@ const TransactionHistory = () => {
               <TransactionHistoryItem
                 key={index}
                 data={item}
-                onClick={() => navigate(`/transaction-history-details/${item?.Session?.ID}`)}
+                onClick={() =>
+                  navigate(`/transaction-history-details/${item?.Session?.ID}`)
+                }
               />
             ))}
         </div>

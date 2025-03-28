@@ -17,12 +17,21 @@ const WheelPicker: React.FC<WheelPickerProps> = ({ value, onChange }) => {
 
   useEffect(() => {
     const index = hours.findIndex((e) => e === value[0]);
+    const indexMinute = minutes.findIndex((e) => e === value[1]);
 
-    if (index > -1)
+    if (index > -1) {
       hourRef.current?.scrollTo({
         top: index * ITEM_HEIGHT,
         behavior: "smooth",
       });
+    }
+
+    if (indexMinute > -1) {
+      minuteRef.current?.scrollTo({
+        top: indexMinute * ITEM_HEIGHT,
+        behavior: "smooth",
+      });
+    }
   }, [value]);
 
   // Ensure perfect centering on scroll stop
