@@ -96,8 +96,8 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
       message.title = "Pilih Metode Pembayaran";
       message.body = "Pilih Metode Pembayaranb terlebih dahulu";
     } else if (
-      selectBalance &&
-      selectBalance < (total || 0) &&
+      selectedBalance &&
+      selectedBalance < (total || 0) &&
       !selectedPayment
     ) {
       message.title = "Saldo tidak cukup";

@@ -249,8 +249,9 @@ const SessionSettings = () => {
       };
 
       setLoading(false);
+
       dispatch(fetchAddSession(body));
-    }, 500);
+    }, 1200);
   };
 
   const chargingNominal: number = getChargingNominal();
@@ -427,8 +428,8 @@ const SessionSettings = () => {
         total={totalPrice}
         onDismiss={() => setVisiblePaymentMethod(false)}
         onSelect={(select) => {
-          onDismiss();
           setForm("paymentMethod", select);
+          setVisiblePaymentMethod(false);
           onNext();
         }}
         onSelectBalance={(select) => setForm("balance", select)}
