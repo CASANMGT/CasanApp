@@ -41,6 +41,7 @@ const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({
   );
 
   const Icon = icon
+  
   return (
     <>
       {isShowSeparator && <Separator className="my-4" />}

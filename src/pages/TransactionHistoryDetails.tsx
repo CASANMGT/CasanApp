@@ -223,11 +223,11 @@ const TransactionHistoryDetails = () => {
             className="my-2"
           />
 
-          <BetweenText
+          {/* <BetweenText
             labelLeft="Service Fee"
             labelRight={detailSession?.data?.ChargingFee || "-"}
             className="border-t border-black10 py-2"
-          />
+          /> */}
 
           <BetweenText
             labelLeft="Total Transaksi"

@@ -52,6 +52,8 @@ import {
   fetchMyUser,
   fetchSendOTP,
   hideLoading,
+  resetDataCalculateCharge,
+  resetDataCalculateDuration,
   setFromGlobal,
   showLoading,
 } from "../../features";
@@ -109,6 +111,9 @@ const SessionSettings = () => {
   useEffect(() => {
     if (isAuthenticated) dispatch(fetchMyUser());
     if (id) dispatch(fetchDeviceById(id));
+
+    dispatch(resetDataCalculateCharge())
+    dispatch(resetDataCalculateDuration())
   }, []);
 
   useEffect(() => {
@@ -142,17 +147,18 @@ const SessionSettings = () => {
   }, [myUser?.error]);
 
   useEffect(() => {
-    if (form.time !== "00:00") onCalculate("charge");
-  }, [form.time]);
+    if (form.time !== "00:00" && form.selectedTab === "2")
+      onCalculate("charge");
+  }, [form.time, form?.ampere, form?.voltage]);
 
   useEffect(() => {
-    if (form.nominal && form.nominal !== "Rp0") {
+    if (form.nominal && form.nominal !== "Rp0" && form.selectedTab === "1") {
       onCalculate("duration");
     }
-  }, [form.nominal]);
+  }, [form.nominal, form?.ampere, form?.voltage]);
 
   useEffect(() => {
-    onNext();
+    if (form.balance > 0 || form?.paymentMethod?.key) onNext();
   }, [form?.paymentMethod, form.balance]);
 
   const onDismiss = () => {

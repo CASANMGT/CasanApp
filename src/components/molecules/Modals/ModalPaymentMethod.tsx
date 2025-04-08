@@ -94,7 +94,7 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
       message.title = "Pilih Metode Pembayaran";
       message.body = "Pilih Metode Pembayaran terlebih dahulu";
     } else if (
-      selectedBalance &&
+      selectedBalance > 0 &&
       selectedBalance < (total || 0) &&
       !selectedPayment
     ) {
@@ -152,16 +152,20 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
               <p className="text-black70 mb-2.5">eWallet</p>
 
               {optionsPaymentMethod &&
-                optionsPaymentMethod.map((item, index: number) => (
-                  <PaymentMethodItem
-                    key={item?.key}
-                    icon={item?.icon}
-                    label={item?.label}
-                    position={index}
-                    isActive={selectedPayment?.key === item?.key}
-                    onSelect={() => setSelectedPayment(item)}
-                  />
-                ))}
+                optionsPaymentMethod.map((item, index: number) => {
+                  if(item?.key==="TRANSFER_TU") return null
+                  
+                  return (
+                    <PaymentMethodItem
+                      key={item?.key}
+                      icon={item?.icon}
+                      label={item?.label}
+                      position={index}
+                      isActive={selectedPayment?.key === item?.key}
+                      onSelect={() => setSelectedPayment(item)}
+                    />
+                  );
+                })}
 
               <div className="h-6" />
             </div>
