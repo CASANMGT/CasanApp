@@ -18,8 +18,7 @@ interface ModalPaymentMethodProps {
   selectBalance: number;
   total?: number;
   onDismiss: () => void;
-  onSelect: (select: FeeSettingsProps | undefined) => void;
-  onSelectBalance: (value: number) => void;
+  onSelect: (select: FeeSettingsProps | undefined, value?: number) => void;
 }
 
 const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
@@ -30,7 +29,6 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
   total,
   onDismiss,
   onSelect,
-  onSelectBalance,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated } = useAuth();
@@ -105,8 +103,7 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
     }
 
     if (!message?.title) {
-      onSelect(selectedPayment);
-      onSelectBalance(selectedBalance);
+      onSelect(selectedPayment, selectedBalance);
     } else showAlert(message);
   };
 

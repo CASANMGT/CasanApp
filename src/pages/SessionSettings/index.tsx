@@ -61,8 +61,6 @@ import PriceInformation from "../ChargingStationDetails/PriceInformation";
 import InputHour from "./InputHour";
 import InputNominal from "./InputNominal";
 
-const costMax: number = 800; //jam
-
 const tabsNominalHour = [
   {
     id: "1",
@@ -153,6 +151,10 @@ const SessionSettings = () => {
     }
   }, [form.nominal]);
 
+  useEffect(() => {
+    onNext();
+  }, [form?.paymentMethod, form.balance]);
+
   const onDismiss = () => {
     navigate(-1);
   };
@@ -231,7 +233,11 @@ const SessionSettings = () => {
         id: data.PriceSettingID,
         total_charge: Number(form.nominal.replace("Rp", "").replace(/\./g, "")),
         vehicle_type: 1,
-        watt: Number(form?.voltage || 0) * Number(form?.ampere || 0),
+        watt: Number(
+          (
+            Number(form?.voltage?.value || 0) * Number(form?.ampere?.value || 0)
+          ).toFixed(0)
+        ),
       };
 
       dispatch(fetchCalculateDuration(body));
@@ -239,23 +245,17 @@ const SessionSettings = () => {
   };
 
   const onNext = () => {
-    setLoading(true);
+    const body: AddSessionBody = {
+      amount: chargingNominal,
+      device_id: selectedDevice?.ID,
+      payment_method: form.paymentMethod?.key || "BALANCE_FU",
+      session_method: form.selectedTab === "1" ? 1 : 2,
+      socket_id: form?.selectedSocket || 0,
+      station_id: data?.ID,
+      wallet_used_amount: form?.balance,
+    };
 
-    setTimeout(() => {
-      const body: AddSessionBody = {
-        amount: chargingNominal,
-        device_id: selectedDevice?.ID,
-        payment_method: form.paymentMethod?.key || "BALANCE_FU",
-        session_method: form.selectedTab === "1" ? 1 : 2,
-        socket_id: form?.selectedSocket || 0,
-        station_id: data?.ID,
-        wallet_used_amount: form?.balance,
-      };
-
-      setLoading(false);
-
-      dispatch(fetchAddSession(body));
-    }, 1200);
+    dispatch(fetchAddSession(body));
   };
 
   const chargingNominal: number = getChargingNominal();
@@ -431,12 +431,14 @@ const SessionSettings = () => {
         selectBalance={form?.balance}
         total={totalPrice}
         onDismiss={() => setVisiblePaymentMethod(false)}
-        onSelect={(select) => {
-          setForm("paymentMethod", select);
+        onSelect={(select, value) => {
+          const cloneData = clone(form);
+          cloneData.paymentMethod = select;
+          cloneData.balance = value || 0;
+
+          setForm("all", cloneData);
           setVisiblePaymentMethod(false);
-          onNext();
         }}
-        onSelectBalance={(select) => setForm("balance", select)}
       />
 
       <ModalVoltageAmpere
