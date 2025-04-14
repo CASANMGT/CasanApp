@@ -75,6 +75,9 @@ const TransactionDetails = () => {
       setIsRunning(false);
       navigate(`/payment-success/${detailSession?.data?.ID}`);
     }
+
+    if (detailSession?.data?.Transaction?.Status === 1) setIsShow(true);
+    else setIsShow(false);
   }, [detailSession?.data]);
 
   useEffect(() => {
@@ -185,51 +188,57 @@ const TransactionDetails = () => {
           id="receipt"
           className="relative p-3 pb-6 bg-white rounded-lg mt-[28px] drop-shadow"
         >
-          <div className="between-x">
-            <div>
-              <span className="text-blackBold font-medium flex flex-col">
-                Nominal Pembayaran
-              </span>
+          {status !== 1 && (
+            <>
+              <div className="between-x">
+                <div>
+                  <span className="text-blackBold font-medium flex flex-col">
+                    Nominal Pembayaran
+                  </span>
 
-              <span className="text-base font-semibold text-primary100">
-                {`Rp${rupiah(detailSession?.data?.Transaction?.DueAmount)}`}
-              </span>
-            </div>
+                  <span className="text-base font-semibold text-primary100">
+                    {`Rp${rupiah(detailSession?.data?.Transaction?.DueAmount)}`}
+                  </span>
+                </div>
 
-            <button
-              type="button"
-              onClick={() => setIsShow(!isShow)}
-              className="row gap-1 py-1.5 px-[14px] bg-primary10 border border-primary50 rounded-full"
-            >
-              <span className="text-xs text-primary100 font-medium">
-                Lihat Detail
-              </span>
+                <button
+                  type="button"
+                  onClick={() => setIsShow(!isShow)}
+                  className="row gap-1 py-1.5 px-[14px] bg-primary10 border border-primary50 rounded-full"
+                >
+                  <span className="text-xs text-primary100 font-medium">
+                    Lihat Detail
+                  </span>
 
-              <div
-                className={`transform transition-transform duration-500 ${
-                  isShow ? "rotate-180" : "rotate-0"
-                }`}
-              >
-                <IcLineDown className="w-[12px] h-auto text-primary100" />
+                  <div
+                    className={`transform transition-transform duration-500 ${
+                      isShow ? "rotate-180" : "rotate-0"
+                    }`}
+                  >
+                    <IcLineDown className="w-[12px] h-auto text-primary100" />
+                  </div>
+                </button>
               </div>
-            </button>
-          </div>
 
-          <Separator className="!bg-baseLightGray mb-4 mt-2.5" />
+              <Separator className="!bg-baseLightGray mb-4 mt-2.5" />
 
-          <BetweenText
-            labelLeft="Metode Pemabayaran"
-            labelRight={""}
-            content={
-              <div className="row">
-                <IconPayment className="w-6 h-auto mr-1.5" />
+              <BetweenText
+                labelLeft="Metode Pemabayaran"
+                labelRight={""}
+                content={
+                  <div className="row">
+                    <IconPayment className="w-6 h-auto mr-1.5" />
 
-                <span className="text-base font-medium">{labelPayment}</span>
-              </div>
-            }
-          />
+                    <span className="text-base font-medium">
+                      {labelPayment}
+                    </span>
+                  </div>
+                }
+              />
 
-          <Separator className="my-4" />
+              <Separator className="my-4" />
+            </>
+          )}
 
           <p className="font-medium mb-2">Informasi Transaksi</p>
           <div className="text-black100/70 row gap-2">
@@ -246,11 +255,13 @@ const TransactionDetails = () => {
             <p className="text-xs">{`ID${detailSession?.data?.TransactionID}`}</p>
           </div>
 
-          <BetweenText
-            labelLeft="Referensi Sesi ID"
-            labelRight={detailSession?.data?.ID || "-"}
-            className="pt-4"
-          />
+          {status !== 1 && (
+            <BetweenText
+              labelLeft="Referensi Sesi ID"
+              labelRight={detailSession?.data?.ID || "-"}
+              className="pt-4"
+            />
+          )}
 
           {isShow && (
             <>
