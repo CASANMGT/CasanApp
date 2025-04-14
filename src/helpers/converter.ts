@@ -7,13 +7,14 @@ import {
   IcNoImage,
   IcOvo,
   IcQris,
-  IcShopeePay
+  IcShopeePay,
 } from "../assets";
 import {
   ASTRAPAY,
   DANA,
   GOPAY,
   LINK_AJA,
+  OperationalHour,
   OVO,
   QRIS,
   SHOPEEPAY,
@@ -117,4 +118,19 @@ export const decodeToken = (token: string): TokenPayload | null => {
     console.error("Invalid token", error);
     return null;
   }
+};
+
+export const convertToReadableHours = (data: OperationalHour[]) => {
+  let value: boolean = false;
+
+  const isOpenAllWeek =
+    data.length === 7 &&
+    data.every(
+      (item) => item.From === "00:00" && item.To === "23:59" && !item.IsClosed
+    );
+
+  if (isOpenAllWeek) return (value = true);
+
+  // fallback (optional): format each day
+  return value;
 };

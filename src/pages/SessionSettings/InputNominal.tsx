@@ -28,6 +28,9 @@ const InputNominal: React.FC<InputNominalProps> = ({
     (state: RootState) => state.calculateDuration
   );
 
+  console.log('cek calculateDuration', calculateDuration);
+  
+
   return (
     <>
       <p className="text-xs text-black100/70 mb-[14px]">{description}</p>

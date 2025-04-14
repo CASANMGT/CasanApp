@@ -145,7 +145,7 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
             ? "+"
             : "-"
         }Rp${rupiah(
-          cloneData?.Transaction?.DueAmount || cloneData?.Amount
+          cloneData?.Transaction?.DueAmount || Math.abs(cloneData?.Amount)
         )}`}</p>
       </div>
 

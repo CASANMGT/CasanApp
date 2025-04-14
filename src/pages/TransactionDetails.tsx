@@ -157,6 +157,12 @@ const TransactionDetails = () => {
       .toLocaleLowerCase()
   );
 
+  const isShowRefund: boolean =
+    Number(detailSession?.data?.Transaction?.WalletUsedAmount || 0) > 0 &&
+    (status === 3 || status === 4)
+      ? true
+      : false;
+
   return (
     <div className="background-1 py-[14px] px-4">
       <Header type="secondary" title="Detail Transaksi" onDismiss={onDismiss} />
@@ -223,7 +229,7 @@ const TransactionDetails = () => {
               <Separator className="!bg-baseLightGray mb-4 mt-2.5" />
 
               <BetweenText
-                labelLeft="Metode Pemabayaran"
+                labelLeft="Metode Pembayaran"
                 labelRight={""}
                 content={
                   <div className="row">
@@ -328,11 +334,13 @@ const TransactionDetails = () => {
                 classNameLabelRight="text-black100 font-medium"
               />
 
-              <BetweenText
-                labelLeft="Pemngembalian Dana"
-                labelRight={`Rp${rupiah(detailSession?.data?.RefundAmount)}`}
-                className="my-2"
-              />
+              {isShowRefund && (
+                <BetweenText
+                  labelLeft="Pengembalian Dana"
+                  labelRight={`Rp${rupiah(detailSession?.data?.RefundAmount)}`}
+                  className="my-2"
+                />
+              )}
             </>
           )}
 

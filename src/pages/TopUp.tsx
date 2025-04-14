@@ -64,7 +64,7 @@ const TopUp = () => {
     } else {
       return (
         <p className="text-xs text-primary100 font-medium">
-          Pilih Metode Pemabayaran
+          Pilih Metode Pembayaran
         </p>
       );
     }
