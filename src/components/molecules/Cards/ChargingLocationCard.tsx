@@ -1,6 +1,6 @@
 import {
   IcBike,
-  IcDownGreen,
+  IcLineDown,
   IcFuel,
   IcShareGreen,
   ILNoImage,
@@ -144,7 +144,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
           type="secondary"
           label="Muat Lainnya"
           loading={loading}
-          iconRight={IcDownGreen}
+          iconRight={IcLineDown}
           onClick={onLoadMore}
         />
       )}

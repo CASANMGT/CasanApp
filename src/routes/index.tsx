@@ -25,7 +25,7 @@ import {
   Test,
   TopUp,
   TransactionHistory,
-  TransactionHistoryDetails,
+  TransactionDetails,
   Vehicle,
   VerificationNumber,
   Withdraw,
@@ -75,7 +75,7 @@ const RoutesPage = () => {
         />
         <Route
           path="transaction-history-details/:id"
-          element={<ProtectedRoute element={<TransactionHistoryDetails />} />}
+          element={<ProtectedRoute element={<TransactionDetails />} />}
         />
         <Route
           path="balance-history-details"

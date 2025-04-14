@@ -8,10 +8,11 @@ import {
   useParams,
 } from "react-router-dom";
 import {
+  IcLineDown,
   IcSaveGreen,
   IcShareGreen2,
   IcSuccessGreen,
-  IcTimerCircle,
+  IcTimerCircle
 } from "../assets";
 import {
   BetweenText,
@@ -29,10 +30,15 @@ import {
   resetDataCancelSession,
   showLoading,
 } from "../features";
-import { getLabelPaymentMethod, moments, rupiah } from "../helpers";
+import {
+  getIconPaymentMethod,
+  getLabelPaymentMethod,
+  moments,
+  rupiah,
+} from "../helpers";
 import { AppDispatch, RootState } from "../store";
 
-const TransactionHistoryDetails = () => {
+const TransactionDetails = () => {
   const navigate: NavigateFunction = useNavigate();
   const location = useLocation();
   const { id, type } = useParams();
@@ -41,6 +47,7 @@ const TransactionHistoryDetails = () => {
   const detailSession = useSelector((state: RootState) => state.detailSession);
   const cancelSession = useSelector((state: RootState) => state.cancelSession);
   const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [isShow, setIsShow] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(resetDataAddSession());
@@ -136,6 +143,17 @@ const TransactionHistoryDetails = () => {
     else navigate(-1);
   };
 
+  const IconPayment = getIconPaymentMethod(
+    (detailSession?.data?.Transaction?.PaymentMethod || "")
+      .split("_")[0]
+      .toLocaleLowerCase()
+  );
+  const labelPayment = getLabelPaymentMethod(
+    (detailSession?.data?.Transaction?.PaymentMethod || "")
+      .replace("_TU", "")
+      .toLocaleLowerCase()
+  );
+
   return (
     <div className="background-1 py-[14px] px-4">
       <Header type="secondary" title="Detail Transaksi" onDismiss={onDismiss} />
@@ -167,6 +185,52 @@ const TransactionHistoryDetails = () => {
           id="receipt"
           className="relative p-3 pb-6 bg-white rounded-lg mt-[28px] drop-shadow"
         >
+          <div className="between-x">
+            <div>
+              <span className="text-blackBold font-medium flex flex-col">
+                Nominal Pembayaran
+              </span>
+
+              <span className="text-base font-semibold text-primary100">
+                {`Rp${rupiah(detailSession?.data?.Transaction?.DueAmount)}`}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsShow(!isShow)}
+              className="row gap-1 py-1.5 px-[14px] bg-primary10 border border-primary50 rounded-full"
+            >
+              <span className="text-xs text-primary100 font-medium">
+                Lihat Detail
+              </span>
+
+              <div
+                className={`transform transition-transform duration-500 ${
+                  isShow ? "rotate-180" : "rotate-0"
+                }`}
+              >
+                <IcLineDown className="w-[12px] h-auto text-primary100" />
+              </div>
+            </button>
+          </div>
+
+          <Separator className="!bg-baseLightGray mb-4 mt-2.5" />
+
+          <BetweenText
+            labelLeft="Metode Pemabayaran"
+            labelRight={""}
+            content={
+              <div className="row">
+                <IconPayment className="w-6 h-auto mr-1.5" />
+
+                <span className="text-base font-medium">{labelPayment}</span>
+              </div>
+            }
+          />
+
+          <Separator className="my-4" />
+
           <p className="font-medium mb-2">Informasi Transaksi</p>
           <div className="text-black100/70 row gap-2">
             <p className="text-xs">
@@ -182,70 +246,78 @@ const TransactionHistoryDetails = () => {
             <p className="text-xs">{`ID${detailSession?.data?.TransactionID}`}</p>
           </div>
 
-          <Separator className="my-4 bg-black10" />
-
-          <p className="text-xs text-black100/70  mb-2">Detail Transaksi</p>
-
-          <BetweenText
-            labelLeft="Tipe Transaksi"
-            labelRight="Pengisisan Daya"
-            classNameLabelRight="font-medium text-black100"
-            className="mb-2"
-          />
-
           <BetweenText
             labelLeft="Referensi Sesi ID"
             labelRight={detailSession?.data?.ID || "-"}
-            className="border-y border-black10 py-2"
+            className="pt-4"
           />
 
-          <BetweenText
-            labelLeft="Metode Pembayaran"
-            labelRight={getLabelPaymentMethod(
-              (detailSession?.data?.Transaction?.PaymentMethod || "")
-                .replace("_TU", "")
-                .toLocaleLowerCase()
-            )}
-            className="my-2"
-          />
+          {isShow && (
+            <>
+              <BetweenText
+                labelLeft="Tipe Transaksi"
+                labelRight="Pengisisan Daya"
+                classNameLabelRight="font-medium text-black100"
+                className="mb-2 mt-4"
+              />
 
-          <BetweenText
-            labelLeft="Nominal Pengecasan"
-            labelRight={`Rp${rupiah(detailSession?.data?.Transaction?.Amount)}`}
-            className="border-y border-black10 py-2"
-          />
+              <BetweenText
+                labelLeft="Referensi Sesi ID"
+                labelRight={detailSession?.data?.ID || "-"}
+                className="border-y border-black10 py-2"
+              />
 
-          <BetweenText
-            labelLeft="Admin Fee"
-            labelRight={`Rp${rupiah(
-              detailSession?.data?.Transaction?.TotalFee
-            )}`}
-            className="my-2"
-          />
+              <BetweenText
+                labelLeft="Metode Pembayaran"
+                labelRight={getLabelPaymentMethod(
+                  (detailSession?.data?.Transaction?.PaymentMethod || "")
+                    .replace("_TU", "")
+                    .toLocaleLowerCase()
+                )}
+                className="my-2"
+              />
 
-          {/* <BetweenText
+              <BetweenText
+                labelLeft="Nominal Pengecasan"
+                labelRight={`Rp${rupiah(
+                  detailSession?.data?.Transaction?.Amount
+                )}`}
+                className="border-y border-black10 py-2"
+              />
+
+              <BetweenText
+                labelLeft="Admin Fee"
+                labelRight={`Rp${rupiah(
+                  detailSession?.data?.Transaction?.TotalFee
+                )}`}
+                className="my-2"
+              />
+
+              {/* <BetweenText
             labelLeft="Service Fee"
             labelRight={detailSession?.data?.ChargingFee || "-"}
             className="border-t border-black10 py-2"
           /> */}
 
-          <BetweenText
-            labelLeft="Total Transaksi"
-            labelRight={`Rp${rupiah(
-              detailSession?.data?.Transaction?.DueAmount
-            )}`}
-            className="border-y border-black100 py-2"
-            classNameLabelLeft="text-black100"
-            classNameLabelRight="text-black100 font-medium"
-          />
+              <BetweenText
+                labelLeft="Pembayaran Casan Wallet"
+                labelRight={`Rp${rupiah(
+                  detailSession?.data?.Transaction?.WalletUsedAmount
+                )}`}
+                className="border-t border-t-black10 py-2"
+              />
 
-          <BetweenText
-            labelLeft="Pembayaran Casan Wallet"
-            labelRight={`Rp${rupiah(
-              detailSession?.data?.Transaction?.WalletUsedAmount
-            )}`}
-            className="mt-2"
-          />
+              <BetweenText
+                labelLeft="Total Transaksi"
+                labelRight={`Rp${rupiah(
+                  detailSession?.data?.Transaction?.DueAmount
+                )}`}
+                className="border-y border-black100 py-2"
+                classNameLabelLeft="text-black100"
+                classNameLabelRight="text-black100 font-medium"
+              />
+            </>
+          )}
 
           {status !== 3 && (
             <>
@@ -300,4 +372,4 @@ const TransactionHistoryDetails = () => {
   );
 };
 
-export default TransactionHistoryDetails;
+export default TransactionDetails;

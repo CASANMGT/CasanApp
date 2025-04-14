@@ -15,7 +15,7 @@ import SessionSettings from "./SessionSettings";
 import Splash from "./Splash";
 import Test from "./Test";
 import TransactionHistory from "./TransactionHistory";
-import TransactionHistoryDetails from "./TransactionHistoryDetails";
+import TransactionDetails from "./TransactionDetails";
 import VerificationNumber from "./VerificationNumber";
 import Vehicle from "./Vehicle";
 import SessionDetails from "./SessionDetails";
@@ -51,7 +51,7 @@ export {
     Splash,
     Test,
     TransactionHistory,
-    TransactionHistoryDetails,
+    TransactionDetails,
     VerificationNumber,
     Withdraw,
     BalanceHistory,
