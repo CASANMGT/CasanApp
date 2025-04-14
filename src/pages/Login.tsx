@@ -54,9 +54,19 @@ const Login = () => {
         <div className="text-xs">
           <p>
             Dengan mendaftar, Anda menyetujui{" "}
-            <b className="text-primary100 cursor-pointer">Syarat & Ketentuan</b>{" "}
+            <b
+              onClick={() => navigate("/text-condition")}
+              className="text-primary100 cursor-pointer"
+            >
+              Syarat & Ketentuan
+            </b>{" "}
             dan{" "}
-            <b className="text-primary100 cursor-pointer">Kebijakan Privasi</b>{" "}
+            <b
+              onClick={() => navigate("/privacy-police")}
+              className="text-primary100 cursor-pointer"
+            >
+              Kebijakan Privasi
+            </b>{" "}
             kami.
           </p>
         </div>

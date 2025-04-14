@@ -25,6 +25,8 @@ import Withdraw from "./Withdraw";
 import PaymentSuccess from "./PaymentSuccess";
 import ComingSoon from "./ComingSoon";
 import BalanceHistory from "./BalanceHistory";
+import TermCondition from "./TermCondition";
+import PrivacyPolice from "./PrivacyPolice";
 import BalanceHistoryDetails from "./BalanceHistoryDetails";
 
 export {
@@ -55,6 +57,8 @@ export {
     VerificationNumber,
     Withdraw,
     BalanceHistory,
-    BalanceHistoryDetails
+    BalanceHistoryDetails,
+    TermCondition,
+    PrivacyPolice
 };
 

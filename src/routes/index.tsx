@@ -15,6 +15,7 @@ import {
   NotFound,
   Order,
   PaymentSuccess,
+  PrivacyPolice,
   Profile,
   Scan,
   SelectBank,
@@ -22,10 +23,11 @@ import {
   SessionDetails,
   SessionSettings,
   Splash,
+  TermCondition,
   Test,
   TopUp,
-  TransactionHistory,
   TransactionDetails,
+  TransactionHistory,
   Vehicle,
   VerificationNumber,
   Withdraw,
@@ -52,6 +54,8 @@ const RoutesPage = () => {
           element={<ProtectedRoute element={<LocationList />} />}
         />
         <Route path="login" element={<Login />} />
+        <Route path="text-condition" element={<TermCondition />} />
+        <Route path="privacy-police" element={<PrivacyPolice />} />
         <Route path="scan" element={<Scan />} />
         <Route path="select-bank" element={<SelectBank />} />
         <Route path="select-payment-method" element={<SelectPaymentMethod />} />
