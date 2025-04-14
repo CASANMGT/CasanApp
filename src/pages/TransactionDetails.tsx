@@ -12,7 +12,7 @@ import {
   IcSaveGreen,
   IcShareGreen2,
   IcSuccessGreen,
-  IcTimerCircle
+  IcTimerCircle,
 } from "../assets";
 import {
   BetweenText,
@@ -315,6 +315,12 @@ const TransactionDetails = () => {
                 className="border-y border-black100 py-2"
                 classNameLabelLeft="text-black100"
                 classNameLabelRight="text-black100 font-medium"
+              />
+
+              <BetweenText
+                labelLeft="Pemngembalian Dana"
+                labelRight={`Rp${rupiah(detailSession?.data?.RefundAmount)}`}
+                className="my-2"
               />
             </>
           )}
