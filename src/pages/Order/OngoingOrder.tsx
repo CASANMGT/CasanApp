@@ -1,12 +1,11 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { ILOrderEmpty } from "../../assets";
 import { Session, SessionListBody } from "../../common";
 import { EmptyList, LoadingPage, OrderCard } from "../../components";
 import { fetchOnGoingSessionList } from "../../features";
 import { AppDispatch, RootState } from "../../store";
-import { ILOrderEmpty } from "../../assets";
-import { useAuth } from "../../context/AuthContext";
 
 const OngoingOrder = () => {
   const navigate = useNavigate();

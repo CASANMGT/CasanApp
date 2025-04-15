@@ -1,8 +1,14 @@
 import { capitalize } from "lodash";
 import { IcFuel, ILNoImage } from "../../../assets";
 import { Session } from "../../../common";
-import { getIconPaymentMethod, moments, rupiah } from "../../../helpers";
+import {
+  formatDuration,
+  getIconPaymentMethod,
+  moments,
+  rupiah,
+} from "../../../helpers";
 import { Separator } from "../../atoms";
+import { div } from "framer-motion/client";
 
 interface OrderCardProps {
   position: number;
@@ -45,6 +51,14 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
     data?.Transaction?.PaymentMethod.split("_")[0].toLocaleLowerCase()
   );
 
+  let diff: string = "";
+
+  if (status === 5) {
+    diff = formatDuration(
+      moments(data?.StopChargingTime).diff(moments(), "second")
+    );
+  }
+
   return (
     <div
       onClick={onClick}
@@ -60,9 +74,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
         />
 
         <div className="flex flex-col justify-between">
-          <p className="font-medium ">
-            {data?.ChargingStation?.Name || "-"}
-          </p>
+          <p className="font-medium ">{data?.ChargingStation?.Name || "-"}</p>
           <p className="text-2-line text-xs text-black90">
             {data?.ChargingStation?.Location?.Address || "-"}
           </p>
@@ -109,6 +121,12 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
                       "-"
                     )}
                   </p>
+                ) : status === 5 ? (
+                  <div>
+                    <p className="text-xs text-black50">
+                      Tersisa: <span className="text-black100 text-xs">{diff}</span>
+                    </p>
+                  </div>
                 ) : (
                   <div className="row gap-1">
                     <Icon className="w-[14px] h-auto" />

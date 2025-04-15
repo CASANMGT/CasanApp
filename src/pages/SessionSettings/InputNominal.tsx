@@ -1,11 +1,10 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { IcEditGreen } from "../../assets";
 import { FormSession } from "../../common";
 import { NominalTopUpItem, Separator } from "../../components";
 import { setFromGlobal } from "../../features";
 import { formatDuration, rupiah } from "../../helpers";
 import { AppDispatch, RootState } from "../../store";
-import { useSelector } from "react-redux";
 
 interface InputNominalProps {
   form: FormSession;
@@ -27,9 +26,6 @@ const InputNominal: React.FC<InputNominalProps> = ({
   const calculateDuration = useSelector(
     (state: RootState) => state.calculateDuration
   );
-
-  console.log('cek calculateDuration', calculateDuration);
-  
 
   return (
     <>

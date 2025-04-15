@@ -34,7 +34,7 @@ import {
   resetDataStopSession,
   showLoading,
 } from "../features";
-import { formatDuration, formatTime, moments, rupiah } from "../helpers";
+import { formatDuration, moments, rupiah } from "../helpers";
 import { AppDispatch, RootState } from "../store";
 
 const Charging = () => {
@@ -189,8 +189,12 @@ const Charging = () => {
 
             <InformationItem
               icon={IcClockGreen}
-              label="Durasi"
-              content={formatTime(dataSession?.Duration)}
+              label="Durasi Pemesanan"
+              content={
+                dataSession?.ExpectedDuration
+                  ? formatDuration(dataSession?.ExpectedDuration)
+                  : "-"
+              }
             />
 
             <InformationItem
@@ -239,27 +243,16 @@ const Charging = () => {
 
             <BetweenText
               type="medium-content"
-              labelLeft="Durasi pemesanan"
-              labelRight={
-                dataSession?.ExpectedDuration
-                  ? formatDuration(dataSession?.ExpectedDuration)
-                  : "-"
-              }
-              className="p-3"
-            />
-
-            <BetweenText
-              type="medium-content"
               labelLeft="Total Transaksi"
               labelRight={`Rp${rupiah(dataSession?.Transaction?.Amount)}`}
-              className="bg-baseLightGray p-3"
+              className="p-3"
             />
 
             <BetweenText
               type="medium-content"
               labelLeft="Tarif Pengecasan"
               labelRight={dataSession?.ChargingFee || "-"}
-              className="p-3"
+              className="bg-baseLightGray p-3"
             />
 
             {status === 6 && (
