@@ -135,7 +135,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
             <p className="text-xs text-black50">{watt}</p>
           </div>
 
-          <IcBike />
+          <IcBike className="text-primary100"/>
         </div>
       </div>
 

@@ -87,6 +87,7 @@ const SessionSettings = () => {
   const { id } = useParams<{ id?: string }>();
 
   const global = useSelector((state: RootState) => state.global);
+  const dataLogin = useSelector((state: RootState) => state.login);
   const addSession = useSelector((state: RootState) => state.addSession);
   const calculateCharge = useSelector(
     (state: RootState) => state.calculateCharge
@@ -112,8 +113,8 @@ const SessionSettings = () => {
     if (isAuthenticated) dispatch(fetchMyUser());
     if (id) dispatch(fetchDeviceById(id));
 
-    dispatch(resetDataCalculateCharge())
-    dispatch(resetDataCalculateDuration())
+    dispatch(resetDataCalculateCharge());
+    dispatch(resetDataCalculateDuration());
   }, []);
 
   useEffect(() => {

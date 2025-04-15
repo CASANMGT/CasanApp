@@ -14,6 +14,7 @@ import IcDana from "./dana.svg?react";
 import IcDownCircleGreen from "./down-circle-green.svg?react";
 import IcDownGray from "./down-gray.svg?react";
 import IcLineDown from "./down-line.svg?react";
+import IcCar from './car.svg?react'
 import IcEditGreen from "./edit-green.svg?react";
 import IcEditWhite from "./edit-white.svg?react";
 import IcElectricityBlack from "./electricity-black.svg?react";
@@ -161,5 +162,6 @@ export {
   IcVehicleBlack,
   IcWallet,
   IcWalletGreen,
+  IcCar,
   IcWalletGreen2,
 };

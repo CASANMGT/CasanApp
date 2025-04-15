@@ -33,6 +33,7 @@ export type OptionsProps = {
   target?: any;
   disabled?: boolean;
   data?: any;
+  icon?: any;
 };
 
 export type chargingLocationProps = {

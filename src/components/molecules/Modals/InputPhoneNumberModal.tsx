@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { REGEX_PHONE_NUMBER_HALF } from "../../../common";
 import { Button, Input } from "../../atoms";
 import ModalContainer from "./ModalContainer";
@@ -17,6 +18,8 @@ const InputPhoneNumberModal: React.FC<InputPhoneNumberModalProps> = ({
   onClick,
   onChange,
 }) => {
+  const navigate = useNavigate();
+
   const onValidation = () => {
     let check: boolean = !REGEX_PHONE_NUMBER_HALF.test(value);
 
@@ -48,9 +51,19 @@ const InputPhoneNumberModal: React.FC<InputPhoneNumberModalProps> = ({
         <div className="text-xs">
           <p>
             Dengan mendaftar, Anda menyetujui{" "}
-            <b className="text-primary100 cursor-pointer">Syarat & Ketentuan</b>{" "}
+            <b
+              onClick={() => navigate("/text-condition")}
+              className="text-primary100 cursor-pointer"
+            >
+              Syarat & Ketentuan
+            </b>{" "}
             dan{" "}
-            <b className="text-primary100 cursor-pointer">Kebijakan Privasi</b>{" "}
+            <b
+              onClick={() => navigate("/privacy-police")}
+              className="text-primary100 cursor-pointer"
+            >
+              Kebijakan Privasi
+            </b>{" "}
             kami.
           </p>
         </div>

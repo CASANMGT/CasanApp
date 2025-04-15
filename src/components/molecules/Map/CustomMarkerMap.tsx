@@ -78,7 +78,7 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
         closeOnClick={false}
         closeOnEscapeKey={false}
       >
-        <div>
+        <div onClick={() => alert()} className="cursor-pointer">
           <p className="!m-0 font-semibold text-xs">
             Rp <span className="text-xl">{`${rupiah(price)}/jam`}</span>
           </p>

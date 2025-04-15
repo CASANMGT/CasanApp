@@ -2,21 +2,24 @@ import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import {
+  IcBike,
+  IcCar,
   IcNotificationBadgesGreen,
   IcNotificationGreen,
   IcPinWhite,
   IcSearchGray,
 } from "../assets";
 import {
-  AVAILABLE_PLACE,
   ChargingStationBody,
   LatLng,
   LIMIT_LIST,
-  SessionListBody,
+  OptionsProps,
+  SessionListBody
 } from "../common";
 import {
-  AvailablePlaceItem,
+  AvailableTypeVehicleItem,
   ChargingLocationCard,
+  Dropdown,
   LoadingPage,
   OngoingItem,
 } from "../components";
@@ -37,7 +40,8 @@ const Home = () => {
   );
 
   const [page, setPage] = useState(1);
-  const [place, setPlace] = useState<string>("Terdekat");
+  const [typeVehicle, setTypeVehicle] = useState<string | number>("bike");
+  const [place, setPlace] = useState<string>("terdekat");
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
 
   useEffect(() => {
@@ -178,15 +182,26 @@ const Home = () => {
           )}
 
           {/* FILTER */}
-          <div className="row gap-3 mt-5">
-            {AVAILABLE_PLACE.map((item: string, index: number) => (
-              <AvailablePlaceItem
-                key={index}
-                label={item}
-                isActive={item === place}
-                onClick={() => setPlace(item)}
-              />
-            ))}
+          <div className="between-x mt-5">
+            <div className="row gap-3 flex-1">
+              {optionsTypeVehicle.map((item, index: number) => (
+                <AvailableTypeVehicleItem
+                  key={index}
+                  data={item}
+                  isActive={item?.value === typeVehicle}
+                  onClick={() => setTypeVehicle(item.value)}
+                />
+              ))}
+            </div>
+
+            <Dropdown
+              select={place}
+              type="sm"
+              placeholder="Voltage"
+              options={optionsPlace}
+              onSelect={(select) => setPlace(select?.value.toString())}
+              className="!w-[120px]"
+            />
           </div>
         </div>
 
@@ -223,3 +238,14 @@ const Home = () => {
 };
 
 export default Home;
+
+const optionsPlace: OptionsProps[] = [
+  { name: "Terdekat", value: "terdekat" },
+  { name: "Termurah", value: "termurah" },
+  { name: "Tersedia", value: "tersedia" },
+];
+
+const optionsTypeVehicle: OptionsProps[] = [
+  { name: "Motor", value: "bike", icon: IcBike },
+  { name: "Mobile", value: "car", icon: IcCar },
+];

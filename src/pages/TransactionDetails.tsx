@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import {
   IcLineDown,
+  IcRightCircleGreen,
   IcSaveGreen,
   IcShareGreen2,
   IcSuccessGreen,
@@ -37,6 +38,7 @@ import {
   rupiah,
 } from "../helpers";
 import { AppDispatch, RootState } from "../store";
+import { div } from "framer-motion/client";
 
 const TransactionDetails = () => {
   const navigate: NavigateFunction = useNavigate();
@@ -162,6 +164,8 @@ const TransactionDetails = () => {
     (status === 3 || status === 4)
       ? true
       : false;
+  const isShowSession =
+    status === 1 && detailSession?.data?.Status !== 6 ? true : false;
 
   return (
     <div className="background-1 py-[14px] px-4">
@@ -349,20 +353,36 @@ const TransactionDetails = () => {
               <Separator className="my-6 bg-black10" />
 
               {status === 1 ? (
-                <div className="between-x gap-6">
-                  <Button
-                    type="secondary"
-                    label="Bagikan Resi"
-                    iconRight={IcShareGreen2}
-                    onClick={handleShare}
-                  />
-                  <Button
-                    type="secondary"
-                    label="Simpan Resi"
-                    iconRight={IcSaveGreen}
-                    onClick={handleSave}
-                  />
-                </div>
+                <>
+                  <div className="between-x gap-6">
+                    <Button
+                      type="secondary"
+                      label="Bagikan Resi"
+                      iconRight={IcShareGreen2}
+                      onClick={handleShare}
+                    />
+                    <Button
+                      type="secondary"
+                      label="Simpan Resi"
+                      iconRight={IcSaveGreen}
+                      onClick={handleSave}
+                    />
+                  </div>
+
+                  {isShowSession && (
+                    <div>
+                      <Separator className="my-6" />
+
+                      <div
+                        onClick={() => navigate(`/session-details/${id}`)}
+                        className="row gap-2 center cursor-pointer"
+                      >
+                        <span className="text-primary100">Lihat Sesi</span>
+                        <IcRightCircleGreen />
+                      </div>
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className="between-y gap-4">
                   <button

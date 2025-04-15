@@ -1,10 +1,12 @@
 import { useCallback, useMemo, useState } from "react";
 import { IcDownGray } from "../../assets";
-import {  OptionsProps } from "../../common";
+import { OptionsProps } from "../../common";
 import Separator from "./Separator";
+import { SwitchLayoutGroupContext } from "framer-motion";
 
 interface DropdownProps {
-  className?:string
+  className?: string;
+  type?: "sm" | "md" | "xl";
   select: string | number | undefined;
   placeholder: string;
   disabled?: boolean;
@@ -14,6 +16,7 @@ interface DropdownProps {
 
 const Dropdown: React.FC<DropdownProps> = ({
   className,
+  type,
   select,
   placeholder,
   options,
@@ -24,6 +27,28 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
+  };
+
+  const getTypeButton = () => {
+    let value: string = "";
+
+    switch (type) {
+      case "sm":
+        value = "h-[28px] px-[14px]";
+        break;
+
+      case "md":
+        break;
+
+      case "xl":
+        break;
+
+      default:
+        value = "h-[48px] px-6";
+        break;
+    }
+
+    return value;
   };
 
   const getValue = useCallback(() => {
@@ -57,7 +82,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     >
       {/* Dropdown Button */}
       <button
-        className="flex items-center justify-between w-full h-[48px] px-6 bg-white border border-baseGray rounded-full shadow-sm hover:bg-gray-100 focus:outline-none"
+        className={`flex items-center justify-between w-full bg-white border border-baseGray rounded-full shadow-sm hover:bg-gray-100 focus:outline-none ${getTypeButton()}`}
         onClick={toggleDropdown}
       >
         {value ? (
@@ -70,14 +95,14 @@ const Dropdown: React.FC<DropdownProps> = ({
             isOpen ? "rotate-180" : "rotate-0"
           }`}
         >
-          <IcDownGray />
+          <IcDownGray className={`${type === "sm" ? "w-5" : ""} h-auto`} />
         </div>
       </button>
 
       {/* Dropdown Menu */}
       {(isOpen || !isOpen) && isShowOption && (
         <div
-          className={`dropdown-menu ${
+          className={`dropdown-menu ${type === "sm" ? "p-1" : "p-3"} ${
             isOpen
               ? "opacity-100 translate-y-0 z-10"
               : "opacity-0 translate-y-2 invisible"
@@ -97,7 +122,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                         setIsOpen(false);
                       }
                     }}
-                    className={`font-medium p-2 ${
+                    className={`font-medium p-2 text-sm ${
                       !isLast && "border-b border-b-baseLightGray"
                     } ${
                       item?.disabled

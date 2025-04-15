@@ -28,6 +28,7 @@ const Location = () => {
     const body: ChargingStationBody = {
       page: 1,
       limit: LIMIT_LIST,
+      is_admin: false,
     };
 
     dispatch(fetchChargingStationLocations(body));

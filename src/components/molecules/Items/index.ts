@@ -1,4 +1,4 @@
-import AvailablePlaceItem from "./AvaialblePlaceItem";
+import AvailableTypeVehicleItem from "./AvailableTypeVehicleItem";
 import CostInformationItem from "./CostInformationItem";
 import DeviceListItem from "./DeviceListItem";
 import MenuItem from "./MenuItem";
@@ -10,7 +10,7 @@ import SocketItem from "./SocketItem";
 import TransactionHistoryItem from "./TransactionHistoryItem";
 
 export {
-  AvailablePlaceItem,
+  AvailableTypeVehicleItem,
   CostInformationItem,
   DeviceListItem,
   MenuItem,
