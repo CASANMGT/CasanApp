@@ -54,6 +54,7 @@ import {
   hideLoading,
   resetDataCalculateCharge,
   resetDataCalculateDuration,
+  resetDataLogin,
   setFromGlobal,
   showLoading,
 } from "../../features";
@@ -82,7 +83,7 @@ const SessionSettings = () => {
   const navigate: NavigateFunction = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, login } = useAuth();
   const { showAlert } = useAlert();
   const { id } = useParams<{ id?: string }>();
 
@@ -161,6 +162,16 @@ const SessionSettings = () => {
   useEffect(() => {
     if (form.balance > 0 || form?.paymentMethod?.key) onNext();
   }, [form?.paymentMethod, form.balance]);
+
+  useEffect(() => {
+    if (dataLogin?.data) {
+      dispatch(resetDataLogin());
+      login();
+      setOpenInputOTP(false);
+      setVisiblePaymentMethod(true);
+      navigate("/session-settings");
+    }
+  }, [dataLogin?.data]);
 
   const onDismiss = () => {
     navigate(-1);

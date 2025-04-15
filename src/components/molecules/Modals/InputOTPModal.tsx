@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
 import {
   fetchLogin,
   fetchSendOTP,
@@ -26,9 +24,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
   phoneNumber,
   onDismiss,
 }) => {
-  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { login } = useAuth();
 
   const dataLogin = useSelector((state: RootState) => state.login);
 
@@ -51,12 +47,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
     if (dataLogin?.loading) dispatch(showLoading());
     else dispatch(hideLoading());
 
-    if (dataLogin?.data) {
-      dispatch(resetDataLogin());
-      login();
-      navigate("/session-settings");
-      onDismiss();
-    } else if (dataLogin?.error) {
+    if (dataLogin?.error) {
       dispatch(resetDataLogin());
       setLabelError("kode verifikasi tidak valid");
     }
