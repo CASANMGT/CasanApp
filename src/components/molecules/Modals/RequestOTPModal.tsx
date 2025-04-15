@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { formatPhoneNumber } from "../../../helpers";
 import { Button } from "../../atoms";
 import ModalContainer from "./ModalContainer";
@@ -16,7 +15,9 @@ const RequestOTPModal: React.FC<RequestOTPProps> = ({
   onDismiss,
   onClick,
 }) => {
-  const navigate = useNavigate();
+  const openBlank = (path: string) => {
+    window.open(path, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <ModalContainer isOpen={open} onDismiss={onDismiss}>
@@ -39,14 +40,14 @@ const RequestOTPModal: React.FC<RequestOTPProps> = ({
           <p>
             Dengan mendaftar, Anda menyetujui{" "}
             <b
-              onClick={() => navigate("/text-condition")}
+              onClick={() => openBlank("/text-condition")}
               className="text-primary100 cursor-pointer"
             >
               Syarat & Ketentuan
             </b>{" "}
             dan{" "}
             <b
-              onClick={() => navigate("/privacy-police")}
+              onClick={() => openBlank("/privacy-police")}
               className="text-primary100 cursor-pointer"
             >
               Kebijakan Privasi

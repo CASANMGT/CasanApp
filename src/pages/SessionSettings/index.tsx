@@ -498,7 +498,7 @@ const SessionSettings = () => {
       />
 
       <InputPhoneNumberModal
-        open={openInputPhoneNumber}
+        open={!openInputPhoneNumber}
         value={form.phoneNumber}
         onDismiss={() => setOpenInputPhoneNumber(false)}
         onChange={(value) => setForm("phoneNumber", value)}
