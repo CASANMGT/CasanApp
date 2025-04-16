@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ILFlashLogo, ILLogo } from "../assets";
+import { PRODUCTION } from "../common";
 import { useAuth } from "../context/AuthContext";
+const cluster = import.meta.env.VITE_CLUSTER;
 
 const Splash = () => {
   const { isAuthenticated } = useAuth();
@@ -14,8 +16,8 @@ const Splash = () => {
   const setUp = () => {
     setTimeout(() => {
       let nextPage: string;
-
-      if (isAuthenticated) nextPage = "/home";
+      if (cluster === PRODUCTION) nextPage = "/coming-soon";
+      else if (isAuthenticated) nextPage = "/home";
       else nextPage = "/login";
 
       navigate(nextPage, { replace: true });

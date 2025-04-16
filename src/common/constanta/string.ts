@@ -1,7 +1,9 @@
 export const VERSION: string = "1.0.0";
-export const CUSTOMER_SERVICES:string='085143489403'
-export const INVALID_TOKEN = "Invalid token"
-export const ERROR_MESSAGE = "Something wen't wrong"
+export const STAGING: string = "STAGING";
+export const PRODUCTION: string = "PRODUCTION";
+export const CUSTOMER_SERVICES: string = "085143489403";
+export const INVALID_TOKEN = "Invalid token";
+export const ERROR_MESSAGE = "Something wen't wrong";
 
 // PAYMENT METHOD
 export const QRIS: string = "qris";
