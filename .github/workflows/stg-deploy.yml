@@ -30,8 +30,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY_STG }}
           script: |
             cd /home/root/casan-frontend
-            echo "${{ secrets.STG_ENV}}"
             echo "${{ secrets.STG_ENV}}" > .env
-            head -n 1 .env
             docker-compose down
             docker-compose up -d --build
