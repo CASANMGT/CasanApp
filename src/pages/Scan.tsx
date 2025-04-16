@@ -1,5 +1,4 @@
 import { BrowserMultiFormatReader } from "@zxing/library";
-import { isNumber } from "lodash";
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { IcInfoCircleBlack } from "../assets";
