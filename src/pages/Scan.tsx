@@ -1,5 +1,5 @@
 import { BrowserMultiFormatReader } from "@zxing/library";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IcInfoCircleBlack } from "../assets";
 import { ERROR_MESSAGE } from "../common";
@@ -11,27 +11,42 @@ const Scan = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const codeReader = new BrowserMultiFormatReader();
 
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [torchOn, setTorchOn] = useState(false);
+
+  const isUseMobile: boolean = useIsMobile();
+
   useEffect(() => {
     const startScanner = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment" },
-        });
+        const constraints = {
+          video: isUseMobile
+            ? {
+                facingMode: { exact: "environment" }, // Rear camera
+              }
+            : { facingMode: "environment" },
+        };
+
+        const mediaStream = await navigator.mediaDevices.getUserMedia(
+          constraints
+        );
 
         if (videoRef.current) {
-          videoRef.current.srcObject = stream;
+          videoRef.current.srcObject = mediaStream;
           videoRef.current.play();
         }
 
+        if (isUseMobile) setStream(mediaStream);
+
         // Decode barcode once from video
         const result = await codeReader.decodeOnceFromStream(
-          stream,
+          mediaStream,
           videoRef.current!
         );
 
         onNext(result.getText()); // Save the scanned result
 
-        stream.getTracks().forEach((track) => track.stop());
+        mediaStream.getTracks().forEach((track) => track.stop());
       } catch (error) {
         console.error("Error scanning barcode:", error);
       }
@@ -44,6 +59,34 @@ const Scan = () => {
       codeReader.reset();
     };
   }, []);
+
+  useEffect(() => {
+    if (isUseMobile) toggleTorch();
+  }, [stream]);
+
+  const toggleTorch = async () => {
+    if (!stream) return;
+
+    const videoTrack = stream.getVideoTracks()[0];
+    const capabilities = (videoTrack.getCapabilities?.() || {}) as {
+      torch?: boolean;
+    };
+
+    if (capabilities.torch) {
+      try {
+        const constraints = {
+          advanced: [{ torch: !torchOn }],
+        } as MediaTrackConstraints & { advanced: Array<{ torch: boolean }> };
+
+        await videoTrack.applyConstraints(constraints);
+        setTorchOn(!torchOn);
+      } catch (err) {
+        console.error("Torch toggle failed:", err);
+      }
+    } else {
+      console.warn("Torch not supported on this device.");
+    }
+  };
 
   const onDismiss = () => {
     navigate(-1);
@@ -92,3 +135,17 @@ const Scan = () => {
 };
 
 export default Scan;
+
+export const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const userAgent = navigator.userAgent || navigator.vendor;
+    const mobile = /android|iphone|ipad|ipod/i.test(userAgent);
+    const touch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
+    setIsMobile(mobile && touch);
+  }, []);
+
+  return isMobile;
+};
