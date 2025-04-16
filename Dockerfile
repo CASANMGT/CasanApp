@@ -15,6 +15,7 @@ ENV VITE_API_URL=$VITE_API_URL
 
 RUN yarn build
 
+
 FROM node:20
 
 RUN yarn global add serve
