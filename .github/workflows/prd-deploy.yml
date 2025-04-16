@@ -1,0 +1,35 @@
+name: Deploy Go App
+
+on:
+  push:
+    branches: [prd]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Copy project files to VM (excluding .env)
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "."
+          target: "/home/root/casan-frontend"
+          strip_components: 1 # optional if your folder is nested
+
+      - name: SSH and run Docker Compose
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/root/casan-frontend
+            echo "${{ secrets.PRD_ENV}}" > .env
+            docker-compose down
+            docker-compose up -d --build

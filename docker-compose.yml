@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  fe1:
+    build: .
+    ports:
+      - "8050:8080"
+    env_file:
+      - .env
