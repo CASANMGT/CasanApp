@@ -3,13 +3,14 @@ import {
   IcBackBlack,
   IcBackWhite,
   IcClose,
+  IcCustomerService,
   IcFlashOff,
   IcFlashOn,
-  IcMenuBlack,
+  IcMenuBlack
 } from "../../assets";
 
 interface HeaderProps {
-  type?: "primary" | "secondary" | "scan";
+  type?: "primary" | "secondary" | "scan" | "cancel" | "charging";
   title: string;
   isActive?: boolean;
   className?: string;
@@ -65,28 +66,37 @@ const Header: React.FC<HeaderProps> = ({
           </div>
         ) : (
           <div
-            onClick={() => setIsOpen((prev) => !prev)}
+            onClick={() => {
+              if (type === "charging" && onPress) onPress();
+              else setIsOpen((prev) => !prev);
+            }}
             className="relative w-10 h-10 rounded-full center cursor-pointer bg-baseLightGray/70"
           >
-            <div className="rotate-90">
-              <IcMenuBlack />
-            </div>
+            {type === "charging" ? (
+              <IcCustomerService />
+            ) : (
+              <>
+                <div className="rotate-90">
+                  <IcMenuBlack />
+                </div>
 
-            {isOpen && (
-              <div
-                onClick={onPress}
-                className={`absolute right-0 top-11 flex gap-2 p-3 rounded-lg bg-white transform transition-all duration-200 cursor-pointer ${
-                  isOpen
-                    ? "opacity-100 translate-y-0 z-10"
-                    : "opacity-0 translate-y-2 invisible"
-                }`}
-              >
-                <IcClose className="text-red" />
+                {isOpen && (
+                  <div
+                    onClick={onPress}
+                    className={`absolute right-0 top-11 flex gap-2 p-3 rounded-lg bg-white transform transition-all duration-200 cursor-pointer ${
+                      isOpen
+                        ? "opacity-100 translate-y-0 z-10"
+                        : "opacity-0 translate-y-2 invisible"
+                    }`}
+                  >
+                    <IcClose className="text-red" />
 
-                <span className="text-red whitespace-nowrap">
-                  Batalkan Sesi
-                </span>
-              </div>
+                    <span className="text-red whitespace-nowrap">
+                      Batalkan Sesi
+                    </span>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )

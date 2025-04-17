@@ -5,12 +5,14 @@ import CountdownTimer from "./CountdownTimer";
 interface StatusIndicatorProps {
   className?: string;
   type: number;
+  port: number;
   duration: number;
   onFinish: () => void;
 }
 
 const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   type,
+  port,
   duration,
   className,
   onFinish,
@@ -52,13 +54,12 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
                   isCharging ? "bg-primary10" : "bg-secondary10"
                 }`}
               >
-                {isCharging ? <IcBattery /> : <IcStandBy />}
                 <span
-                  className={`text-xs ${
+                  className={`text-xs font-medium ${
                     isCharging ? "text-primary100" : "text-[#E8A126]"
                   }`}
                 >
-                  {isCharging ? "Charging" : "Stand By"}
+                  {`Socket ${port}`}
                 </span>
               </div>
             </div>

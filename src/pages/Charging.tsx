@@ -2,16 +2,18 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
+  IcBattery,
   IcClockGreen,
   IcFlashGreen,
   IcInfoCircleGreen,
   IcInfoCircleRed,
   IcMarkerSmall,
+  IcStandBy,
   IcSuccessGreen,
   IcWalletGreen,
   ILCharging,
 } from "../assets";
-import { CalculateDurationBody, Session } from "../common";
+import { CalculateDurationBody, CUSTOMER_SERVICES, Session } from "../common";
 import {
   AlertModal,
   BetweenText,
@@ -34,7 +36,7 @@ import {
   resetDataStopSession,
   showLoading,
 } from "../features";
-import { formatDuration, moments, rupiah } from "../helpers";
+import { formatDuration, moments, openWhatsApp, rupiah } from "../helpers";
 import { AppDispatch, RootState } from "../store";
 
 const Charging = () => {
@@ -55,13 +57,21 @@ const Charging = () => {
     useState<boolean>(false);
   const [openFinished, setOpenFinished] = useState<boolean>(false);
   const [openStop, setOpenStop] = useState<boolean>(false);
+  const [openCS, setOpenCS] = useState<boolean>(false);
 
   useEffect(() => {
     getData();
   }, []);
 
   useEffect(() => {
-    if (detailSession?.data?.Status === 5) timeoutProgress();
+    if (
+      detailSession?.data?.Status === 3 ||
+      detailSession?.data?.Status === 4 ||
+      detailSession?.data?.Status === 5
+    ) {
+      if (detailSession?.data?.Status === 5) setOpenDiagnosis(false);
+      timeoutProgress();
+    }
   }, [detailSession?.data]);
 
   useEffect(() => {
@@ -160,18 +170,19 @@ const Charging = () => {
     .add(dataSession?.ExpectedDuration || 0, "seconds")
     .diff(moments(), "seconds");
 
+  const isCharging: boolean = status === 5 || status === 6 ? true : false;
+
   return (
     <div className="background-1 pt-3 overflow-hidden flex flex-col justify-between">
       <Header
-        type="secondary"
+        type={detailSession?.data?.Status !== 5 ? "cancel" : "charging"}
         title="Halaman Pengisian"
         onDismiss={onDismiss}
         className="mx-4 mb-4"
-        onPress={
-          detailSession?.data?.Status !== 5
-            ? () => setOpenCancel(true)
-            : undefined
-        }
+        onPress={() => {
+          if (detailSession?.data?.Status !== 5) setOpenCancel(true);
+          else openWhatsApp(CUSTOMER_SERVICES)
+        }}
       />
 
       <LoadingPage
@@ -204,15 +215,8 @@ const Charging = () => {
             />
           </div>
 
-          {/* STATUS */}
-          <StatusIndicator
-            type={status || 2}
-            duration={duration > 0 ? duration : 0}
-            onFinish={getData}
-            className="mt-8 mb-7"
-          />
-
-          <div className="flex justify-center mb-5">
+          {/* LOCATION */}
+          <div className="flex justify-center mt-8">
             <div className="flex items-center gap-2 bg-white rounded-full px-2.5 py-1.5">
               <IcMarkerSmall />
 
@@ -221,6 +225,32 @@ const Charging = () => {
               </span>
 
               <Signal signalValue={dataSession?.Device?.SignalValue} />
+            </div>
+          </div>
+
+          {/* STATUS */}
+          <StatusIndicator
+            type={status || 2}
+            duration={duration > 0 ? duration : 0}
+            port={dataSession?.Socket?.Port || 0}
+            onFinish={getData}
+            className="my-5"
+          />
+
+          <div className="flex justify-center mb-5 ">
+            <div
+              className={`rounded-full h-6 px-2.5 space-x-2 flex items-center shadow bg-white ${
+                isCharging ? "border border-primary10" : ""
+              }`}
+            >
+              {isCharging ? <IcBattery /> : <IcStandBy />}
+              <span
+                className={`text-xs font-medium ${
+                  isCharging ? "text-primary100" : "text-[#E8A126]"
+                }`}
+              >
+                {isCharging ? "Charging" : "Stand By"}
+              </span>
             </div>
           </div>
 
@@ -236,8 +266,15 @@ const Charging = () => {
 
             <BetweenText
               type="medium-content"
+              labelLeft="Sesi ID"
+              labelRight={id || ""}
+              className="p-3"
+            />
+
+            <BetweenText
+              type="medium-content"
               labelLeft="Alat"
-              labelRight={`${dataSession?.Device?.PileNumber}, Socket ${dataSession?.Socket?.Port}`}
+              labelRight={dataSession?.Device?.PileNumber || ""}
               className="bg-baseLightGray rounded-t p-3"
             />
 
