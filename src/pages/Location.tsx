@@ -1,13 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import {
-  IcBackBlack,
-  IcMenuWhite,
-  IcMyLocationBlack,
-  IcSearchBlack,
-} from "../assets";
-import { ChargingStationBody, LIMIT_LIST } from "../common";
+import { IcMenuWhite, IcMyLocationBlack } from "../assets";
+import { ChargingStationBody, LatLng, LIMIT_LIST } from "../common";
 import { LoadingPage, Map } from "../components";
 import { fetchChargingStationLocations } from "../features";
 import { AppDispatch, RootState } from "../store";
@@ -19,6 +14,8 @@ const Location = () => {
   const chargingStationLocations = useSelector(
     (state: RootState) => state?.chargingStationLocations
   );
+
+  const [currentLocation, setCurrentLocation] = useState<LatLng>();
 
   useEffect(() => {
     getData();
@@ -34,8 +31,33 @@ const Location = () => {
     dispatch(fetchChargingStationLocations(body));
   };
 
-  const onDismiss = () => {
-    navigate(-1);
+  const getCurrentLocation = () => {
+    if (!window.google || !window.google.maps) {
+      console.error("Google Maps API not loaded");
+      return;
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setCurrentLocation([latitude, longitude]);
+        },
+        (err) => {
+          if (err.code === err.PERMISSION_DENIED) {
+            console.log("User denied the request for Geolocation.");
+          } else if (err.code === err.POSITION_UNAVAILABLE) {
+            console.log("Location information is unavailable.");
+          } else if (err.code === err.TIMEOUT) {
+            console.log("The request to get user location timed out.");
+          } else {
+            console.log("An unknown error occurred.");
+          }
+        }
+      );
+    } else {
+      console.error("Geolocation not supported");
+    }
   };
 
   const onShowAll = () => {
@@ -47,21 +69,24 @@ const Location = () => {
       <LoadingPage loading={chargingStationLocations?.loading}>
         <div className=" w-full h-full relative">
           {/* MAP */}
-          <Map data={chargingStationLocations?.data?.data} />
+          <Map
+            data={chargingStationLocations?.data?.data}
+            myLocation={currentLocation}
+          />
 
           {/* SEARCH */}
-          <div
+          {/* <div
             onClick={onShowAll}
             className="absolute top-4 left-4 right-4 row gap-2 flex-1 bg-white h-10 rounded-full drop-shadow px-4 cursor-pointer"
           >
             <p className="flex-1 text-black100/50 font-medium">Cari Lokasi</p>
             <IcSearchBlack />
-          </div>
+          </div> */}
 
           {/* MY LOCATION */}
           <div
-            onClick={() => alert("coming soon")}
-            className="absolute left-4 bottom-[94px] bg-white p-2 rounded-lg drop-shadow cursor-pointe"
+            onClick={getCurrentLocation}
+            className="absolute left-4 bottom-[94px] bg-white p-2 rounded-lg drop-shadow cursor-pointer"
           >
             <IcMyLocationBlack />
           </div>

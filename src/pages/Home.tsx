@@ -14,7 +14,7 @@ import {
   LatLng,
   LIMIT_LIST,
   OptionsProps,
-  SessionListBody
+  SessionListBody,
 } from "../common";
 import {
   AvailableTypeVehicleItem,
@@ -142,7 +142,7 @@ const Home = () => {
           </div>
 
           {/* SEARCH */}
-          <div className="row gap-3 mt-2.5 mb-5">
+          {/* <div className="row gap-3 mt-2.5 mb-5">
             <div
               onClick={onSearch}
               className="row px-3 h-10 rounded-full bg-baseLightGray/70 gap-2.5 flex-1 cursor-pointer"
@@ -160,7 +160,7 @@ const Home = () => {
             >
               {false ? <IcNotificationBadgesGreen /> : <IcNotificationGreen />}
             </div>
-          </div>
+          </div> */}
 
           {/* CAROUSEL */}
           {/* <Carousel slides={slidesDummy} /> */}
@@ -182,7 +182,7 @@ const Home = () => {
           )}
 
           {/* FILTER */}
-          <div className="between-x mt-5">
+          {/* <div className="between-x mt-5">
             <div className="row gap-3 flex-1">
               {optionsTypeVehicle.map((item, index: number) => (
                 <AvailableTypeVehicleItem
@@ -202,7 +202,7 @@ const Home = () => {
               onSelect={(select) => setPlace(select?.value.toString())}
               className="!w-[120px]"
             />
-          </div>
+          </div> */}
         </div>
 
         {/* CHARGING LIST */}

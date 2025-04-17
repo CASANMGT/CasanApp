@@ -54,8 +54,8 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
   ) {
     const filtered = data?.PriceSetting?.PriceBaseRules[0].PriceBaseTime.filter(
       (e) =>
-        timeToSeconds(e?.PriceTimeRule.From) >= currentTime &&
-        currentTime <= timeToSeconds(e?.PriceTimeRule.To)
+        currentTime > timeToSeconds(e?.PriceTimeRule.From) &&
+        currentTime < timeToSeconds(e?.PriceTimeRule.To)
     )[0];
 
     price = filtered?.Value || 0;
@@ -78,7 +78,7 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
         closeOnClick={false}
         closeOnEscapeKey={false}
       >
-        <div onClick={() => alert()} className="cursor-pointer">
+        <div >
           <p className="!m-0 font-semibold text-xs">
             Rp <span className="text-xl">{`${rupiah(price)}/jam`}</span>
           </p>

@@ -86,7 +86,7 @@ const LocationList = () => {
           <IcBackBlack />
         </div>
 
-        {!loading && !chargingStationLocations?.loading && (
+        {/* {!loading && !chargingStationLocations?.loading && (
           <div
             onClick={onSearch}
             className="row gap-2 flex-1 bg-baseLightGray/70 h-10 rounded-full drop-shadow px-4 cursor-pointer"
@@ -96,7 +96,7 @@ const LocationList = () => {
               Cari lokasi pengecekan
             </p>
           </div>
-        )}
+        )} */}
       </div>
 
       <LoadingPage loading={loading || chargingStationLocations?.loading}>
@@ -108,11 +108,11 @@ const LocationList = () => {
               isActive={type === "Semua"}
               onClick={() => setType("Semua")}
             />
-            <Label
+            {/* <Label
               label="Tersedia"
               isActive={type === "Tersedia"}
               onClick={() => setType("Tersedia")}
-            />
+            /> */}
           </div>
 
           <div className="row rounded-full bg-white/30 h-[28px] center px-[14px] text-xs text-primary100">

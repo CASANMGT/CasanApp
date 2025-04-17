@@ -79,15 +79,15 @@ const Profile = () => {
             <span className="text-xl text-white font-semibold">
               {formatPhoneNumber(myUser?.data?.Phone || "")}
             </span>
-            <IcEditWhite onClick={onEdit} className="cursor-pointer" />
+            {/* <IcEditWhite onClick={onEdit} className="cursor-pointer" /> */}
           </div>
 
-          <div
+          {/* <div
             onClick={onNotification}
             className="center w-10 h-10 rounded-full bg-baseLightGray/70 cursor-pointer"
           >
             <IcNotificationGreen />
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -107,7 +107,7 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="row gap-3">
+          {/* <div className="row gap-3">
             <Button
               type="secondary"
               buttonType="sm"
@@ -115,7 +115,7 @@ const Profile = () => {
               onClick={onRefund}
             />
             <Button buttonType="sm" label="Top Up" onClick={onTopUp} />
-          </div>
+          </div> */}
         </div>
 
         <div className="row gap-1 px-3 py-2">
@@ -127,7 +127,7 @@ const Profile = () => {
       </div>
 
       {/* MENU 1 */}
-      <div className="mx-4 mt-3 px-3 py-4 bg-white rounded-lg">
+      {/* <div className="mx-4 mt-3 px-3 py-4 bg-white rounded-lg">
         <MenuItem
           icon={IcVehicleBlack}
           label="Kendaraan Saya"
@@ -141,7 +141,7 @@ const Profile = () => {
           label="Atur Pin Cazz"
           onClick={() => onNext("input-pin")}
         />
-      </div>
+      </div> */}
 
       {/* MENU 2 */}
       <div className="mx-4 mt-4 px-3 py-4 bg-white rounded-lg">
@@ -159,9 +159,9 @@ const Profile = () => {
           onClick={() => onNext("transaction-history")}
         />
 
-        <Separator className="my-4" />
+        {/* <Separator className="my-4" /> */}
 
-        <MenuItem icon={IcCashBlack} label="Akun Bank" onClick={onMyVehicle} />
+        {/* <MenuItem icon={IcCashBlack} label="Akun Bank" onClick={onMyVehicle} /> */}
 
         <Separator className="my-4" />
 
@@ -171,13 +171,13 @@ const Profile = () => {
           onClick={onMyVehicle}
         />
 
-        <Separator className="my-4" />
+        {/* <Separator className="my-4" />
 
         <MenuItem
           icon={IcSettingBlack}
           label="Pengaturan"
           onClick={onMyVehicle}
-        />
+        /> */}
       </div>
 
       <div

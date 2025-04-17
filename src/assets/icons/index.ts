@@ -82,8 +82,10 @@ import IcVehicleBlack from "./vehicle-black.svg?react";
 import IcWalletGreen2 from "./wallet-green-2.svg?react";
 import IcWalletGreen from "./wallet-green.svg?react";
 import IcWallet from "./wallet.svg?react";
+import IcMyLocation from './my-location.png'
 
 export {
+  IcMyLocation,
   IcAstraPay,
   IcBackBlack,
   IcBackWhite,

@@ -148,6 +148,14 @@ const TransactionDetails = () => {
     else navigate(-1);
   };
 
+  const onViewSession = () => {
+    let nextPage = "charging";
+
+    if (detailSession?.data?.Status === 6) nextPage = "session-details";
+
+    navigate(`/${nextPage}/${id}`);
+  };
+
   const IconPayment = getIconPaymentMethod(
     (detailSession?.data?.Transaction?.PaymentMethod || "")
       .split("_")[0]
@@ -164,8 +172,6 @@ const TransactionDetails = () => {
     (status === 3 || status === 4)
       ? true
       : false;
-  const isShowSession =
-    status === 1 && detailSession?.data?.Status !== 6 ? true : false;
 
   return (
     <div className="background-1 py-[14px] px-4">
@@ -369,19 +375,17 @@ const TransactionDetails = () => {
                     />
                   </div>
 
-                  {isShowSession && (
-                    <div>
-                      <Separator className="my-6" />
+                  <div>
+                    <Separator className="my-6" />
 
-                      <div
-                        onClick={() => navigate(`/charging/${id}`)}
-                        className="row gap-2 center cursor-pointer"
-                      >
-                        <span className="text-primary100">Lihat Sesi</span>
-                        <IcRightCircleGreen />
-                      </div>
+                    <div
+                      onClick={onViewSession}
+                      className="row gap-2 center cursor-pointer"
+                    >
+                      <span className="text-primary100">Lihat Sesi</span>
+                      <IcRightCircleGreen />
                     </div>
-                  )}
+                  </div>
                 </>
               ) : (
                 <div className="between-y gap-4">
