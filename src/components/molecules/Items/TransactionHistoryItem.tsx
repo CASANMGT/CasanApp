@@ -1,5 +1,5 @@
 import { IcFuel, IcMoneyReceive, IcMoneySend } from "../../../assets";
-import { Balance, DataTransaction } from "../../../common";
+import { DataTransaction } from "../../../common";
 import { moments, rupiah } from "../../../helpers";
 import { Separator } from "../../atoms";
 
@@ -12,41 +12,9 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
   data,
   onClick,
 }) => {
-  const cloneData: DataTransaction & Balance = data;
+  const cloneData: DataTransaction = data;
+  const dataBalance = data;
   const isTransaction = cloneData?.Transaction?.ID ? true : false;
-
-  const getLabelType = () => {
-    let value: string;
-
-    switch (
-      isTransaction ? cloneData?.Transaction?.Status : cloneData?.Status
-    ) {
-      case 1:
-        value =
-          isTransaction && cloneData?.Transaction?.Type === 2
-            ? "Pengisian Daya"
-            : "Top-Up";
-        break;
-
-      case 2:
-        value = "Refund Sesi";
-        break;
-
-      case 3:
-        value = "Bayar Sesi";
-        break;
-
-      case 4:
-        value = "Penarikan Saldo";
-        break;
-
-      default:
-        value = "";
-        break;
-    }
-
-    return value;
-  };
 
   const getLabelStatus = () => {
     let value: string;
@@ -99,9 +67,9 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
       <div onClick={onClick} className="between-x cursor-pointer">
         <div className="row gap-2">
           <div className="w-9 h-9 center rounded-full bg-primary100/10">
-            {cloneData?.Status === 1 || cloneData?.Status === 2 ? (
+            {dataBalance?.Status === 1 || dataBalance?.Status === 2 ? (
               <IcMoneyReceive />
-            ) : cloneData?.Status === 3 || cloneData?.Status === 4 ? (
+            ) : dataBalance?.Status === 3 || dataBalance?.Status === 4 ? (
               <IcMoneySend />
             ) : (
               <IcFuel className="text-primary100" />
@@ -122,7 +90,9 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
             <div className="row gap-1">
               <p className="text-xs text-black100/70">
                 {moments(
-                  cloneData?.Session?.StartChargingTime || cloneData?.CreatedAt
+                  cloneData?.Session?.StartChargingTime ||
+                    cloneData?.Transaction?.CreatedAt ||
+                    dataBalance?.CreatedAt
                 ).format("DD MMM YYYY HH:mm")}
               </p>
               {isTransaction && (
@@ -141,11 +111,11 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
         <p className="text-blackBold font-semibold">{`${
           isTransaction
             ? "-"
-            : cloneData?.Status === 1 || cloneData?.Status === 2
+            : dataBalance?.Status === 1 || dataBalance?.Status === 2
             ? "+"
             : "-"
         }Rp${rupiah(
-          cloneData?.Transaction?.DueAmount || Math.abs(cloneData?.Amount)
+          cloneData?.Transaction?.DueAmount || Math.abs(dataBalance?.Amount)
         )}`}</p>
       </div>
 

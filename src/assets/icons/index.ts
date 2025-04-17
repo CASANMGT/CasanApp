@@ -32,6 +32,8 @@ import IcInfoCircle from "./info-circle.svg?react";
 import IcInfoCircleRed from "./info-circle-red.svg?react";
 import IcInfoRed from "./info-red.svg?react";
 import IcBackBlack from "./left-black.svg?react";
+import IcFlashOn from './flash-on.svg?react'
+import IcFlashOff from './flash-off.svg?react'
 import IcBackWhite from "./left-white.svg?react";
 import IcLinkAja from "./link-aja.svg?react";
 import IcLocationActive from "./location-active.svg?react";
@@ -164,4 +166,6 @@ export {
   IcWalletGreen,
   IcCar,
   IcWalletGreen2,
+  IcFlashOff,
+  IcFlashOn
 };

@@ -247,5 +247,5 @@ const optionsPlace: OptionsProps[] = [
 
 const optionsTypeVehicle: OptionsProps[] = [
   { name: "Motor", value: "bike", icon: IcBike },
-  { name: "Mobile", value: "car", icon: IcCar },
+  // { name: "Mobile", value: "car", icon: IcCar },
 ];

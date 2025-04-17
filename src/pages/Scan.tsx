@@ -60,10 +60,6 @@ const Scan = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (isUseMobile) toggleTorch();
-  }, [stream]);
-
   const toggleTorch = async () => {
     if (!stream) return;
 
@@ -101,10 +97,12 @@ const Scan = () => {
   return (
     <div className="container-screen !bg-black overflow-hidden flex flex-col relative">
       <Header
-        className="z-10"
-        type="secondary"
+        type="scan"
         title="Scan Barcode"
         onDismiss={onDismiss}
+        isActive={torchOn}
+        onPress={isUseMobile ? toggleTorch : undefined}
+        className="z-10"
       />
 
       {/* Video Feed */}

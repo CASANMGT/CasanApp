@@ -1,5 +1,5 @@
 import { IcCustomerServiceBlack } from "../../assets";
-import { CUSTOMER_SERVICES, DaysOfWeek, OperationalHour } from "../../common";
+import { DaysOfWeek, OperationalHour } from "../../common";
 import { Button, Separator } from "../../components";
 import {
   convertToReadableHours,
@@ -8,10 +8,11 @@ import {
 } from "../../helpers";
 
 interface BasicInformationProps {
+  phone: string;
   data: OperationalHour[];
 }
 
-const BasicInformation: React.FC<BasicInformationProps> = ({ data }) => {
+const BasicInformation: React.FC<BasicInformationProps> = ({ phone, data }) => {
   const isAllSame: boolean = convertToReadableHours(data);
 
   return (
@@ -41,7 +42,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ data }) => {
         <div className="row gap-2">
           <IcCustomerServiceBlack />
           <span className="font-medium">
-            {formatPhoneNumber(CUSTOMER_SERVICES)}
+            {phone ? formatPhoneNumber(phone) : "-"}
           </span>
         </div>
 
@@ -50,7 +51,9 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ data }) => {
             type="light-green"
             buttonType="sm"
             label="Contact Us ->"
-            onClick={() => openWhatsApp(CUSTOMER_SERVICES)}
+            onClick={() => {
+              if (phone) openWhatsApp(phone);
+            }}
             // className="!h-[24px] text-xs"
           />
         </div>

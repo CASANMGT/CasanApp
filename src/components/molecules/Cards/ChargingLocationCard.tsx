@@ -1,16 +1,10 @@
-import {
-  IcBike,
-  IcLineDown,
-  IcFuel,
-  IcShareGreen,
-  ILNoImage,
-} from "../../../assets";
+import { IcBike, IcFuel, IcLineDown, ILNoImage } from "../../../assets";
 import { ChargingStation, LatLng } from "../../../common";
 import {
   getDistanceFromLatLonInKm,
   moments,
   rupiah,
-  timeToSeconds,
+  timeToSeconds
 } from "../../../helpers";
 import { Button } from "../../atoms";
 
@@ -35,14 +29,19 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
 }) => {
   const currentTime = timeToSeconds(moments().format("HH:mm"));
 
-  const isFull: boolean = false;
   const distance = getDistanceFromLatLonInKm(
     { lat: data?.Location?.Latitude, lon: data?.Location?.Longitude },
     currentLocation
   );
+  let isFull: boolean = false;
+  let isDisconnect: boolean = false;
   let price: number = 0;
   let watt: string = "";
-  let available: number = 0;
+  let totalSocket: number = 0;
+  let totalAvailable: number = 0;
+  let totalFull: number = 0;
+  let totalDisconnect: number = 0;
+  let timeFinished: number = 0;
 
   if (
     data?.PriceSetting?.PriceBaseRules &&
@@ -61,11 +60,52 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   }
 
   if (data?.Devices && data?.Devices.length) {
-    available = data?.Devices.reduce(
+    totalSocket = data?.Devices.reduce(
       (accumulator, currentValue) =>
         accumulator + (currentValue.Sockets.length || 0),
       0
     );
+
+    for (const key in data?.Devices) {
+      const element = data?.Devices[key];
+
+      if (element?.Sockets && element?.Sockets?.length) {
+        for (const i in element?.Sockets) {
+          const e = element?.Sockets[i];
+
+          if (e.IsCharging === 0) totalAvailable += 1;
+          if (e.IsCharging === 1) totalFull += 1;
+          if (e.IsCharging === 3) totalDisconnect += 1;
+        }
+      }
+    }
+
+    if (totalAvailable <= 0) {
+      if (totalSocket === totalFull) isFull = true;
+      else if (totalSocket === totalDisconnect) isDisconnect = true;
+    }
+
+    if (isFull) {
+      const dataCombine = [];
+
+      for (const key in data?.Devices) {
+        const element = data?.Devices[key];
+
+        for (const item of element?.Sockets) {
+          dataCombine.push(item);
+        }
+      }
+
+      const now = new Date("2025-04-15T12:00:00Z");
+      const nextDate = dataCombine
+        .map((dateStr) => new Date(dateStr.CreatedAt))
+        .filter((date) => date > now)
+        .sort((a, b) => a.getTime() - b.getTime())[0];
+
+      const result = nextDate?.toISOString() || null;
+      const diff = moments(result).diff(moments(), "seconds");
+      timeFinished = Math.floor((diff % 3600) / 60);
+    }
   }
 
   return (
@@ -97,20 +137,36 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
             <div className="row gap-2.5">
               <div
                 className={`h-[30px] w-[30px] rounded p-2 ${
-                  isFull ? "bg-lightRed" : "bg-primary100/10"
+                  isFull
+                    ? "bg-lightRed"
+                    : isDisconnect
+                    ? "bg-black10"
+                    : "bg-primary10"
                 }`}
               >
-                <IcFuel className={isFull ? "text-red" : "text-primary100"} />
+                <IcFuel
+                  className={
+                    isFull
+                      ? "text-red"
+                      : isDisconnect
+                      ? "text-black50"
+                      : "text-primary100"
+                  }
+                />
               </div>
 
               {isFull ? (
                 <div>
                   <p className="font-semibold text-xs text-red">Sedang Penuh</p>
-                  <p className="text-[10px] text-red">30 menit lagi</p>
+                  <p className="text-[10px] text-red">{`Tunggu ${timeFinished} mnt`}</p>
                 </div>
+              ) : isDisconnect ? (
+                <span className="text-xs font-semibold text-black70">
+                  Sedang Tutup
+                </span>
               ) : (
                 <div className="flex flex-row gap-1 relative">
-                  <p className="text-lg font-semibold">{available}</p>
+                  <p className="text-lg font-semibold">{`${totalAvailable}/${totalSocket}`}</p>
                   <p className="text-xs self-end mb-1 text-black50 font-medium">
                     tersedia
                   </p>
@@ -118,24 +174,20 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
               )}
             </div>
 
-            <div className="row gap-2">
-              <p className="text-xs text-primary100 font-medium">{`${distance}km dari anda`}</p>
-
-              <div className="p-[5px] rounded-full bg-primary10">
-                <IcShareGreen />
-              </div>
-            </div>
+            <p className="text-xs text-primary100 font-medium">{`${distance}km dari anda`}</p>
           </div>
         </div>
 
         <div className="bg-white px-4 py-2.5 rounded-b-lg between-x">
           <div className=" row gap-1">
             <p className="text-xs text-primary100 font-semibold">Rp</p>
-            <p className="text-lg text-primary100 font-semibold mr-1">{`${rupiah(price)}/jam`}</p>
+            <p className="text-lg text-primary100 font-semibold mr-1">{`${rupiah(
+              price
+            )}/jam`}</p>
             <p className="text-xs text-black50">{watt}</p>
           </div>
 
-          <IcBike className="text-primary100"/>
+          <IcBike className="text-primary100" />
         </div>
       </div>
 
@@ -153,3 +205,9 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
 };
 
 export default ChargingLocationCard;
+
+const data = [
+  "2025-04-18T06:56:58.147844Z",
+  "2025-04-18T06:30:58.147844Z",
+  "2025-04-18T07:56:58.147844Z",
+];

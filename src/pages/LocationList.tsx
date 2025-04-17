@@ -52,6 +52,7 @@ const LocationList = () => {
       const body: ChargingStationBody = {
         page: nextPage || page,
         limit: LIMIT_LIST,
+        is_admin: false,
       };
 
       dispatch(fetchChargingStationLocations(body));

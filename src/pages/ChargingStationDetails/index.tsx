@@ -176,7 +176,7 @@ const ChargingStationDetails = () => {
         <PriceInformation data={data} />
 
         {/* BASIC INFORMATION  */}
-        <BasicInformation data={data?.OperationalHours} />
+        <BasicInformation phone={data?.Phone} data={data?.OperationalHours} />
 
         {/* DEVICE LIST */}
         <div className="bg-white p-3 rounded-lg mt-[14px] border drop-shadow">

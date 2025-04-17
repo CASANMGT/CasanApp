@@ -1,9 +1,17 @@
 import { useState } from "react";
-import { IcBackBlack, IcBackWhite, IcClose, IcMenuBlack } from "../../assets";
+import {
+  IcBackBlack,
+  IcBackWhite,
+  IcClose,
+  IcFlashOff,
+  IcFlashOn,
+  IcMenuBlack,
+} from "../../assets";
 
 interface HeaderProps {
-  type?: "primary" | "secondary";
+  type?: "primary" | "secondary" | "scan";
   title: string;
+  isActive?: boolean;
   className?: string;
   onDismiss: () => void;
   onPress?: () => void;
@@ -13,6 +21,7 @@ const Header: React.FC<HeaderProps> = ({
   type = "primary",
   className,
   title,
+  isActive,
   onDismiss,
   onPress,
 }) => {
@@ -45,29 +54,42 @@ const Header: React.FC<HeaderProps> = ({
       </div>
 
       {isShowRight ? (
-        <div
-          onClick={() => setIsOpen((prev) => !prev)}
-          className="relative w-10 h-10 rounded-full center cursor-pointer bg-baseLightGray/70"
-        >
-          <div className="rotate-90">
-            <IcMenuBlack />
+        type === "scan" ? (
+          <div
+            onClick={onPress}
+            className={`w-10 h-10 rounded-full justify-center items-center flex cursor-pointer ${
+              isActive ? "bg-primary100" : "bg-baseLightGray/70"
+            }`}
+          >
+            {isActive ? <IcFlashOn /> : <IcFlashOff />}
           </div>
-
-          {isOpen && (
-            <div
-              onClick={onPress}
-              className={`absolute right-0 top-11 flex gap-2 p-3 rounded-lg bg-white transform transition-all duration-200 cursor-pointer ${
-                isOpen
-                  ? "opacity-100 translate-y-0 z-10"
-                  : "opacity-0 translate-y-2 invisible"
-              }`}
-            >
-              <IcClose className="text-red" />
-
-              <span className="text-red whitespace-nowrap">Batalkan Sesi</span>
+        ) : (
+          <div
+            onClick={() => setIsOpen((prev) => !prev)}
+            className="relative w-10 h-10 rounded-full center cursor-pointer bg-baseLightGray/70"
+          >
+            <div className="rotate-90">
+              <IcMenuBlack />
             </div>
-          )}
-        </div>
+
+            {isOpen && (
+              <div
+                onClick={onPress}
+                className={`absolute right-0 top-11 flex gap-2 p-3 rounded-lg bg-white transform transition-all duration-200 cursor-pointer ${
+                  isOpen
+                    ? "opacity-100 translate-y-0 z-10"
+                    : "opacity-0 translate-y-2 invisible"
+                }`}
+              >
+                <IcClose className="text-red" />
+
+                <span className="text-red whitespace-nowrap">
+                  Batalkan Sesi
+                </span>
+              </div>
+            )}
+          </div>
+        )
       ) : (
         <div className="w-10 h-10 invisible" />
       )}

@@ -374,7 +374,7 @@ const TransactionDetails = () => {
                       <Separator className="my-6" />
 
                       <div
-                        onClick={() => navigate(`/session-details/${id}`)}
+                        onClick={() => navigate(`/charging/${id}`)}
                         className="row gap-2 center cursor-pointer"
                       >
                         <span className="text-primary100">Lihat Sesi</span>

@@ -23,7 +23,7 @@ export enum TransactionType {
   "Session" = 2,
 }
 
-export enum DeviceStatus {
+export enum DeviceStatus { // Socket Status
   "StandBy" = 0,
   "Charging" = 1,
   "Disconnect" = 3,

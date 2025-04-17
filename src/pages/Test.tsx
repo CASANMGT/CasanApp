@@ -15,7 +15,9 @@ const TorchVideo: React.FC = () => {
           },
         };
 
-        const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+        const mediaStream = await navigator.mediaDevices.getUserMedia(
+          constraints
+        );
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
         }
@@ -29,32 +31,33 @@ const TorchVideo: React.FC = () => {
     getCamera();
 
     return () => {
-      stream?.getTracks().forEach(track => track.stop());
+      stream?.getTracks().forEach((track) => track.stop());
     };
   }, []);
 
   const toggleTorch = async () => {
-  if (!stream) return;
+    if (!stream) return;
 
-  const videoTrack = stream.getVideoTracks()[0];
-  const capabilities = (videoTrack.getCapabilities?.() || {}) as { torch?: boolean };
+    const videoTrack = stream.getVideoTracks()[0];
+    const capabilities = (videoTrack.getCapabilities?.() || {}) as {
+      torch?: boolean;
+    };
 
-  if (capabilities.torch) {
-    try {
-      const constraints = {
-        advanced: [{ torch: !torchOn }],
-      } as MediaTrackConstraints & { advanced: Array<{ torch: boolean }> };
+    if (capabilities.torch) {
+      try {
+        const constraints = {
+          advanced: [{ torch: !torchOn }],
+        } as MediaTrackConstraints & { advanced: Array<{ torch: boolean }> };
 
-      await videoTrack.applyConstraints(constraints);
-      setTorchOn(!torchOn);
-    } catch (err) {
-      console.error("Torch toggle failed:", err);
+        await videoTrack.applyConstraints(constraints);
+        setTorchOn(!torchOn);
+      } catch (err) {
+        console.error("Torch toggle failed:", err);
+      }
+    } else {
+      console.warn("Torch not supported on this device.");
     }
-  } else {
-    console.warn("Torch not supported on this device.");
-  }
-};
-
+  };
 
   return (
     <div className="flex flex-col items-center gap-4">
