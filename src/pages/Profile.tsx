@@ -1,26 +1,20 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import {
   IcBalance,
   IcCashBlack,
   IcChatBlack,
-  IcEditWhite,
   IcElectricityBlack,
-  IcLogout,
-  IcNotificationGreen,
-  IcPasswordBlack,
-  IcSettingBlack,
-  IcVehicleBlack,
+  IcLogout
 } from "../assets";
 import NullPhotoImg from "../assets/illustrations/null-photo.png";
-import { VERSION } from "../common";
-import { Button, MenuItem, Separator } from "../components";
-import { formatPhoneNumber, rupiah } from "../helpers";
+import { CUSTOMER_SERVICES, VERSION } from "../common";
+import { MenuItem, Separator } from "../components";
 import { useAuth } from "../context/AuthContext";
-import { useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../store";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
 import { fetchMyUser } from "../features";
+import { formatPhoneNumber, openWhatsApp, rupiah } from "../helpers";
+import { AppDispatch, RootState } from "../store";
 
 const Profile = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -48,10 +42,6 @@ const Profile = () => {
   };
 
   const onTopUp = () => {
-    alert("coming soon");
-  };
-
-  const onMyVehicle = () => {
     alert("coming soon");
   };
 
@@ -168,7 +158,7 @@ const Profile = () => {
         <MenuItem
           icon={IcChatBlack}
           label="Customer Support"
-          onClick={onMyVehicle}
+          onClick={() => openWhatsApp(CUSTOMER_SERVICES)}
         />
 
         {/* <Separator className="my-4" />

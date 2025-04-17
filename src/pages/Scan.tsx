@@ -13,10 +13,16 @@ const Scan = () => {
 
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [torchOn, setTorchOn] = useState(false);
-
-  const isUseMobile: boolean = useIsMobile();
+  const [useMobile, setUseMobile] = useState<boolean>(false);
 
   useEffect(() => {
+    const userAgent = navigator.userAgent || navigator.vendor;
+    const mobile = /android|iphone|ipad|ipod/i.test(userAgent);
+    const touch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
+    const isUseMobile: boolean = mobile && touch;
+    setUseMobile(isUseMobile);
+
     const startScanner = async () => {
       try {
         const constraints = {
@@ -101,7 +107,7 @@ const Scan = () => {
         title="Scan Barcode"
         onDismiss={onDismiss}
         isActive={torchOn}
-        onPress={isUseMobile ? toggleTorch : undefined}
+        onPress={useMobile ? toggleTorch : undefined}
         className="z-10"
       />
 
@@ -133,17 +139,3 @@ const Scan = () => {
 };
 
 export default Scan;
-
-export const useIsMobile = () => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const userAgent = navigator.userAgent || navigator.vendor;
-    const mobile = /android|iphone|ipad|ipod/i.test(userAgent);
-    const touch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-
-    setIsMobile(mobile && touch);
-  }, []);
-
-  return isMobile;
-};
