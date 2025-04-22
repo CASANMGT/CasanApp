@@ -4,7 +4,7 @@ import {
   getDistanceFromLatLonInKm,
   moments,
   rupiah,
-  timeToSeconds
+  timeToSeconds,
 } from "../../../helpers";
 import { Button } from "../../atoms";
 
@@ -74,15 +74,15 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
           const e = element?.Sockets[i];
 
           if (e.IsCharging === 0) totalAvailable += 1;
-          if (e.IsCharging === 1) totalFull += 1;
-          if (e.IsCharging === 3) totalDisconnect += 1;
+          else if (e.IsCharging === 1) totalFull += 1;
+          else if (e.IsCharging === 3) totalDisconnect += 1;
         }
       }
     }
 
     if (totalAvailable <= 0) {
       if (totalSocket === totalFull) isFull = true;
-      else if (totalSocket === totalDisconnect) isDisconnect = true;
+      else if (totalDisconnect > 0) isDisconnect = true;
     }
 
     if (isFull) {
@@ -161,9 +161,13 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
                   <p className="text-[10px] text-red">{`Tunggu ${timeFinished} mnt`}</p>
                 </div>
               ) : isDisconnect ? (
-                <span className="text-xs font-semibold text-black70">
-                  Sedang Tutup
-                </span>
+                <div className="text-black70">
+                  <p className="text-xs font-semibold text-black70">
+                    Sedang Dalam Gangguan
+                  </p>
+
+                  <p className="text-[10px]">Mohon cek berkala</p>
+                </div>
               ) : (
                 <div className="flex flex-row gap-1 relative">
                   <p className="text-lg font-semibold">{`${totalAvailable}/${totalSocket}`}</p>

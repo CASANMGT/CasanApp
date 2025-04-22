@@ -44,7 +44,8 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
 
   const currentTime = timeToSeconds(moments().format("HH:mm"));
   let price: number = 0;
-  let available: number = 0;
+  let totalSocket: number = 0;
+  let totalAvailable: number = 0;
 
   if (
     data?.PriceSetting?.PriceBaseRules &&
@@ -62,11 +63,23 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
   }
 
   if (data?.Devices && data?.Devices.length) {
-    available = data?.Devices.reduce(
+    totalSocket = data?.Devices.reduce(
       (accumulator, currentValue) =>
         accumulator + (currentValue.Sockets.length || 0),
       0
     );
+
+    for (const key in data?.Devices) {
+      const element = data?.Devices[key];
+
+      if (element?.Sockets && element?.Sockets?.length) {
+        for (const i in element?.Sockets) {
+          const e = element?.Sockets[i];
+
+          if (e.IsCharging === 0) totalAvailable += 1;
+        }
+      }
+    }
   }
 
   return (
@@ -78,14 +91,16 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
         closeOnClick={false}
         closeOnEscapeKey={false}
       >
-        <div >
+        <div>
           <p className="!m-0 font-semibold text-xs">
             Rp <span className="text-xl">{`${rupiah(price)}/jam`}</span>
           </p>
           <div className="row gap-1 mt-2 text-xs text-black70">
             <IcFuel className="text-primary100" />
             <span>Tersedia</span>
-            <span className="text-primary100 font-semibold">{available}</span>
+            <span className="text-primary100 font-semibold">
+              {totalAvailable}
+            </span>
           </div>
         </div>
       </Popup>
