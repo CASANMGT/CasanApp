@@ -1,15 +1,20 @@
 import L from "leaflet";
 import { useEffect, useRef } from "react";
 import { Marker, Popup, useMap } from "react-leaflet";
+import { useDispatch } from "react-redux";
 import { IcFuel } from "../../../assets";
 import { ChargingStation, LatLng } from "../../../common";
+import { setFromGlobal } from "../../../features";
 import { moments, rupiah, timeToSeconds } from "../../../helpers";
+import { AppDispatch } from "../../../store";
 
 interface CustomMarkerProps {
   data: ChargingStation;
 }
 
 const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const markerRef = useRef<L.Marker>(null);
   const map = useMap();
 
@@ -29,6 +34,16 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
       markerRef.current.openPopup();
     }
   }, [map]);
+
+  const onShow = () => {
+    dispatch(
+      setFromGlobal({
+        type: "openChargingStation",
+        value: true,
+        data: data?.LocationID,
+      })
+    );
+  };
 
   if (
     !data?.Location?.Latitude ||
@@ -91,7 +106,7 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
         closeOnClick={false}
         closeOnEscapeKey={false}
       >
-        <div>
+        <div onClick={onShow} className="cursor-pointer">
           <p className="!m-0 font-semibold text-xs">
             Rp <span className="text-xl">{`${rupiah(price)}/jam`}</span>
           </p>

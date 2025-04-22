@@ -8,6 +8,7 @@ import chargingStationReducer from "../features/chargingStations/chargingStation
 import deviceByIdReducer from "../features/device/deviceByIdSlice.ts";
 import feeSettingsReducer from "../features/feeSettings/feeSettingsSlice";
 import globalReducer from "../features/globalSlice";
+import locationByIdReducer from "../features/location/locationByIdSlice.tsx";
 import calculateChargeReducer from "../features/priceRule/calculateChargeSlice";
 import calculateDurationReducer from "../features/priceRule/calculateDurationSlice";
 import addSessionReducer from "../features/sessions/addSessionSlice.ts";
@@ -63,6 +64,9 @@ export const store = configureStore({
 
     // DEVICE
     deviceById: deviceByIdReducer,
+
+    // LOCATION
+    locationById: locationByIdReducer,
   },
 });
 

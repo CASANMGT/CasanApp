@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { IcMenuWhite, IcMyLocationBlack } from "../assets";
 import { ChargingStationBody, LatLng, LIMIT_LIST } from "../common";
-import { LoadingPage, Map } from "../components";
-import { fetchChargingStationLocations } from "../features";
+import { LoadingPage, Map, ModalChargingStation } from "../components";
+import { fetchChargingStationLocations, setFromGlobal } from "../features";
 import { AppDispatch, RootState } from "../store";
 
 const Location = () => {
@@ -14,6 +14,7 @@ const Location = () => {
   const chargingStationLocations = useSelector(
     (state: RootState) => state?.chargingStationLocations
   );
+  const global = useSelector((state: RootState) => state?.global);
 
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
 
@@ -101,6 +102,16 @@ const Location = () => {
           </div>
         </div>
       </LoadingPage>
+
+      {/* MODAL */}
+      <ModalChargingStation
+        isOpen={global?.openChargingStation}
+        locationId={global?.data}
+        onDismiss={() =>
+          dispatch(setFromGlobal({ type: "openChargingStation", value: false }))
+        }
+      />
+      {/* END MODAL */}
     </div>
   );
 };

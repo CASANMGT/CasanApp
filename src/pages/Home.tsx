@@ -1,13 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   IcBike,
-  IcCar,
-  IcNotificationBadgesGreen,
-  IcNotificationGreen,
-  IcPinWhite,
-  IcSearchGray,
+  IcPinWhite
 } from "../assets";
 import {
   ChargingStationBody,
@@ -17,18 +13,16 @@ import {
   SessionListBody,
 } from "../common";
 import {
-  AvailableTypeVehicleItem,
   ChargingLocationCard,
-  Dropdown,
   LoadingPage,
-  OngoingItem,
+  OngoingItem
 } from "../components";
 import { useAuth } from "../context/AuthContext";
 import { fetchChargingStation, fetchOnGoingSessionList } from "../features";
 import { AppDispatch, RootState } from "../store";
 
 const Home = () => {
-  const navigate: NavigateFunction = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated } = useAuth();
 

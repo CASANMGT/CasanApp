@@ -12,10 +12,10 @@ interface ChargingLocationCardProps {
   type?: "location-list";
   data: ChargingStation;
   currentLocation: LatLng | undefined;
-  isLast: boolean | undefined;
+  isLast?: boolean | undefined;
   loading: boolean;
   onClick: () => void;
-  onLoadMore: () => void;
+  onLoadMore?: () => void;
 }
 
 const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
@@ -110,7 +110,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
 
   return (
     <>
-      <div onClick={onClick} className="mb-3 cursor-pointer">
+      <div onClick={onClick} className="mb-3 shadow-md rounded-lg cursor-pointer">
         <div className="p-3 bg-chargingLocation bg-center rounded-t-lg">
           <div className="row gap-3">
             <img
@@ -201,7 +201,9 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
           label="Muat Lainnya"
           loading={loading}
           iconRight={IcLineDown}
-          onClick={onLoadMore}
+          onClick={() => {
+            if (onLoadMore) onLoadMore();
+          }}
         />
       )}
     </>
