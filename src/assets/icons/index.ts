@@ -84,8 +84,10 @@ import IcWalletGreen from "./wallet-green.svg?react";
 import IcWallet from "./wallet.svg?react";
 import IcMyLocation from './my-location.png'
 import IcCustomerService from './customer-service.svg?react';
+import IcUser from './user.svg?react'
 
 export {
+  IcUser,
   IcCustomerService,
   IcMyLocation,
   IcAstraPay,

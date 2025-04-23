@@ -6,6 +6,7 @@ import {
   Charging,
   ChargingStationDetails,
   ComingSoon,
+  EditProfile,
   Home,
   InputPin,
   Location,
@@ -89,10 +90,18 @@ const RoutesPage = () => {
         <Route path="vehicle" element={<Vehicle />} />
         <Route path="verification" element={<VerificationNumber />} />
         <Route path="withdraw" element={<Withdraw />} />
+        <Route
+          path="edit-profile"
+          element={
+            <ProtectedRoute
+              element={<ProtectedRoute element={<EditProfile />} />}
+            />
+          }
+        />
 
         {/* BOTTOM NAVIGATION */}
         <Route path="home" element={<Main />}>
-          <Route path="index" element={<Home />}></Route>
+          <Route path="index" element={<Home />} />
           <Route
             path="location"
             element={<ProtectedRoute element={<Location />} />}

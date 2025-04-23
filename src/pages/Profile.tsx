@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { NavigateFunction, Outlet, useNavigate } from "react-router-dom";
 import {
   IcBalance,
   IcCashBlack,
   IcChatBlack,
+  IcEditWhite,
   IcElectricityBlack,
   IcLogout
 } from "../assets";
@@ -69,7 +70,8 @@ const Profile = () => {
             <span className="text-xl text-white font-semibold">
               {formatPhoneNumber(myUser?.data?.Phone || "")}
             </span>
-            {/* <IcEditWhite onClick={onEdit} className="cursor-pointer" /> */}
+            
+            <IcEditWhite onClick={()=> navigate('/edit-profile')} className="cursor-pointer" />
           </div>
 
           {/* <div
@@ -181,6 +183,7 @@ const Profile = () => {
       <span className="ml-4 text-xs text-black90">{`Version ${VERSION}`}</span>
 
       <div className="mb-[100px]" />
+
     </div>
   );
 };

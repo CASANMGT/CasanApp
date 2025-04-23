@@ -28,8 +28,10 @@ import BalanceHistory from "./BalanceHistory";
 import TermCondition from "./TermCondition";
 import PrivacyPolice from "./PrivacyPolice";
 import BalanceHistoryDetails from "./BalanceHistoryDetails";
+import EditProfile from "./EditProfile";
 
 export {
+    EditProfile,
     Charging,
     Vehicle,
     PaymentSuccess,
