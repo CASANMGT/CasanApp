@@ -1,15 +1,20 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { IcInfoCircleGreen, IcRightCircleGreen, IcSolarGreen } from "../assets";
-import { AddTransactionBody, FeeSettingsProps } from "../common";
+import { IcEditGreen, IcInfoCircleGreen, IcSolarGreen } from "../assets";
+import {
+  AddTransactionBody,
+  FeeSettingsProps,
+  NOMINAL_TOP_UP,
+  REGEX_NUMBERS,
+} from "../common";
 import {
   BetweenText,
   Button,
   Card,
   Header,
   ModalPaymentMethod,
-  Separator,
+  NominalTopUpItem,
   SubTitle,
 } from "../components";
 import {
@@ -19,9 +24,13 @@ import {
   resetDataAddTransaction,
   showLoading,
 } from "../features";
-import { rupiah } from "../helpers";
+import { rupiah, useForm } from "../helpers";
 import { AppDispatch, RootState } from "../store";
-import InputNominal from "./SessionSettings/InputNominal";
+
+interface FormTopUp {
+  nominal: string;
+  paymentMethod?: FeeSettingsProps | undefined;
+}
 
 const TopUp = () => {
   const navigate = useNavigate();
@@ -30,6 +39,10 @@ const TopUp = () => {
   const addTransaction = useSelector(
     (state: RootState) => state?.addTransaction
   );
+
+  const [form, setForm] = useForm<FormTopUp>({
+    nominal: "",
+  });
 
   const [nominal, setNominal] = useState<string>();
   const [paymentMethod, setPaymentMethod] = useState<FeeSettingsProps>();
@@ -51,32 +64,17 @@ const TopUp = () => {
     navigate(-1);
   };
 
-  const FormatPaymentMethod: () => JSX.Element = useCallback(() => {
-    if (paymentMethod) {
-      const Icon = paymentMethod.icon;
-      return (
-        <div className="row gap-1">
-          <Icon className="w-[22px]" />
+  const handleChange = (e: string) => {
+    const value = e.replace(REGEX_NUMBERS, "");
+    const formatted: string = `Rp${rupiah(value)}`;
 
-          <p className="font-medium">{paymentMethod.label}</p>
-        </div>
-      );
-    } else {
-      return (
-        <p className="text-xs text-primary100 font-medium">
-          Pilih Metode Pembayaran
-        </p>
-      );
-    }
-  }, [paymentMethod]);
+    setForm("nominal", formatted);
+  };
 
   const validation = () => {
     let value: boolean = true;
 
-    if (
-      Number(nominal?.replace("Rp", "").replace(/\./g, "") || 0) > 0 &&
-      paymentMethod
-    ) {
+    if (Number(form.nominal?.replace("Rp", "").replace(/\./g, "") || 0) > 0) {
       value = false;
     }
 
@@ -91,7 +89,7 @@ const TopUp = () => {
       wallet_used_amount: 0,
     };
 
-    dispatch(fetchAddTransaction(body))
+    dispatch(fetchAddTransaction(body));
   };
 
   return (
@@ -107,12 +105,39 @@ const TopUp = () => {
             className="mb-2"
           />
 
-          <InputNominal
-            value={nominal || ""}
-            description="Silakan pilih nominal pengisian sesuai dengan daya kebutuhan anda"
-            dataNominal={["5000", "10000", "20000", "50000"]}
-            onChange={(value) => setNominal(value)}
-          />
+          <p className="text-xs text-black100/70 mb-[14px]">
+            {
+              "Silakan pilih nominal pengisian sesuai dengan daya kebutuhan anda"
+            }
+          </p>
+
+          <div className="relative w-full mb-3">
+            <input
+              type="text"
+              inputMode="numeric"
+              value={form.nominal}
+              placeholder="Masukan Nominal"
+              className="w-full p-5 font-semibold text-base text-center bg-baseGray rounded-lg placeholder:text-black50 outline-none"
+              onChange={(e) => handleChange(e?.target?.value)}
+            />
+
+            <div className="absolute bottom-2 right-2">
+              <IcEditGreen />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            {NOMINAL_TOP_UP.map((item, index: number) => (
+              <NominalTopUpItem
+                key={index}
+                value={item}
+                isActive={
+                  item === form.nominal?.replace("Rp", "").replace(/\./g, "")
+                }
+                onClick={() => handleChange(item)}
+              />
+            ))}
+          </div>
         </Card>
 
         {/* PAYMENT DETAILS */}
@@ -143,17 +168,6 @@ const TopUp = () => {
 
       {/* FOOTER */}
       <div className="container-button-footer">
-        <div
-          onClick={() => setVisiblePaymentMethod(true)}
-          className="between-x cursor-pointer"
-        >
-          <FormatPaymentMethod />
-
-          <IcRightCircleGreen />
-        </div>
-
-        <Separator className="my-2.5" />
-
         <div className="between-x">
           <p className="text-base text-black100/70">
             Total:{" "}
@@ -164,21 +178,33 @@ const TopUp = () => {
           </p>
 
           <Button
-            className="!w-[130px]"
             label="Bayar"
             disabled={validation()}
-            onClick={onPay}
+            onClick={() => setVisiblePaymentMethod(true)}
+            className="!w-[130px]"
           />
         </div>
       </div>
 
       {/* MODAL */}
-      <ModalPaymentMethod
+      {/* <ModalPaymentMethod
         type={"top-up"}
         visible={visiblePaymentMethod}
         select={paymentMethod}
         onDismiss={() => setVisiblePaymentMethod(false)}
         onSelect={(select) => setPaymentMethod(select)}
+      /> */}
+
+      <ModalPaymentMethod
+        type={"top-up"}
+        visible={visiblePaymentMethod}
+        select={form.paymentMethod}
+        total={Number(form.nominal?.replace("Rp", "").replace(/\./g, "") || 0)}
+        onDismiss={() => setVisiblePaymentMethod(false)}
+        onSelect={(select) => {
+          setForm("paymentMethod", select);
+          setVisiblePaymentMethod(false);
+        }}
       />
       {/* END MODAL */}
     </div>

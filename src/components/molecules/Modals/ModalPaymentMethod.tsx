@@ -15,7 +15,7 @@ interface ModalPaymentMethodProps {
   type?: "top-up";
   visible: boolean;
   select: FeeSettingsProps | undefined;
-  selectBalance: number;
+  selectBalance?: number;
   total?: number;
   onDismiss: () => void;
   onSelect: (select: FeeSettingsProps | undefined, value?: number) => void;

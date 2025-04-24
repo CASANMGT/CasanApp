@@ -21,6 +21,7 @@ import stopSessionReducer from "../features/sessions/stopSessionSlice.ts";
 import toastReducer from "../features/toastSlice";
 import addTransactionReducer from "../features/transactions/addTransactionSlice.ts";
 import transactionListReducer from "../features/transactions/transactionListSlice.ts";
+import editUserReducer from "../features/users/editUserSlice.ts";
 import myUserReducer from "../features/users/myUserSlice.ts";
 
 export const store = configureStore({
@@ -34,6 +35,7 @@ export const store = configureStore({
 
     // USER
     myUser: myUserReducer,
+    editUser: editUserReducer,
 
     // CHARGING STATION
     chargingStation: chargingStationReducer,

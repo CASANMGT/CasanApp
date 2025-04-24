@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavigateFunction, Outlet, useNavigate } from "react-router-dom";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 import {
   IcBalance,
   IcCashBlack,
@@ -11,7 +11,7 @@ import {
 } from "../assets";
 import NullPhotoImg from "../assets/illustrations/null-photo.png";
 import { CUSTOMER_SERVICES, VERSION } from "../common";
-import { MenuItem, Separator } from "../components";
+import { Button, MenuItem, Separator } from "../components";
 import { useAuth } from "../context/AuthContext";
 import { fetchMyUser } from "../features";
 import { formatPhoneNumber, openWhatsApp, rupiah } from "../helpers";
@@ -42,10 +42,6 @@ const Profile = () => {
     alert("coming soon");
   };
 
-  const onTopUp = () => {
-    alert("coming soon");
-  };
-
   const onNext = (path: string) => {
     navigate(`/${path}`);
   };
@@ -70,8 +66,11 @@ const Profile = () => {
             <span className="text-xl text-white font-semibold">
               {formatPhoneNumber(myUser?.data?.Phone || "")}
             </span>
-            
-            <IcEditWhite onClick={()=> navigate('/edit-profile')} className="cursor-pointer" />
+
+            <IcEditWhite
+              onClick={() => navigate("/edit-profile")}
+              className="cursor-pointer"
+            />
           </div>
 
           {/* <div
@@ -99,15 +98,19 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* <div className="row gap-3">
-            <Button
+          <div className="row gap-3">
+            {/* <Button
               type="secondary"
               buttonType="sm"
               label="Refund"
               onClick={onRefund}
+            /> */}
+            <Button
+              buttonType="sm"
+              label="Top Up"
+              onClick={() => navigate("/top-up")}
             />
-            <Button buttonType="sm" label="Top Up" onClick={onTopUp} />
-          </div> */}
+          </div>
         </div>
 
         <div className="row gap-1 px-3 py-2">
@@ -183,7 +186,6 @@ const Profile = () => {
       <span className="ml-4 text-xs text-black90">{`Version ${VERSION}`}</span>
 
       <div className="mb-[100px]" />
-
     </div>
   );
 };

@@ -1,11 +1,17 @@
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { IcUser } from "../assets";
 import { REGEX_PHONE_NUMBER_HALF } from "../common";
 import { Button, Header, Input, SubTitle } from "../components";
+import {
+  EditUserRequestProps,
+  fetchEditUser,
+  resetDataEditUser,
+} from "../features/users/editUserSlice";
 import { useForm } from "../helpers";
 import { AppDispatch, RootState } from "../store";
-import { useEffect, useState } from "react";
+import { fetchMyUser } from "../features";
 
 interface FormEditProfile {
   name: string;
@@ -23,6 +29,7 @@ const EditProfile = () => {
   const navigate = useNavigate();
 
   const myUser = useSelector((state: RootState) => state.myUser);
+  const editUser = useSelector((state: RootState) => state.editUser);
 
   const [form, setForm] = useForm<FormEditProfile>({
     name: "",
@@ -46,6 +53,13 @@ const EditProfile = () => {
     getData();
   }, []);
 
+  useEffect(() => {
+    if (editUser?.data) {
+      dispatch(resetDataEditUser());
+      dispatch(fetchMyUser());
+    }
+  }, [editUser]);
+
   const handleChange = (type: "name" | "phone" | "email", value: string) => {
     setForm(type, value);
   };
@@ -59,7 +73,21 @@ const EditProfile = () => {
     return value;
   };
 
-  const onSubmit = () => {};
+  const onSubmit = () => {
+    try {
+      const body: EditUserRequestProps = {
+        name: form.name,
+        phone: `+62${form.phone}`,
+        email: form.email,
+      };
+      
+      dispatch(fetchEditUser(body));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log("cek d", editUser);
 
   return (
     <div className="background-1">
@@ -93,7 +121,12 @@ const EditProfile = () => {
           onChange={(value) => handleChange("email", value)}
         />
 
-        <Button label="Simpan" disabled={validation()} onClick={onSubmit} />
+        <Button
+          label="Simpan"
+          loading={editUser?.loading}
+          disabled={validation()}
+          onClick={onSubmit}
+        />
       </div>
     </div>
   );
