@@ -20,3 +20,7 @@ export const rupiah = (price?: string | number) => {
     Math.round(parseInt(price.toString())).toString()
   ).toString()}`;
 };
+
+export const formatWithDots = (value: number | string): string => {
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};

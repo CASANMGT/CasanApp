@@ -70,15 +70,6 @@ const RoutesPage = () => {
           path="session-details/:id"
           element={<ProtectedRoute element={<SessionDetails />} />}
         />
-        <Route path="top-up" element={<ProtectedRoute element={<TopUp />} />} />
-        <Route
-          path="bank-account"
-          element={<ProtectedRoute element={<BankAccount />} />}
-        />
-        <Route
-          path="select-bank"
-          element={<ProtectedRoute element={<SelectBank />} />}
-        />
 
         <Route
           path="balance-history"
@@ -98,15 +89,35 @@ const RoutesPage = () => {
         />
         <Route path="vehicle" element={<Vehicle />} />
         <Route path="verification" element={<VerificationNumber />} />
-        <Route path="withdraw" element={<Withdraw />} />
-        <Route
-          path="edit-profile"
-          element={
-            <ProtectedRoute
-              element={<ProtectedRoute element={<EditProfile />} />}
-            />
-          }
-        />
+
+        {/* PROFILE TAB */}
+        <>
+          <Route
+            path="top-up"
+            element={<ProtectedRoute element={<TopUp />} />}
+          />
+          <Route
+            path="bank-account"
+            element={<ProtectedRoute element={<BankAccount />} />}
+          />
+          <Route
+            path="select-bank"
+            element={<ProtectedRoute element={<SelectBank />} />}
+          />
+          <Route
+            path="edit-profile"
+            element={
+              <ProtectedRoute
+                element={<ProtectedRoute element={<EditProfile />} />}
+              />
+            }
+          />
+          <Route
+            path="withdraw"
+            element={<ProtectedRoute element={<Withdraw />} />}
+          />
+        </>
+        {/* END PROFILE TAB */}
 
         {/* BOTTOM NAVIGATION */}
         <Route path="home" element={<Main />}>
@@ -126,7 +137,7 @@ const RoutesPage = () => {
         </Route>
 
         {/* HANDLE PATH NOT FOUND */}
-        <Route path="/test" element={<Test />} />
+        <Route path="test" element={<Test />} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

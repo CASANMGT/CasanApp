@@ -18,7 +18,7 @@ export type AlertModalProps = {
   labelButtonLeft?: string;
   labelButtonRight?: string;
   description?: string;
-  onDismiss: () => void;
+  onDismiss?: () => void;
   onClick?: () => void;
 };
 

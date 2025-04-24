@@ -72,16 +72,16 @@ const Button: React.FC<ButtonProps> = ({
 
     switch (buttonType) {
       case "sm":
-        buttonStyle = "h-6 px-[14px]";
+        buttonStyle = "!h-6 px-[14px]";
         labelStyle = "text-xs";
         break;
 
       case "lg":
-        buttonStyle = "h-[48px]";
+        buttonStyle = "!h-[48px]";
         break;
 
       default:
-        buttonStyle = "h-[38px]";
+        buttonStyle = "!h-[38px]";
         break;
     }
 

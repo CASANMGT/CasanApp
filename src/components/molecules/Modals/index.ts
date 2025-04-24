@@ -9,9 +9,11 @@ import ModalInputNominal from "./ModalInputNominal";
 import ModalPaymentMethod from "./ModalPaymentMethod";
 import ModalVoltageAmpere from "./ModalVoltageAmpere";
 import RequestOTPModal from "./RequestOTPModal";
+import ModalSelectBank from "./ModalSelectBank";
 
 export {
     AlertModal,
+    ModalSelectBank,
     DiagnosisModal,
     InputOTPModal,
     InputPhoneNumberModal,

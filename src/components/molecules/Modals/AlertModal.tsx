@@ -21,10 +21,13 @@ const AlertModal: React.FC<AlertModalProps> = ({
   const isShowClick = onClick ? true : false;
 
   return (
-    <ModalContainer isOpen={visible} onDismiss={onDismiss}>
+    <ModalContainer
+      isOpen={visible}
+      onDismiss={onDismiss ? onDismiss : () => {}}
+    >
       <div>
         {isShowIcon && (
-          <div className="mb-6 mt-3 center">
+          <div className="mb-5 mt-3 center">
             <Icon />
           </div>
         )}
@@ -40,7 +43,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
         )}
 
         {isShowTitle && (
-          <h4 className="text-base font-semibold mb-1.5 text-center">
+          <h4 className="text-base font-semibold mb-1 text-center">
             {title}
           </h4>
         )}
@@ -56,11 +59,13 @@ const AlertModal: React.FC<AlertModalProps> = ({
               if (onClick) onClick();
             }}
           />
-          <Button
-            type="secondary"
-            label={labelButtonRight || ""}
-            onClick={onDismiss}
-          />
+          {onDismiss && (
+            <Button
+              type="secondary"
+              label={labelButtonRight || ""}
+              onClick={onDismiss}
+            />
+          )}
         </div>
       </div>
     </ModalContainer>

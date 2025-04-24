@@ -39,9 +39,6 @@ const Profile = () => {
     alert("coming soon");
   };
 
-  const onRefund = () => {
-    alert("coming soon");
-  };
 
   const onNext = (path: string) => {
     navigate(`/${path}`);
@@ -100,12 +97,12 @@ const Profile = () => {
           </div>
 
           <div className="row gap-3">
-            {/* <Button
+            <Button
               type="secondary"
               buttonType="sm"
-              label="Refund"
-              onClick={onRefund}
-            /> */}
+              label="Withdraw"
+              onClick={() => navigate("/withdraw")}
+            />
             <Button
               buttonType="sm"
               label="Top Up"
