@@ -27,7 +27,10 @@ const BankAccount = () => {
             </>
           )}
 
-          <div onClick={() => {}} className="row cursor-pointer">
+          <div
+            onClick={() => navigate("/select-bank")}
+            className="row cursor-pointer"
+          >
             <IcPlus />
 
             <span className="ml-1 text-primary100 text-xs font-medium">
@@ -42,4 +45,4 @@ const BankAccount = () => {
 
 export default BankAccount;
 
-const dataDummy = [1, 2, 3];
+const dataDummy: any[] = [];

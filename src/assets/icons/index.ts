@@ -1,4 +1,5 @@
 import IcAstraPay from "./astrapay.svg?react";
+import IcCheckCircle from './check-circle.svg?react'
 import IcDelete from './delete.svg?react'
 import IcPlus from './plus.svg?react'
 import IcBank from './bank.svg?react'
@@ -179,5 +180,6 @@ export {
   IcFlashOn,
   IcBank,
   IcPlus,
-  IcDelete
+  IcDelete,
+  IcCheckCircle
 };

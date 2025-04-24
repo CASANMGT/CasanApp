@@ -60,7 +60,6 @@ const RoutesPage = () => {
         <Route path="text-condition" element={<TermCondition />} />
         <Route path="privacy-police" element={<PrivacyPolice />} />
         <Route path="scan" element={<Scan />} />
-        <Route path="select-bank" element={<SelectBank />} />
         <Route path="select-payment-method" element={<SelectPaymentMethod />} />
         <Route path="session-settings/:id?" element={<SessionSettings />} />
         <Route
@@ -72,7 +71,15 @@ const RoutesPage = () => {
           element={<ProtectedRoute element={<SessionDetails />} />}
         />
         <Route path="top-up" element={<ProtectedRoute element={<TopUp />} />} />
-        <Route path="bank-account" element={<ProtectedRoute element={<BankAccount />} />} />
+        <Route
+          path="bank-account"
+          element={<ProtectedRoute element={<BankAccount />} />}
+        />
+        <Route
+          path="select-bank"
+          element={<ProtectedRoute element={<SelectBank />} />}
+        />
+
         <Route
           path="balance-history"
           element={<ProtectedRoute element={<BalanceHistory />} />}
