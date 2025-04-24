@@ -1,4 +1,5 @@
 import Charging from "./Charging";
+import WithdrawalHistory from "./WithdrawalHistory";
 import BankAccount from './BankAccount'
 import ChargingStationDetails from "./ChargingStationDetails";
 import Order from "./Order";
@@ -63,6 +64,7 @@ export {
     BalanceHistoryDetails,
     TermCondition,
     PrivacyPolice,
-    BankAccount
+    BankAccount,
+    WithdrawalHistory
 };
 

@@ -6,6 +6,7 @@ import {
   IcBank,
   IcCashBlack,
   IcChatBlack,
+  IcCreditCard,
   IcEditWhite,
   IcElectricityBlack,
   IcLogout,
@@ -150,6 +151,14 @@ const Profile = () => {
           icon={IcCashBlack}
           label="Riwayat Transaksi"
           onClick={() => onNext("transaction-history")}
+        />
+
+        <Separator className="my-4" />
+
+        <MenuItem
+          icon={IcCreditCard}
+          label="Riwayat Penarikan Saldo"
+          onClick={() => onNext("withdrawal-history")}
         />
 
         <Separator className="my-4" />

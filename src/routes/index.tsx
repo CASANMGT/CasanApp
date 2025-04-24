@@ -33,6 +33,7 @@ import {
   Vehicle,
   VerificationNumber,
   Withdraw,
+  WithdrawalHistory,
 } from "../pages";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -93,18 +94,6 @@ const RoutesPage = () => {
         {/* PROFILE TAB */}
         <>
           <Route
-            path="top-up"
-            element={<ProtectedRoute element={<TopUp />} />}
-          />
-          <Route
-            path="bank-account"
-            element={<ProtectedRoute element={<BankAccount />} />}
-          />
-          <Route
-            path="select-bank"
-            element={<ProtectedRoute element={<SelectBank />} />}
-          />
-          <Route
             path="edit-profile"
             element={
               <ProtectedRoute
@@ -115,6 +104,26 @@ const RoutesPage = () => {
           <Route
             path="withdraw"
             element={<ProtectedRoute element={<Withdraw />} />}
+          />
+          <Route
+            path="top-up"
+            element={<ProtectedRoute element={<TopUp />} />}
+          />
+          <Route
+            path="withdrawal-history"
+            element={
+              <ProtectedRoute
+                element={<ProtectedRoute element={<WithdrawalHistory />} />}
+              />
+            }
+          />
+          <Route
+            path="bank-account"
+            element={<ProtectedRoute element={<BankAccount />} />}
+          />
+          <Route
+            path="select-bank"
+            element={<ProtectedRoute element={<SelectBank />} />}
           />
         </>
         {/* END PROFILE TAB */}
