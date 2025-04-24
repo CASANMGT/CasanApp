@@ -87,7 +87,6 @@ const EditProfile = () => {
     }
   };
 
-  console.log("cek d", editUser);
 
   return (
     <div className="background-1">

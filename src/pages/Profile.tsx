@@ -3,11 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import {
   IcBalance,
+  IcBank,
   IcCashBlack,
   IcChatBlack,
   IcEditWhite,
   IcElectricityBlack,
-  IcLogout
+  IcLogout,
 } from "../assets";
 import NullPhotoImg from "../assets/illustrations/null-photo.png";
 import { CUSTOMER_SERVICES, VERSION } from "../common";
@@ -154,9 +155,13 @@ const Profile = () => {
           onClick={() => onNext("transaction-history")}
         />
 
-        {/* <Separator className="my-4" /> */}
+        <Separator className="my-4" />
 
-        {/* <MenuItem icon={IcCashBlack} label="Akun Bank" onClick={onMyVehicle} /> */}
+        <MenuItem
+          icon={IcBank}
+          label="Akun Bank"
+          onClick={() => navigate("/bank-account")}
+        />
 
         <Separator className="my-4" />
 

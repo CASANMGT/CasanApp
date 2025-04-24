@@ -1,6 +1,7 @@
+import BankAccountCard from "./BankAccountCard";
+import Card from "./Card";
 import ChargingLocationCard from "./ChargingLocationCard";
 import OrderCard from "./OrderCard";
-import Card from "./Card";
 
+export { BankAccountCard, Card, ChargingLocationCard, OrderCard };
 
-export { ChargingLocationCard, OrderCard, Card };

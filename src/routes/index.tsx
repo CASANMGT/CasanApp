@@ -3,6 +3,7 @@ import { AuthProvider } from "../context/AuthContext";
 import {
   BalanceHistory,
   BalanceHistoryDetails,
+  BankAccount,
   Charging,
   ChargingStationDetails,
   ComingSoon,
@@ -71,6 +72,7 @@ const RoutesPage = () => {
           element={<ProtectedRoute element={<SessionDetails />} />}
         />
         <Route path="top-up" element={<ProtectedRoute element={<TopUp />} />} />
+        <Route path="bank-account" element={<ProtectedRoute element={<BankAccount />} />} />
         <Route
           path="balance-history"
           element={<ProtectedRoute element={<BalanceHistory />} />}
