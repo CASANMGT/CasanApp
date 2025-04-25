@@ -26,7 +26,7 @@ const BetweenText: React.FC<BetweenTextProps> = ({
 
   return (
     <div className={`between-x text-xs text-black100/80 ${className}`}>
-      <p className={classNameLabelLeft}>{labelLeft}</p>
+      <p className={`text-xs text-black70 ${classNameLabelLeft}`}>{labelLeft}</p>
       {isShowContent ? (
         <>{content}</>
       ) : (
@@ -37,7 +37,7 @@ const BetweenText: React.FC<BetweenTextProps> = ({
             </p>
           )}
           <p
-            className={`text-black100 ${
+            className={`text-black100 text-xs ${
               type === "medium-content" ? "text-blackBold font-medium" : ""
             } ${classNameLabelRight}`}
           >

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ILFlashLogo, ILLogo } from "../assets";
 import { PRODUCTION } from "../common";
 import { useAuth } from "../context/AuthContext";
+import { BetweenText } from "../components";
 
 const Splash = () => {
   const { isAuthenticated } = useAuth();

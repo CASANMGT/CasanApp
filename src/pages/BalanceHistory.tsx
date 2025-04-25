@@ -60,7 +60,7 @@ const BalanceHistory = () => {
                 key={index}
                 data={item}
                 onClick={() => {
-                  navigate("/balance-history-details", {
+                  navigate("details", {
                     state: { data: item },
                   });
                 }}

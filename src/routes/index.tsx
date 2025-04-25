@@ -33,6 +33,7 @@ import {
   Vehicle,
   VerificationNumber,
   Withdraw,
+  WithdrawalDetails,
   WithdrawalHistory,
 } from "../pages";
 import ProtectedRoute from "./ProtectedRoute";
@@ -72,22 +73,6 @@ const RoutesPage = () => {
           element={<ProtectedRoute element={<SessionDetails />} />}
         />
 
-        <Route
-          path="balance-history"
-          element={<ProtectedRoute element={<BalanceHistory />} />}
-        />
-        <Route
-          path="transaction-history"
-          element={<ProtectedRoute element={<TransactionHistory />} />}
-        />
-        <Route
-          path="transaction-history-details/:id"
-          element={<ProtectedRoute element={<TransactionDetails />} />}
-        />
-        <Route
-          path="balance-history-details"
-          element={<ProtectedRoute element={<BalanceHistoryDetails />} />}
-        />
         <Route path="vehicle" element={<Vehicle />} />
         <Route path="verification" element={<VerificationNumber />} />
 
@@ -110,10 +95,36 @@ const RoutesPage = () => {
             element={<ProtectedRoute element={<TopUp />} />}
           />
           <Route
+            path="balance-history"
+            element={<ProtectedRoute element={<BalanceHistory />} />}
+          />
+
+          <Route
+            path="balance-history/details"
+            element={<ProtectedRoute element={<BalanceHistoryDetails />} />}
+          />
+
+          <Route
+            path="transaction-history"
+            element={<ProtectedRoute element={<TransactionHistory />} />}
+          />
+          <Route
+            path="transaction-history/details/:id"
+            element={<ProtectedRoute element={<TransactionDetails />} />}
+          />
+          <Route
             path="withdrawal-history"
             element={
               <ProtectedRoute
                 element={<ProtectedRoute element={<WithdrawalHistory />} />}
+              />
+            }
+          />
+          <Route
+            path="withdrawal-history/details"
+            element={
+              <ProtectedRoute
+                element={<ProtectedRoute element={<WithdrawalDetails />} />}
               />
             }
           />

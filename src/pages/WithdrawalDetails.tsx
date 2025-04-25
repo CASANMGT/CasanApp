@@ -1,15 +1,13 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { IcSuccessGreen } from "../assets";
 import { Balance } from "../common";
+import { BetweenText, Header, LoadingPage, Separator } from "../components";
 import {
-  BetweenText,
-  Button,
-  Header,
-  LoadingPage,
-  Separator,
-} from "../components";
-import { moments, rupiah } from "../helpers";
+  getIconPaymentMethod,
+  getLabelPaymentMethod,
+  moments,
+  rupiah,
+} from "../helpers";
 
 const WithdrawalDetails = () => {
   const navigate = useNavigate();
@@ -42,59 +40,96 @@ const WithdrawalDetails = () => {
     navigate(`/${nextPage}/${data?.SeasonID || 0}`);
   };
 
+  const status:number = 3
+  const IconPayment: any = getIconPaymentMethod("dana");
+  const labelPayment: string = getLabelPaymentMethod("dana");
+
   return (
-    <div className="background-1 py-[14px] px-4">
-      <Header
-        type="secondary"
-        title="Detail Saldo"
-        onDismiss={() => navigate(-1)}
-      />
+    <div className="container-screen bg-white flex flex-col">
+      <Header title="Detail Penarikan" onDismiss={() => navigate(-1)} />
 
       <LoadingPage loading={false}>
-        <div className="flex flex-col gap-2 items-center justify-center my-7 ">
-          <IcSuccessGreen />
+        <div className="px-4 py-6 bg-white flex-1">
+          <div className="between-x">
+            <div className="flex flex-col">
+              <span className="text-blackBold font-medium ">
+                Nominal Penarikan
+              </span>
 
-          <span className="font-medium text-blackBold">
-            {getLabelType(data?.Status)}
-          </span>
-        </div>
+              <span className="text-base font-semibold text-primary100">
+                {`Rp${rupiah(99999)}`}
+              </span>
+            </div>
 
-        <div className="relative p-3 pb-6 bg-white rounded-lg mt-[28px] drop-shadow">
-          <p className="font-medium mb-2">Informasi Transaksi</p>
-
-          <div className="text-black100/70 row gap-2">
-            <p className="text-xs">
-              {moments(data?.CreatedAt).format("DD MMMM YYYY")}
-            </p>
-            <p className="text-xs">
-              {moments(data?.CreatedAt).format("HH:mm WIB")}
-            </p>
-            <p className="text-xs">{`ID${data?.ID}`}</p>
+            <div className={`py-1 px-[14px] rounded-full border ${getColorStatus(status).bgColor}`}>
+              <p className={`text-xs font-medium ${getColorStatus(status).textColor}`}>
+                {getLabelStatus(status)}
+              </p>
+            </div>
           </div>
 
-          <Separator className="my-4 bg-black10" />
-
-          <p className="text-xs text-black100/70  mb-2">Detail Transaksi</p>
+          <Separator className="my-2.5" />
 
           <BetweenText
-            type="medium-content"
-            labelLeft="Tipe Transaksi"
-            labelRight={getLabelType(data?.Status, true)}
-            classNameLabelRight="font-medium text-black100"
+            labelLeft="Bank Tujuan"
+            labelRight=""
+            content={
+              <div className="row">
+                <IconPayment className="w-6 h-6" />
+                <span className="ml-1 text-base font-medium">
+                  {labelPayment}
+                </span>
+              </div>
+            }
             className="mb-2"
           />
 
           <BetweenText
-            labelLeft="Nominal Casan Wallet"
-            labelRight={`Rp${rupiah(data?.Amount)}`}
-            className="border-y border-black100 py-2"
-            classNameLabelLeft="text-black100"
-            classNameLabelRight="text-black100 font-medium"
+            labelLeft="Nama Rekening"
+            labelRight={"Tedy"}
+            classNameLabelRight="font-semibold"
           />
 
-          <Separator className="my-6 bg-black10" />
+          <Separator className="bg-[#e4e4e4] my-4" />
 
-          <Button type="secondary" label="Lihat Transaksi" onClick={onNext} />
+          <span className="text-blackBold font-medium">
+            Informasi Penarikan
+          </span>
+
+          <BetweenText
+            labelLeft="ID Penarikan"
+            labelRight={1432}
+            className="py-2 border-b border-b-black10"
+          />
+          <BetweenText
+            labelLeft="Tanggal Pengajuan"
+            labelRight={moments().format("DD MMMM YYYY, HH:mm")}
+            className="py-2 border-b border-b-black10"
+          />
+          <BetweenText
+            labelLeft="Tanggal Diproses"
+            labelRight={"-"}
+            className="py-2 border-b border-b-black10"
+          />
+          <BetweenText
+            labelLeft="Nominal Penarikan"
+            labelRight={`Rp${rupiah(460000)}`}
+            classNameLabelLeft="text-blackBold"
+            className="py-2 border-b border-b-black10"
+          />
+          <BetweenText
+            labelLeft="Biaya Penarikan"
+            labelRight={`-Rp${rupiah(10000)}`}
+            classNameLabelLeft="text-blackBold"
+            className="py-2 border-b border-b-black70"
+          />
+          <BetweenText
+            labelLeft="Total Akhir"
+            labelRight={`Rp${rupiah(450000)}`}
+            classNameLabelLeft="text-black100"
+            classNameLabelRight="text-black100 font-semibold"
+            className="py-2 border-b border-b-black70"
+          />
         </div>
       </LoadingPage>
     </div>
@@ -103,24 +138,52 @@ const WithdrawalDetails = () => {
 
 export default WithdrawalDetails;
 
-const getLabelType = (status: number, isType?: boolean) => {
-  let value: string;
+const getColorStatus = (type: number) => {
+  let bgColor: string;
+  let textColor: string;
 
-  switch (status) {
+  switch (type) {
     case 1:
-      value = isType ? "Top-Up" : "Traksaksi Selesai";
+      bgColor = "bg-primary10 border-primary50";
+      textColor = "text-primary100";
       break;
 
     case 2:
-      value = isType ? "Refund" : "Refund Selesai";
+      bgColor = "bg-lightGreen border-strokeGreen";
+      textColor = "text-green";
       break;
 
     case 3:
-      value = isType ? "Bayar Sesi" : "Sesi Selesai";
+      bgColor = "bg-lightRed border-strokeRed";
+      textColor = "text-red";
       break;
 
-    case 4:
-      value = "Penarikan Selesai";
+    default:
+      bgColor = "";
+      textColor = "";
+      break;
+  }
+
+  return {
+    bgColor,
+    textColor,
+  };
+};
+
+const getLabelStatus = (type: number) => {
+  let value: string;
+
+  switch (type) {
+    case 1:
+      value = "Penarikan Diproses";
+      break;
+
+    case 2:
+      value = "Penarikan Disetujui";
+      break;
+
+    case 3:
+      value = "Penarikan Ditolak";
       break;
 
     default:

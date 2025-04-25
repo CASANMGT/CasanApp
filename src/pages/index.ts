@@ -31,6 +31,7 @@ import TermCondition from "./TermCondition";
 import PrivacyPolice from "./PrivacyPolice";
 import BalanceHistoryDetails from "./BalanceHistoryDetails";
 import EditProfile from "./EditProfile";
+import WithdrawalDetails from "./WithdrawalDetails";
 
 export {
     EditProfile,
@@ -65,6 +66,7 @@ export {
     TermCondition,
     PrivacyPolice,
     BankAccount,
+    WithdrawalDetails,
     WithdrawalHistory
 };
 
