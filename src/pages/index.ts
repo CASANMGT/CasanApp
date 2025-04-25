@@ -1,8 +1,10 @@
+import BalanceHistory from "./BalanceHistory";
+import BalanceHistoryDetails from "./BalanceHistoryDetails";
+import BankAccount from "./BankAccount";
 import Charging from "./Charging";
-import WithdrawalHistory from "./WithdrawalHistory";
-import BankAccount from './BankAccount'
 import ChargingStationDetails from "./ChargingStationDetails";
-import Order from "./Order";
+import ComingSoon from "./ComingSoon";
+import EditProfile from "./EditProfile";
 import Home from "./Home";
 import InputPin from "./InputPin";
 import Location from "./Location";
@@ -10,40 +12,34 @@ import LocationList from "./LocationList";
 import Login from "./Login";
 import Main from "./Main";
 import NotFound from "./NotFound";
+import Order from "./Order";
+import PaymentSuccess from "./PaymentSuccess";
+import PrivacyPolice from "./PrivacyPolice";
 import Profile from "./Profile";
 import Scan from "./Scan";
-import SelectPaymentMethod from "./SelectPaymentMethod";
+import SelectBank from "./SelectBank";
+import SessionDetails from "./SessionDetails";
 import SessionSettings from "./SessionSettings";
 import Splash from "./Splash";
-import Test from "./Test";
-import TransactionHistory from "./TransactionHistory";
-import TransactionDetails from "./TransactionDetails";
-import VerificationNumber from "./VerificationNumber";
-import Vehicle from "./Vehicle";
-import SessionDetails from "./SessionDetails";
-import TopUp from "./TopUp";
-import SelectBank from "./SelectBank";
-import Withdraw from "./Withdraw";
-import PaymentSuccess from "./PaymentSuccess";
-import ComingSoon from "./ComingSoon";
-import BalanceHistory from "./BalanceHistory";
 import TermCondition from "./TermCondition";
-import PrivacyPolice from "./PrivacyPolice";
-import BalanceHistoryDetails from "./BalanceHistoryDetails";
-import EditProfile from "./EditProfile";
+import Test from "./Test";
+import TopUp from "./TopUp";
+import TransactionDetails from "./TransactionDetails";
+import TransactionHistory from "./TransactionHistory";
+import Vehicle from "./Vehicle";
+import VerificationNumber from "./VerificationNumber";
+import Withdraw from "./Withdraw";
 import WithdrawalDetails from "./WithdrawalDetails";
+import WithdrawalHistory from "./WithdrawalHistory";
 
 export {
-    EditProfile,
+    BalanceHistory,
+    BalanceHistoryDetails,
+    BankAccount,
     Charging,
-    Vehicle,
-    PaymentSuccess,
-    TopUp,
-    ComingSoon,
-    SelectBank,
-    SessionDetails,
     ChargingStationDetails,
-    Order,
+    ComingSoon,
+    EditProfile,
     Home,
     InputPin,
     Location,
@@ -51,21 +47,23 @@ export {
     Login,
     Main,
     NotFound,
+    Order,
+    PaymentSuccess,
+    PrivacyPolice,
     Profile,
     Scan,
-    SelectPaymentMethod,
+    SelectBank,
+    SessionDetails,
     SessionSettings,
     Splash,
+    TermCondition,
     Test,
-    TransactionHistory,
+    TopUp,
     TransactionDetails,
+    TransactionHistory,
+    Vehicle,
     VerificationNumber,
     Withdraw,
-    BalanceHistory,
-    BalanceHistoryDetails,
-    TermCondition,
-    PrivacyPolice,
-    BankAccount,
     WithdrawalDetails,
     WithdrawalHistory
 };

@@ -15,6 +15,7 @@ export type AlertModalProps = {
   image?: any;
   icon?: any;
   title?: string;
+  typeButtonLeft?: ButtonType;
   labelButtonLeft?: string;
   labelButtonRight?: string;
   description?: string;
@@ -93,3 +94,11 @@ export type TabItemProps = {
   label: string;
   content: any;
 };
+
+export type ButtonType =
+  | "primary"
+  | "secondary"
+  | "danger"
+  | "light-green"
+  | "light-red"
+  | "primary-line";

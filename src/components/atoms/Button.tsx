@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { ButtonType } from "../../common";
 
 interface SizeButtonStyleProps {
   buttonStyle: string;
@@ -7,13 +8,7 @@ interface SizeButtonStyleProps {
 
 interface ButtonProps {
   className?: string;
-  type?:
-    | "primary"
-    | "secondary"
-    | "danger"
-    | "light-green"
-    | "light-red"
-    | "primary-line";
+  type?: ButtonType;
   buttonType?: "sm" | "md" | "lg";
   label: string;
   iconRight?: any;

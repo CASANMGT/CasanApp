@@ -7,6 +7,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
   image,
   icon,
   title,
+  typeButtonLeft,
   labelButtonLeft,
   labelButtonRight,
   description,
@@ -43,9 +44,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
         )}
 
         {isShowTitle && (
-          <h4 className="text-base font-semibold mb-1 text-center">
-            {title}
-          </h4>
+          <h4 className="text-base font-semibold mb-1 text-center">{title}</h4>
         )}
 
         {isShowDescription && (
@@ -54,6 +53,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
 
         <div className="between-x gap-2">
           <Button
+            type={typeButtonLeft}
             label={labelButtonLeft || ""}
             onClick={() => {
               if (onClick) onClick();

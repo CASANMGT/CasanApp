@@ -21,7 +21,6 @@ import {
   Profile,
   Scan,
   SelectBank,
-  SelectPaymentMethod,
   SessionDetails,
   SessionSettings,
   Splash,
@@ -34,7 +33,7 @@ import {
   VerificationNumber,
   Withdraw,
   WithdrawalDetails,
-  WithdrawalHistory,
+  WithdrawalHistory
 } from "../pages";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -62,7 +61,6 @@ const RoutesPage = () => {
         <Route path="text-condition" element={<TermCondition />} />
         <Route path="privacy-police" element={<PrivacyPolice />} />
         <Route path="scan" element={<Scan />} />
-        <Route path="select-payment-method" element={<SelectPaymentMethod />} />
         <Route path="session-settings/:id?" element={<SessionSettings />} />
         <Route
           path="payment-success/:id"

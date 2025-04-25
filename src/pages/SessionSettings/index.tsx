@@ -34,6 +34,7 @@ import {
   LoadingPage,
   ModalInputHour,
   ModalInputNominal,
+  ModalInputPin,
   ModalPaymentMethod,
   ModalVoltageAmpere,
   RequestOTPModal,
@@ -109,6 +110,7 @@ const SessionSettings = () => {
     useState<boolean>(false);
   const [openRequestOTP, setOpenRequestOTP] = useState<boolean>(false);
   const [openInputOTP, setOpenInputOTP] = useState<boolean>(false);
+  const [openInputPin, setOpenInputPin] = useState<boolean>(false);
 
   useEffect(() => {
     if (isAuthenticated) dispatch(fetchMyUser());
@@ -527,6 +529,11 @@ const SessionSettings = () => {
         onDismiss={() => setOpenInputOTP(false)}
       />
 
+      <ModalInputPin
+        isOpen={openInputPin}
+        onDismiss={() => setOpenInputPin(false)}
+        onConfirm={() => {}}
+      />
       {/* END MODALS */}
     </Container>
   );

@@ -10,6 +10,7 @@ import {
   IcEditWhite,
   IcElectricityBlack,
   IcLogout,
+  IcPasswordBlack,
 } from "../assets";
 import NullPhotoImg from "../assets/illustrations/null-photo.png";
 import { CUSTOMER_SERVICES, VERSION } from "../common";
@@ -121,21 +122,21 @@ const Profile = () => {
       </div>
 
       {/* MENU 1 */}
-      {/* <div className="mx-4 mt-3 px-3 py-4 bg-white rounded-lg">
-        <MenuItem
+      <div className="mx-4 mt-3 px-3 py-4 bg-white rounded-lg">
+        {/* <MenuItem
           icon={IcVehicleBlack}
           label="Kendaraan Saya"
           onClick={onMyVehicle}
-        />
+        /> */}
 
-        <Separator className="my-4" />
+        {/* <Separator className="my-4" /> */}
 
         <MenuItem
           icon={IcPasswordBlack}
           label="Atur Pin Cazz"
           onClick={() => onNext("input-pin")}
         />
-      </div> */}
+      </div>
 
       {/* MENU 2 */}
       <div className="mx-4 mt-4 px-3 py-4 bg-white rounded-lg">

@@ -10,6 +10,7 @@ import ModalPaymentMethod from "./ModalPaymentMethod";
 import ModalVoltageAmpere from "./ModalVoltageAmpere";
 import RequestOTPModal from "./RequestOTPModal";
 import ModalSelectBank from "./ModalSelectBank";
+import ModalInputPin from "./ModalInputPin";
 
 export {
     AlertModal,
@@ -23,6 +24,7 @@ export {
     ModalInputNominal,
     ModalPaymentMethod,
     ModalVoltageAmpere,
-    RequestOTPModal
+    RequestOTPModal,
+    ModalInputPin
 };
 
