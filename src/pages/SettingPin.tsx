@@ -1,42 +1,71 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { IcSuccessGreen } from "../assets";
 import { CUSTOMER_SERVICES } from "../common";
 import { AlertModal, Button, Header, InputCode } from "../components";
+import { fetchCheckPin, resetDataCheckPin } from "../features";
 import { openWhatsApp } from "../helpers";
-import { RootState } from "../store";
+import { AppDispatch, RootState } from "../store";
 
 const maxError: number = 3;
 
 const SettingPin = () => {
-  const navigate: NavigateFunction = useNavigate();
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const myUser = useSelector((state: RootState) => state.myUser);
+  const checkPin = useSelector((state: RootState) => state.checkPin);
+
   const [codes, setCodes] = useState<string[]>(["", "", "", ""]);
+  const [changeCodes, setChangeCodes] = useState<string[]>(["", "", "", ""]);
   const [isNewPin, setIsNewPin] = useState<boolean>(true);
-  const [countError, setCountError] = useState<number>(0);
+  const [isChangePin, setIsChangePin] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [openSuccess, setOpenSuccess] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
 
   useEffect(() => {
     if (!myUser?.data) navigate(-1);
-    else {
-      if (myUser?.data?.WithdrawPIN) setIsNewPin(false);
-    }
+    else if (myUser?.data?.WithdrawPIN) setIsNewPin(false);
   }, []);
+
+  useEffect(() => {
+    if (checkPin?.data) {
+      if (checkPin?.data?.data?.is_match) setIsChangePin(true);
+      else setErrorMessage(checkPin?.data?.message || "");
+
+      dispatch(resetDataCheckPin());
+    }
+  }, [checkPin]);
 
   const validation = () => {
     let value: boolean = true;
 
-    const some = codes.some((e) => e === "");
-    if (!some) value = false;
+    if (isChangePin) {
+      const some = changeCodes.some((e) => e === "");
+      if (!some) value = false;
+    } else {
+      const some = codes.some((e) => e === "");
+      if (!some) value = false;
+    }
 
     return value;
   };
 
+  const onDismiss = () => {
+    if (isChangePin) {
+      setIsChangePin(false);
+      setChangeCodes(["", "", "", ""]);
+    } else navigate(-1);
+  };
+
   const onNext = () => {
-    navigate("/confirmation-pin", { state: codes });
+    if (isNewPin || isChangePin)
+      navigate("/confirmation-pin", { state: codes });
+    else {
+      dispatch(fetchCheckPin(codes.join("")));
+    }
   };
 
   return (
@@ -44,24 +73,36 @@ const SettingPin = () => {
       <Header
         className="mx-4 mt-3.5"
         type={"secondary"}
-        title={isNewPin ? "Pengaturan Pin" : "Masukkan Pin"}
-        onDismiss={() => navigate(-1)}
+        title={
+          isNewPin
+            ? "Pengaturan Pin"
+            : isChangePin
+            ? "Ubah PIN"
+            : "Masukkan Pin"
+        }
+        onDismiss={onDismiss}
       />
 
       <div className="flex flex-col h-full justify-between">
         <div className="flex">
           <div className="w-full mx-4 mt-[72px] bg-white py-9 drop-shadow rounded-lg">
-            <p className="text-center mb-4">Silahkan masukkan kode PIN anda</p>
+            <p className="text-center mb-4">
+              {isNewPin
+                ? "Silahkan masukkan kode PIN anda"
+                : isChangePin
+                ? "Silahkan masukkan kode PIN Anda yang baru"
+                : "Silahkan masukkan kode PIN lama Anda"}
+            </p>
 
             <InputCode
               type="password"
-              values={codes}
-              error={
-                countError > 0
-                  ? `PIN salah. Coba lagi. (${countError}/${maxError})`
-                  : ""
-              }
-              onChange={(value: string[]) => setCodes(value)}
+              values={isChangePin ? changeCodes : codes}
+              error={errorMessage}
+              onChange={(value: string[]) => {
+                if (errorMessage) setErrorMessage("");
+                if (isChangePin) setChangeCodes(value);
+                else setCodes(value);
+              }}
             />
 
             <p className="text-xs text-black70 mt-4 text-center">
@@ -81,6 +122,7 @@ const SettingPin = () => {
             buttonType="lg"
             label="Konfirmasi PIN"
             disabled={validation()}
+            loading={checkPin?.loading}
             onClick={onNext}
           />
         </div>

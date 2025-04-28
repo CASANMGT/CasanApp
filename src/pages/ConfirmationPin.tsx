@@ -24,12 +24,14 @@ const ConfirmationPin = () => {
   const editPin = useSelector((state: RootState) => state.editPin);
 
   const [codes, setCodes] = useState<string[]>(["", "", "", ""]);
+  const [isNewPin, setIsNewPin] = useState<boolean>(true);
   const [countError, setCountError] = useState<number>(0);
   const [openSuccess, setOpenSuccess] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
 
   useEffect(() => {
     if (!myUser?.data) navigate(-1);
+    else if (myUser?.data?.WithdrawPIN) setIsNewPin(false);
   }, []);
 
   useEffect(() => {
@@ -75,7 +77,7 @@ const ConfirmationPin = () => {
       <Header
         className="mx-4 mt-3.5"
         type={"secondary"}
-        title="Konfirmasi Pin"
+        title={`Konfirmasi Pin${!isNewPin && ` Baru`}`}
         onDismiss={() => navigate(-1)}
       />
 
@@ -83,7 +85,7 @@ const ConfirmationPin = () => {
         <div className="flex">
           <div className="w-full mx-4 mt-[72px] bg-white py-9 drop-shadow rounded-lg">
             <p className="text-center mb-4">
-              Silahkan masukkan ulang kode PIN anda
+              {`Silahkan masukkan ulang kode PIN anda${!isNewPin && ` yang baru`}`}
             </p>
 
             <InputCode

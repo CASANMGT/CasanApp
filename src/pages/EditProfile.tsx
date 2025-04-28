@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { IcUser } from "../assets";
 import { REGEX_PHONE_NUMBER_HALF } from "../common";
 import { Button, Header, Input, SubTitle } from "../components";
+import { fetchMyUser } from "../features";
 import {
   EditUserRequestProps,
   fetchEditUser,
@@ -11,7 +12,6 @@ import {
 } from "../features/users/editUserSlice";
 import { useForm } from "../helpers";
 import { AppDispatch, RootState } from "../store";
-import { fetchMyUser } from "../features";
 
 interface FormEditProfile {
   name: string;
@@ -57,10 +57,18 @@ const EditProfile = () => {
     if (editUser?.data) {
       dispatch(resetDataEditUser());
       dispatch(fetchMyUser());
+    } else if (editUser?.error?.response?.data?.error) {
+      if (editUser?.error?.response?.data?.error === "phone already in use")
+        setFormError("phone", "No HP telah digunakan");
+      if (editUser?.error?.response?.data?.error === "email already in use")
+        setFormError("email", "Email telah digunakan");
     }
   }, [editUser]);
 
+  console.log("cek editUser", editUser);
+
   const handleChange = (type: "name" | "phone" | "email", value: string) => {
+    if (formError[type]) setFormError(type, "");
     setForm(type, value);
   };
 
@@ -80,13 +88,12 @@ const EditProfile = () => {
         phone: `+62${form.phone}`,
         email: form.email,
       };
-      
+
       dispatch(fetchEditUser(body));
     } catch (error) {
       console.log(error);
     }
   };
-
 
   return (
     <div className="background-1">
@@ -110,12 +117,14 @@ const EditProfile = () => {
         <Input
           type={"phone"}
           value={form.phone}
+          error={formError?.phone}
           placeholder="Nomor Handphone"
           onChange={(value) => handleChange("phone", value)}
         />
 
         <Input
           value={form.email}
+          error={formError?.email}
           placeholder="Email (Opsional)"
           onChange={(value) => handleChange("email", value)}
         />

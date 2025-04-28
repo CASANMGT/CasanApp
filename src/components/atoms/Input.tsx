@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { REGEX_NUMBERS } from "../../common";
-import { div } from "framer-motion/client";
 
 interface InputProps {
   type?: "number" | "text" | "phone";
@@ -38,8 +37,12 @@ const Input: React.FC<InputProps> = ({
   const isError = useMemo(() => (error ? true : false), [error]);
 
   return (
-    <div className="flex w-full">
-      <div className={`w-full px-6 border border-baseGray rounded-full flex flex-row gap-2 items-center ${isError && "border-red"}`}>
+    <div className="flex flex-col w-full">
+      <div
+        className={`w-full px-6 border border-baseGray rounded-full flex flex-row gap-2 items-center ${
+          isError && "border-red"
+        }`}
+      >
         {type === "phone" && (
           <>
             <span>+62</span>
