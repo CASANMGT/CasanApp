@@ -5,7 +5,7 @@ import { IcSuccessGreen } from "../assets";
 import { CUSTOMER_SERVICES } from "../common";
 import { AlertModal, Button, Header, InputCode } from "../components";
 import { fetchCheckPin, resetDataCheckPin } from "../features";
-import { openWhatsApp } from "../helpers";
+import { moments, openWhatsApp } from "../helpers";
 import { AppDispatch, RootState } from "../store";
 
 const maxError: number = 3;
@@ -24,6 +24,7 @@ const SettingPin = () => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [openSuccess, setOpenSuccess] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
   useEffect(() => {
     if (!myUser?.data) navigate(-1);
@@ -36,18 +37,31 @@ const SettingPin = () => {
       else setErrorMessage(checkPin?.data?.message || "");
 
       dispatch(resetDataCheckPin());
+    } else if (checkPin?.error?.response?.data) {
+      const error: string = checkPin?.error?.response?.data?.error;
+      const split = error.split("until ")[1];
+
+      if (split) {
+        const diff = moments(split).diff(moments(), "minutes");
+        setErrorMessage(
+          `Anda telah memasukkan konfirmasi PIN yang salah beberapa kali. Silakan tunggu ${diff} menit sebelum mencoba lagi`
+        );
+        setIsDisabled(true);
+      }
     }
   }, [checkPin]);
 
   const validation = () => {
     let value: boolean = true;
 
-    if (isChangePin) {
-      const some = changeCodes.some((e) => e === "");
-      if (!some) value = false;
-    } else {
-      const some = codes.some((e) => e === "");
-      if (!some) value = false;
+    if (!isDisabled) {
+      if (isChangePin) {
+        const some = changeCodes.some((e) => e === "");
+        if (!some) value = false;
+      } else {
+        const some = codes.some((e) => e === "");
+        if (!some) value = false;
+      }
     }
 
     return value;

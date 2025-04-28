@@ -58,14 +58,14 @@ const EditProfile = () => {
       dispatch(resetDataEditUser());
       dispatch(fetchMyUser());
     } else if (editUser?.error?.response?.data?.error) {
-      if (editUser?.error?.response?.data?.error === "phone already in use")
+      if (editUser?.error?.response?.data?.code === "4105")
         setFormError("phone", "No HP telah digunakan");
-      if (editUser?.error?.response?.data?.error === "email already in use")
+      if (editUser?.error?.response?.data?.code === "4104")
         setFormError("email", "Email telah digunakan");
+
+      dispatch(resetDataEditUser());
     }
   }, [editUser]);
-
-  console.log("cek editUser", editUser);
 
   const handleChange = (type: "name" | "phone" | "email", value: string) => {
     if (formError[type]) setFormError(type, "");

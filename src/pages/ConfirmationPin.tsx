@@ -13,8 +13,6 @@ import {
 import { openWhatsApp } from "../helpers";
 import { AppDispatch, RootState } from "../store";
 
-const maxError: number = 3;
-
 const ConfirmationPin = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,16 +24,20 @@ const ConfirmationPin = () => {
   const [codes, setCodes] = useState<string[]>(["", "", "", ""]);
   const [isNewPin, setIsNewPin] = useState<boolean>(true);
   const [countError, setCountError] = useState<number>(0);
+  const [maxCountError, setMaxCountError] = useState<number>(3);
   const [openSuccess, setOpenSuccess] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
 
   useEffect(() => {
     if (!myUser?.data) navigate(-1);
-    else if (myUser?.data?.WithdrawPIN) setIsNewPin(false);
+    else if (myUser?.data?.WithdrawPIN) {
+      setIsNewPin(false);
+      setMaxCountError(5);
+    }
   }, []);
 
   useEffect(() => {
-    if (countError === 3) {
+    if (countError === maxCountError) {
       setTimeout(() => {
         navigate(-1);
       }, 1000);
@@ -65,11 +67,8 @@ const ConfirmationPin = () => {
     const beforeCode: string = location?.state.join("");
     const codeJoin: string = codes.join("");
 
-    if (codeJoin === beforeCode) {
-      dispatch(fetchEditPin(codeJoin));
-    } else {
-      if (countError < 3) setCountError((prev) => prev + 1);
-    }
+    if (codeJoin === beforeCode) dispatch(fetchEditPin(codeJoin));
+    else if (countError < maxCountError) setCountError((prev) => prev + 1);
   };
 
   return (
@@ -77,7 +76,7 @@ const ConfirmationPin = () => {
       <Header
         className="mx-4 mt-3.5"
         type={"secondary"}
-        title={`Konfirmasi Pin${!isNewPin && ` Baru`}`}
+        title={`Konfirmasi Pin${!isNewPin ? ` Baru` : ""}`}
         onDismiss={() => navigate(-1)}
       />
 
@@ -85,7 +84,9 @@ const ConfirmationPin = () => {
         <div className="flex">
           <div className="w-full mx-4 mt-[72px] bg-white py-9 drop-shadow rounded-lg">
             <p className="text-center mb-4">
-              {`Silahkan masukkan ulang kode PIN anda${!isNewPin && ` yang baru`}`}
+              {`Silahkan masukkan ulang kode PIN anda${
+                !isNewPin && ` yang baru`
+              }`}
             </p>
 
             <InputCode
@@ -93,7 +94,9 @@ const ConfirmationPin = () => {
               values={codes}
               error={
                 countError > 0
-                  ? `PIN salah. Coba lagi. (${countError}/${maxError})`
+                  ? `PIN${
+                      !isNewPin ? ` baru` : ""
+                    } salah. Coba lagi. (${countError}/${maxCountError})`
                   : ""
               }
               onChange={(value: string[]) => setCodes(value)}
