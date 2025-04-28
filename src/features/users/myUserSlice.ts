@@ -1,22 +1,9 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { INVALID_TOKEN } from "../../common";
+import { DataUser, INVALID_TOKEN } from "../../common";
 import { Api } from "../../services/Api";
 
-export type MyUserResponse = {
-  ID: number;
-  Name: string;
-  Phone: string;
-  IsVerified: boolean;
-  Email: string | null;
-  Balance: number;
-  Status: number;
-  CreatedAt: string;
-  UpdatedAt: string;
-  DeletedAt: string | null;
-};
-
 type MyUserState = {
-  data: MyUserResponse | null;
+  data: DataUser | null;
   loading: boolean;
   error: string | null;
 };
@@ -36,7 +23,7 @@ export const fetchMyUser = createAsyncThunk(
         url: `users/me`,
       });
 
-      return res?.data as MyUserResponse;
+      return res?.data as DataUser;
     } catch (e) {
       return rejectWithValue(e);
     }
@@ -55,7 +42,7 @@ const myUserSlice = createSlice({
       })
       .addCase(
         fetchMyUser.fulfilled,
-        (state, action: PayloadAction<MyUserResponse>) => {
+        (state, action: PayloadAction<DataUser>) => {
           state.loading = false;
           state.data = action.payload;
           state.error = null;

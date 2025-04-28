@@ -134,7 +134,7 @@ const Profile = () => {
         <MenuItem
           icon={IcPasswordBlack}
           label="Atur Pin Cazz"
-          onClick={() => onNext("input-pin")}
+          onClick={() => onNext("setting-pin")}
         />
       </div>
 

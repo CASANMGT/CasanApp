@@ -6,7 +6,7 @@ import ChargingStationDetails from "./ChargingStationDetails";
 import ComingSoon from "./ComingSoon";
 import EditProfile from "./EditProfile";
 import Home from "./Home";
-import InputPin from "./InputPin";
+import SettingPin from "./SettingPin";
 import Location from "./Location";
 import LocationList from "./LocationList";
 import Login from "./Login";
@@ -31,8 +31,10 @@ import VerificationNumber from "./VerificationNumber";
 import Withdraw from "./Withdraw";
 import WithdrawalDetails from "./WithdrawalDetails";
 import WithdrawalHistory from "./WithdrawalHistory";
+import ConfirmationPin from "./ConfirmationPin";
 
 export {
+    ConfirmationPin,
     BalanceHistory,
     BalanceHistoryDetails,
     BankAccount,
@@ -41,7 +43,7 @@ export {
     ComingSoon,
     EditProfile,
     Home,
-    InputPin,
+    SettingPin,
     Location,
     LocationList,
     Login,

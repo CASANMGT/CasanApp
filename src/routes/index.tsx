@@ -7,9 +7,9 @@ import {
   Charging,
   ChargingStationDetails,
   ComingSoon,
+  ConfirmationPin,
   EditProfile,
   Home,
-  InputPin,
   Location,
   LocationList,
   Login,
@@ -23,6 +23,7 @@ import {
   SelectBank,
   SessionDetails,
   SessionSettings,
+  SettingPin,
   Splash,
   TermCondition,
   Test,
@@ -33,7 +34,7 @@ import {
   VerificationNumber,
   Withdraw,
   WithdrawalDetails,
-  WithdrawalHistory
+  WithdrawalHistory,
 } from "../pages";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -52,7 +53,6 @@ const RoutesPage = () => {
           path="charging-station-details"
           element={<ChargingStationDetails />}
         />
-        <Route path="input-pin" element={<InputPin />} />
         <Route
           path="location-list"
           element={<ProtectedRoute element={<LocationList />} />}
@@ -91,6 +91,14 @@ const RoutesPage = () => {
           <Route
             path="top-up"
             element={<ProtectedRoute element={<TopUp />} />}
+          />
+          <Route
+            path="setting-pin"
+            element={<ProtectedRoute element={<SettingPin />} />}
+          />
+          <Route
+            path="confirmation-pin"
+            element={<ProtectedRoute element={<ConfirmationPin />} />}
           />
           <Route
             path="balance-history"

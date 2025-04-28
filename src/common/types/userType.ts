@@ -6,6 +6,7 @@ export type DataUser = {
   Email: string;
   Balance: number;
   Status: number;
+  WithdrawPIN: string;
   CreatedAt: string;
   UpdatedAt: string;
   DeletedAt: string | null;
