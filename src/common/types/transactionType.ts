@@ -24,6 +24,8 @@ export type Transaction = {
   TotalFee: number;
   Type: number;
   Status: number;
+  SessionID: number | null;
+  Session: Session;
   RefTransactionID: string | null;
   PaymentMethod: string;
   DeepLinkRedirectURL: string;

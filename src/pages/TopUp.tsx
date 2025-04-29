@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { IcEditGreen, IcInfoCircleGreen, IcSolarGreen } from "../assets";
 import {
   AddTransactionBody,
+  ERROR_MESSAGE,
   FeeSettingsProps,
   NOMINAL_TOP_UP,
   REGEX_NUMBERS,
@@ -24,7 +25,7 @@ import {
   resetDataAddTransaction,
   showLoading,
 } from "../features";
-import { rupiah, useForm } from "../helpers";
+import { checkCalculationPaymentMethod, rupiah, useForm } from "../helpers";
 import { AppDispatch, RootState } from "../store";
 
 interface FormTopUp {
@@ -44,8 +45,6 @@ const TopUp = () => {
     nominal: "",
   });
 
-  const [nominal, setNominal] = useState<string>();
-  const [paymentMethod, setPaymentMethod] = useState<FeeSettingsProps>();
   const [visiblePaymentMethod, setVisiblePaymentMethod] =
     useState<boolean>(false);
 
@@ -54,9 +53,12 @@ const TopUp = () => {
     else dispatch(hideLoading());
 
     if (addTransaction?.data) {
+      navigate(`/transaction-history/details/${addTransaction?.data?.ID}`, {
+        replace: true,
+      });
+
+      dispatch(fetchMyUser());
       dispatch(resetDataAddTransaction());
-      fetchMyUser();
-      navigate("/balance-history", { replace: true });
     }
   }, [addTransaction]);
 
@@ -81,16 +83,30 @@ const TopUp = () => {
     return value;
   };
 
-  const onPay = () => {
-    const body: AddTransactionBody = {
-      amount: Number(nominal?.replace("Rp", "").replace(/\./g, "") || 0),
-      payment_method: paymentMethod?.key || "",
-      type: 1,
-      wallet_used_amount: 0,
-    };
+  const onPay = (select?: FeeSettingsProps) => {
+    try {
+      setVisiblePaymentMethod(false);
+      setForm("paymentMethod", select);
 
-    dispatch(fetchAddTransaction(body));
+      if (select?.key) {
+        const body: AddTransactionBody = {
+          amount: total,
+          payment_method: select?.key || "",
+          type: 1,
+          wallet_used_amount: 0,
+        };
+
+        dispatch(fetchAddTransaction(body));
+      }
+    } catch (_) {
+      alert(ERROR_MESSAGE);
+    }
   };
+
+  const { total, fee } = checkCalculationPaymentMethod(
+    Number(form?.nominal?.replace("Rp", "").replace(/\./g, "") || 0),
+    form?.paymentMethod
+  );
 
   return (
     <div className="background-1 flex flex-col justify-between overflow-hidden">
@@ -150,9 +166,9 @@ const TopUp = () => {
 
           <BetweenText
             type="medium-content"
-            labelLeft="Nominal Top Uo"
+            labelLeft="Nominal Top Up"
             labelRight={`Rp${rupiah(
-              nominal?.replace("Rp", "").replace(/\./g, "") || 0
+              form.nominal?.replace("Rp", "").replace(/\./g, "") || 0
             )}`}
             className="bg-baseLightGray p-3 rounded-t"
           />
@@ -160,7 +176,7 @@ const TopUp = () => {
           <BetweenText
             type="medium-content"
             labelLeft="Admin Fee"
-            labelRight={`Rp${rupiah(paymentMethod?.value || 0)}`}
+            labelRight={`Rp${rupiah(fee)}`}
             className="p-3"
           />
         </Card>
@@ -171,10 +187,7 @@ const TopUp = () => {
         <div className="between-x">
           <p className="text-base text-black100/70">
             Total:{" "}
-            <a className="text-blackBold font-bold">{`Rp${rupiah(
-              Number(nominal?.replace("Rp", "").replace(/\./g, "") || 0) +
-                Number(paymentMethod?.value || 0)
-            )}`}</a>
+            <a className="text-blackBold font-bold">{`Rp${rupiah(total)}`}</a>
           </p>
 
           <Button
@@ -199,12 +212,9 @@ const TopUp = () => {
         type={"top-up"}
         visible={visiblePaymentMethod}
         select={form.paymentMethod}
-        total={Number(form.nominal?.replace("Rp", "").replace(/\./g, "") || 0)}
+        total={total}
         onDismiss={() => setVisiblePaymentMethod(false)}
-        onSelect={(select) => {
-          setForm("paymentMethod", select);
-          setVisiblePaymentMethod(false);
-        }}
+        onSelect={(select) => onPay(select)}
       />
       {/* END MODAL */}
     </div>

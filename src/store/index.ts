@@ -20,6 +20,7 @@ import startSessionReducer from "../features/sessions/startSessionSlice.ts";
 import stopSessionReducer from "../features/sessions/stopSessionSlice.ts";
 import toastReducer from "../features/toastSlice";
 import addTransactionReducer from "../features/transactions/addTransactionSlice.ts";
+import transactionByIdReducer from "../features/transactions/transactionByIdSlice.ts";
 import transactionListReducer from "../features/transactions/transactionListSlice.ts";
 import checkPinReducer from "../features/users/checkPinSlice.ts";
 import editPinReducer from "../features/users/editPinSlice.ts";
@@ -63,6 +64,7 @@ export const store = configureStore({
 
     // TRANSACTION
     transactionList: transactionListReducer,
+    transactionById: transactionByIdReducer,
     addTransaction: addTransactionReducer,
 
     // BALANCE

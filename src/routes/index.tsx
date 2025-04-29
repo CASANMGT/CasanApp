@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { AuthProvider } from "../context/AuthContext";
 import {
   BalanceHistory,
-  BalanceHistoryDetails,
+  BalanceDetails,
   BankAccount,
   Charging,
   ChargingStationDetails,
@@ -107,7 +107,7 @@ const RoutesPage = () => {
 
           <Route
             path="balance-history/details"
-            element={<ProtectedRoute element={<BalanceHistoryDetails />} />}
+            element={<ProtectedRoute element={<BalanceDetails />} />}
           />
 
           <Route

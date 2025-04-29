@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IcSuccessGreen } from "../assets";
-import { Balance } from "../common";
+import { Balance, ERROR_MESSAGE } from "../common";
 import {
   BetweenText,
   Button,
@@ -11,7 +11,7 @@ import {
 } from "../components";
 import { moments, rupiah } from "../helpers";
 
-const BalanceHistoryDetails = () => {
+const BalanceDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,10 +19,11 @@ const BalanceHistoryDetails = () => {
 
   const onNext = () => {
     let nextPage: string;
+    let id: number | null = data?.SeasonID;
 
     switch (data?.Status) {
       case 1:
-        nextPage = "transaction-history-details";
+        nextPage = "transaction-history/details";
         break;
 
       case 2:
@@ -39,7 +40,8 @@ const BalanceHistoryDetails = () => {
         break;
     }
 
-    navigate(`/${nextPage}/${data?.SeasonID || 0}`);
+    if (id) navigate(`/${nextPage}/${id}`);
+    else alert(ERROR_MESSAGE);
   };
 
   return (
@@ -101,7 +103,7 @@ const BalanceHistoryDetails = () => {
   );
 };
 
-export default BalanceHistoryDetails;
+export default BalanceDetails;
 
 const getLabelType = (status: number, isType?: boolean) => {
   let value: string;

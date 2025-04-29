@@ -1,5 +1,5 @@
 import BalanceHistory from "./BalanceHistory";
-import BalanceHistoryDetails from "./BalanceHistoryDetails";
+import BalanceDetails from "./BalanceDetails";
 import BankAccount from "./BankAccount";
 import Charging from "./Charging";
 import ChargingStationDetails from "./ChargingStationDetails";
@@ -36,7 +36,7 @@ import ConfirmationPin from "./ConfirmationPin";
 export {
     ConfirmationPin,
     BalanceHistory,
-    BalanceHistoryDetails,
+    BalanceDetails,
     BankAccount,
     Charging,
     ChargingStationDetails,

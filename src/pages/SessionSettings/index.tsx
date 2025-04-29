@@ -136,7 +136,7 @@ const SessionSettings = () => {
     else dispatch(hideLoading());
 
     if (addSession?.data) {
-      navigate(`/transaction-history-details/${addSession?.data?.ID}`, {
+      navigate(`/transaction-history/details/${addSession?.data?.TransactionID}`, {
         replace: true,
         state: { isGoOrder: true },
       });

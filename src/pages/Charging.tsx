@@ -113,10 +113,13 @@ const Charging = () => {
         currentStatus === 7 ||
         currentStatus === 8
       ) {
-        navigate(`/transaction-history-details/${detailSession?.data?.ID}`, {
-          replace: true,
-          state: { isGoOrder: true },
-        });
+        navigate(
+          `/transaction-history/details/${detailSession?.data?.TransactionID}`,
+          {
+            replace: true,
+            state: { isGoOrder: true },
+          }
+        );
       } else if (
         currentStatus === 2 &&
         resSession?.ChargingStationID &&
@@ -181,7 +184,7 @@ const Charging = () => {
         className="mx-4 mb-4"
         onPress={() => {
           if (detailSession?.data?.Status !== 5) setOpenCancel(true);
-          else openWhatsApp(CUSTOMER_SERVICES)
+          else openWhatsApp(CUSTOMER_SERVICES);
         }}
       />
 

@@ -20,7 +20,7 @@ const WithdrawalDetails = () => {
 
     switch (data?.Status) {
       case 1:
-        nextPage = "transaction-history-details";
+        nextPage = "transaction-history/details";
         break;
 
       case 2:

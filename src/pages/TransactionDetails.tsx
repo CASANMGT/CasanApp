@@ -25,7 +25,7 @@ import {
 } from "../components";
 import {
   fetchCancelSession,
-  fetchDetailSession,
+  fetchTransactionById,
   hideLoading,
   resetDataAddSession,
   resetDataCancelSession,
@@ -38,15 +38,16 @@ import {
   rupiah,
 } from "../helpers";
 import { AppDispatch, RootState } from "../store";
-import { div } from "framer-motion/client";
 
 const TransactionDetails = () => {
   const navigate: NavigateFunction = useNavigate();
   const location = useLocation();
-  const { id, type } = useParams();
+  const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
-  const detailSession = useSelector((state: RootState) => state.detailSession);
+  const transactionById = useSelector(
+    (state: RootState) => state.transactionById
+  );
   const cancelSession = useSelector((state: RootState) => state.cancelSession);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isShow, setIsShow] = useState<boolean>(false);
@@ -71,23 +72,23 @@ const TransactionDetails = () => {
   }, [cancelSession]);
 
   useEffect(() => {
-    if (detailSession?.data?.Transaction?.Status === 2) {
+    if (transactionById?.data?.Status === 2) {
       setIsRunning(true);
-    } else if (isRunning && detailSession?.data?.Transaction?.Status === 1) {
+    } else if (isRunning && transactionById?.data?.Status === 1) {
       setIsRunning(false);
-      navigate(`/payment-success/${detailSession?.data?.ID}`);
+      navigate(`/payment-success/${transactionById?.data?.SessionID}`);
     }
 
-    if (detailSession?.data?.Transaction?.Status === 1) setIsShow(true);
+    if (transactionById?.data?.Status === 1) setIsShow(true);
     else setIsShow(false);
-  }, [detailSession?.data]);
+  }, [transactionById?.data]);
 
   useEffect(() => {
     if (isRunning) timeoutProgress();
   }, [isRunning]);
 
   const getData = () => {
-    dispatch(fetchDetailSession(Number(id)));
+    dispatch(fetchTransactionById(Number(id)));
   };
 
   const timeoutProgress = () => {
@@ -132,11 +133,12 @@ const TransactionDetails = () => {
     document.body.removeChild(link);
   };
 
-  const status: number = detailSession?.data?.Transaction?.Status || 0;
+  const status: number = transactionById?.data?.Status || 0;
+  const transactionType: number = transactionById?.data?.Type || 0;
   let duration: number = 0;
 
   if (status === 2) {
-    const diff = moments(detailSession?.data?.ExpiredAt).diff(
+    const diff = moments(transactionById?.data?.Session?.ExpiredAt).diff(
       moments(),
       "second"
     );
@@ -151,24 +153,25 @@ const TransactionDetails = () => {
   const onViewSession = () => {
     let nextPage = "charging";
 
-    if (detailSession?.data?.Status === 6) nextPage = "session-details";
+    if (transactionById?.data?.Session?.Status === 6)
+      nextPage = "session-details";
 
     navigate(`/${nextPage}/${id}`);
   };
 
   const IconPayment = getIconPaymentMethod(
-    (detailSession?.data?.Transaction?.PaymentMethod || "")
+    (transactionById?.data?.PaymentMethod || "")
       .split("_")[0]
       .toLocaleLowerCase()
   );
   const labelPayment = getLabelPaymentMethod(
-    (detailSession?.data?.Transaction?.PaymentMethod || "")
+    (transactionById?.data?.PaymentMethod || "")
       .replace("_TU", "")
       .toLocaleLowerCase()
   );
 
   const isShowRefund: boolean =
-    Number(detailSession?.data?.Transaction?.WalletUsedAmount || 0) > 0 &&
+    Number(transactionById?.data?.WalletUsedAmount || 0) > 0 &&
     (status === 3 || status === 4)
       ? true
       : false;
@@ -177,7 +180,7 @@ const TransactionDetails = () => {
     <div className="background-1 py-[14px] px-4">
       <Header type="secondary" title="Detail Transaksi" onDismiss={onDismiss} />
 
-      <LoadingPage loading={detailSession?.loading}>
+      <LoadingPage loading={transactionById?.loading}>
         <div className="flex flex-col gap-2 items-center justify-center my-7 ">
           {status === 1 ? (
             <IcSuccessGreen />
@@ -202,7 +205,7 @@ const TransactionDetails = () => {
 
         <div
           id="receipt"
-          className="relative p-3 pb-6 bg-white rounded-lg mt-[28px] drop-shadow"
+          className="relative p-3 pb-4 bg-white rounded-lg mt-[28px] drop-shadow"
         >
           {status !== 1 && (
             <>
@@ -213,7 +216,7 @@ const TransactionDetails = () => {
                   </span>
 
                   <span className="text-base font-semibold text-primary100">
-                    {`Rp${rupiah(detailSession?.data?.Transaction?.DueAmount)}`}
+                    {`Rp${rupiah(transactionById?.data?.DueAmount)}`}
                   </span>
                 </div>
 
@@ -236,7 +239,7 @@ const TransactionDetails = () => {
                 </button>
               </div>
 
-              <Separator className="!bg-baseLightGray mb-4 mt-2.5" />
+              <Separator className="!bg-baseLightGray mb-3 mt-2.5" />
 
               <BetweenText
                 labelLeft="Metode Pembayaran"
@@ -251,94 +254,99 @@ const TransactionDetails = () => {
                   </div>
                 }
               />
-
-              <Separator className="my-4" />
             </>
-          )}
-
-          <p className="font-medium mb-2">Informasi Transaksi</p>
-          <div className="text-black100/70 row gap-2">
-            <p className="text-xs">
-              {moments(detailSession?.data?.Transaction?.CreatedAt).format(
-                "DD MMMM YYYY"
-              )}
-            </p>
-            <p className="text-xs">
-              {moments(detailSession?.data?.Transaction?.CreatedAt).format(
-                "HH:mm WIB"
-              )}
-            </p>
-            <p className="text-xs">{`ID${detailSession?.data?.TransactionID}`}</p>
-          </div>
-
-          {status !== 1 && (
-            <BetweenText
-              labelLeft="Referensi Sesi ID"
-              labelRight={detailSession?.data?.ID || "-"}
-              className="pt-4"
-            />
           )}
 
           {isShow && (
             <>
-              <BetweenText
-                labelLeft="Tipe Transaksi"
-                labelRight="Pengisisan Daya"
-                classNameLabelRight="font-medium text-black100"
-                className="mb-2 mt-4"
-              />
+              <Separator className="mb-4 mt-3" />
+
+              <p className="font-medium mb-2">Informasi Transaksi</p>
+              <div className="text-black100/70 row gap-2">
+                <p className="text-xs">
+                  {moments(transactionById?.data?.CreatedAt).format(
+                    "DD MMMM YYYY"
+                  )}
+                </p>
+                <p className="text-xs">
+                  {moments(transactionById?.data?.CreatedAt).format(
+                    "HH:mm WIB"
+                  )}
+                </p>
+                <p className="text-xs">{`ID${transactionById?.data?.ID}`}</p>
+              </div>
+
+              {transactionType !== 1 && (
+                <BetweenText
+                  labelLeft="Referensi Sesi ID"
+                  labelRight={transactionById?.data?.SessionID || "-"}
+                  className="pt-4"
+                />
+              )}
+
+              <Separator className="my-4" />
+              <span className="text-xs text-black70">Detail Transaksi</span>
 
               <BetweenText
-                labelLeft="Referensi Sesi ID"
-                labelRight={detailSession?.data?.ID || "-"}
-                className="border-y border-black10 py-2"
+                labelLeft="Tipe Transaksi"
+                labelRight={
+                  transactionType === 1 ? "Top Up" : "Pengisisan Daya"
+                }
+                classNameLabelRight="font-medium text-black100"
+                className="py-2 border-b border-b-black10"
               />
+
+              {transactionType !== 1 && (
+                <BetweenText
+                  labelLeft="Referensi Sesi ID"
+                  labelRight={transactionById?.data?.SessionID || "-"}
+                  className="py-2 border-b border-b-black10"
+                />
+              )}
 
               <BetweenText
                 labelLeft="Metode Pembayaran"
                 labelRight={getLabelPaymentMethod(
-                  (detailSession?.data?.Transaction?.PaymentMethod || "")
+                  (transactionById?.data?.PaymentMethod || "")
                     .replace("_TU", "")
                     .toLocaleLowerCase()
                 )}
-                className="my-2"
+                className="py-2 border-b border-b-black10"
               />
 
               <BetweenText
-                labelLeft="Nominal Pengecasan"
-                labelRight={`Rp${rupiah(
-                  detailSession?.data?.Transaction?.Amount
-                )}`}
-                className="border-y border-black10 py-2"
+                labelLeft={`Nominal ${
+                  transactionType === 1 ? "Topup" : "Pengecasan"
+                }`}
+                labelRight={`Rp${rupiah(transactionById?.data?.Amount)}`}
+                className="py-2 border-b border-b-black10"
               />
 
               <BetweenText
                 labelLeft="Admin Fee"
-                labelRight={`Rp${rupiah(
-                  detailSession?.data?.Transaction?.TotalFee
-                )}`}
-                className="my-2"
+                labelRight={`Rp${rupiah(transactionById?.data?.TotalFee)}`}
+                className="py-2 border-b border-b-black10"
               />
 
               {/* <BetweenText
             labelLeft="Service Fee"
-            labelRight={detailSession?.data?.ChargingFee || "-"}
-            className="border-t border-black10 py-2"
+            labelRight={transactionById?.data?.Session?.ChargingFee || "-"}
+            className="py-2 border-b border-b-black10"
           /> */}
 
-              <BetweenText
-                labelLeft="Pembayaran Casan Wallet"
-                labelRight={`Rp${rupiah(
-                  detailSession?.data?.Transaction?.WalletUsedAmount
-                )}`}
-                className="border-t border-t-black10 py-2"
-              />
+              {transactionType !== 1 && (
+                <BetweenText
+                  labelLeft="Pembayaran Casan Wallet"
+                  labelRight={`Rp${rupiah(
+                    transactionById?.data?.WalletUsedAmount
+                  )}`}
+                  className="py-2"
+                />
+              )}
 
               <BetweenText
                 labelLeft="Total Transaksi"
-                labelRight={`Rp${rupiah(
-                  detailSession?.data?.Transaction?.DueAmount
-                )}`}
+                labelRight={`Rp${rupiah(transactionById?.data?.DueAmount)}`}
                 className="border-y border-black100 py-2"
                 classNameLabelLeft="text-black100"
                 classNameLabelRight="text-black100 font-medium"
@@ -347,7 +355,9 @@ const TransactionDetails = () => {
               {isShowRefund && (
                 <BetweenText
                   labelLeft="Pengembalian Dana"
-                  labelRight={`Rp${rupiah(detailSession?.data?.RefundAmount)}`}
+                  labelRight={`Rp${rupiah(
+                    transactionById?.data?.Session?.RefundAmount
+                  )}`}
                   className="my-2"
                 />
               )}
@@ -392,7 +402,7 @@ const TransactionDetails = () => {
                   <button
                     onClick={() =>
                       window.open(
-                        detailSession?.data?.Transaction?.DeepLinkRedirectURL,
+                        transactionById?.data?.DeepLinkRedirectURL,
                         "_blank"
                       )
                     }
@@ -400,7 +410,7 @@ const TransactionDetails = () => {
                   >
                     <span>Lanjutkan Pembayaran</span>
                     <span className="font-semibold">{`Rp${rupiah(
-                      detailSession?.data?.Transaction?.DueAmount
+                      transactionById?.data?.DueAmount
                     )}`}</span>
                   </button>
 
@@ -408,13 +418,20 @@ const TransactionDetails = () => {
                     type="danger"
                     label="Cancel"
                     onClick={() =>
-                      dispatch(fetchCancelSession(detailSession?.data?.ID || 0))
+                      transactionById?.data?.SessionID &&
+                      dispatch(
+                        fetchCancelSession(
+                          transactionById?.data?.SessionID || 0
+                        )
+                      )
                     }
                   />
                 </div>
               )}
             </>
           )}
+
+          {isShow && <div className="mb-2"/>}
         </div>
       </LoadingPage>
     </div>

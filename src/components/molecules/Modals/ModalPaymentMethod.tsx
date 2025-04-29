@@ -5,7 +5,11 @@ import { FeeSettingsProps } from "../../../common";
 import { useAlert } from "../../../context/AlertContext";
 import { useAuth } from "../../../context/AuthContext";
 import { fetchFeeSettings, fetchMyUser } from "../../../features";
-import { getIconPaymentMethod } from "../../../helpers";
+import {
+  checkCalculationPaymentMethod,
+  getIconPaymentMethod,
+  rupiah,
+} from "../../../helpers";
 import { AppDispatch, RootState } from "../../../store";
 import { Button, LoadingPage } from "../../atoms";
 import { PaymentMethodItem } from "../Items";
@@ -84,35 +88,24 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
     if (isAuthenticated) dispatch(fetchMyUser());
   };
 
-  const onValidation = () => {
-    let message = {
-      title: "",
-      body: "",
-    };
+  const validation = () => {
+    let value: boolean = true;
 
-    if (!selectedBalance && !selectedPayment) {
-      message.title = "Pilih Metode Pembayaran";
-      message.body = "Pilih Metode Pembayaran terlebih dahulu";
-    } else if (
-      selectedBalance > 0 &&
-      selectedBalance < (total || 0) &&
-      !selectedPayment
-    ) {
-      message.title = "Saldo tidak cukup";
-      message.body = "Saldo Casan anda tidak mencukupi";
-    }
+    if (selectedBalance && selectedBalance > (total || 0) && !selectedPayment)
+      value = false;
+    else if (selectedPayment) value = false;
 
-    if (!message?.title) {
-      onSelect(selectedPayment, selectedBalance);
-    } else showAlert(message);
+    return value;
   };
 
-  const myBalance = myUser?.data?.Balance || 0;
+  const myBalance: number = myUser?.data?.Balance || 0;
+  const calculate: { total: number; fee: number } =
+    checkCalculationPaymentMethod(total || 0, selectedPayment);
 
   return (
     <ModalContainer isOpen={visible} isBottom onDismiss={onDismiss}>
-      <div className="w-full bg-white p-4 rounded-t-xl between-y">
-        <div className="flex-1 flex flex-col overflow-hidden relative">
+      <div className="w-full bg-white rounded-t-xl between-y">
+        <div className="flex-1 flex flex-col p-4 overflow-hidden relative">
           <div className="between-x mb-6">
             <label className="text-base font-semibold">
               Pilih Metode Pembayaran
@@ -127,7 +120,7 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
             loading={feeSettings?.loading || myUser?.loading}
             color="primary100"
           >
-            <div className="overflow-auto">
+            <div className="overflow-auto scrollbar-none">
               {type !== "top-up" && (
                 <>
                   <p className="text-black70 mb-2.5">Saldo Anda</p>
@@ -153,8 +146,8 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
 
               {optionsPaymentMethod &&
                 optionsPaymentMethod.map((item, index: number) => {
-                  if(item?.key==="TRANSFER_TU") return null
-                  
+                  if (item?.key === "TRANSFER_TU") return null;
+
                   return (
                     <PaymentMethodItem
                       key={item?.key}
@@ -173,8 +166,22 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
         </div>
 
         {/* FOOTER */}
-        <div className="">
-          <Button buttonType="lg" label="Pilih" onClick={onValidation} />
+        <div className="container-button-footer">
+          <div className="between-x">
+            <p className="text-base text-black100/70">
+              Total:{" "}
+              <a className="text-blackBold font-bold">{`Rp${rupiah(
+                calculate?.total
+              )}`}</a>
+            </p>
+
+            <Button
+              label="Pilih"
+              disabled={validation()}
+              onClick={() => onSelect(selectedPayment, selectedBalance)}
+              className="!w-[130px]"
+            />
+          </div>
         </div>
       </div>
     </ModalContainer>

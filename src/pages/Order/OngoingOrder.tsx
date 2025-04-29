@@ -30,9 +30,12 @@ const OngoingOrder = () => {
 
   const onNext = (select: Session) => {
     let url: string;
+    let id: number = select?.ID;
 
-    if (select?.Status === 1) url = "/transaction-history-details";
-    else if (
+    if (select?.Status === 1) {
+      id = select?.TransactionID;
+      url = "/transaction-history/details";
+    } else if (
       select?.Status === 2 ||
       select?.Status === 3 ||
       select?.Status === 4 ||
@@ -41,7 +44,7 @@ const OngoingOrder = () => {
       url = "/charging";
     else url = "/session-details";
 
-    navigate(`${url}/${select?.ID}`);
+    navigate(`${url}/${id}`);
   };
 
   return (

@@ -1,3 +1,5 @@
+import { FeeSettingsProps } from "../common";
+
 const deg2rad = (deg: number): number => {
   return deg * (Math.PI / 180);
 };
@@ -52,4 +54,22 @@ export const getDistanceFromLatLonInKm = (
   const d = R * c; // Distance in km
 
   return isNaN(d) ? 0 : parseFloat(d.toFixed(0));
+};
+
+export const checkCalculationPaymentMethod = (
+  nominal: number,
+  data?: FeeSettingsProps
+) => {
+  let value: number = 0;
+  let fee: number = 0;
+
+  if (data?.priceType === "percentage") 
+    fee = (nominal * Number(data?.value || 0)) / 100;
+   else 
+    fee = Number(data?.value || 0);
+  
+
+  value = nominal + fee;
+
+  return { total: value, fee };
 };

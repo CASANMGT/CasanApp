@@ -1,5 +1,5 @@
 import { IcFuel, IcMoneyReceive, IcMoneySend } from "../../../assets";
-import { DataTransaction } from "../../../common";
+import { Balance, DataTransaction } from "../../../common";
 import { moments, rupiah } from "../../../helpers";
 import { Separator } from "../../atoms";
 
@@ -13,60 +13,25 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
   onClick,
 }) => {
   const cloneData: DataTransaction = data;
-  const dataBalance = data;
+  const dataBalance: Balance = data;
   const isTransaction = cloneData?.Transaction?.ID ? true : false;
 
-  const getLabelStatus = () => {
-    let value: string;
-    switch (cloneData?.Transaction?.Status) {
-      case 2:
-        value = "Belum Bayar";
-        break;
-
-      case 3:
-        value = "Expired";
-        break;
-
-      case 1:
-        value = "Selesai";
-        break;
-
-      default:
-        value = "";
-        break;
-    }
-
-    return value;
-  };
-
-  const getColorStatus = () => {
-    let value: string;
-    switch (cloneData?.Transaction?.Status) {
-      case 2:
-        value = "red";
-        break;
-
-      case 3:
-        value = "black50";
-        break;
-
-      case 1:
-        value = "green";
-        break;
-
-      default:
-        value = "";
-        break;
-    }
-
-    return value;
-  };
+  const details: { condition: string; color: string; label: string } =
+    getDetailsByStatus(
+      isTransaction ? cloneData?.Transaction?.Status : dataBalance?.Status
+    );
 
   return (
     <div className="mx-4">
       <div onClick={onClick} className="between-x cursor-pointer">
         <div className="row gap-2">
-          <div className="w-9 h-9 center rounded-full bg-primary100/10">
+          <div
+            className={`w-9 h-9 center rounded-full bg-${
+              dataBalance?.Status === 3 || dataBalance?.Status === 4
+                ? "lightRed"
+                : "primary10"
+            }`}
+          >
             {dataBalance?.Status === 1 || dataBalance?.Status === 2 ? (
               <IcMoneyReceive />
             ) : dataBalance?.Status === 3 || dataBalance?.Status === 4 ? (
@@ -78,11 +43,11 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
 
           <div>
             <p className="font-medium">
-              {"Pengisian Daya"}
+              {details.label}
 
               {isTransaction && (
-                <span className={`text-[10px] ml-1 text-${getColorStatus()}`}>
-                  {getLabelStatus()}
+                <span className={`text-[10px] ml-1 text-${details.color}`}>
+                  {details.condition}
                 </span>
               )}
             </p>
@@ -125,3 +90,43 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
 };
 
 export default TransactionHistoryItem;
+
+const getDetailsByStatus = (status: number) => {
+  let condition: string;
+  let color: string;
+  let label: string;
+
+  switch (status) {
+    case 1:
+      condition = "Selesai";
+      color = "green";
+      label = "Top-Up";
+      break;
+
+    case 2:
+      condition = "Belum Bayar";
+      color = "red";
+      label = "Refund Sesi";
+      break;
+
+    case 3:
+      condition = "Expired";
+      color = "black50";
+      label = "Bayar Sesi";
+      break;
+
+    case 4:
+      condition = "Expired";
+      color = "red";
+      label = "Penarikan Saldo";
+      break;
+
+    default:
+      condition = "";
+      color = "";
+      label = "";
+      break;
+  }
+
+  return { condition, color, label };
+};

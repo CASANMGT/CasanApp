@@ -55,7 +55,7 @@ const TransactionHistory = () => {
                 key={index}
                 data={item}
                 onClick={() =>
-                  navigate(`details/${item?.Session?.ID}`)
+                  navigate(`details/${item?.Transaction?.ID}`)
                 }
               />
             ))}
