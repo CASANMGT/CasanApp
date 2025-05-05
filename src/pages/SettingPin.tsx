@@ -76,7 +76,9 @@ const SettingPin = () => {
 
   const onNext = () => {
     if (isNewPin || isChangePin)
-      navigate("/confirmation-pin", { state: codes });
+      navigate("/confirmation-pin", {
+        state: isChangePin ? changeCodes : codes,
+      });
     else {
       dispatch(fetchCheckPin(codes.join("")));
     }

@@ -7,6 +7,8 @@ export type DataUser = {
   Balance: number;
   Status: number;
   WithdrawPIN: string;
+  WithdrawPINCooldownUntil: string
+  WithdrawPINFailedAttempts: number
   CreatedAt: string;
   UpdatedAt: string;
   DeletedAt: string | null;

@@ -13,8 +13,6 @@ const BalanceHistory = () => {
 
   const balanceList = useSelector((state: RootState) => state.balanceList);
   const { logout } = useAuth();
-
-  console.log('cek balanceList', balanceList);
   
 
   useEffect(() => {

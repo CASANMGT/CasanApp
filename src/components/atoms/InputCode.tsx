@@ -70,8 +70,8 @@ const InputCode: React.FC<InputCodeProps> = ({
       </div>
       {isError && (
         <div className="flex flex-row items-center gap-1 mt-4">
-          <IcInfoRed />
-          <span className="text-xs text-red">{error}</span>
+          {/* <IcInfoRed /> */}
+          <span className="text-xs text-red text-center">{error}</span>
         </div>
       )}
     </div>

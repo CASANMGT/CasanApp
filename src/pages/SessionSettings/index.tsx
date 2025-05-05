@@ -96,6 +96,7 @@ const SessionSettings = () => {
   );
   const myUser = useSelector((state: RootState) => state.myUser);
   const deviceById = useSelector((state: RootState) => state.deviceById);
+  const checkPin = useSelector((state: RootState) => state.checkPin);
 
   const [form, setForm] = useForm<FormSession>(FormDefaultSession);
 
@@ -136,10 +137,13 @@ const SessionSettings = () => {
     else dispatch(hideLoading());
 
     if (addSession?.data) {
-      navigate(`/transaction-history/details/${addSession?.data?.TransactionID}`, {
-        replace: true,
-        state: { isGoOrder: true },
-      });
+      navigate(
+        `/transaction-history/details/${addSession?.data?.TransactionID}`,
+        {
+          replace: true,
+          state: { isGoOrder: true },
+        }
+      );
     }
   }, [addSession]);
 
@@ -162,10 +166,6 @@ const SessionSettings = () => {
   }, [form.nominal, form?.ampere, form?.voltage]);
 
   useEffect(() => {
-    if (form.balance > 0 || form?.paymentMethod?.key) onNext();
-  }, [form?.paymentMethod, form.balance]);
-
-  useEffect(() => {
     if (dataLogin?.data) {
       dispatch(resetDataLogin());
       login();
@@ -174,6 +174,12 @@ const SessionSettings = () => {
       navigate("/session-settings");
     }
   }, [dataLogin?.data]);
+
+  useEffect(() => {
+    if (checkPin?.data?.data?.is_match) {
+      onPay(form);
+    }
+  }, [checkPin]);
 
   const onDismiss = () => {
     navigate(-1);
@@ -264,15 +270,15 @@ const SessionSettings = () => {
     }
   };
 
-  const onNext = () => {
+  const onPay = (select: FormSession) => {
     const body: AddSessionBody = {
       amount: chargingNominal,
       device_id: selectedDevice?.ID,
-      payment_method: form.paymentMethod?.key || "BALANCE_FU",
-      session_method: form.selectedTab === "1" ? 1 : 2,
-      socket_id: form?.selectedSocket || 0,
+      payment_method: select.paymentMethod?.key || "BALANCE_FU",
+      session_method: select.selectedTab === "1" ? 1 : 2,
+      socket_id: select?.selectedSocket || 0,
       station_id: data?.ID,
-      wallet_used_amount: form?.balance,
+      wallet_used_amount: select?.balance,
     };
 
     dispatch(fetchAddSession(body));
@@ -457,7 +463,11 @@ const SessionSettings = () => {
           cloneData.balance = value || 0;
 
           setForm("all", cloneData);
-          setVisiblePaymentMethod(false);
+
+          if (cloneData?.balance > 0) {
+            setVisiblePaymentMethod(false);
+            setOpenInputPin(true);
+          } else onPay(cloneData);
         }}
       />
 
@@ -532,7 +542,6 @@ const SessionSettings = () => {
       <ModalInputPin
         isOpen={openInputPin}
         onDismiss={() => setOpenInputPin(false)}
-        onConfirm={() => {}}
       />
       {/* END MODALS */}
     </Container>

@@ -32,7 +32,6 @@ const ConfirmationPin = () => {
     if (!myUser?.data) navigate(-1);
     else if (myUser?.data?.WithdrawPIN) {
       setIsNewPin(false);
-      setMaxCountError(5);
     }
   }, []);
 
