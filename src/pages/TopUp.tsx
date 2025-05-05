@@ -47,6 +47,7 @@ const TopUp = () => {
 
   const [visiblePaymentMethod, setVisiblePaymentMethod] =
     useState<boolean>(false);
+  const [error, setError] = useState<string>();
 
   useEffect(() => {
     if (addTransaction?.loading) dispatch(showLoading());
@@ -70,6 +71,8 @@ const TopUp = () => {
     const value = e.replace(REGEX_NUMBERS, "");
     const formatted: string = `Rp${rupiah(value)}`;
 
+    if (error) setError("");
+
     setForm("nominal", formatted);
   };
 
@@ -81,6 +84,12 @@ const TopUp = () => {
     }
 
     return value;
+  };
+
+  const onValidation = () => {
+    if (Number(form.nominal?.replace("Rp", "").replace(/\./g, "") || 0) < 5000)
+      setError("Min. top up saldo Rp5.000");
+    else setVisiblePaymentMethod(true);
   };
 
   const onPay = (select?: FeeSettingsProps) => {
@@ -108,6 +117,8 @@ const TopUp = () => {
     form?.paymentMethod
   );
 
+  const isError: boolean = error ? true : false;
+
   return (
     <div className="background-1 flex flex-col justify-between overflow-hidden">
       <Header type="secondary" title="Isi Saldo" onDismiss={onDismiss} />
@@ -127,13 +138,15 @@ const TopUp = () => {
             }
           </p>
 
-          <div className="relative w-full mb-3">
+          <div className="relative w-full ">
             <input
               type="text"
               inputMode="numeric"
               value={form.nominal}
               placeholder="Masukan Nominal"
-              className="w-full p-5 font-semibold text-base text-center bg-baseGray rounded-lg placeholder:text-black50 outline-none"
+              className={`w-full p-5 font-semibold text-base text-center bg-baseGray placeholder:text-black50 outline-none ${
+                isError ? "rounded-t-lg" : "rounded-lg"
+              }`}
               onChange={(e) => handleChange(e?.target?.value)}
             />
 
@@ -142,7 +155,13 @@ const TopUp = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          {isError && (
+            <div className="rounded-b-lg bg-lightRed px-3 py-1 border-t border-t-red">
+              <span className="text-red text-xs">{error}</span>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-3 mt-3">
             {NOMINAL_TOP_UP.map((item, index: number) => (
               <NominalTopUpItem
                 key={index}
@@ -193,7 +212,7 @@ const TopUp = () => {
           <Button
             label="Bayar"
             disabled={validation()}
-            onClick={() => setVisiblePaymentMethod(true)}
+            onClick={onValidation}
             className="!w-[130px]"
           />
         </div>
