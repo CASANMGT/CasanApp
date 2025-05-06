@@ -134,6 +134,7 @@ const TransactionDetails = () => {
   };
 
   const status: number = transactionById?.data?.Status || 0;
+
   const transactionType: number = transactionById?.data?.Type || 0;
   let duration: number = 0;
 
@@ -385,17 +386,19 @@ const TransactionDetails = () => {
                     />
                   </div>
 
-                  <div>
-                    <Separator className="my-6" />
+                  {transactionType !== 1 && (
+                    <div>
+                      <Separator className="my-6" />
 
-                    <div
-                      onClick={onViewSession}
-                      className="row gap-2 center cursor-pointer"
-                    >
-                      <span className="text-primary100">Lihat Sesi</span>
-                      <IcRightCircleGreen />
+                      <div
+                        onClick={onViewSession}
+                        className="row gap-2 center cursor-pointer"
+                      >
+                        <span className="text-primary100">Lihat Sesi</span>
+                        <IcRightCircleGreen />
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </>
               ) : (
                 <div className="between-y gap-4">
@@ -431,7 +434,7 @@ const TransactionDetails = () => {
             </>
           )}
 
-          {isShow && <div className="mb-2"/>}
+          {isShow && <div className="mb-2" />}
         </div>
       </LoadingPage>
     </div>

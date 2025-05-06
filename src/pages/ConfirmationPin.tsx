@@ -84,7 +84,7 @@ const ConfirmationPin = () => {
           <div className="w-full mx-4 mt-[72px] bg-white py-9 drop-shadow rounded-lg">
             <p className="text-center mb-4">
               {`Silahkan masukkan ulang kode PIN anda${
-                !isNewPin && ` yang baru`
+                !isNewPin ? ` yang baru` : ""
               }`}
             </p>
 

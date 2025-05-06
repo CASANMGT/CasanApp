@@ -4,7 +4,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   IcBattery,
   IcClockGreen,
-  IcFlashGreen,
+  IcFlash,
   IcInfoCircleGreen,
   IcInfoCircleRed,
   IcMarkerSmall,
@@ -212,7 +212,7 @@ const Charging = () => {
             />
 
             <InformationItem
-              icon={IcFlashGreen}
+              icon={IcFlash}
               label="Daya"
               content={status === 5 ? `${dataSession?.MaxWatt} Watt` : "-"}
             />
@@ -384,8 +384,9 @@ const Charging = () => {
 
       <DiagnosisModal
         isOpen={openDiagnosis}
+        data={dataSession?.Device}
         onDismiss={() => setOpenDiagnosis(false)}
-        onClick={() => dispatch(fetchCancelSession(Number(id)))}
+        onClick={() => getData()}
       />
       {/* END */}
     </div>

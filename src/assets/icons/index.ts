@@ -24,7 +24,7 @@ import IcEditGreen from "./edit-green.svg?react";
 import IcEditWhite from "./edit-white.svg?react";
 import IcElectricityBlack from "./electricity-black.svg?react";
 import IcFlashCircleGreen from "./flash-circle-green.svg?react";
-import IcFlashGreen from "./flash-green.svg?react";
+import IcFlash from "./flash.svg?react";
 import IcFuel from "./fuel.svg?react";
 import IcGopay from "./gopay.svg?react";
 import IcHistoryActive from "./history-active.svg?react";
@@ -117,7 +117,7 @@ export {
   IcEditWhite,
   IcElectricityBlack,
   IcFlashCircleGreen,
-  IcFlashGreen,
+  IcFlash,
   IcFuel,
   IcGopay,
   IcHistoryActive,

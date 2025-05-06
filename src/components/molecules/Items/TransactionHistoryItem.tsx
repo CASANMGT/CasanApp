@@ -18,7 +18,8 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
 
   const details: { condition: string; color: string; label: string } =
     getDetailsByStatus(
-      isTransaction ? cloneData?.Transaction?.Status : dataBalance?.Status
+      isTransaction ? cloneData?.Transaction?.Status : dataBalance?.Status,
+      isTransaction ? cloneData?.Transaction?.Type : undefined
     );
 
   return (
@@ -91,7 +92,7 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
 
 export default TransactionHistoryItem;
 
-const getDetailsByStatus = (status: number) => {
+const getDetailsByStatus = (status: number, type?: number) => {
   let condition: string;
   let color: string;
   let label: string;
@@ -126,6 +127,11 @@ const getDetailsByStatus = (status: number) => {
       color = "";
       label = "";
       break;
+  }
+
+  if (type) {
+    if (type === 1) label = "Top-Up";
+    else if (type === 2) label = "Session";
   }
 
   return { condition, color, label };

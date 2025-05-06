@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import {
   IcBackBlack,
+  IcBike,
   IcDownCircleGreen,
   IcFuel,
   IcShareGreen,
@@ -145,11 +146,15 @@ const ChargingStationDetails = () => {
                 <p className="text-[10px] text-red">30 menit lagi</p>
               </div>
             ) : (
-              <div className="flex flex-row gap-1 relative">
-                <p className="text-lg font-semibold">{available}</p>
-                <p className="text-xs self-end mb-1 text-black50 font-medium">
-                  tersedia
-                </p>
+              <div className="row gap-2 relative">
+                <IcBike className="text-primary100" />
+
+                <div className="flex gap-1 items-end">
+                  <p className="text-lg font-semibold">{available}</p>
+                  <p className="text-xs self-end mb-1 text-black50 font-medium">
+                    tersedia
+                  </p>
+                </div>
               </div>
             )}
           </div>
@@ -180,7 +185,10 @@ const ChargingStationDetails = () => {
 
         {/* DEVICE LIST */}
         <div className="bg-white p-3 rounded-lg mt-[14px] border drop-shadow">
-          <p className="font-medium mb-4">Device List</p>
+          <div className="row gap-2 mb-4">
+            <IcBike className="text-primary100"/>
+            <p className="font-medium">Device List</p>
+          </div>
 
           {data?.Devices &&
             data?.Devices.map((item, index: number) => (

@@ -1,7 +1,7 @@
-import { IcFuel, IcRight } from "../../../assets";
+import { IcBike, IcFlash, IcFuel, IcRight } from "../../../assets";
 import { Device, StringNumber } from "../../../common";
 import { formatSpaceNumber } from "../../../helpers";
-import { Signal } from "../../atoms";
+import { Separator, Signal } from "../../atoms";
 
 interface DeviceListItemProps {
   isLast: boolean;
@@ -49,51 +49,54 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
         onClick(); // DUMMY
         // if (!isFull && total > 0) onClick();
       }}
-      className={`row gap-2 bg-white py-2 px-3.5 rounded-lg border border-${
+      className={` bg-white py-2 px-3.5 rounded-lg border border-${
         isFull || !total ? "black10" : "primary30"
       } ${!isLast ? "mb-2.5" : ""} ${
         isFull || !total ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
       }`}
     >
-      <div className="w-[30px] h-[30px] rounded-full bg-primary30 center">
-        <p className="text-primary100 font-semibold">
-          {StringNumber[position]}
-        </p>
-      </div>
-
-      <div className="flex flex-col flex-1">
-        <div className="between-x">
-          <p className="font-medium mb-1">{`${data.Name} - ${formatSpaceNumber(
-            data?.PileNumber
-          )}`}</p>
-
+        <div className="row gap-2">
           <Signal signalValue={data?.SignalValue} />
+
+          <p className="font-medium">
+            {`${data.Name}`}{" "}
+            <span className="text-black50">({data?.TotalSocket})</span>
+          </p>
         </div>
 
-        <div className="row ">
-          <IcFuel className={`ml-1 ${isFull ? "text-red" : "text-black100"}`} />
+        <Separator className="my-1.5" />
 
-          <div
-            className={`ml-1 font-medium  ${
-              isFull ? "text-red" : "text-black100"
-            }`}
-          >
-            {isFull ? (
-              <p>
-                Penuh
-                <a className="text-xs ml-1">{"(Tunggu 30 mnt)"}</a>
-              </p>
-            ) : (
-              <p>
-                {total > 0 ? total : "Tidak"}{" "}
-                <a className="text-xs text-black70">Tersedia</a>
-              </p>
-            )}
+        <div className="row gap-2">
+          <div className="row gap-1">
+            <IcFlash className="text-black100" />
+            <p className="text-black90 text-xs">
+              <span className="font-medium text-sm">Max {data?.MaxWatt}</span>
+              kWh
+            </p>
+          </div>
+
+          <div className="row gap-1">
+            <IcFuel className={`${isFull ? "text-red" : "text-black100"}`} />
+
+            <div
+              className={`font-medium  ${
+                isFull ? "text-red" : "text-black100"
+              }`}
+            >
+              {isFull ? (
+                <p>
+                  Penuh
+                  <a className="text-xs ml-1">{"(Tunggu 30 mnt)"}</a>
+                </p>
+              ) : (
+                <p className="font-medium">
+                  {total > 0 ? total : "Tidak"}{" "}
+                  <a className="text-xs text-black70 font-normal">Tersedia</a>
+                </p>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-
-      <IcRight  className="text-black100"/>
     </div>
   );
 };

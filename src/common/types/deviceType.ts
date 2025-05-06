@@ -14,6 +14,9 @@ export type Device = {
   TotalSocket: number;
   Protocol: number;
   VehicleType: number;
+  MaxWatt: number;
+  Rating: number;
+  SocketRating: number;
   Sockets: Socket[];
   ChargingStation: ChargingStation;
   DeletedAt: any;

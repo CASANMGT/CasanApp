@@ -176,7 +176,7 @@ const TopUp = () => {
         </Card>
 
         {/* PAYMENT DETAILS */}
-        <Card>
+        {false && <Card>
           <SubTitle
             icon={IcInfoCircleGreen}
             label="Rincian Pembayaran"
@@ -198,7 +198,7 @@ const TopUp = () => {
             labelRight={`Rp${rupiah(fee)}`}
             className="p-3"
           />
-        </Card>
+        </Card>}
       </div>
 
       {/* FOOTER */}

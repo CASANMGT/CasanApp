@@ -1,4 +1,10 @@
-import { IcBike, IcFuel, IcLineDown, ILNoImage } from "../../../assets";
+import {
+  IcBike,
+  IcFlash,
+  IcFuel,
+  IcLineDown,
+  ILNoImage,
+} from "../../../assets";
 import { ChargingStation, LatLng } from "../../../common";
 import {
   getDistanceFromLatLonInKm,
@@ -33,6 +39,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
     { lat: data?.Location?.Latitude, lon: data?.Location?.Longitude },
     currentLocation
   );
+  const dataMaxWatt = data?.Devices?.map((device) => device?.MaxWatt);
+
   let isFull: boolean = false;
   let isDisconnect: boolean = false;
   let price: number = 0;
@@ -42,6 +50,13 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   let totalFull: number = 0;
   let totalDisconnect: number = 0;
   let timeFinished: number = 0;
+  let minWatt: number = 0;
+  let maxWatt: number = 0;
+
+  if (dataMaxWatt?.length) {
+    minWatt = Math.min(...dataMaxWatt);
+    maxWatt = Math.max(...dataMaxWatt);
+  }
 
   if (
     data?.PriceSetting?.PriceBaseRules &&
@@ -110,7 +125,10 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
 
   return (
     <>
-      <div onClick={onClick} className="mb-3 shadow-md rounded-lg cursor-pointer">
+      <div
+        onClick={onClick}
+        className="mb-3 shadow-md rounded-lg cursor-pointer"
+      >
         <div className="p-3 bg-chargingLocation bg-center rounded-t-lg">
           <div className="row gap-3">
             <img
@@ -184,6 +202,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
 
         <div className="bg-white px-4 py-2.5 rounded-b-lg between-x">
           <div className=" row gap-1">
+            <IcBike className="text-primary100 mr-3" />
+
             <p className="text-xs text-primary100 font-semibold">Rp</p>
             <p className="text-lg text-primary100 font-semibold mr-1">{`${rupiah(
               price
@@ -191,7 +211,18 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
             <p className="text-xs text-black50">{watt}</p>
           </div>
 
-          <IcBike className="text-primary100" />
+          <div className="bg-primary100 rounded-md row">
+            <div className="py-0.5 px-1 row gap-1">
+              <IcFlash className="text-white" />
+
+              <span className="text-white text-xs font-medium">Max</span>
+            </div>
+
+            <div className="text-primary100 bg-primary10 px-1  rounded-md rounded-l-[40px] gap-1 flex items-end py-0.5">
+              <span className="font-medium">{`${minWatt}-${maxWatt}`}</span>
+              <span className="text-xs">kWh</span>
+            </div>
+          </div>
         </div>
       </div>
 

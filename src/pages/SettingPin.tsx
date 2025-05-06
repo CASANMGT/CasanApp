@@ -2,13 +2,11 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { IcSuccessGreen } from "../assets";
-import { CUSTOMER_SERVICES } from "../common";
+import { CUSTOMER_SERVICES, MAX_INPUT_PIN } from "../common";
 import { AlertModal, Button, Header, InputCode } from "../components";
 import { fetchCheckPin, resetDataCheckPin } from "../features";
 import { moments, openWhatsApp } from "../helpers";
 import { AppDispatch, RootState } from "../store";
-
-const maxError: number = 3;
 
 const SettingPin = () => {
   const navigate = useNavigate();
@@ -31,10 +29,26 @@ const SettingPin = () => {
     else if (myUser?.data?.WithdrawPIN) setIsNewPin(false);
   }, []);
 
+  console.log("cek checkPin");
+
   useEffect(() => {
     if (checkPin?.data) {
-      if (checkPin?.data?.data?.is_match) setIsChangePin(true);
-      else setErrorMessage(checkPin?.data?.message || "");
+      if (!checkPin?.data?.data?.is_match) {
+        if (
+          checkPin?.data?.data?.user?.WithdrawPINFailedAttempts %
+            MAX_INPUT_PIN ===
+          0
+        ) {
+          formatError(checkPin?.data?.data?.user?.WithdrawPINCooldownUntil);
+        } else {
+          setErrorMessage(
+            `PIN salah. Coba lagi. (${
+              checkPin?.data?.data?.user?.WithdrawPINFailedAttempts %
+              MAX_INPUT_PIN
+            }/${MAX_INPUT_PIN})`
+          );
+        }
+      } else setIsChangePin(true);
 
       dispatch(resetDataCheckPin());
     } else if (checkPin?.error?.response?.data) {
@@ -50,6 +64,26 @@ const SettingPin = () => {
       }
     }
   }, [checkPin]);
+
+  const formatError = (date?: string) => {
+    if (date) {
+      const diff = moments(date).diff(moments(), "minutes");
+      const hours = Math.floor(diff / 60);
+
+      if (diff > 0) {
+        setIsDisabled(true);
+
+        let label = "";
+
+        if (hours > 0) label = `${hours} jam`;
+        else label = `${diff} menit`;
+
+        setErrorMessage(
+          `Anda telah memasukkan konfirmasi PIN yang salah beberapa kali. Silakan tunggu ${label} sebelum mencoba lagi`
+        );
+      }
+    }
+  };
 
   const validation = () => {
     let value: boolean = true;

@@ -8,7 +8,11 @@ import {
   useParams,
 } from "react-router-dom";
 import {
+  IcInfoCircle,
+  IcInfoCircleBlack,
   IcInfoCircleGreen,
+  IcInfoCircleRed,
+  IcInfoRed,
   IcRightCircleGreen,
   IcRightGreen,
   IcSocketCircleGreen,
@@ -310,7 +314,7 @@ const SessionSettings = () => {
       <LoadingPage loading={deviceById?.loading}>
         <div className="flex-1 flex-col overflow-auto scrollbar-none">
           {/* LOCATION */}
-          <div className="p-4 bg-white mb-2">
+          <div className="p-4 bg-white ">
             <div className="between-x">
               <p className="text-blackBold font-medium">{data?.Name}</p>
               <div>
@@ -330,16 +334,23 @@ const SessionSettings = () => {
               <div className="row gap-2">
                 <Signal signalValue={selectedDevice?.SignalValue} />
 
-                <p className="text-xs font-medium">
-                  {`${selectedDevice?.Name} - ${selectedDevice?.PileNumber}`}
-                </p>
+                <p className="text-xs font-medium">{selectedDevice?.Name}</p>
               </div>
 
               <p className="text-xs text-black90">{`Nomor Alat ${selectedDevice?.ID}`}</p>
             </div>
           </div>
 
-          <div className="p-4">
+          <div className="bg-primary10 row gap-1.5 px-4">
+            <IcInfoCircle className="w-5 text-primary100" />
+
+            <p className="text-primary100 font-medium">
+              Charger tidak boleh melebihi{" "}
+              <span className="font-semibold">{selectedDevice?.MaxWatt}W</span>
+            </p>
+          </div>
+
+          <div className="p-4 mt-2">
             {/* SELECT SOCKET */}
             <div className="bg-white py-4 px-3 rounded-lg mb-3">
               <div className="row gap-2 mb-2">

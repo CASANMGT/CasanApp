@@ -20,7 +20,6 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
   const myUser = useSelector((state: RootState) => state.myUser);
 
   const [codes, setCodes] = useState<string[]>(["", "", "", ""]);
-  const [countError, setCountError] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
@@ -40,7 +39,6 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
         ) {
           formatError(checkPin?.data?.data?.user?.WithdrawPINCooldownUntil);
         } else {
-          const count = countError + 1;
           setErrorMessage(
             `PIN salah. Coba lagi. (${
               checkPin?.data?.data?.user?.WithdrawPINFailedAttempts %
@@ -48,7 +46,6 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
             }/${MAX_INPUT_PIN})`
           );
 
-          setCountError(count);
         }
       }
 
