@@ -77,7 +77,7 @@ export type Socket = {
   UpdatedAt: string;
 };
 
-type PriceSetting = {
+export type PriceSetting = {
   ID: number;
   Name: string;
   AdminID: number;
@@ -102,7 +102,7 @@ export interface PriceBaseRule {
   UpdatedAt: string;
 }
 
-interface PriceBaseTime {
+export interface PriceBaseTime {
   PriceBaseRuleID: number;
   PriceTimeRuleID: number;
   Value: number;
@@ -130,8 +130,8 @@ export type ChargingStation = {
   PriceSettingID: number;
   AdminID: number;
   LocationID: number;
-  Admin: Admin;
   Location: LocationResponse;
+  Admin: Admin;
   OperationalHours: OperationalHour[];
   Devices: Device[] | null;
   PriceSetting: PriceSetting;

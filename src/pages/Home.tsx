@@ -1,10 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {
-  IcBike,
-  IcPinWhite
-} from "../assets";
+import { IcBike, IcPinWhite } from "../assets";
 import {
   ChargingStationBody,
   LatLng,
@@ -12,11 +9,7 @@ import {
   OptionsProps,
   SessionListBody,
 } from "../common";
-import {
-  ChargingLocationCard,
-  LoadingPage,
-  OngoingItem
-} from "../components";
+import { ChargingLocationCard, LoadingPage, OngoingItem } from "../components";
 import { useAuth } from "../context/AuthContext";
 import { fetchChargingStation, fetchOnGoingSessionList } from "../features";
 import { AppDispatch, RootState } from "../store";
@@ -217,8 +210,8 @@ const Home = () => {
                     page * LIMIT_LIST == chargingStation?.data?.data.length
                   }
                   onClick={() =>
-                    navigate("/charging-station-details", {
-                      state: { data: item, currentLocation },
+                    navigate(`/charging-station-details/${item?.ID}`, {
+                      state: { currentLocation },
                     })
                   }
                   onLoadMore={onLoadMore}

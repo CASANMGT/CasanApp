@@ -1,3 +1,5 @@
+import { ChargingStation, PriceSetting } from "./chargingStationsType";
+
 export type MenuBottomNavigationProps = {
   id: string;
   page: string;
@@ -82,6 +84,7 @@ export type LocationResponse = {
   DeletedAt: any;
   CreatedAt: string;
   UpdatedAt: string;
+  ChargingStations: ChargingStation[]
 };
 
 export type ResponseSuccess = {

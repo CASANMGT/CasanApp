@@ -106,7 +106,7 @@ const Location = () => {
       {/* MODAL */}
       <ModalChargingStation
         isOpen={global?.openChargingStation}
-        locationId={global?.data}
+        data={global?.data}
         onDismiss={() =>
           dispatch(setFromGlobal({ type: "openChargingStation", value: false }))
         }

@@ -1,42 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { IcClose } from "../../../assets";
-import { LatLng } from "../../../common";
-import { fetchLocationById } from "../../../features";
-import { AppDispatch, RootState } from "../../../store";
+import { ChargingStation, LatLng } from "../../../common";
 import { LoadingPage } from "../../atoms";
 import { ChargingLocationCard } from "../Cards";
 import ModalContainer from "./ModalContainer";
 
 interface ModalChargingStationProps {
   isOpen: boolean;
-  locationId: string;
+  data: ChargingStation[] | undefined;
   onDismiss: () => void;
 }
 
 const ModalChargingStation: React.FC<ModalChargingStationProps> = ({
   isOpen,
-  locationId,
+  data,
   onDismiss,
 }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-
-  const locationById = useSelector((state: RootState) => state.locationById);
 
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
 
   useEffect(() => {
-    if (isOpen && locationId) {
-      getData();
+    if (isOpen) {
       getCurrentLocation();
     }
   }, [isOpen]);
-
-  const getData = () => {
-    dispatch(fetchLocationById(locationId));
-  };
 
   const getCurrentLocation = () => {
     if (!window.google || !window.google.maps) {
@@ -67,10 +56,12 @@ const ModalChargingStation: React.FC<ModalChargingStationProps> = ({
     }
   };
 
+  console.log("cek data", data);
+
   return (
     <ModalContainer isOpen={isOpen} isBottom onDismiss={onDismiss}>
       <div className="w-full bg-white p-4 rounded-t-xl between-y">
-        <div className="between-x">
+        <div className="between-x mb-6">
           <span className="text-base font-semibold">
             Daftar Stasiun Pengecasan
           </span>
@@ -79,28 +70,21 @@ const ModalChargingStation: React.FC<ModalChargingStationProps> = ({
         </div>
 
         <div className="flex-1 overflow-hidden relative">
-          <LoadingPage
-            loading={
-              !locationById?.data?.data?.ChargingStations &&
-              locationById?.loading
-            }
-          >
-            {locationById?.data?.data?.ChargingStations &&
-              locationById?.data?.data?.ChargingStations.map(
-                (item, index: number) => (
-                  <ChargingLocationCard
-                    key={index}
-                    data={item}
-                    loading={locationById?.loading}
-                    currentLocation={currentLocation}
-                    onClick={() =>
-                      navigate("/charging-station-details", {
-                        state: { data: item, currentLocation },
-                      })
-                    }
-                  />
-                )
-              )}
+          <LoadingPage loading={false}>
+            {data &&
+              data.map((item, index: number) => (
+                <ChargingLocationCard
+                  key={index}
+                  data={item}
+                  loading={false}
+                  currentLocation={currentLocation}
+                  onClick={() =>
+                    navigate(`/charging-station-details/${item?.ID}`, {
+                      state: { currentLocation },
+                    })
+                  }
+                />
+              ))}
           </LoadingPage>
         </div>
       </div>

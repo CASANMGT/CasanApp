@@ -26,6 +26,7 @@ import checkPinReducer from "../features/users/checkPinSlice.ts";
 import editPinReducer from "../features/users/editPinSlice.ts";
 import editUserReducer from "../features/users/editUserSlice.ts";
 import myUserReducer from "../features/users/myUserSlice.ts";
+import chargingStationByIdReducer from "../features/chargingStations/chargingStationByIdSlice.ts";
 
 export const store = configureStore({
   reducer: {
@@ -45,6 +46,7 @@ export const store = configureStore({
     // CHARGING STATION
     chargingStation: chargingStationReducer,
     chargingStationLocations: chargingStationLocationsReducer,
+    chargingStationById: chargingStationByIdReducer,
 
     // PRICE RULE
     calculateCharge: calculateChargeReducer,

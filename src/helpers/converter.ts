@@ -120,16 +120,18 @@ export const decodeToken = (token: string): TokenPayload | null => {
   }
 };
 
-export const convertToReadableHours = (data: OperationalHour[]) => {
+export const convertToReadableHours = (data?: OperationalHour[]) => {
   let value: boolean = false;
 
-  const isOpenAllWeek =
-    data.length === 7 &&
-    data.every(
-      (item) => item.From === "00:00" && item.To === "23:59" && !item.IsClosed
-    );
+  if (data) {
+    const isOpenAllWeek =
+      data.length === 7 &&
+      data.every(
+        (item) => item.From === "00:00" && item.To === "23:59" && !item.IsClosed
+      );
 
-  if (isOpenAllWeek) return (value = true);
+    if (isOpenAllWeek) return (value = true);
+  }
 
   // fallback (optional): format each day
   return value;

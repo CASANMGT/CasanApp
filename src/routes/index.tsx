@@ -50,7 +50,7 @@ const RoutesPage = () => {
           element={<ProtectedRoute element={<Charging />} />}
         />
         <Route
-          path="charging-station-details"
+          path="charging-station-details/:id"
           element={<ChargingStationDetails />}
         />
         <Route

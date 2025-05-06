@@ -139,8 +139,8 @@ const LocationList = () => {
                     chargingStationLocations?.data?.data.length
                 }
                 onClick={() =>
-                  navigate("/charging-station-details", {
-                    state: { data: item, currentLocation },
+                  navigate(`/charging-station-details/${item?.ID}`, {
+                    state: { currentLocation },
                   })
                 }
                 onLoadMore={onLoadMore}

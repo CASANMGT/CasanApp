@@ -7,7 +7,7 @@ import { Separator, Tabs } from "../../components";
 import { rupiah } from "../../helpers";
 
 interface PriceInformationProps {
-  data: ChargingStation | undefined;
+  data: ChargingStation | null;
   isHideParking?: boolean;
 }
 

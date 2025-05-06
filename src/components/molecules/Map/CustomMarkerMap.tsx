@@ -3,7 +3,13 @@ import { useEffect, useRef } from "react";
 import { Marker, Popup, useMap } from "react-leaflet";
 import { useDispatch } from "react-redux";
 import { IcFuel } from "../../../assets";
-import { ChargingStation, LatLng } from "../../../common";
+import {
+  ChargingStation,
+  Device,
+  LatLng,
+  PriceBaseRule,
+  PriceBaseTime,
+} from "../../../common";
 import { setFromGlobal } from "../../../features";
 import { moments, rupiah, timeToSeconds } from "../../../helpers";
 import { AppDispatch } from "../../../store";
@@ -40,7 +46,7 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
       setFromGlobal({
         type: "openChargingStation",
         value: true,
-        data: data?.LocationID,
+        data: dataChargingStation,
       })
     );
   };
@@ -62,39 +68,55 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
   let totalSocket: number = 0;
   let totalAvailable: number = 0;
 
-  if (
-    data?.PriceSetting?.PriceBaseRules &&
-    data?.PriceSetting?.PriceBaseRules.length &&
-    data?.PriceSetting?.PriceBaseRules[0]?.PriceBaseTime &&
-    data?.PriceSetting?.PriceBaseRules[0]?.PriceBaseTime.length
-  ) {
-    const filtered = data?.PriceSetting?.PriceBaseRules[0].PriceBaseTime.filter(
-      (e) =>
-        currentTime > timeToSeconds(e?.PriceTimeRule.From) &&
-        currentTime < timeToSeconds(e?.PriceTimeRule.To)
-    )[0];
+  const dataChargingStation: ChargingStation[] =
+    data?.Location?.ChargingStations;
 
-    price = filtered?.Value || 0;
-  }
+  if (dataChargingStation?.length) {
+    dataChargingStation.forEach((element) => {
+      const dataPriceBaseRules: PriceBaseRule[] =
+        element?.PriceSetting?.PriceBaseRules;
 
-  if (data?.Devices && data?.Devices.length) {
-    totalSocket = data?.Devices.reduce(
-      (accumulator, currentValue) =>
-        accumulator + (currentValue.Sockets.length || 0),
-      0
-    );
+      if (
+        dataPriceBaseRules?.length &&
+        dataPriceBaseRules[0]?.PriceBaseTime?.length
+      ) {
+        const dataPriceBaseTime: PriceBaseTime[] =
+          dataPriceBaseRules[0]?.PriceBaseTime;
 
-    for (const key in data?.Devices) {
-      const element = data?.Devices[key];
+        const filtered = dataPriceBaseTime.filter(
+          (e) =>
+            currentTime > timeToSeconds(e?.PriceTimeRule.From) &&
+            currentTime < timeToSeconds(e?.PriceTimeRule.To)
+        )[0];
 
-      if (element?.Sockets && element?.Sockets?.length) {
-        for (const i in element?.Sockets) {
-          const e = element?.Sockets[i];
+        price = filtered?.Value || 0;
 
-          if (e.IsCharging === 0) totalAvailable += 1;
+        if (price > 0 && price > filtered?.Value) price = filtered?.Value;
+        else price = filtered?.Value || 0;
+      }
+
+      const dataDevices: Device[] | null = element?.Devices;
+
+      if (dataDevices?.length) {
+        totalSocket = dataDevices.reduce(
+          (accumulator, currentValue) =>
+            accumulator + (currentValue.Sockets.length || 0),
+          0
+        );
+
+        for (const key in dataDevices) {
+          const el = dataDevices[key];
+
+          if (el?.Sockets && el?.Sockets?.length) {
+            for (const i in el?.Sockets) {
+              const e = el?.Sockets[i];
+
+              if (e.IsCharging === 0) totalAvailable += 1;
+            }
+          }
         }
       }
-    }
+    });
   }
 
   return (
