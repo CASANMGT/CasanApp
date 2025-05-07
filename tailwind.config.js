@@ -30,7 +30,7 @@ export default {
         darkMode:"#252526",
 
         // PRIMARY
-        primary100: "#19ACB6",
+        primary100: "#2dba9d",
         primary90: "#30B4BD",
         primary70: "#5EC5CC",
         primary50: "#8CD5DA",

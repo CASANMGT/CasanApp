@@ -54,8 +54,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   let maxWatt: number = 0;
 
   if (dataMaxWatt?.length) {
-    minWatt = Math.min(...dataMaxWatt);
-    maxWatt = Math.max(...dataMaxWatt);
+    minWatt = Math.min(...dataMaxWatt) / 1000;
+    maxWatt = Math.max(...dataMaxWatt) / 1000;
   }
 
   if (
@@ -218,7 +218,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
               <span className="text-white text-xs font-medium">Max</span>
             </div>
 
-            <div className="text-primary100 bg-primary10 px-1  rounded-md rounded-l-[40px] gap-1 flex items-end py-0.5">
+            <div className="text-primary100 bg-primary10 px-1 rounded-md rounded-l-[40px] gap-1 flex items-center py-0.5">
               <span className="font-medium">{`${minWatt}-${maxWatt}`}</span>
               <span className="text-xs">kWh</span>
             </div>

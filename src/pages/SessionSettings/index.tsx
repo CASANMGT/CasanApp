@@ -551,7 +551,7 @@ const SessionSettings = () => {
       />
 
       <ModalInputPin
-        isOpen={openInputPin}
+        isOpen={!openInputPin}
         onDismiss={() => setOpenInputPin(false)}
       />
       {/* END MODALS */}

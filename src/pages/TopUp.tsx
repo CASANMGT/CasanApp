@@ -56,6 +56,7 @@ const TopUp = () => {
     if (addTransaction?.data) {
       navigate(`/transaction-history/details/${addTransaction?.data?.ID}`, {
         replace: true,
+        state: { isGoHome: true },
       });
 
       dispatch(fetchMyUser());

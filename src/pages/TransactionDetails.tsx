@@ -147,7 +147,8 @@ const TransactionDetails = () => {
   }
 
   const onDismiss = () => {
-    if (location?.state?.isGoOrder) navigate("/home/order");
+    if (location?.state?.isGoOrder) navigate("/home/order", { replace: true });
+    else if (location?.state?.isGoHome) navigate("/home", { replace: true });
     else navigate(-1);
   };
 

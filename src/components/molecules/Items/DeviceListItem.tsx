@@ -70,7 +70,7 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
           <div className="row gap-1">
             <IcFlash className="text-black100" />
             <p className="text-black90 text-xs">
-              <span className="font-medium text-sm">Max {data?.MaxWatt}</span>
+              <span className="font-medium text-sm">Max {data?.MaxWatt/1000}</span>
               kWh
             </p>
           </div>

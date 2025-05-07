@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IcClose, IcRadioActive, IcRadioInactive } from "../../../assets";
 import { CUSTOMER_SERVICES, MAX_INPUT_PIN } from "../../../common";
@@ -7,6 +7,7 @@ import { moments, openWhatsApp } from "../../../helpers";
 import { AppDispatch, RootState } from "../../../store";
 import { Button, InputCode, Separator } from "../../atoms";
 import ModalContainer from "./ModalContainer";
+import { p } from "framer-motion/client";
 
 interface Props {
   isOpen: boolean;
@@ -21,6 +22,7 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
 
   const [codes, setCodes] = useState<string[]>(["", "", "", ""]);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [errorTime, setErrorTime] = useState<string>();
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
   useEffect(() => {
@@ -39,13 +41,13 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
         ) {
           formatError(checkPin?.data?.data?.user?.WithdrawPINCooldownUntil);
         } else {
+          setCodes(["", "", "", ""]);
           setErrorMessage(
             `PIN salah. Coba lagi. (${
               checkPin?.data?.data?.user?.WithdrawPINFailedAttempts %
               MAX_INPUT_PIN
             }/${MAX_INPUT_PIN})`
           );
-
         }
       }
 
@@ -73,27 +75,30 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
         if (hours > 0) label = `${hours} jam`;
         else label = `${diff} menit`;
 
-        setErrorMessage(
-          `Anda telah memasukkan konfirmasi PIN yang salah beberapa kali. Silakan tunggu ${label} sebelum mencoba lagi`
-        );
+        setErrorTime(label);
       }
     }
   };
 
-  const validation = () => {
-    let value: boolean = true;
+  const onChangeText = (value: string[]) => {
+    setCodes(value);
 
-    if (!isDisabled) {
-      const some = codes.some((e) => e === "");
-      if (!some) value = false;
-    }
+    if (errorMessage) setErrorMessage("");
+    if (errorTime) setErrorTime("");
 
-    return value;
+    const isValid: boolean = value.every((item) => item !== "");
+
+    if (isValid) onNext(value);
   };
 
-  const onConfirmation = () => {
-    dispatch(fetchCheckPin(codes.join("")));
+  const onNext = (code: string[]) => {
+    dispatch(fetchCheckPin(code.join("")));
   };
+
+  const isShowError: boolean = useMemo(
+    () => (errorMessage || errorTime ? true : false),
+    [errorMessage, errorTime]
+  );
 
   return (
     <ModalContainer
@@ -117,12 +122,24 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
           <InputCode
             type="password"
             values={codes}
-            error={errorMessage}
-            onChange={(value: string[]) => {
-              if (errorMessage) setErrorMessage("");
-              setCodes(value);
-            }}
+            disabled={isDisabled}
+            onChange={onChangeText}
           />
+
+          {isShowError && (
+            <div className="flex flex-row items-center justify-center gap-1 mt-4 text-red text-center">
+              {errorTime ? (
+                <p className="text-xs">
+                  Anda telah memasukkan konfirmasi PIN yang salah beberapa kali.
+                  Silakan tunggu
+                  <span className="text-xs font-semibold">{` ${errorTime} `}</span>
+                  sebelum mencoba lagi
+                </p>
+              ) : (
+                <p className="text-xs">{errorMessage}</p>
+              )}
+            </div>
+          )}
 
           <p className="text-xs text-black70 mt-4 text-center">
             Butuh bantuan?{" "}
@@ -133,15 +150,6 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
               Hubungi Kami
             </b>
           </p>
-        </div>
-
-        <div className="py-6 px-4 border-t border-t-black10 mt-4 -mx-4">
-          <Button
-            label="Konfirmasi PIN"
-            buttonType="lg"
-            disabled={validation()}
-            onClick={onConfirmation}
-          />
         </div>
       </div>
     </ModalContainer>

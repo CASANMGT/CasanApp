@@ -5,6 +5,7 @@ interface InputCodeProps {
   type?: "number" | "password";
   values: string[];
   error?: string;
+  disabled?:boolean
   onChange: (value: string[]) => void;
 }
 
@@ -12,6 +13,7 @@ const InputCode: React.FC<InputCodeProps> = ({
   type = "number",
   values,
   error,
+  disabled,
   onChange,
 }) => {
   const handleChange = (index: number, value: string) => {
@@ -54,7 +56,7 @@ const InputCode: React.FC<InputCodeProps> = ({
         {values.map((value, index: number) => (
           <input
             key={index}
-            className={`w-10 h-10 border border-baseGray rounded-lg center text-center text-2xl font-bold focus:outline-primary100 bg-white ${
+            className={`w-10 h-10 border border-baseGray rounded-lg center text-center text-2xl font-bold focus:outline-primary100 bg-white disabled:bg-[#EFEFEF] disabled:text-[#C9C9C9] ${
               isError ? "border-red" : ""
             }`}
             id={`input-box-${index}`}
@@ -62,6 +64,7 @@ const InputCode: React.FC<InputCodeProps> = ({
             maxLength={1}
             value={value}
             autoFocus={index === 0 ? true : false}
+            disabled={disabled}
             onChange={(e) => handleChange(index, e.target.value)}
             onKeyDown={handleKeyDown}
             onWheel={handleWheel}
