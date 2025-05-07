@@ -61,7 +61,7 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
                     dataBalance?.CreatedAt
                 ).format("DD MMM YYYY HH:mm")}
               </p>
-              {isTransaction && (
+              {isTransaction && cloneData?.Transaction?.Type !== 1 && (
                 <>
                   {" "}
                   <p className="text-xs text-black100/40">at</p>
@@ -75,11 +75,13 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
         </div>
 
         <p className="text-blackBold font-semibold">{`${
-          isTransaction
-            ? "-"
-            : dataBalance?.Status === 1 || dataBalance?.Status === 2
-            ? "+"
-            : "-"
+          cloneData?.Transaction?.DueAmount || Math.abs(dataBalance?.Amount) > 0
+            ? isTransaction
+              ? "-"
+              : dataBalance?.Status === 1 || dataBalance?.Status === 2
+              ? "+"
+              : "-"
+            : ""
         }Rp${rupiah(
           cloneData?.Transaction?.DueAmount || Math.abs(dataBalance?.Amount)
         )}`}</p>

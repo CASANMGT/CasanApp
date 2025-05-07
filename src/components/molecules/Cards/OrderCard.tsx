@@ -19,6 +19,8 @@ interface OrderCardProps {
 const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
   const status: number = data?.Status;
 
+  console.log("cek data", data);
+
   const getLabelStatus = () => {
     let value: string;
 
@@ -37,6 +39,14 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
 
       case 6:
         value = "Selesai";
+        break;
+
+      case 7:
+        value = "Expired";
+        break;
+
+      case 8:
+        value = "Dibatalkan";
         break;
 
       default:
@@ -58,6 +68,8 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
       moments(data?.StopChargingTime).diff(moments(), "second")
     );
   }
+
+  const isDark: boolean = status === 6 || status === 7 || status === 8;
 
   return (
     <div
@@ -87,18 +99,20 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
         <div className="row gap-2">
           <div
             className={`w-9 h-9 center rounded-full ${
-              status === 6 ? "bg-black10" : "bg-primary10"
+              isDark ? "bg-black10" : "bg-primary10"
             }`}
           >
-            <IcFuel
-              className={status === 6 ? "text-black70" : "text-primary100"}
-            />
+            <IcFuel className={isDark ? "text-black70" : "text-primary100"} />
           </div>
 
           <div>
             <p
               className={`font-medium ${
-                status === 5 ? "text-[#129030]" : "text-black100"
+                status === 5
+                  ? "text-[#129030]"
+                  : status === 7 || status === 8
+                  ? "text-red"
+                  : "text-black100"
               }`}
             >
               {getLabelStatus()}
@@ -106,7 +120,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
 
             {status !== 2 && (
               <>
-                {status === 6 ? (
+                {isDark ? (
                   <p className="text-black70">
                     {data?.StartChargingTime ? (
                       <>
@@ -117,6 +131,8 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
                           {moments(data?.StopChargingTime).format("HH:mm")}
                         </span>
                       </>
+                    ) : data?.UpdatedAt ? (
+                      moments(data?.UpdatedAt).format("HH:mm")
                     ) : (
                       "-"
                     )}
@@ -124,7 +140,8 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
                 ) : status === 5 ? (
                   <div>
                     <p className="text-xs text-black50">
-                      Tersisa: <span className="text-black100 text-xs">{diff}</span>
+                      Tersisa:{" "}
+                      <span className="text-black100 text-xs">{diff}</span>
                     </p>
                   </div>
                 ) : (

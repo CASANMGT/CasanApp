@@ -291,7 +291,7 @@ const TransactionDetails = () => {
               <BetweenText
                 labelLeft="Tipe Transaksi"
                 labelRight={
-                  transactionType === 1 ? "Top Up" : "Pengisisan Daya"
+                  transactionType === 1 ? "Top Up" : "Pengisian Daya"
                 }
                 classNameLabelRight="font-medium text-black100"
                 className="py-2 border-b border-b-black10"

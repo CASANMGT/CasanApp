@@ -72,6 +72,7 @@ const Charging = () => {
     ) {
       if (detailSession?.data?.Status === 3) setOpenDiagnosis(true);
       else if (detailSession?.data?.Status === 5) setOpenDiagnosis(false);
+      
       timeoutProgress();
     }
   }, [detailSession?.data]);

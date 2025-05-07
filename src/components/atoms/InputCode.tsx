@@ -1,11 +1,10 @@
 import { useMemo } from "react";
-import { IcInfoRed } from "../../assets";
 
 interface InputCodeProps {
   type?: "number" | "password";
   values: string[];
   error?: string;
-  disabled?:boolean
+  disabled?: boolean;
   onChange: (value: string[]) => void;
 }
 
@@ -65,6 +64,7 @@ const InputCode: React.FC<InputCodeProps> = ({
             value={value}
             autoFocus={index === 0 ? true : false}
             disabled={disabled}
+            inputMode="numeric"
             onChange={(e) => handleChange(index, e.target.value)}
             onKeyDown={handleKeyDown}
             onWheel={handleWheel}
