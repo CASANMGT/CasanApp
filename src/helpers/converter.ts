@@ -87,6 +87,7 @@ export const getLabelPaymentMethod: (type: string) => string = (
       label = "Dana";
       break;
 
+    case "shopee":
     case SHOPEEPAY:
       label = "Shopeepay";
       break;

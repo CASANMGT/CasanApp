@@ -51,6 +51,7 @@ const TransactionDetails = () => {
   const cancelSession = useSelector((state: RootState) => state.cancelSession);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isShow, setIsShow] = useState<boolean>(false);
+  const [duration, setDuration] = useState<number>();
 
   useEffect(() => {
     dispatch(resetDataAddSession());
@@ -73,6 +74,13 @@ const TransactionDetails = () => {
 
   useEffect(() => {
     if (transactionById?.data?.Status === 2) {
+      const diff = moments(transactionById?.data?.Session?.ExpiredAt).diff(
+        moments(),
+        "second"
+      );
+      const newDuration = diff > 0 ? diff : 0;
+
+      setDuration(newDuration);
       setIsRunning(true);
     } else if (isRunning && transactionById?.data?.Status === 1) {
       setIsRunning(false);
@@ -136,15 +144,6 @@ const TransactionDetails = () => {
   const status: number = transactionById?.data?.Status || 0;
 
   const transactionType: number = transactionById?.data?.Type || 0;
-  let duration: number = 0;
-
-  if (status === 2) {
-    const diff = moments(transactionById?.data?.Session?.ExpiredAt).diff(
-      moments(),
-      "second"
-    );
-    duration = diff > 0 ? diff : 0;
-  }
 
   const onDismiss = () => {
     if (location?.state?.isGoOrder) navigate("/home/order", { replace: true });
@@ -199,7 +198,7 @@ const TransactionDetails = () => {
           ) : (
             <CountdownTimer
               label="Berlaku"
-              initialSeconds={duration}
+              initialSeconds={duration || 0}
               onFinish={getData}
             />
           )}
@@ -418,18 +417,18 @@ const TransactionDetails = () => {
                     )}`}</span>
                   </button>
 
-                  <Button
-                    type="danger"
-                    label="Cancel"
-                    onClick={() =>
-                      transactionById?.data?.SessionID &&
-                      dispatch(
-                        fetchCancelSession(
-                          transactionById?.data?.SessionID || 0
+                  {transactionType !== 1 && (
+                    <Button
+                      type="danger"
+                      label="Cancel"
+                      onClick={() =>
+                        transactionById?.data?.Session?.ID &&
+                        dispatch(
+                          fetchCancelSession(transactionById?.data?.Session?.ID)
                         )
-                      )
-                    }
-                  />
+                      }
+                    />
+                  )}
                 </div>
               )}
             </>

@@ -20,6 +20,7 @@ export type AlertModalProps = {
   typeButtonLeft?: ButtonType;
   labelButtonLeft?: string;
   labelButtonRight?: string;
+  typeButtonRight?: ButtonType;
   description?: string;
   onDismiss?: () => void;
   onClick?: () => void;
@@ -84,7 +85,7 @@ export type LocationResponse = {
   DeletedAt: any;
   CreatedAt: string;
   UpdatedAt: string;
-  ChargingStations: ChargingStation[]
+  ChargingStations: ChargingStation[];
 };
 
 export type ResponseSuccess = {

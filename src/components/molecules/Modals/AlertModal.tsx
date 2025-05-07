@@ -10,6 +10,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
   typeButtonLeft,
   labelButtonLeft,
   labelButtonRight,
+  typeButtonRight,
   description,
   onDismiss,
   onClick,
@@ -52,16 +53,18 @@ const AlertModal: React.FC<AlertModalProps> = ({
         )}
 
         <div className="between-x gap-2">
-          <Button
-            type={typeButtonLeft}
-            label={labelButtonLeft || ""}
-            onClick={() => {
-              if (onClick) onClick();
-            }}
-          />
+          {isShowClick && (
+            <Button
+              type={typeButtonLeft}
+              label={labelButtonLeft || ""}
+              onClick={() => {
+                if (onClick) onClick();
+              }}
+            />
+          )}
           {onDismiss && (
             <Button
-              type="secondary"
+              type={typeButtonRight || "secondary"}
               label={labelButtonRight || ""}
               onClick={onDismiss}
             />

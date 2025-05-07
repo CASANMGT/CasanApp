@@ -58,6 +58,7 @@ const Charging = () => {
   const [openFinished, setOpenFinished] = useState<boolean>(false);
   const [openStop, setOpenStop] = useState<boolean>(false);
   const [openCS, setOpenCS] = useState<boolean>(false);
+  const [openCantProcess, setOpenCantProcess] = useState<boolean>(false);
 
   useEffect(() => {
     getData();
@@ -69,7 +70,8 @@ const Charging = () => {
       detailSession?.data?.Status === 4 ||
       detailSession?.data?.Status === 5
     ) {
-      if (detailSession?.data?.Status === 5) setOpenDiagnosis(false);
+      if (detailSession?.data?.Status === 3) setOpenDiagnosis(true);
+      else if (detailSession?.data?.Status === 5) setOpenDiagnosis(false);
       timeoutProgress();
     }
   }, [detailSession?.data]);
@@ -79,8 +81,11 @@ const Charging = () => {
       if (detailSession?.data?.Status === 2) {
         setOpenDiagnosis(true);
       }
-      dispatch(resetDataStartSession());
       getData();
+      dispatch(resetDataStartSession());
+    } else if (startSession?.error) {
+      setOpenCantProcess(true);
+      dispatch(resetDataStartSession());
     }
   }, [startSession?.data]);
 
@@ -388,6 +393,16 @@ const Charging = () => {
         onDismiss={() => setOpenDiagnosis(false)}
         onClick={() => getData()}
       />
+
+      <AlertModal
+        visible={openCantProcess}
+        icon={IcInfoCircleRed}
+        title="Permintaan Anda tidak dapat diproses"
+        description="Silakan coba beberapa saat lagi"
+        labelButtonRight="Tutup"
+        typeButtonRight='primary'
+        onDismiss={() => setOpenCantProcess(false)}
+      />
       {/* END */}
     </div>
   );
@@ -411,7 +426,7 @@ const InformationItem: React.FC<InformationItemProps> = ({
   return (
     <div className="">
       <div className="row gap-0.5">
-        {isShowIcon && <Icon />}
+        {isShowIcon && <Icon className="text-primary100" />}
         <p className="text-xs text-black100/80">{label}</p>
       </div>
 
