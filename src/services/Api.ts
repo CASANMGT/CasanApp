@@ -72,4 +72,27 @@ export const Api = {
       throw error;
     }
   },
+
+
+  delete: async ({ url, showLog }: ApiProps): Promise<any> => {
+    try {
+      if (showLog) {
+        console.log("API URL", url);
+      }
+
+      const res = await ApiClient.delete(url);
+
+      if (showLog) console.log("API RES", res?.data);
+
+      return res?.data;
+    } catch (error: any) {
+      if (showLog) console.log("API ERROR", error);
+
+      if (error?.response?.data?.message) {
+        error.message = error?.response?.data?.message;
+      }
+
+      throw error;
+    }
+  },
 };

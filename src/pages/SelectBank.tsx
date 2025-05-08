@@ -1,25 +1,29 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button, Dropdown, Header, Input } from "../components";
-import { useState } from "react";
-import { OptionsProps } from "../common";
-import { useForm } from "../helpers";
 import { IcCheckCircle } from "../assets";
+import { FormSelectBank, OptionsProps, ValidateBankBody } from "../common";
+import { Button, Dropdown, Header, Input, LoadingPage } from "../components";
+import {
+  FeeSettingsResponseProps,
+  fetchFeeSettings,
+  fetchValidateBank,
+  resetDataValidateBank,
+} from "../features";
+import { useForm } from "../helpers";
+import { AppDispatch, RootState } from "../store";
 
-interface FormSelectBank {
-  bankName: OptionsProps;
-  accountNumber: string;
-}
 
-const optionDummy: OptionsProps[] = [
-  { name: "1A", value: 1 },
-  { name: "2A", value: 2 },
-  { name: "5A", value: 3 },
-];
 const SelectBank = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
-  const [bankName, setBankName] = useState<OptionsProps>();
-  const [accountNumber, setAccountNumber] = useState<string>("");
+  const feeSettings = useSelector((state: RootState) => state.feeSettings);
+  const validateBank = useSelector((state: RootState) => state.validateBank);
+  const myUser = useSelector((state: RootState) => state.myUser);
+
+  const [optionsBank, setOptionsBank] = useState<OptionsProps[]>();
+  const [error, setError] = useState<string>("");
 
   const [form, setForm] = useForm<FormSelectBank>({
     bankName: {
@@ -29,7 +33,44 @@ const SelectBank = () => {
     accountNumber: "",
   });
 
-  const validation = () => {
+  useEffect(() => {
+    dispatch(resetDataValidateBank());
+    dispatch(fetchFeeSettings());
+  }, []);
+
+  // manage response fee settings
+  useEffect(() => {
+    const setUpFeeSetting = () => {
+      const newData: OptionsProps[] = [];
+
+      feeSettings?.data?.length &&
+        feeSettings?.data.forEach((element) => {
+          if (element?.IsWithdraw) {
+            const newItem: OptionsProps = {
+              name: element?.Name,
+              value: element?.Code,
+              data: element,
+            };
+
+            newData.push(newItem);
+          }
+        });
+
+      setOptionsBank(newData);
+    };
+
+    if (feeSettings?.data) setUpFeeSetting();
+  }, [feeSettings?.data]);
+
+  // manage response validate bank account
+  useEffect(() => {
+    if (validateBank?.data) {
+      if (!validateBank?.data?.is_found)
+        setError("Nomor rekening tidak ditemukan. Cek kembali, ya");
+    }
+  }, [validateBank?.data]);
+
+  const validationCheck = () => {
     let value: boolean = true;
 
     if (form?.bankName?.value && form.accountNumber.trim()) value = false;
@@ -37,53 +78,89 @@ const SelectBank = () => {
     return value;
   };
 
-  const onSelect = () => {
-    alert("coming soon");
+  const onCheck = () => {
+    const dataFeeSetting: FeeSettingsResponseProps = form?.bankName?.data;
+
+    const body: ValidateBankBody = {
+      account_number: form?.accountNumber,
+      code: dataFeeSetting?.ExternalCode,
+      reference_id: "",
+    };
+
+    dispatch(fetchValidateBank(body));
   };
+
+  const onNext = () => {
+    navigate("/verification", {
+      state: {
+        isAddBank: true,
+        phone: myUser?.data?.Phone.replace("+62", "0"),
+        data: form,
+      },
+    });
+  };
+
+  const isFound: boolean = validateBank?.data?.is_found ? true : false;
 
   return (
     <div className="container-screen between-y">
       <Header title="Pilih Bank" onDismiss={() => navigate(-1)} />
 
-      <div className="flex-1">
-        <div className="bg-white p-4 space-y-4">
-          <Dropdown
-            select={form.bankName?.name}
-            placeholder="Nama Bank/Digital Wallet"
-            options={optionDummy}
-            onSelect={(select) => setForm("bankName", select)}
-          />
-
-          <div>
-            <Input
-              type="number"
-              value={form.accountNumber}
-              placeholder="Nomor Rekening/Handphone"
-              onChange={(value) => setForm("accountNumber", value)}
+      <LoadingPage loading={feeSettings?.loading}>
+        <div className="flex-1">
+          <div className="bg-white p-4 space-y-4">
+            <Dropdown
+              select={form.bankName?.name}
+              placeholder="Nama Bank/Digital Wallet"
+              options={optionsBank}
+              onSelect={(select) => setForm("bankName", select)}
             />
 
-            <div className="row mt-1 ml-5 text-blackBold ">
-              <IcCheckCircle />
+            <div>
+              <Input
+                type="number"
+                value={form.accountNumber}
+                placeholder="Nomor Rekening/Handphone"
+                error={error}
+                onChange={(value) => {
+                  if (error) setError("");
+                  setForm("accountNumber", value);
+                }}
+              />
 
-              <p className="ml-1 text-xs">
-                Atas nama <b className="text-xs font-semibold">Tedy</b>
-              </p>
+              {isFound && (
+                <div className="row mt-1 ml-5 text-blackBold ">
+                  <IcCheckCircle />
+
+                  <p className="ml-1 text-xs">
+                    Atas nama{" "}
+                    <b className="text-xs font-semibold">
+                      {validateBank?.data?.account_name}
+                    </b>
+                  </p>
+                </div>
+              )}
             </div>
+
+            <Button
+              label="Cek"
+              loading={validateBank?.loading}
+              disabled={validationCheck()}
+              onClick={onCheck}
+            />
           </div>
-
-          <Button label="Cek" onClick={() => {}} />
         </div>
-      </div>
 
-      {/* FOOTER */}
-      <div className="container-button-footer">
-        <Button
-          buttonType="lg"
-          label="Simpan Rekening"
-          disabled={validation()}
-          onClick={onSelect}
-        />
-      </div>
+        {/* FOOTER */}
+        <div className="container-button-footer">
+          <Button
+            buttonType="lg"
+            label="Simpan Rekening"
+            disabled={!isFound}
+            onClick={onNext}
+          />
+        </div>
+      </LoadingPage>
     </div>
   );
 };

@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
+import { AddBankAccountBody, FormSelectBank } from "../common";
 import { Header, InputCode, Separator } from "../components";
 import { useAuth } from "../context/AuthContext";
 import {
+  fetchAddBankAccount,
   fetchLogin,
   fetchSendOTP,
   hideLoading,
   LoginRequest,
+  resetDataAddBankAccount,
   resetDataLogin,
   showLoading,
 } from "../features";
@@ -22,6 +25,10 @@ const VerificationNumber = () => {
   const { isAuthenticated, login } = useAuth();
 
   const dataLogin = useSelector((state: RootState) => state.login);
+  const validateBank = useSelector((state: RootState) => state.validateBank);
+  const addBankAccount = useSelector(
+    (state: RootState) => state.addBankAccount
+  );
 
   const [codes, setCodes] = useState<string[]>(["", "", "", ""]);
   const [phoneNumber, setPhoneNumber] = useState<string>("");
@@ -29,12 +36,15 @@ const VerificationNumber = () => {
   const [labelError, setLabelError] = useState<string>();
   const [counter, setCounter] = useState<number>(60);
 
+  console.log("cek validateBank", validateBank);
+
   useEffect(() => {
     getData();
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated) navigate("/home", { replace: true });
+    if (isAuthenticated && !location?.state?.isAddBank)
+      navigate("/home", { replace: true });
   }, []);
 
   useEffect(() => {
@@ -60,6 +70,16 @@ const VerificationNumber = () => {
       setLabelError("kode verifikasi tidak valid");
     }
   }, [dataLogin]);
+
+  useEffect(() => {
+    if (addBankAccount?.loading) dispatch(showLoading());
+    else dispatch(hideLoading());
+
+    if (addBankAccount?.data) {
+      dispatch(resetDataAddBankAccount());
+      navigate("/bank-account", { replace: true });
+    }
+  }, [addBankAccount]);
 
   const getData = () => {
     dispatch(resetDataLogin());
@@ -96,7 +116,8 @@ const VerificationNumber = () => {
   };
 
   const onDismiss = () => {
-    navigate("/login", { replace: true });
+    if (location?.state?.isAddBank) navigate(-1);
+    else navigate("/login", { replace: true });
   };
 
   const onRequestCode = () => {
@@ -109,12 +130,24 @@ const VerificationNumber = () => {
   };
 
   const onNext = (code: string[]) => {
-    const body: LoginRequest = {
-      code: code.join(""),
-      phone_number: phoneNumber.replace(/\s+/g, ""),
-    };
+    if (location?.state?.isAddBank) {
+      const data: FormSelectBank = location?.state?.data;
 
-    dispatch(fetchLogin(body));
+      const body: AddBankAccountBody = {
+        code: data?.bankName?.data?.ExternalCode,
+        number: data?.accountNumber,
+        otp_code: code.join(""),
+      };
+
+      dispatch(fetchAddBankAccount(body));
+    } else {
+      const body: LoginRequest = {
+        code: code.join(""),
+        phone_number: phoneNumber.replace(/\s+/g, ""),
+      };
+
+      dispatch(fetchLogin(body));
+    }
   };
 
   return (

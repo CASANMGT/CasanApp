@@ -10,7 +10,7 @@ interface DropdownProps {
   select: string | number | undefined;
   placeholder: string;
   disabled?: boolean;
-  options: OptionsProps[];
+  options: OptionsProps[] | undefined;
   onSelect: (select: OptionsProps) => void;
 }
 

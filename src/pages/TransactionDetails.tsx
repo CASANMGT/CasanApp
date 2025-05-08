@@ -157,7 +157,7 @@ const TransactionDetails = () => {
     if (transactionById?.data?.Session?.Status === 6)
       nextPage = "session-details";
 
-    navigate(`/${nextPage}/${id}`);
+    navigate(`/${nextPage}/${transactionById?.data?.Session?.ID}`);
   };
 
   const IconPayment = getIconPaymentMethod(

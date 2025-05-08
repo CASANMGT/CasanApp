@@ -3,6 +3,11 @@ import { configureStore } from "@reduxjs/toolkit";
 import loginReducer from "../features/auth/loginSlice";
 import sendOTPReducer from "../features/auth/sendOTPSlice.ts";
 import balanceListReducer from "../features/balance/balanceListSlice.ts";
+import addBankAccountReducer from "../features/bank/addBankAccountSlice.ts";
+import bankAccountListReducer from "../features/bank/bankAccountListSlice.ts";
+import deleteBankAccountReducer from "../features/bank/deleteBankAccountSlice.ts";
+import validateBankReducer from "../features/bank/validateBankSlice.ts";
+import chargingStationByIdReducer from "../features/chargingStations/chargingStationByIdSlice.ts";
 import chargingStationLocationsReducer from "../features/chargingStations/chargingStationLocationsSlice.ts";
 import chargingStationReducer from "../features/chargingStations/chargingStationSlice";
 import deviceByIdReducer from "../features/device/deviceByIdSlice.ts";
@@ -26,7 +31,6 @@ import checkPinReducer from "../features/users/checkPinSlice.ts";
 import editPinReducer from "../features/users/editPinSlice.ts";
 import editUserReducer from "../features/users/editUserSlice.ts";
 import myUserReducer from "../features/users/myUserSlice.ts";
-import chargingStationByIdReducer from "../features/chargingStations/chargingStationByIdSlice.ts";
 
 export const store = configureStore({
   reducer: {
@@ -77,6 +81,12 @@ export const store = configureStore({
 
     // LOCATION
     locationById: locationByIdReducer,
+
+    // BANK
+    validateBank: validateBankReducer,
+    addBankAccount: addBankAccountReducer,
+    bankAccountList: bankAccountListReducer,
+    deleteBankAccount: deleteBankAccountReducer,
   },
 });
 

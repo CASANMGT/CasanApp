@@ -1,67 +1,61 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { BankAccountList, MetaResponseProps } from "../../common";
 import { Api } from "../../services/Api";
 
-export type FeeSettingsResponseProps = {
-  Code: string;
-  Name: string;
-  IsPercentage: boolean;
-  Value: number;
-  IsActive: boolean;
-  ExternalCode: string;
-  IsWithdraw: boolean;
-  CreatedAt: string;
-  UpdatedAt: string;
-  DeletedAt: string | null;
+type BankAccountListResponseProps = {
+  status: string;
+  message: string;
+  data: BankAccountList[];
+  meta: MetaResponseProps;
 };
 
-type FeeSettingsState = {
-  data: FeeSettingsResponseProps[] | null;
+type BankAccountListState = {
+  data: BankAccountList[] | null;
   loading: boolean;
   error: string | null;
 };
 
-const initialState: FeeSettingsState = {
+const initialState: BankAccountListState = {
   data: null,
   loading: false,
   error: null,
 };
 
-// Async thunk for get fee settings
-export const fetchFeeSettings = createAsyncThunk(
-  "fetchFeeSettings",
+// Async thunk for get charging station
+export const fetchBankAccountList = createAsyncThunk(
+  "fetchBankAccountList",
   async (_, { rejectWithValue }) => {
     try {
       const res = await Api.get({
-        url: "fee-settings",
-        params: {},
+        url: "bank-accounts",
       });
 
-      return res?.data as FeeSettingsResponseProps[];
+      return res?.data as BankAccountList[];
     } catch (e) {
       return rejectWithValue(e);
     }
   }
 );
 
-const feeSettingsSlice = createSlice({
-  name: "feeSettings",
+const bankAccountListSlice = createSlice({
+  name: "bankAccountList",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchFeeSettings.pending, (state) => {
+      .addCase(fetchBankAccountList.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
-        fetchFeeSettings.fulfilled,
-        (state, action: PayloadAction<FeeSettingsResponseProps[]>) => {
+        fetchBankAccountList.fulfilled,
+        (state, action: PayloadAction<BankAccountList[]>) => {
           state.loading = false;
           state.data = action.payload;
           state.error = null;
         }
       )
-      .addCase(fetchFeeSettings.rejected, (state, action) => {
+      .addCase(fetchBankAccountList.rejected, (state, action) => {
         const dataError: any = action?.payload;
         if (dataError?.message) alert(dataError?.message);
 
@@ -72,4 +66,4 @@ const feeSettingsSlice = createSlice({
   },
 });
 
-export default feeSettingsSlice.reducer;
+export default bankAccountListSlice.reducer;

@@ -208,7 +208,6 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
             <p className="text-lg text-primary100 font-semibold mr-1">{`${rupiah(
               price
             )}/jam`}</p>
-            <p className="text-xs text-black50">{watt}</p>
           </div>
 
           <div className="bg-primary100 rounded-md row">
@@ -242,9 +241,3 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
 };
 
 export default ChargingLocationCard;
-
-const data = [
-  "2025-04-18T06:56:58.147844Z",
-  "2025-04-18T06:30:58.147844Z",
-  "2025-04-18T07:56:58.147844Z",
-];
