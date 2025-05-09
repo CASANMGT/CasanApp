@@ -8,7 +8,12 @@ import {
   IcSuccessGreen,
   IcWalletGreen2,
 } from "../assets";
-import { BankAccountList, REGEX_NUMBERS } from "../common";
+import {
+  AddWithdrawBody,
+  BankAccountList,
+  ERROR_MESSAGE,
+  REGEX_NUMBERS,
+} from "../common";
 import {
   AlertModal,
   Button,
@@ -17,7 +22,13 @@ import {
   Separator,
   SubTitle,
 } from "../components";
-import { fetchBankAccountList } from "../features";
+import {
+  fetchAddWithdraw,
+  fetchBankAccountList,
+  hideLoading,
+  resetDataAddWithdraw,
+  showLoading,
+} from "../features";
 import { rupiah } from "../helpers";
 import { AppDispatch, RootState } from "../store";
 
@@ -25,24 +36,47 @@ const Withdraw = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
+  const myUser = useSelector((state: RootState) => state.myUser);
   const bankAccountList = useSelector(
     (state: RootState) => state.bankAccountList
   );
+  const addWithdraw = useSelector((state: RootState) => state.addWithdraw);
 
   const [nominal, setNominal] = useState<string>("");
   const [openSuccess, setOpenSuccess] = useState<boolean>(false);
   const [openSelectBank, setOpenSelectBank] = useState<boolean>(false);
   const [selectBank, setSelectBank] = useState<BankAccountList>();
+  const [error, setError] = useState<string>();
 
   useEffect(() => {
     getData();
   }, []);
+
+  // manage response bank account list
+  useEffect(() => {
+    if (bankAccountList?.data?.length) {
+      setSelectBank(bankAccountList?.data[0]);
+    }
+  }, [bankAccountList]);
+
+  // manage response add withdraw
+  useEffect(() => {
+    if (addWithdraw?.loading) dispatch(showLoading());
+    else dispatch(hideLoading());
+
+    if (addWithdraw?.data) {
+      dispatch(resetDataAddWithdraw());
+      setOpenSuccess(true);
+    }
+  }, [addWithdraw]);
 
   const getData = () => {
     dispatch(fetchBankAccountList());
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (error) setError("");
+
     const value = e?.target?.value.replace(REGEX_NUMBERS, "");
     const formatted: string = `${rupiah(value)}`;
 
@@ -51,15 +85,33 @@ const Withdraw = () => {
 
   const onChange = () => {
     if (isAvailable) setOpenSelectBank(true);
-    else {
-    }
+    else navigate("/select-bank");
   };
 
-  const onSelect = () => {
-    setOpenSuccess(true);
+  const onValidation = () => {
+    let err: string = "";
+
+    const withdraw: number = Number(nominal.replace(/\./g, "") || 0);
+
+    if (withdraw > (myUser?.data?.Balance || 0)) err = "Angka melebihi saldo yang tersedia";
+    else if (withdraw < 15000) err = "Min. Withdraw Rp15.000";
+
+    if (err) setError(err);
+    else onConfirm;
   };
 
-  const isAvailable: boolean = true;
+  const onConfirm = () => {
+    if (selectBank) {
+      const body: AddWithdrawBody = {
+        amount: Number(nominal.replace(/\./g, "") || 0),
+        bank_account_id: selectBank?.ID,
+      };
+
+      dispatch(fetchAddWithdraw(body));
+    } else alert(ERROR_MESSAGE);
+  };
+
+  const isAvailable: boolean = selectBank ? true : false;
 
   return (
     <div className="background-1 flex flex-col justify-between overflow-hidden">
@@ -81,9 +133,11 @@ const Withdraw = () => {
           {isAvailable ? (
             <>
               <p className="text-xs text-blackBold font-medium">
-                Bank Mandiri - 1440024861665
+                {`${selectBank?.Code.replace("ID_", "")} - ${
+                  selectBank?.Number
+                }`}
               </p>
-              <p className="text-xs mt-1">TEDY IMAN PRIYO TANTO</p>
+              <p className="text-xs mt-1">{selectBank?.Name}</p>
             </>
           ) : (
             <p className="text-xs text-black70">Belum ada akun bank</p>
@@ -117,7 +171,7 @@ const Withdraw = () => {
             <p className="text-black90 text-xs py-2 px-2.5">
               Biaya layanan{" "}
               <span className="text-xs text-blackBold font-medium">{`Rp${rupiah(
-                500
+                0
               )}`}</span>
             </p>
             <div className="container-card mb-4">
@@ -143,13 +197,17 @@ const Withdraw = () => {
                 />
               </div>
 
-              <Separator className="mt-1 mb-3" />
+              <div className="mb-3 mt-1">
+                <Separator className={error ? "bg-red" : ""} />
+
+                {error && <span className="text-xs text-red">{error}</span>}
+              </div>
 
               <div className="between-x">
                 <span className="text-xs text-black70">Saldo Anda</span>
 
                 <span className="text-base font-semibold">{`Rp${rupiah(
-                  50000
+                  myUser?.data?.Balance || 0
                 )}`}</span>
               </div>
             </div>
@@ -160,7 +218,7 @@ const Withdraw = () => {
       {/* FOOTER */}
       {isAvailable && (
         <div className="container-button-footer">
-          <Button buttonType="lg" label="Konfirmasi" onClick={onSelect} />
+          <Button buttonType="lg" label="Konfirmasi" onClick={onValidation} />
         </div>
       )}
 
@@ -171,7 +229,7 @@ const Withdraw = () => {
         title="Penarikan Dana telah diajukan"
         description="Penarikan Dana telah diajukan, proses ini membutuhkan waktu maksimal 24 jam"
         labelButtonLeft="Konfirmasi"
-        onClick={() => {}}
+        onClick={() => navigate("/withdrawal-history")}
       />
 
       <ModalSelectBank

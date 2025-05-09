@@ -49,7 +49,7 @@ const SelectBank = () => {
 
       feeSettings?.data?.length &&
         feeSettings?.data.forEach((element) => {
-          if (element?.IsWithdraw) {
+          if (element?.IsWithdraw && element?.IsActive) {
             const newItem: OptionsProps = {
               name: element?.Name,
               value: element?.Code,

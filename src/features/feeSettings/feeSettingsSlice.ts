@@ -1,19 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { FeeSettingsResponseProps } from "../../common";
 import { Api } from "../../services/Api";
-
-export type FeeSettingsResponseProps = {
-  Code: string;
-  Name: string;
-  IsPercentage: boolean;
-  Value: number;
-  IsActive: boolean;
-  ExternalCode: string;
-  IsWithdraw: boolean;
-  IsEWallet: boolean;
-  CreatedAt: string;
-  UpdatedAt: string;
-  DeletedAt: string | null;
-};
 
 type FeeSettingsState = {
   data: FeeSettingsResponseProps[] | null;

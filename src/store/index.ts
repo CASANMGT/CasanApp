@@ -31,6 +31,7 @@ import checkPinReducer from "../features/users/checkPinSlice.ts";
 import editPinReducer from "../features/users/editPinSlice.ts";
 import editUserReducer from "../features/users/editUserSlice.ts";
 import myUserReducer from "../features/users/myUserSlice.ts";
+import addWithdrawReducer from "../features/withdraw/addWithdrawSlice.ts";
 
 export const store = configureStore({
   reducer: {
@@ -87,6 +88,9 @@ export const store = configureStore({
     addBankAccount: addBankAccountReducer,
     bankAccountList: bankAccountListReducer,
     deleteBankAccount: deleteBankAccountReducer,
+
+    // WITHDRAW
+    addWithdraw: addWithdrawReducer,
   },
 });
 

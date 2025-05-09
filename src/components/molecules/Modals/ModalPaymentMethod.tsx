@@ -63,17 +63,19 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
         const newDataTop: FeeSettingsProps[] = [];
 
         dataTopUp.forEach((item) => {
-          const newItem: FeeSettingsProps = {
-            key: item.Code,
-            icon: getIconPaymentMethod(
-              item.Code.split("_")[0].toLocaleLowerCase()
-            ),
-            label: item.Name,
-            priceType: item?.IsPercentage ? "percentage" : "fixed",
-            value: item.Value.toString(),
-          };
+          if (item?.IsActive) {
+            const newItem: FeeSettingsProps = {
+              key: item.Code,
+              icon: getIconPaymentMethod(
+                item.Code.split("_")[0].toLocaleLowerCase()
+              ),
+              label: item.Name,
+              priceType: item?.IsPercentage ? "percentage" : "fixed",
+              value: item.Value.toString(),
+            };
 
-          newDataTop.push(newItem);
+            newDataTop.push(newItem);
+          }
         });
 
         setOptionsPaymentMethod(newDataTop);
