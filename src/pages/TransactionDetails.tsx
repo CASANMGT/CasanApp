@@ -177,6 +177,8 @@ const TransactionDetails = () => {
       ? true
       : false;
 
+  console.log("cek status", status);
+
   return (
     <div className="background-1 py-[14px] px-4">
       <Header type="secondary" title="Detail Transaksi" onDismiss={onDismiss} />
@@ -187,13 +189,21 @@ const TransactionDetails = () => {
             <IcSuccessGreen />
           ) : (
             <IcTimerCircle
-              className={status === 3 ? "text-red" : "text-orange"}
+              className={
+                status === 3 || status === 4 ? "text-red" : "text-orange"
+              }
             />
           )}
 
-          {status === 1 || status === 3 ? (
+          {status === 1 || status === 3 || status === 4 ? (
             <span className="font-medium text-blackBold">
-              {`Transaksi ${status === 1 ? "Selesai" : "Expired"}`}
+              {`Transaksi ${
+                status === 1
+                  ? "Selesai"
+                  : status === 4
+                  ? "Dibatalkan"
+                  : "Expired"
+              }`}
             </span>
           ) : (
             <CountdownTimer
@@ -290,9 +300,7 @@ const TransactionDetails = () => {
 
               <BetweenText
                 labelLeft="Tipe Transaksi"
-                labelRight={
-                  transactionType === 1 ? "Top Up" : "Pengisian Daya"
-                }
+                labelRight={transactionType === 1 ? "Top Up" : "Pengisian Daya"}
                 classNameLabelRight="font-medium text-black100"
                 className="py-2 border-b border-b-black10"
               />
@@ -365,7 +373,7 @@ const TransactionDetails = () => {
             </>
           )}
 
-          {status !== 3 && (
+          {status !== 3 && status !== 4 && (
             <>
               <Separator className="my-6 bg-black10" />
 
