@@ -3,6 +3,16 @@ import { REGEX_NUMBERS } from "../../common";
 
 interface InputProps {
   type?: "number" | "text" | "phone";
+  inputMode?:
+    | "text"
+    | "search"
+    | "email"
+    | "tel"
+    | "url"
+    | "none"
+    | "numeric"
+    | "decimal"
+    | undefined;
   placeholder: string;
   value: string;
   error?: string;
@@ -12,6 +22,7 @@ interface InputProps {
 
 const Input: React.FC<InputProps> = ({
   type = "text",
+  inputMode,
   placeholder,
   autoFocus,
   value,
@@ -54,6 +65,7 @@ const Input: React.FC<InputProps> = ({
           type={type}
           placeholder={placeholder}
           value={value}
+          inputMode={inputMode}
           autoFocus={autoFocus}
           onChange={handleChange}
           className="h-full w-full px-0 py-3 bg-transparent text-sm text-black100 focus:outline-none  "

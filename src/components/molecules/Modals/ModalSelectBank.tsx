@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import {
-    IcClose,
-    IcPlus,
-    IcRadioActive,
-    IcRadioInactive,
+  IcClose,
+  IcPlus,
+  IcRadioActive,
+  IcRadioInactive,
 } from "../../../assets";
+import { BankAccountList } from "../../../common";
+import { RootState } from "../../../store";
 import { Button, Separator } from "../../atoms";
 import ModalContainer from "./ModalContainer";
 
@@ -12,7 +15,7 @@ interface Props {
   isOpen: boolean;
   onAddBank: () => void;
   onDismiss: () => void;
-  onSelect: () => void;
+  onSelect: (data: BankAccountList | undefined) => void;
 }
 
 const ModalSelectBank: React.FC<Props> = ({
@@ -21,12 +24,18 @@ const ModalSelectBank: React.FC<Props> = ({
   onDismiss,
   onSelect,
 }) => {
+  const bankAccountList = useSelector(
+    (state: RootState) => state.bankAccountList
+  );
+
+  const [selectBank, setSelectBank] = useState<BankAccountList>();
+
   return (
     <ModalContainer
       isOpen={isOpen}
       isBottom
       onDismiss={onDismiss}
-      classNameBottom="!h-auto"
+      classNameBottom="!h-auto !max-h-3/4"
     >
       <div className="w-full bg-white p-4 rounded-t-xl">
         <div className="between-x mb-4">
@@ -39,9 +48,15 @@ const ModalSelectBank: React.FC<Props> = ({
 
         <span className="text-black90">Daftar Rekening Bank</span>
 
-        {dataDummy.map((item, index) => (
-          <SelectBankCard key={index} isActive={false} onSelect={() => {}} />
-        ))}
+        {bankAccountList?.data?.length &&
+          bankAccountList?.data.map((item, index) => (
+            <SelectBankCard
+              key={index}
+              data={item}
+              isActive={item?.ID === selectBank?.ID}
+              onSelect={() => setSelectBank(item)}
+            />
+          ))}
 
         <div onClick={onAddBank} className="row cursor-pointer py-4">
           <IcPlus />
@@ -53,7 +68,7 @@ const ModalSelectBank: React.FC<Props> = ({
 
         <Separator className="mb-1" />
 
-        <Button label="Pilih" onClick={onSelect} />
+        <Button label="Pilih" onClick={() => onSelect(selectBank)} />
       </div>
     </ModalContainer>
   );
@@ -65,11 +80,13 @@ const dataDummy = [1, 2, 3];
 
 interface SelectBankCardProps {
   isActive: boolean;
+  data: BankAccountList;
   onSelect: () => void;
 }
 
 export const SelectBankCard: React.FC<SelectBankCardProps> = ({
   isActive,
+  data,
   onSelect,
 }) => {
   return (
@@ -77,9 +94,9 @@ export const SelectBankCard: React.FC<SelectBankCardProps> = ({
       <div className="between-x py-4">
         <div className="flex-col flex">
           <span className="text-blackBold text-xs font-medium">
-            Bank Mandiri - 1440024861665
+            {data?.Code.replace("ID_", "")} - {data?.Number}
           </span>
-          <span className="text-xs mt-1">TEDY IMAN PRIYO TANTO</span>
+          <span className="text-xs mt-1">{data?.Name}</span>
         </div>
 
         {isActive ? <IcRadioActive /> : <IcRadioInactive />}

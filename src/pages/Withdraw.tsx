@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   IcEditGreen,
@@ -7,7 +8,7 @@ import {
   IcSuccessGreen,
   IcWalletGreen2,
 } from "../assets";
-import { REGEX_NUMBERS } from "../common";
+import { BankAccountList, REGEX_NUMBERS } from "../common";
 import {
   AlertModal,
   Button,
@@ -16,14 +17,30 @@ import {
   Separator,
   SubTitle,
 } from "../components";
+import { fetchBankAccountList } from "../features";
 import { rupiah } from "../helpers";
+import { AppDispatch, RootState } from "../store";
 
 const Withdraw = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const bankAccountList = useSelector(
+    (state: RootState) => state.bankAccountList
+  );
 
   const [nominal, setNominal] = useState<string>("");
   const [openSuccess, setOpenSuccess] = useState<boolean>(false);
   const [openSelectBank, setOpenSelectBank] = useState<boolean>(false);
+  const [selectBank, setSelectBank] = useState<BankAccountList>();
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = () => {
+    dispatch(fetchBankAccountList());
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e?.target?.value.replace(REGEX_NUMBERS, "");
@@ -161,7 +178,10 @@ const Withdraw = () => {
         isOpen={openSelectBank}
         onDismiss={() => setOpenSelectBank(false)}
         onAddBank={() => navigate("/select-bank")}
-        onSelect={() => setOpenSelectBank(false)}
+        onSelect={(select) => {
+          setOpenSelectBank(false);
+          setSelectBank(select);
+        }}
       />
       {/* END MODAL */}
     </div>

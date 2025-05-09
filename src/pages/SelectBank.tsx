@@ -2,17 +2,21 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { IcCheckCircle } from "../assets";
-import { FormSelectBank, OptionsProps, ValidateBankBody } from "../common";
-import { Button, Dropdown, Header, Input, LoadingPage } from "../components";
 import {
   FeeSettingsResponseProps,
+  FormSelectBank,
+  OptionsProps,
+  REGEX_PHONE_NUMBER_HALF,
+  ValidateBankBody,
+} from "../common";
+import { Button, Dropdown, Header, Input, LoadingPage } from "../components";
+import {
   fetchFeeSettings,
   fetchValidateBank,
   resetDataValidateBank,
 } from "../features";
 import { useForm } from "../helpers";
 import { AppDispatch, RootState } from "../store";
-
 
 const SelectBank = () => {
   const navigate = useNavigate();
@@ -73,7 +77,14 @@ const SelectBank = () => {
   const validationCheck = () => {
     let value: boolean = true;
 
-    if (form?.bankName?.value && form.accountNumber.trim()) value = false;
+    if (form?.bankName?.value && form.accountNumber.trim()) {
+      if (form.bankName?.data?.IsEWallet) {
+        let isPhoneValid: boolean = !REGEX_PHONE_NUMBER_HALF.test(
+          form.accountNumber
+        );
+        value = isPhoneValid;
+      } else value = false;
+    }
 
     return value;
   };
@@ -82,7 +93,9 @@ const SelectBank = () => {
     const dataFeeSetting: FeeSettingsResponseProps = form?.bankName?.data;
 
     const body: ValidateBankBody = {
-      account_number: form?.accountNumber,
+      account_number: `${form.bankName?.data?.IsEWallet ? "+62" : ""}${
+        form?.accountNumber
+      }`,
       code: dataFeeSetting?.ExternalCode,
       reference_id: "",
     };
@@ -118,7 +131,8 @@ const SelectBank = () => {
 
             <div>
               <Input
-                type="number"
+                type={form.bankName?.data?.IsEWallet ? "phone" : "number"}
+                inputMode="numeric"
                 value={form.accountNumber}
                 placeholder="Nomor Rekening/Handphone"
                 error={error}

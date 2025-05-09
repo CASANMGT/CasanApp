@@ -9,6 +9,7 @@ export type FeeSettingsResponseProps = {
   IsActive: boolean;
   ExternalCode: string;
   IsWithdraw: boolean;
+  IsEWallet: boolean;
   CreatedAt: string;
   UpdatedAt: string;
   DeletedAt: string | null;
