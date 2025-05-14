@@ -1,13 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { BankAccountList, MetaResponseProps } from "../../common";
+import { BankAccountList } from "../../common";
 import { Api } from "../../services/Api";
-
-type BankAccountListResponseProps = {
-  status: string;
-  message: string;
-  data: BankAccountList[];
-  meta: MetaResponseProps;
-};
 
 type BankAccountListState = {
   data: BankAccountList[] | null;
