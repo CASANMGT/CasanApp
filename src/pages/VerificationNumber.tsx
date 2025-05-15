@@ -36,8 +36,6 @@ const VerificationNumber = () => {
   const [labelError, setLabelError] = useState<string>();
   const [counter, setCounter] = useState<number>(60);
 
-  console.log("cek validateBank", validateBank);
-
   useEffect(() => {
     getData();
   }, []);

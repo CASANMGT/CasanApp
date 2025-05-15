@@ -29,8 +29,6 @@ const SettingPin = () => {
     else if (myUser?.data?.WithdrawPIN) setIsNewPin(false);
   }, []);
 
-  console.log("cek checkPin");
-
   useEffect(() => {
     if (checkPin?.data) {
       if (!checkPin?.data?.data?.is_match) {

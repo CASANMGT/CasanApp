@@ -15,6 +15,7 @@ import {
   IcSuccessGreen,
   IcTimerCircle,
 } from "../assets";
+import { ERROR_MESSAGE } from "../common";
 import {
   BetweenText,
   Button,
@@ -157,7 +158,9 @@ const TransactionDetails = () => {
     if (transactionById?.data?.Session?.Status === 6)
       nextPage = "session-details";
 
-    navigate(`/${nextPage}/${transactionById?.data?.Session?.ID}`);
+    if (transactionById?.data?.Session?.ID)
+      navigate(`/${nextPage}/${transactionById?.data?.Session?.ID}`);
+    else alert(ERROR_MESSAGE);
   };
 
   const IconPayment = getIconPaymentMethod(
@@ -176,8 +179,6 @@ const TransactionDetails = () => {
     (status === 3 || status === 4)
       ? true
       : false;
-
-  console.log("cek status", status);
 
   return (
     <div className="background-1 py-[14px] px-4">

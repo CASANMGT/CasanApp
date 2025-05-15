@@ -8,7 +8,6 @@ import {
   rupiah,
 } from "../../../helpers";
 import { Separator } from "../../atoms";
-import { div } from "framer-motion/client";
 
 interface OrderCardProps {
   position: number;
@@ -18,8 +17,6 @@ interface OrderCardProps {
 
 const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
   const status: number = data?.Status;
-
-  console.log("cek data", data);
 
   const getLabelStatus = () => {
     let value: string;

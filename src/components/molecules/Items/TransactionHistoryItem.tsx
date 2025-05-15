@@ -75,9 +75,10 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
         </div>
 
         <p className="text-blackBold font-semibold">{`${
-          cloneData?.Transaction?.DueAmount || Math.abs(dataBalance?.Amount) > 0
+          cloneData?.Transaction?.DueAmount > 0 ||
+          Math.abs(dataBalance?.Amount) > 0
             ? isTransaction
-              ? "-"
+              ? ""
               : dataBalance?.Status === 1 || dataBalance?.Status === 2
               ? "+"
               : "-"

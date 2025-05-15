@@ -25,6 +25,9 @@ const SelectBank = () => {
   const feeSettings = useSelector((state: RootState) => state.feeSettings);
   const validateBank = useSelector((state: RootState) => state.validateBank);
   const myUser = useSelector((state: RootState) => state.myUser);
+  const bankAccountList = useSelector(
+    (state: RootState) => state.bankAccountList
+  );
 
   const [optionsBank, setOptionsBank] = useState<OptionsProps[]>();
   const [error, setError] = useState<string>("");
@@ -71,8 +74,6 @@ const SelectBank = () => {
     if (validateBank?.data) {
       if (!validateBank?.data?.is_found)
         setError("Nomor rekening tidak ditemukan. Cek kembali, ya");
-      else if (validateBank?.data?.is_verified)
-        setError("Account has already been added");
     }
   }, [validateBank?.data]);
 
@@ -92,17 +93,30 @@ const SelectBank = () => {
   };
 
   const onCheck = () => {
-    const dataFeeSetting: FeeSettingsResponseProps = form?.bankName?.data;
+    let isValid: boolean = false;
 
-    const body: ValidateBankBody = {
-      account_number: `${form.bankName?.data?.IsEWallet ? "+62" : ""}${
-        form?.accountNumber
-      }`,
-      code: dataFeeSetting?.ExternalCode,
-      reference_id: "",
-    };
+    if (bankAccountList?.data && bankAccountList?.data.length) {
+      const some = bankAccountList?.data.some(
+        (e) => e.Number === form.accountNumber
+      );
 
-    dispatch(fetchValidateBank(body));
+      isValid = some;
+    }
+
+    if (isValid) setError("Account has already been added");
+    else {
+      const dataFeeSetting: FeeSettingsResponseProps = form?.bankName?.data;
+
+      const body: ValidateBankBody = {
+        account_number: `${form.bankName?.data?.IsEWallet ? "+62" : ""}${
+          form?.accountNumber
+        }`,
+        code: dataFeeSetting?.ExternalCode,
+        reference_id: "",
+      };
+
+      dispatch(fetchValidateBank(body));
+    }
   };
 
   const onNext = () => {
@@ -124,7 +138,7 @@ const SelectBank = () => {
     <div className="container-screen between-y">
       <Header title="Pilih Bank" onDismiss={() => navigate(-1)} />
 
-      <LoadingPage loading={feeSettings?.loading}>
+      <LoadingPage loading={feeSettings?.loading || bankAccountList?.loading}>
         <div className="flex-1">
           <div className="bg-white p-4 space-y-4">
             <Dropdown

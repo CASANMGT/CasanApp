@@ -126,7 +126,6 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
               {type !== "top-up" && (
                 <>
                   <p className="text-black70 mb-2.5">Saldo Anda</p>
-                  {/* DUMMY  value 1000*/}
                   <PaymentMethodItem
                     type="checkbox"
                     label="Saldo"
