@@ -59,7 +59,7 @@ const ModalChargingStation: React.FC<ModalChargingStationProps> = ({
   console.log("cek data", data);
 
   return (
-    <ModalContainer isOpen={isOpen} isBottom onDismiss={onDismiss}>
+    <ModalContainer isOpen={isOpen} isBottom onDismiss={onDismiss} classNameBottom="!h-auto">
       <div className="w-full bg-white p-4 rounded-t-xl between-y">
         <div className="between-x mb-6">
           <span className="text-base font-semibold">

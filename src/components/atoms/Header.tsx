@@ -4,10 +4,13 @@ import {
   IcBackWhite,
   IcClose,
   IcCustomerService,
+  IcCustomerServiceBlack,
   IcFlashOff,
   IcFlashOn,
-  IcMenuBlack
+  IcMenuBlack,
 } from "../../assets";
+import { openWhatsApp } from "../../helpers";
+import { CUSTOMER_SERVICES } from "../../common";
 
 interface HeaderProps {
   type?: "primary" | "secondary" | "scan" | "cancel" | "charging";
@@ -82,18 +85,30 @@ const Header: React.FC<HeaderProps> = ({
 
                 {isOpen && (
                   <div
-                    onClick={onPress}
-                    className={`absolute right-0 top-11 flex gap-2 p-3 rounded-lg bg-white transform transition-all duration-200 cursor-pointer ${
+                    className={`absolute right-0 top-11 space-y-2 p-3 rounded-lg bg-white transform transition-all duration-200 cursor-pointer ${
                       isOpen
                         ? "opacity-100 translate-y-0 z-10"
                         : "opacity-0 translate-y-2 invisible"
                     }`}
                   >
-                    <IcClose className="text-red" />
+                    <div onClick={onPress} className="row gap-2">
+                      <IcClose className="text-red" />
 
-                    <span className="text-red whitespace-nowrap">
-                      Batalkan Sesi
-                    </span>
+                      <span className="text-red whitespace-nowrap">
+                        Batalkan Sesi
+                      </span>
+                    </div>
+
+                    <div
+                      className="row gap-2"
+                      onClick={() => openWhatsApp(CUSTOMER_SERVICES)}
+                    >
+                      <IcCustomerServiceBlack />
+
+                      <span className=" whitespace-nowrap">
+                        Hubungi Kami
+                      </span>
+                    </div>
                   </div>
                 )}
               </>
