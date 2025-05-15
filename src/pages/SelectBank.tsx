@@ -103,7 +103,7 @@ const SelectBank = () => {
       isValid = some;
     }
 
-    if (isValid) setError("Account has already been added");
+    if (isValid) setError("Nomor rekening sudah didaftarkan di akun Anda");
     else {
       const dataFeeSetting: FeeSettingsResponseProps = form?.bankName?.data;
 
