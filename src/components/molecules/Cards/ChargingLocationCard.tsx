@@ -123,6 +123,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
     }
   }
 
+  const labelWatt = getLabelWatt(minWatt, maxWatt);
+
   return (
     <>
       <div
@@ -213,13 +215,10 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
           <div className="bg-primary100 rounded-md row">
             <div className="py-0.5 px-1 row gap-1">
               <IcFlash className="text-white" />
-
-              <span className="text-white text-xs font-medium">Max</span>
             </div>
 
             <div className="text-primary100 bg-primary10 px-1 rounded-md rounded-l-[40px] gap-1 flex items-center py-0.5">
-              <span className="font-medium">{`${minWatt}-${maxWatt}`}</span>
-              <span className="text-xs">kWh</span>
+              <span className="font-medium">{labelWatt}</span>
             </div>
           </div>
         </div>
@@ -241,3 +240,16 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
 };
 
 export default ChargingLocationCard;
+
+const getLabelWatt = (min: number, max: number) => {
+  let value: string = "";
+
+  if (min === max) {
+    if (min < 1) value = `${min * 1000}w`;
+    else value = `${min}kW`;
+  } else {
+    value = `${min}-${max}kW`;
+  }
+
+  return value;
+};
