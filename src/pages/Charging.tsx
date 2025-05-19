@@ -72,7 +72,7 @@ const Charging = () => {
     ) {
       if (detailSession?.data?.Status === 3) setOpenDiagnosis(true);
       else if (detailSession?.data?.Status === 5) setOpenDiagnosis(false);
-      
+
       timeoutProgress();
     }
   }, [detailSession?.data]);
@@ -108,39 +108,44 @@ const Charging = () => {
   }, [cancelSession]);
 
   const getData = () => {
-    dispatch(fetchDetailSession(Number(id))).then((res) => {
-      const resSession: Session = res?.payload as Session;
-      const currentStatus = resSession?.Status;
+    if (id) {
+      dispatch(fetchDetailSession(Number(id))).then((res) => {
+        const resSession: Session = res?.payload as Session;
+        const currentStatus = resSession?.Status;
 
-      if (currentStatus === 6) {
-        setOpenFinished(true);
-      } else if (
-        currentStatus === 1 ||
-        currentStatus === 7 ||
-        currentStatus === 8
-      ) {
-        navigate(
-          `/transaction-history/details/${detailSession?.data?.TransactionID}`,
-          {
-            replace: true,
-            state: { isGoOrder: true },
-          }
-        );
-      } else if (
-        currentStatus === 2 &&
-        resSession?.ChargingStationID &&
-        resSession?.MaxWatt
-      ) {
-        const body: CalculateDurationBody = {
-          id: resSession?.ChargingStationID,
-          total_charge: Number(resSession?.Transaction?.Amount),
-          vehicle_type: 1,
-          watt: Number(resSession?.MaxWatt),
-        };
+        if (currentStatus === 6) {
+          setOpenFinished(true);
+        } else if (
+          currentStatus === 1 ||
+          currentStatus === 7 ||
+          currentStatus === 8
+        ) {
+          navigate(
+            `/transaction-history/details/${detailSession?.data?.TransactionID}`,
+            {
+              replace: true,
+              state: { isGoOrder: true },
+            }
+          );
+        } else if (
+          currentStatus === 2 &&
+          resSession?.ChargingStationID &&
+          resSession?.MaxWatt
+        ) {
+          const body: CalculateDurationBody = {
+            id: resSession?.ChargingStationID,
+            total_charge: Number(resSession?.Transaction?.Amount),
+            vehicle_type: 1,
+            watt: Number(resSession?.MaxWatt),
+          };
 
-        dispatch(fetchCalculateDuration(body));
-      }
-    });
+          dispatch(fetchCalculateDuration(body));
+        }
+      });
+    } else {
+      alert("Can't find session ID");
+      onDismiss()
+    }
   };
 
   // over loop if status is charging
@@ -401,7 +406,7 @@ const Charging = () => {
         title="Permintaan Anda tidak dapat diproses"
         description="Silakan coba beberapa saat lagi"
         labelButtonRight="Tutup"
-        typeButtonRight='primary'
+        typeButtonRight="primary"
         onDismiss={() => setOpenCantProcess(false)}
       />
       {/* END */}

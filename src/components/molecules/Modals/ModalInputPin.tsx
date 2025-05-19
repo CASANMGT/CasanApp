@@ -2,12 +2,17 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IcClose, IcRadioActive, IcRadioInactive } from "../../../assets";
 import { CUSTOMER_SERVICES, MAX_INPUT_PIN } from "../../../common";
-import { fetchCheckPin, resetDataCheckPin } from "../../../features";
+import {
+  fetchCheckPin,
+  fetchEditPin,
+  hideLoading,
+  resetDataCheckPin,
+  showLoading
+} from "../../../features";
 import { moments, openWhatsApp } from "../../../helpers";
 import { AppDispatch, RootState } from "../../../store";
-import { Button, InputCode, Separator } from "../../atoms";
+import { InputCode, Separator } from "../../atoms";
 import ModalContainer from "./ModalContainer";
-import { p } from "framer-motion/client";
 
 interface Props {
   isOpen: boolean;
@@ -31,7 +36,11 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
     }
   }, [isOpen]);
 
+  // manage response check pin
   useEffect(() => {
+    if (checkPin?.loading) dispatch(showLoading());
+    else dispatch(hideLoading());
+
     if (checkPin?.data) {
       if (!checkPin?.data?.data?.is_match) {
         if (
@@ -92,7 +101,8 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
   };
 
   const onNext = (code: string[]) => {
-    dispatch(fetchCheckPin(code.join("")));
+    if (myUser?.data?.WithdrawPIN) dispatch(fetchCheckPin(code.join("")));
+    else dispatch(fetchEditPin(code.join("")));
   };
 
   const isShowError: boolean = useMemo(

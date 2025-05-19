@@ -148,10 +148,7 @@ const RoutesPage = () => {
         {/* BOTTOM NAVIGATION */}
         <Route path="home" element={<Main />}>
           <Route path="index" element={<Home />} />
-          <Route
-            path="location"
-            element={<ProtectedRoute element={<Location />} />}
-          />
+          <Route path="location" element={<Location />} />
           <Route
             path="order"
             element={<ProtectedRoute element={<Order />} />}

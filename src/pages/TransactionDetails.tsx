@@ -97,7 +97,11 @@ const TransactionDetails = () => {
   }, [isRunning]);
 
   const getData = () => {
-    dispatch(fetchTransactionById(Number(id)));
+    if (id) dispatch(fetchTransactionById(Number(id)));
+    else {
+      alert("Can't find transaction ID");
+      onDismiss();
+    }
   };
 
   const timeoutProgress = () => {

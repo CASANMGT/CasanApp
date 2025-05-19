@@ -38,7 +38,7 @@ export const fetchCheckPin = createAsyncThunk(
 );
 
 const checkPinSlice = createSlice({
-  name: "checkPinSlice",
+  name: "checkPin",
   initialState,
   reducers: {
     resetDataCheckPin: (state) => {

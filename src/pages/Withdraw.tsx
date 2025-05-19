@@ -97,7 +97,7 @@ const Withdraw = () => {
     else if (withdraw < 15000) err = "Min. Withdraw Rp15.000";
 
     if (err) setError(err);
-    else onConfirm;
+    else onConfirm();
   };
 
   const onConfirm = () => {

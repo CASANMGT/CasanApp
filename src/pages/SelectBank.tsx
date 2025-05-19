@@ -129,10 +129,7 @@ const SelectBank = () => {
     });
   };
 
-  const isFound: boolean =
-    validateBank?.data?.is_found && !validateBank?.data?.is_verified
-      ? true
-      : false;
+  const isFound: boolean = validateBank?.data?.is_found ? true : false;
 
   return (
     <div className="container-screen between-y">

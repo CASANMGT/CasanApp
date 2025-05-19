@@ -9,10 +9,7 @@ import {
 } from "react-router-dom";
 import {
   IcInfoCircle,
-  IcInfoCircleBlack,
   IcInfoCircleGreen,
-  IcInfoCircleRed,
-  IcInfoRed,
   IcRightCircleGreen,
   IcRightGreen,
   IcSocketCircleGreen,
@@ -59,11 +56,17 @@ import {
   hideLoading,
   resetDataCalculateCharge,
   resetDataCalculateDuration,
+  resetDataEditPin,
   resetDataLogin,
   setFromGlobal,
   showLoading,
 } from "../../features";
-import { formatPhoneNumber, rupiah, useForm } from "../../helpers";
+import {
+  formatPhoneNumber,
+  openGoogleMaps,
+  rupiah,
+  useForm,
+} from "../../helpers";
 import { AppDispatch, RootState } from "../../store";
 import PriceInformation from "../ChargingStationDetails/PriceInformation";
 import InputHour from "./InputHour";
@@ -101,6 +104,7 @@ const SessionSettings = () => {
   const myUser = useSelector((state: RootState) => state.myUser);
   const deviceById = useSelector((state: RootState) => state.deviceById);
   const checkPin = useSelector((state: RootState) => state.checkPin);
+  const editPin = useSelector((state: RootState) => state.editPin);
 
   const [form, setForm] = useForm<FormSession>(FormDefaultSession);
 
@@ -179,11 +183,23 @@ const SessionSettings = () => {
     }
   }, [dataLogin?.data]);
 
+  // manage response check pin
   useEffect(() => {
     if (checkPin?.data?.data?.is_match) {
       onPay(form);
     }
   }, [checkPin]);
+
+  // manage response edit pin
+  useEffect(() => {
+    if (editPin?.loading) dispatch(showLoading());
+    else dispatch(hideLoading());
+
+    if (editPin?.data) {
+      dispatch(resetDataEditPin());
+      onPay(form);
+    }
+  }, [editPin]);
 
   const onDismiss = () => {
     navigate(-1);
@@ -309,6 +325,8 @@ const SessionSettings = () => {
     );
   };
 
+  console.log("cek d", data);
+
   return (
     <Container title="Pengaturan Sesi" onDismiss={onDismiss}>
       <LoadingPage loading={deviceById?.loading}>
@@ -323,7 +341,12 @@ const SessionSettings = () => {
                   buttonType="sm"
                   label="Kunjungi"
                   iconRight={IcRightGreen}
-                  onClick={() => {}}
+                  onClick={() =>
+                    openGoogleMaps(
+                      data?.Location?.Latitude,
+                      data?.Location?.Longitude
+                    )
+                  }
                 />
               </div>
             </div>
