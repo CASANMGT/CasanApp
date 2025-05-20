@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Balance } from "../common";
+import { Balance, WithdrawList } from "../common";
 import { BetweenText, Header, LoadingPage, Separator } from "../components";
 import {
   getIconPaymentMethod,
@@ -13,36 +13,14 @@ const WithdrawalDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [data] = useState<Balance>(location?.state?.data);
+  const [data] = useState<WithdrawList>(location?.state?.data);
 
-  const onNext = () => {
-    let nextPage: string;
+  console.log("cek data", data);
 
-    switch (data?.Status) {
-      case 1:
-        nextPage = "transaction-history/details";
-        break;
-
-      case 2:
-        nextPage = "withdraw-details";
-        break;
-
-      case 3:
-      case 4:
-        nextPage = "session-details";
-        break;
-
-      default:
-        nextPage = "";
-        break;
-    }
-
-    navigate(`/${nextPage}/${data?.SeasonID || 0}`);
-  };
-
-  const status:number = 3
-  const IconPayment: any = getIconPaymentMethod("dana");
-  const labelPayment: string = getLabelPaymentMethod("dana");
+  const status: number = 3;
+  const IconPayment: any = getIconPaymentMethod(data?.BankAccount?.Code);
+  const labelPayment: string = getLabelPaymentMethod(data?.BankAccount?.Code);
+  const formatted = getFormattedByStatus(data?.Status);
 
   return (
     <div className="container-screen bg-white flex flex-col">
@@ -57,13 +35,15 @@ const WithdrawalDetails = () => {
               </span>
 
               <span className="text-base font-semibold text-primary100">
-                {`Rp${rupiah(99999)}`}
+                {`Rp${rupiah(data?.Amount + data?.Fee)}`}
               </span>
             </div>
 
-            <div className={`py-1 px-[14px] rounded-full border ${getColorStatus(status).bgColor}`}>
-              <p className={`text-xs font-medium ${getColorStatus(status).textColor}`}>
-                {getLabelStatus(status)}
+            <div
+              className={`py-1 px-[14px] rounded-full border ${formatted?.bgColor}`}
+            >
+              <p className={`text-xs font-medium ${formatted?.textColor}`}>
+                {formatted?.label}
               </p>
             </div>
           </div>
@@ -86,7 +66,7 @@ const WithdrawalDetails = () => {
 
           <BetweenText
             labelLeft="Nama Rekening"
-            labelRight={"Tedy"}
+            labelRight={data?.BankAccount?.Name}
             classNameLabelRight="font-semibold"
           />
 
@@ -98,34 +78,38 @@ const WithdrawalDetails = () => {
 
           <BetweenText
             labelLeft="ID Penarikan"
-            labelRight={1432}
+            labelRight={data?.ID}
             className="py-2 border-b border-b-black10"
           />
           <BetweenText
             labelLeft="Tanggal Pengajuan"
-            labelRight={moments().format("DD MMMM YYYY, HH:mm")}
+            labelRight={moments(data?.CreatedAt).format("DD MMMM YYYY, HH:mm")}
             className="py-2 border-b border-b-black10"
           />
           <BetweenText
             labelLeft="Tanggal Diproses"
-            labelRight={"-"}
+            labelRight={
+              data?.Status === 1
+                ? "-"
+                : moments(data?.UpdatedAt).format("DD MMMM YYYY, HH:mm")
+            }
             className="py-2 border-b border-b-black10"
           />
           <BetweenText
             labelLeft="Nominal Penarikan"
-            labelRight={`Rp${rupiah(460000)}`}
+            labelRight={`Rp${rupiah(data?.Amount)}`}
             classNameLabelLeft="text-blackBold"
             className="py-2 border-b border-b-black10"
           />
           <BetweenText
             labelLeft="Biaya Penarikan"
-            labelRight={`-Rp${rupiah(10000)}`}
+            labelRight={`${data?.Fee > 0 ? "-" : ""}Rp${rupiah(data?.Fee)}`}
             classNameLabelLeft="text-blackBold"
             className="py-2 border-b border-b-black70"
           />
           <BetweenText
             labelLeft="Total Akhir"
-            labelRight={`Rp${rupiah(450000)}`}
+            labelRight={`Rp${rupiah(data?.Amount + data?.Fee)}`}
             classNameLabelLeft="text-black100"
             classNameLabelRight="text-black100 font-semibold"
             className="py-2 border-b border-b-black70"
@@ -137,6 +121,41 @@ const WithdrawalDetails = () => {
 };
 
 export default WithdrawalDetails;
+
+const getFormattedByStatus = (status: number) => {
+  let label: string = "";
+  let bgColor: string = "";
+  let textColor: string = "";
+
+  switch (status) {
+    case 1:
+      label = "Penarikan Diproses";
+      bgColor = "bg-primary10 border-primary50";
+      textColor = "text-primary100";
+      break;
+
+    case 2:
+      label = "Penarikan Disetujui";
+      bgColor = "bg-lightGreen border-strokeGreen";
+      textColor = "text-green";
+      break;
+
+    case 3:
+      label = "Penarikan Ditolak";
+      bgColor = "bg-lightRed border-strokeRed";
+      textColor = "text-red";
+      break;
+
+    default:
+      break;
+  }
+
+  return {
+    label,
+    bgColor,
+    textColor,
+  };
+};
 
 const getColorStatus = (type: number) => {
   let bgColor: string;

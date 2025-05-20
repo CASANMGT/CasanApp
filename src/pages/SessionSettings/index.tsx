@@ -325,8 +325,6 @@ const SessionSettings = () => {
     );
   };
 
-  console.log("cek d", data);
-
   return (
     <Container title="Pengaturan Sesi" onDismiss={onDismiss}>
       <LoadingPage loading={deviceById?.loading}>

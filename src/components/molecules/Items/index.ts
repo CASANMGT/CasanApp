@@ -7,6 +7,7 @@ import OngoingItem from "./OngoingItem";
 import OperatingHoursItem from "./OperatingHoursItem";
 import PaymentMethodItem from "./PaymentMethodItem";
 import SocketItem from "./SocketItem";
+import WithdrawHistoryItem from "./WithdrawHistoryItem";
 import TransactionHistoryItem from "./TransactionHistoryItem";
 
 export {
@@ -19,6 +20,7 @@ export {
   OperatingHoursItem,
   PaymentMethodItem,
   SocketItem,
-  TransactionHistoryItem
+  TransactionHistoryItem,
+  WithdrawHistoryItem
 };
 

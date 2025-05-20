@@ -54,6 +54,13 @@ export enum DaysOfWeek {
   Minggu = 0,
 }
 
+export enum WithdrawRequestStatus {
+  PendingRequest = 1,
+  ApprovedRequest = 2,
+  RejectedRequest = 3,
+}
+
+
 export enum StringNumber {
   A = 1,
   B = 2,

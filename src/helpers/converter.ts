@@ -104,6 +104,10 @@ export const getLabelPaymentMethod: (type: string) => string = (
       label = "Saldo Casan";
       break;
 
+    case "ID_BCA":
+      label = "BCA";
+      break;
+
     default:
       label = "-";
       break;

@@ -121,7 +121,10 @@ const Charging = () => {
           currentStatus === 8
         ) {
           navigate(
-            `/transaction-history/details/${detailSession?.data?.TransactionID}`,
+            `/transaction-history/details/${
+              detailSession?.data?.Transaction?.ID ||
+              resSession?.Transaction?.ID
+            }`,
             {
               replace: true,
               state: { isGoOrder: true },
@@ -144,7 +147,7 @@ const Charging = () => {
       });
     } else {
       alert("Can't find session ID");
-      onDismiss()
+      onDismiss();
     }
   };
 
