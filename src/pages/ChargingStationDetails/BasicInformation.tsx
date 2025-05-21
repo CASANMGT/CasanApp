@@ -56,7 +56,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ phone, data }) => {
             buttonType="sm"
             label="Contact Us ->"
             onClick={() => {
-              if (phone) openWhatsApp(phone);
+              if (phone) openWhatsApp(phone.replace("+62",""));
             }}
             // className="!h-[24px] text-xs"
           />
