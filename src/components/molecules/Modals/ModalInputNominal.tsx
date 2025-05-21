@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IcClose } from "../../../assets";
 import { NOMINAL_SESSION, REGEX_NUMBERS } from "../../../common";
-import { rupiah } from "../../../helpers";
+import { replaceNominal, rupiah } from "../../../helpers";
 import { Button, Separator } from "../../atoms";
 import { NominalTopUpItem } from "../Items";
 import ModalContainer from "./ModalContainer";
@@ -37,12 +37,14 @@ const ModalInputNominal: React.FC<ModalInputNominalProps> = ({
     setNominal(formatted);
   };
 
+  const isError: boolean = replaceNominal(nominal) > 120000 ? true : false;
+
   return (
     <ModalContainer
       isOpen={open}
       isBottom
       onDismiss={onDismiss}
-      classNameBottom="!h-[350px]"
+      classNameBottom="!h-auto"
     >
       <div className="w-full bg-white p-4 rounded-t-xl between-y">
         <div className="flex-1 flex flex-col overflow-hidden relative">
@@ -58,16 +60,27 @@ const ModalInputNominal: React.FC<ModalInputNominalProps> = ({
             Silakan masukkan nominal pengisian yang sesuai dengan kebutuhan anda
           </p>
 
-          <div className="bg-baseGray rounded-lg center  px-1">
+          <div
+            className={`bg-baseGray center  px-1 ${
+              isError ? "rounded-t-lg" : "rounded-lg"
+            }`}
+          >
             <input
               type={"text"}
               inputMode="numeric"
               placeholder={"0"}
               value={nominal}
               onChange={handleChange}
-              className="z-10 w-auto text-center p-5 w-full text-base font-semibold bg-transparent"
+              className="z-10 w-auto text-center p-4 w-full text-base font-semibold bg-transparent"
             />
           </div>
+          {isError && (
+            <div className="border-t border-t-red bg-lightRed px-3 py-1.5 rounded-b-sm text-red text-xs">
+              <p>
+                Max. <span className="font-semibold">Rp120.000</span>
+              </p>
+            </div>
+          )}
 
           <Separator className="my-4" />
 
@@ -94,10 +107,11 @@ const ModalInputNominal: React.FC<ModalInputNominalProps> = ({
         </div>
 
         {/* FOOTER */}
-        <div className="">
+        <div className="mt-6">
           <Button
             buttonType="lg"
             label="Pilih"
+            disabled={isError}
             onClick={() => onChangeText(nominal || "Rp0")}
           />
         </div>

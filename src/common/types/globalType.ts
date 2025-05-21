@@ -2,7 +2,7 @@ import { ChargingStation, PriceSetting } from "./chargingStationsType";
 
 export type MenuBottomNavigationProps = {
   id: string;
-  page: string;
+  page: "index" | "location" | "scan" | "order" | "profile";
   label: string;
   isCenter?: boolean;
 };

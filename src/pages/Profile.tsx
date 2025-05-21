@@ -26,21 +26,11 @@ const Profile = () => {
 
   const myUser = useSelector((state: RootState) => state.myUser);
 
-  const phoneNumber: string = "08120810812";
   const navigate: NavigateFunction = useNavigate();
 
   useEffect(() => {
     dispatch(fetchMyUser());
   }, []);
-
-  const onEdit = () => {
-    alert("coming soon");
-  };
-
-  const onNotification = () => {
-    alert("coming soon");
-  };
-
 
   const onNext = (path: string) => {
     navigate(`/${path}`);

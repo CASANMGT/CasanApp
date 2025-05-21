@@ -45,12 +45,15 @@ const ModalInputHour: React.FC<ModalInputHourProps> = ({
     }
   };
 
+
+  const isError: boolean = totalMinute(selectTime) > 720 ? true : false;
+
   return (
     <ModalContainer
       isOpen={open}
       isBottom
       onDismiss={onDismiss}
-      classNameBottom="!h-[400px]"
+      classNameBottom="!h-auto"
     >
       <div className="w-full bg-white p-4 rounded-t-xl between-y">
         <div className="flex-1 flex flex-col overflow-hidden relative">
@@ -71,6 +74,14 @@ const ModalInputHour: React.FC<ModalInputHourProps> = ({
             onChange={(value) => setSelectTime(value)}
           />
 
+          {isError && (
+            <div className="border-t border-t-red bg-lightRed px-3 py-1.5 rounded-b-sm text-red text-xs">
+              <p>
+                Max. <span className="font-semibold">12 Jam</span>
+              </p>
+            </div>
+          )}
+
           <Separator className="my-4" />
 
           <div className="grid grid-cols-2 gap-3 ">
@@ -89,10 +100,11 @@ const ModalInputHour: React.FC<ModalInputHourProps> = ({
         </div>
 
         {/* FOOTER */}
-        <div className="">
+        <div className="mt-6">
           <Button
             buttonType="lg"
             label="Pilih"
+            disabled={isError}
             onClick={() => onChange(`${selectTime[0]}:${selectTime[1]}`)}
           />
         </div>
@@ -102,3 +114,12 @@ const ModalInputHour: React.FC<ModalInputHourProps> = ({
 };
 
 export default ModalInputHour;
+
+const totalMinute: (time: [string, string]) => number = (
+  time: [string, string]
+) => {
+  const hours = parseInt(time[0], 0);
+  const minutes = parseInt(time[1], 0);
+
+  return hours * 60 + minutes;
+};

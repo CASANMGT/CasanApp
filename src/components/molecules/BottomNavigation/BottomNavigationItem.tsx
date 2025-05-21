@@ -12,6 +12,7 @@ import {
   IcScanWhite,
 } from "../../../assets";
 import { MenuBottomNavigationProps } from "../../../common";
+import { useAuth } from "../../../context/AuthContext";
 
 interface BottomNavigationItemProps {
   data: MenuBottomNavigationProps;
@@ -24,6 +25,8 @@ const BottomNavigationItem: React.FC<BottomNavigationItemProps> = ({
   isActive,
   onClick,
 }) => {
+  const { isAuthenticated } = useAuth();
+
   const getIcon = useCallback(() => {
     let icon: any = IcHomeActive;
 
@@ -32,7 +35,7 @@ const BottomNavigationItem: React.FC<BottomNavigationItemProps> = ({
         icon = isActive ? IcLocationActive : IcLocationInactive;
         break;
 
-      case "history":
+      case "order":
         icon = isActive ? IcHistoryActive : IcHistoryInactive;
         break;
 
@@ -48,12 +51,28 @@ const BottomNavigationItem: React.FC<BottomNavigationItemProps> = ({
     return icon;
   }, [isActive]);
 
+  const checkTo = () => {
+    let value: string = "";
+
+    if (!isAuthenticated) {
+      if (data?.page === "order" || data?.page === "profile") value = "";
+    }
+
+    if (value) {
+      return "";
+    } else {
+      value = data?.page === "scan" ? `/${data?.page}` : `/home/${data?.page}`;
+    }
+
+    return value;
+  };
+
   const Icon: any = getIcon();
 
   return (
     <Link
       className="flex flex-col items-center gap-0.5 py-2 cursor-pointer w-full"
-      to={data?.page === "scan" ? `/${data?.page}` : `/home/${data?.page}`}
+      to={checkTo()}
       onClick={onClick}
     >
       {data?.isCenter ? (

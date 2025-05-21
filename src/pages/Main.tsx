@@ -6,12 +6,20 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
-import { BottomNavigation } from "../components";
+import { BottomNavigation, InputPhoneNumberModal } from "../components";
+import { useAuth } from "../context/AuthContext";
 
 const Main = () => {
   const location: Location = useLocation();
   const navigate: NavigateFunction = useNavigate();
+  const { isAuthenticated } = useAuth();
+
   const [currentPage, setCurrentPage] = useState<string>("");
+  const [openInputPhoneNumber, setOpenInputPhoneNumber] =
+    useState<boolean>(false);
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [openRequestOTP, setOpenRequestOTP] = useState<boolean>(false);
+  const [openInputOTP, setOpenInputOTP] = useState<boolean>(false);
 
   useEffect(() => {
     validationPage();
@@ -53,6 +61,17 @@ const Main = () => {
       <BottomNavigation
         page={currentPage}
         onClick={(select: string) => setCurrentPage(select)}
+      />
+
+      <InputPhoneNumberModal
+        open={openInputPhoneNumber}
+        value={phoneNumber}
+        onDismiss={() => setOpenInputPhoneNumber(false)}
+        onChange={(value) => setPhoneNumber(value)}
+        onClick={() => {
+          setOpenInputPhoneNumber(false);
+          setOpenRequestOTP(true);
+        }}
       />
     </div>
   );
