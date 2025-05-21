@@ -398,11 +398,10 @@ const TransactionDetails = () => {
                       onClick={handleSave}
                     />
                   </div>
+                  <div>
+                    <Separator className="my-6" />
 
-                  {transactionType !== 1 && (
-                    <div>
-                      <Separator className="my-6" />
-
+                    {transactionType !== 1 ? ( 
                       <div
                         onClick={onViewSession}
                         className="row gap-2 center cursor-pointer"
@@ -410,8 +409,17 @@ const TransactionDetails = () => {
                         <span className="text-primary100">Lihat Sesi</span>
                         <IcRightCircleGreen />
                       </div>
-                    </div>
-                  )}
+                    ) : (
+                      <div>
+                        <Button
+                          label="Kembali ke Beranda"
+                          onClick={() =>
+                            navigate("/home/index", { replace: true })
+                          }
+                        />
+                      </div>
+                    )}
+                  </div>
                 </>
               ) : (
                 <div className="between-y gap-4">
