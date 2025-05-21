@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { IcBike, IcPinWhite } from "../assets";
 import {
   ChargingStationBody,
+  GeocodeResult,
   LatLng,
   LIMIT_LIST,
   OptionsProps,
@@ -13,6 +14,7 @@ import { ChargingLocationCard, LoadingPage, OngoingItem } from "../components";
 import { useAuth } from "../context/AuthContext";
 import { fetchChargingStation, fetchOnGoingSessionList } from "../features";
 import { AppDispatch, RootState } from "../store";
+import { getCurrentLocation, getGeoCode } from "../services/ApiAddress";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -30,10 +32,11 @@ const Home = () => {
   const [typeVehicle, setTypeVehicle] = useState<string | number>("bike");
   const [place, setPlace] = useState<string>("terdekat");
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
+  const [detailLocation, setDetailLocation] = useState<GeocodeResult>();
 
   useEffect(() => {
     setPage(1);
-    getCurrentLocation();
+    getLocation();
     if (isAuthenticated) getOngoing();
   }, []);
 
@@ -41,33 +44,17 @@ const Home = () => {
     getData();
   }, [currentLocation]);
 
-  const getCurrentLocation = () => {
-    if (!window.google || !window.google.maps) {
-      console.error("Google Maps API not loaded");
-      return;
-    }
+  const getLocation = async () => {
+    try {
+      const check = await getCurrentLocation();
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setCurrentLocation([latitude, longitude]);
-        },
-        (err) => {
-          if (err.code === err.PERMISSION_DENIED) {
-            console.log("User denied the request for Geolocation.");
-          } else if (err.code === err.POSITION_UNAVAILABLE) {
-            console.log("Location information is unavailable.");
-          } else if (err.code === err.TIMEOUT) {
-            console.log("The request to get user location timed out.");
-          } else {
-            console.log("An unknown error occurred.");
-          }
-        }
-      );
-    } else {
-      console.error("Geolocation not supported");
-    }
+      const res: GeocodeResult = await getGeoCode({
+        address: `${check[0]},${check[1]}`,
+      });
+
+      setCurrentLocation(check);
+      setDetailLocation(res);
+    } catch (error) {}
   };
 
   const getData = (nextPage?: number) => {
@@ -123,8 +110,8 @@ const Home = () => {
           {/* LOCATION */}
           <div className="row gap-1">
             <IcPinWhite />
-            <span className="opacity-90 text-white text-xs">
-              <a className="font-semibold">Tangerang,</a> Indonesia
+            <span className="opacity-90 text-white font-semibold">
+              {detailLocation?.city}
             </span>
           </div>
 

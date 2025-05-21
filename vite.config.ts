@@ -15,9 +15,9 @@ export default defineConfig({
         cleanupOutdatedCaches: false,
       },
       manifest: {
-        name: "My Awesome App",
-        short_name: "MyApp",
-        description: "My Awesome App description",
+        name: "Casan Charging station ",
+        short_name: "Casan",
+        description: "Casan Charging station ",
         theme_color: "#ffffff",
         icons: [
           {
