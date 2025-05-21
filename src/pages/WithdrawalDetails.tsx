@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Balance, WithdrawList } from "../common";
+import { WithdrawList } from "../common";
 import { BetweenText, Header, LoadingPage, Separator } from "../components";
 import {
   getIconPaymentMethod,
@@ -14,8 +14,6 @@ const WithdrawalDetails = () => {
   const location = useLocation();
 
   const [data] = useState<WithdrawList>(location?.state?.data);
-
-  console.log("cek data", data);
 
   const status: number = 3;
   const IconPayment: any = getIconPaymentMethod(data?.BankAccount?.Code);

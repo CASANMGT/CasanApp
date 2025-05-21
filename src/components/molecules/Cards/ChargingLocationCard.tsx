@@ -111,15 +111,18 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
         }
       }
 
-      const now = new Date("2025-04-15T12:00:00Z");
+      const now = new Date();
       const nextDate = dataCombine
         .map((dateStr) => new Date(dateStr.CreatedAt))
         .filter((date) => date > now)
         .sort((a, b) => a.getTime() - b.getTime())[0];
 
-      const result = nextDate?.toISOString() || null;
-      const diff = moments(result).diff(moments(), "seconds");
-      timeFinished = Math.floor((diff % 3600) / 60);
+      if (nextDate) {
+        const result = nextDate?.toISOString() || null;
+        const diff = moments(result).diff(moments(), "seconds");
+
+        timeFinished = Math.floor((diff % 3600) / 60);
+      }
     }
   }
 

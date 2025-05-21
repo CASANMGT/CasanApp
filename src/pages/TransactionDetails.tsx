@@ -58,8 +58,6 @@ const TransactionDetails = () => {
   const [isShow, setIsShow] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>();
 
-  console.log("cek transactionById", transactionById?.data);
-
   useEffect(() => {
     dispatch(resetDataAddSession());
     getData();
