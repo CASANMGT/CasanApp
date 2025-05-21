@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
-import {
-  ChargingStation,
-  TabItemProps
-} from "../../common";
+import { ChargingStation, OperationalHour, TabItemProps } from "../../common";
 import { Separator, Tabs } from "../../components";
-import { rupiah } from "../../helpers";
+import { moments, rupiah, timeToSeconds } from "../../helpers";
 
 interface PriceInformationProps {
   data: ChargingStation | null;
@@ -56,16 +53,41 @@ const PriceInformation: React.FC<PriceInformationProps> = ({
         });
       });
 
+      const currentDay: number = Number(moments().format("d"));
+      const filterOperationHour: OperationalHour | undefined =
+        data?.OperationalHours.filter((e) => e.Day === currentDay)[0];
+      let timeFromHour: number | undefined;
+      let timeToHour: number | undefined;
+
+      if (filterOperationHour) {
+        timeFromHour = timeToSeconds(filterOperationHour?.From);
+        timeToHour = timeToSeconds(filterOperationHour?.To);
+      }
+
       const newTab: TabItemProps[] = [];
       if (newData && newData.length) {
         newData.forEach((element) => {
-          const newItem: TabItemProps = {
-            id: element?.id,
-            label: element?.title,
-            content: <PriceInformationTab data={element.content} />,
-          };
+          const splitTitle = element.title.split("-");
+          const timeStart = timeToSeconds(splitTitle[0]);
+          const timeEnd = timeToSeconds(splitTitle[1]);
+          let labelFromTitle: string = splitTitle[0];
+          let labelToTitle: string = splitTitle[1];
 
-          newTab.push(newItem);
+          if (timeFromHour && timeToHour && filterOperationHour) {
+            if (timeFromHour > timeStart)
+              labelFromTitle = filterOperationHour?.From;
+            if (timeToHour < timeEnd) labelToTitle = filterOperationHour?.To;
+
+            if (timeFromHour > timeStart || timeToHour < timeEnd) {
+              const newItem: TabItemProps = {
+                id: element?.id,
+                label: `${labelFromTitle}-${labelToTitle}`,
+                content: <PriceInformationTab data={element.content} />,
+              };
+
+              newTab.push(newItem);
+            }
+          }
         });
       }
 

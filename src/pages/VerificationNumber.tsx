@@ -24,6 +24,8 @@ const VerificationNumber = () => {
   const navigate: NavigateFunction = useNavigate();
   const { isAuthenticated, login } = useAuth();
 
+  console.log("cek location", location);
+
   const dataLogin = useSelector((state: RootState) => state.login);
   const validateBank = useSelector((state: RootState) => state.validateBank);
   const addBankAccount = useSelector(
@@ -80,10 +82,12 @@ const VerificationNumber = () => {
   }, [addBankAccount]);
 
   const getData = () => {
-    dispatch(resetDataLogin());
-    const formatter: string = formatPhoneNumber(location?.state?.phone);
-    setPhoneNumber(formatter);
-    getOTP(formatter);
+    if (location?.state?.phone) {
+      dispatch(resetDataLogin());
+      const formatter: string = formatPhoneNumber(location?.state?.phone);
+      setPhoneNumber(formatter);
+      getOTP(formatter);
+    } else navigate(-1);
   };
 
   const getOTP = (phone: string) => {
@@ -133,7 +137,9 @@ const VerificationNumber = () => {
 
       const body: AddBankAccountBody = {
         code: data?.bankName?.data?.ExternalCode,
-        number: data?.accountNumber,
+        number: `${data?.bankName?.data?.IsEWallet ? "+62" : ""}${
+          data?.accountNumber
+        }`,
         otp_code: code.join(""),
       };
 
