@@ -15,6 +15,7 @@ import IcClockGreen from "./clock-green.svg?react";
 import IcClose from "./close.svg?react";
 import IcCopyBlack from "./copy-black.svg?react";
 import IcCustomerServiceBlack from "./customer-service-black.svg?react";
+import IcQrisLabel from './qris-label.svg?react'
 import IcDana from "./dana.svg?react";
 import IcDownCircleGreen from "./down-circle-green.svg?react";
 import IcDownGray from "./down-gray.svg?react";
@@ -183,5 +184,6 @@ export {
   IcPlus,
   IcDelete,
   IcCheckCircle,
-  IcCreditCard
+  IcCreditCard,
+  IcQrisLabel
 };

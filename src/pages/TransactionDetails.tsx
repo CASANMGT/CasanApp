@@ -1,5 +1,6 @@
 import html2canvas from "html2canvas";
-import { useEffect, useState } from "react";
+import { QRCodeCanvas } from "qrcode.react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   NavigateFunction,
@@ -9,6 +10,7 @@ import {
 } from "react-router-dom";
 import {
   IcLineDown,
+  IcQrisLabel,
   IcRightCircleGreen,
   IcSaveGreen,
   IcShareGreen2,
@@ -41,6 +43,7 @@ import {
 import { AppDispatch, RootState } from "../store";
 
 const TransactionDetails = () => {
+  const qrRef = useRef<HTMLCanvasElement | null>(null);
   const navigate: NavigateFunction = useNavigate();
   const location = useLocation();
   const { id } = useParams();
@@ -50,9 +53,12 @@ const TransactionDetails = () => {
     (state: RootState) => state.transactionById
   );
   const cancelSession = useSelector((state: RootState) => state.cancelSession);
+
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isShow, setIsShow] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>();
+
+  console.log("cek transactionById", transactionById?.data);
 
   useEffect(() => {
     dispatch(resetDataAddSession());
@@ -131,19 +137,33 @@ const TransactionDetails = () => {
     }
   };
 
-  const handleSave = async () => {
-    const receiptElement = document.getElementById("receipt"); // Ensure the receipt has an ID
-    if (!receiptElement) return;
+  const handleSave = async (isQris?: boolean) => {
+    if (isQris) {
+      const canvas = qrRef.current;
+      if (!canvas) return;
 
-    const canvas = await html2canvas(receiptElement);
-    const image = canvas.toDataURL("image/png");
+      const pngUrl = canvas
+        .toDataURL("image/png")
+        .replace("image/png", "image/octet-stream");
 
-    const link = document.createElement("a");
-    link.href = image;
-    link.download = "receipt.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+      const downloadLink = document.createElement("a");
+      downloadLink.href = pngUrl;
+      downloadLink.download = "qr-code.png";
+      downloadLink.click();
+    } else {
+      const receiptElement = document.getElementById("receipt"); // Ensure the receipt has an ID
+      if (!receiptElement) return;
+
+      const canvas = await html2canvas(receiptElement);
+      const image = canvas.toDataURL("image/png");
+
+      const link = document.createElement("a");
+      link.href = image;
+      link.download = "receipt.png";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   const status: number = transactionById?.data?.Status || 0;
@@ -257,41 +277,49 @@ const TransactionDetails = () => {
 
               <Separator className="!bg-baseLightGray mb-3 mt-2.5" />
 
-              <BetweenText
-                labelLeft="Metode Pembayaran"
-                labelRight={""}
-                content={
-                  <div className="row">
-                    <IconPayment className="w-6 h-auto mr-1.5" />
+              {transactionById?.data?.PaymentMethod === "QRIS_TU" &&
+              status === 2 ? (
+                <div className="center-y gap-4">
+                  <IcQrisLabel />
+                  <QRCodeCanvas
+                    ref={qrRef}
+                    value={transactionById?.data?.GeneratedQRCodeURL || ""}
+                    size={220}
+                  />
+                </div>
+              ) : (
+                <BetweenText
+                  labelLeft="Metode Pembayaran"
+                  labelRight={""}
+                  content={
+                    <div className="row">
+                      <IconPayment className="w-6 h-auto mr-1.5" />
 
-                    <span className="text-base font-medium">
-                      {labelPayment}
-                    </span>
-                  </div>
-                }
-              />
+                      <span className="text-base font-medium">
+                        {labelPayment}
+                      </span>
+                    </div>
+                  }
+                />
+              )}
             </>
           )}
 
+          <Separator className="mb-4 mt-3" />
+
+          <p className="font-medium mb-2">Informasi Transaksi</p>
+          <div className="text-black100/70 row gap-2">
+            <p className="text-xs">
+              {moments(transactionById?.data?.CreatedAt).format("DD MMMM YYYY")}
+            </p>
+            <p className="text-xs">
+              {moments(transactionById?.data?.CreatedAt).format("HH:mm WIB")}
+            </p>
+            <p className="text-xs">{`ID${transactionById?.data?.ID}`}</p>
+          </div>
+
           {isShow && (
             <>
-              <Separator className="mb-4 mt-3" />
-
-              <p className="font-medium mb-2">Informasi Transaksi</p>
-              <div className="text-black100/70 row gap-2">
-                <p className="text-xs">
-                  {moments(transactionById?.data?.CreatedAt).format(
-                    "DD MMMM YYYY"
-                  )}
-                </p>
-                <p className="text-xs">
-                  {moments(transactionById?.data?.CreatedAt).format(
-                    "HH:mm WIB"
-                  )}
-                </p>
-                <p className="text-xs">{`ID${transactionById?.data?.ID}`}</p>
-              </div>
-
               {transactionType !== 1 && (
                 <BetweenText
                   labelLeft="Referensi Sesi ID"
@@ -401,7 +429,7 @@ const TransactionDetails = () => {
                   <div>
                     <Separator className="my-6" />
 
-                    {transactionType !== 1 ? ( 
+                    {transactionType !== 1 ? (
                       <div
                         onClick={onViewSession}
                         className="row gap-2 center cursor-pointer"
@@ -419,6 +447,29 @@ const TransactionDetails = () => {
                         />
                       </div>
                     )}
+                  </div>
+                </>
+              ) : transactionById?.data?.GeneratedQRCodeURL ? (
+                <>
+                  <div className="between-x gap-6">
+                    {transactionType !== 1 && (
+                      <Button
+                        type="secondary"
+                        label="Cancel"
+                        onClick={() => {
+                          if (transactionById?.data?.Session?.ID)
+                            dispatch(
+                              fetchCancelSession(
+                                transactionById?.data?.Session?.ID
+                              )
+                            );
+                        }}
+                      />
+                    )}
+                    <Button
+                      label="Unduh QRIS"
+                      onClick={() => handleSave(true)}
+                    />
                   </div>
                 </>
               ) : (
@@ -442,12 +493,14 @@ const TransactionDetails = () => {
                     <Button
                       type="danger"
                       label="Cancel"
-                      onClick={() =>
-                        transactionById?.data?.Session?.ID &&
-                        dispatch(
-                          fetchCancelSession(transactionById?.data?.Session?.ID)
-                        )
-                      }
+                      onClick={() => {
+                        if (transactionById?.data?.Session?.ID)
+                          dispatch(
+                            fetchCancelSession(
+                              transactionById?.data?.Session?.ID
+                            )
+                          );
+                      }}
                     />
                   )}
                 </div>
