@@ -70,9 +70,9 @@ const BottomNavigationItem: React.FC<BottomNavigationItemProps> = ({
   const Icon: any = getIcon();
 
   return (
-    <Link
+    <div
       className="flex flex-col items-center gap-0.5 py-2 cursor-pointer w-full"
-      to={checkTo()}
+      // to={checkTo()}
       onClick={onClick}
     >
       {data?.isCenter ? (
@@ -91,7 +91,7 @@ const BottomNavigationItem: React.FC<BottomNavigationItemProps> = ({
       >
         {data?.label}
       </span>
-    </Link>
+    </div>
   );
 };
 

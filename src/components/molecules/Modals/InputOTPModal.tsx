@@ -32,6 +32,15 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
   const [labelTime, setLabelTime] = useState<string>("Kirim Ulang dalam 01:00");
   const [labelError, setLabelError] = useState<string>();
   const [counter, setCounter] = useState<number>(60);
+  const [formatPhone, setFormatPhone] = useState<string>("");
+
+  useEffect(() => {
+    if (open && phoneNumber) {
+      const formatted: string = formatPhoneNumber(phoneNumber);
+      getOTP(formatted);
+      setFormatPhone(formatted);
+    }
+  }, [open]);
 
   useEffect(() => {
     if (counter > 0) {
@@ -53,8 +62,8 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
     }
   }, [dataLogin]);
 
-  const getOTP = () => {
-    dispatch(fetchSendOTP(formatPhone.replace(/\s+/g, "")));
+  const getOTP = (phone: string) => {
+    dispatch(fetchSendOTP(phone.replace(/\s+/g, "")));
   };
 
   const onCounter = () => {
@@ -80,7 +89,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
   };
 
   const onRequestCode = () => {
-    getOTP();
+    getOTP(formatPhone);
     if (counter === 0) {
       setCounter(60);
       setLabelTime("Kirim Ulang dalam 01:00");
@@ -95,8 +104,6 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
 
     dispatch(fetchLogin(body));
   };
-
-  const formatPhone: string = formatPhoneNumber(phoneNumber);
 
   return (
     <ModalContainer isOpen={open} onDismiss={onDismiss}>

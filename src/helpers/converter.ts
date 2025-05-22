@@ -92,6 +92,7 @@ export const getLabelPaymentMethod: (type: string) => string = (
       label = "Shopeepay";
       break;
 
+    case "linkaja":
     case LINK_AJA:
       label = "Link Aja";
       break;

@@ -1,3 +1,4 @@
+import { IcClose } from "../../../assets";
 import { REGEX_PHONE_NUMBER_HALF } from "../../../common";
 import { Button, Input } from "../../atoms";
 import ModalContainer from "./ModalContainer";
@@ -30,8 +31,18 @@ const InputPhoneNumberModal: React.FC<InputPhoneNumberModalProps> = ({
   return (
     <ModalContainer isOpen={open} onDismiss={onDismiss}>
       <>
-        <p className="mb-3 text-base font-semibold text-center">
-          Masukan Nomor Telepon
+        <div className="between-x mb-2.5">
+          <p className="text-base font-semibold text-center">
+            Silahkan Login Dahulu
+          </p>
+
+          <div onClick={onDismiss} className="cursor-pointer">
+            <IcClose />
+          </div>
+        </div>
+
+        <p className="text-xs mb-6">
+          Anda perlu login untuk mengakses halaman ini
         </p>
 
         <Input
@@ -44,13 +55,13 @@ const InputPhoneNumberModal: React.FC<InputPhoneNumberModalProps> = ({
 
         <Button
           className="my-3"
-          label="Lanjutkan"
+          label="Masuk"
           disabled={onValidation()}
           onClick={onClick}
         />
 
-        <div className="text-xs">
-          <p>
+        <div >
+          <p className="text-xs">
             Dengan mendaftar, Anda menyetujui{" "}
             <b
               onClick={() => openBlank("/text-condition")}

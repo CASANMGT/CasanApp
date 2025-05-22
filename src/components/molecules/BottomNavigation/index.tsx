@@ -3,7 +3,7 @@ import BottomNavigationItem from "./BottomNavigationItem";
 
 interface BottomNavigationProps {
   page: string;
-  onClick: (select: string) => void;
+  onClick: (select: MenuBottomNavigationProps) => void;
 }
 
 const MENU: MenuBottomNavigationProps[] = [
@@ -25,7 +25,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
           key={item?.id}
           data={item}
           isActive={page === item?.page}
-          onClick={() => onClick(item?.page)}
+          onClick={() => onClick(item)}
         />
       ))}
     </div>
