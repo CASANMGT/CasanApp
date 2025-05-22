@@ -66,8 +66,6 @@ const PriceInformation: React.FC<PriceInformationProps> = ({
 
       const newTab: TabItemProps[] = [];
 
-      console.log("cek newData", newData);
-
       if (newData && newData.length) {
         newData.forEach((element) => {
           const splitTitle = element.title.split("-");

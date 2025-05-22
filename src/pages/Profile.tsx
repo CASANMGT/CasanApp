@@ -29,8 +29,6 @@ const Profile = () => {
   const navigate: NavigateFunction = useNavigate();
 
   useEffect(() => {
-    console.log('cek masuk');
-    
     dispatch(fetchMyUser());
   }, []);
 

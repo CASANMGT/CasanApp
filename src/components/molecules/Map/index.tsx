@@ -2,7 +2,7 @@ import L from "leaflet";
 import { useEffect, useState } from "react";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import { IcMyLocation } from "../../../assets";
-import { ChargingStation, LatLng } from "../../../common";
+import { ChargingStation, ERROR_MESSAGE, LatLng } from "../../../common";
 import { getCurrentLocation } from "../../../services/ApiAddress";
 import CustomMarkerMap from "./CustomMarkerMap";
 
@@ -32,7 +32,7 @@ const Map: React.FC<MapProps> = ({ data, myLocation }) => {
     } catch (error) {}
   };
 
-  if (!currentLocation) return;
+  if (!currentLocation) return <div>{ERROR_MESSAGE}</div>;
 
   const isShowData = data && data.length ? true : false;
 
