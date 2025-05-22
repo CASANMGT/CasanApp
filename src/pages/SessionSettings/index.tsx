@@ -367,7 +367,9 @@ const SessionSettings = () => {
 
             <p className="text-primary100 font-medium">
               Charger tidak boleh melebihi{" "}
-              <span className="font-semibold">{selectedDevice?.MaxWatt}W</span>
+              <span className="font-semibold">
+                {getLabelWatt(selectedDevice?.MaxWatt)}
+              </span>
             </p>
           </div>
 
@@ -581,3 +583,12 @@ const SessionSettings = () => {
 };
 
 export default SessionSettings;
+
+export const getLabelWatt = (value: number) => {
+  let label: string = "";
+
+  if (value >= 1000) label = `${value / 1000}kW`;
+  else label = `${value}W`;
+
+  return label;
+};

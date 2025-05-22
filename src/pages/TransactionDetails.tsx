@@ -1,5 +1,4 @@
 import html2canvas from "html2canvas";
-import { QRCodeCanvas } from "qrcode.react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -283,10 +282,16 @@ const TransactionDetails = () => {
               {isShowQris && status === 2 ? (
                 <div className="center-y gap-4">
                   <IcQrisLabel />
-                  <QRCodeCanvas
+                  {/* <QRCodeCanvas
                     ref={qrRef}
                     value={transactionById?.data?.GeneratedQRCodeURL || ""}
                     size={220}
+                  /> */}
+
+                  <img
+                    src={transactionById?.data?.GeneratedQRCodeURL || ""}
+                    alt="QR"
+                    className="w-[220px] h-auto"
                   />
                 </div>
               ) : (
