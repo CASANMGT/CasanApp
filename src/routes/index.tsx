@@ -55,7 +55,7 @@ const RoutesPage = () => {
         />
         <Route
           path="location-list"
-          element={<ProtectedRoute element={<LocationList />} />}
+          element={<LocationList />}
         />
         <Route path="login" element={<Login />} />
         <Route path="text-condition" element={<TermCondition />} />

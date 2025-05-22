@@ -83,7 +83,10 @@ const PriceInformation: React.FC<PriceInformationProps> = ({
               labelFromTitle = filterOperationHour?.From;
             if (timeToHour < timeEnd) labelToTitle = filterOperationHour?.To;
 
-            if (timeFromHour >= timeStart || timeEnd <= timeToHour) {
+            if (
+              (timeFromHour >= timeStart && timeFromHour <= timeEnd) &&
+              timeEnd <= timeToHour
+            ) {
               const newItem: TabItemProps = {
                 id: element?.id,
                 label: `${labelFromTitle}-${labelToTitle}`,
