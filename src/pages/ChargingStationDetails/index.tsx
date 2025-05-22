@@ -103,9 +103,6 @@ const ChargingStationDetails = () => {
     available = getTotalAvailable();
   }
 
-  console.log('cek d', chargingStationById);
-  
-
   return (
     <LoadingPage loading={chargingStationById?.loading}>
       <div

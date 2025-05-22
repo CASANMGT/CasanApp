@@ -94,7 +94,7 @@ const TransactionDetails = () => {
 
     if (transactionById?.data?.Status === 1) setIsShow(true);
     else setIsShow(false);
-  }, [transactionById?.data]);
+  }, [transactionById]);
 
   useEffect(() => {
     if (isRunning) timeoutProgress();
@@ -201,6 +201,11 @@ const TransactionDetails = () => {
     (status === 3 || status === 4)
       ? true
       : false;
+  const isShowQris: boolean =
+    transactionById?.data?.GeneratedQRCodeURL &&
+    transactionById?.data?.PaymentMethod === "QRIS_TU"
+      ? true
+      : false;
 
   return (
     <div className="background-1 py-[14px] px-4">
@@ -275,8 +280,7 @@ const TransactionDetails = () => {
 
               <Separator className="!bg-baseLightGray mb-3 mt-2.5" />
 
-              {transactionById?.data?.PaymentMethod === "QRIS_TU" &&
-              status === 2 ? (
+              {isShowQris && status === 2 ? (
                 <div className="center-y gap-4">
                   <IcQrisLabel />
                   <QRCodeCanvas
@@ -447,7 +451,7 @@ const TransactionDetails = () => {
                     )}
                   </div>
                 </>
-              ) : transactionById?.data?.GeneratedQRCodeURL ? (
+              ) : isShowQris ? (
                 <>
                   <div className="between-x gap-6">
                     {transactionType !== 1 && (

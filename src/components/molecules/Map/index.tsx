@@ -25,8 +25,11 @@ const Map: React.FC<MapProps> = ({ data, myLocation }) => {
   }, []);
 
   const getData = async () => {
-    const check = await getCurrentLocation();
-    setCurrentLocation(check);
+    try {
+      const check = await getCurrentLocation();
+
+      setCurrentLocation(check);
+    } catch (error) {}
   };
 
   if (!currentLocation) return;
@@ -45,6 +48,7 @@ const Map: React.FC<MapProps> = ({ data, myLocation }) => {
           attribution="&copy; OpenStreetMap contributors"
         />
         {isShowData &&
+          data &&
           data?.map((item, index) => (
             <CustomMarkerMap key={index} data={item} />
           ))}

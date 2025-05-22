@@ -65,9 +65,11 @@ const Location = () => {
     navigate("/location-list");
   };
 
+  
+
   return (
     <div className="container-screen relative">
-      <LoadingPage loading={chargingStationLocations?.loading}>
+      <LoadingPage loading={chargingStationLocations?.loading} color="primary100">
         <div className=" w-full h-full relative">
           {/* MAP */}
           <Map

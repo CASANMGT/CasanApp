@@ -24,8 +24,6 @@ const VerificationNumber = () => {
   const navigate: NavigateFunction = useNavigate();
   const { isAuthenticated, login } = useAuth();
 
-  console.log("cek location", location);
-
   const dataLogin = useSelector((state: RootState) => state.login);
   const validateBank = useSelector((state: RootState) => state.validateBank);
   const addBankAccount = useSelector(
