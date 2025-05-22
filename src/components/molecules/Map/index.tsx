@@ -1,14 +1,14 @@
 import L from "leaflet";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import { IcMyLocation } from "../../../assets";
 import { ChargingStation, ERROR_MESSAGE, LatLng } from "../../../common";
-import { getCurrentLocation } from "../../../services/ApiAddress";
 import CustomMarkerMap from "./CustomMarkerMap";
 
 interface MapProps {
   data: ChargingStation[] | undefined;
   myLocation?: LatLng;
+  center?: LatLng;
 }
 
 const customMyLocationIcon = L.icon({
@@ -17,32 +17,14 @@ const customMyLocationIcon = L.icon({
   iconAnchor: [16, 32],
 });
 
-const Map: React.FC<MapProps> = ({ data, myLocation }) => {
-  const [currentLocation, setCurrentLocation] = useState<LatLng>();
-
-  useEffect(() => {
-    getData();
-  }, []);
-
-  const getData = async () => {
-    try {
-      const check = await getCurrentLocation();
-
-      setCurrentLocation(check);
-    } catch (error) {}
-  };
-
-  if (!currentLocation) return <div>{ERROR_MESSAGE}</div>;
+const Map: React.FC<MapProps> = ({ data, myLocation, center }) => {
+  if (!center) return <div>{ERROR_MESSAGE}</div>;
 
   const isShowData = data && data.length ? true : false;
 
   return (
     <div className="w-full h-full">
-      <MapContainer
-        center={currentLocation}
-        zoom={13}
-        className="h-full w-full !z-0"
-      >
+      <MapContainer center={center} zoom={13} className="h-full w-full !z-0">
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; OpenStreetMap contributors"

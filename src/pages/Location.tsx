@@ -5,6 +5,7 @@ import { IcMenuWhite, IcMyLocationBlack } from "../assets";
 import { ChargingStationBody, LatLng, LIMIT_LIST } from "../common";
 import { LoadingPage, Map, ModalChargingStation } from "../components";
 import { fetchChargingStationLocations, setFromGlobal } from "../features";
+import { getCurrentLocation } from "../services/ApiAddress";
 import { AppDispatch, RootState } from "../store";
 
 const Location = () => {
@@ -16,10 +17,13 @@ const Location = () => {
   );
   const global = useSelector((state: RootState) => state?.global);
 
+  const [loading, setLoading] = useState<boolean>(true);
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
+  const [centerLocation, setCenterLocation] = useState<LatLng>();
 
   useEffect(() => {
     getData();
+    getLocation();
   }, []);
 
   const getData = () => {
@@ -32,49 +36,38 @@ const Location = () => {
     dispatch(fetchChargingStationLocations(body));
   };
 
-  const getCurrentLocation = () => {
-    if (!window.google || !window.google.maps) {
-      console.error("Google Maps API not loaded");
-      return;
-    }
+  const getLocation = async () => {
+    try {
+      const check = await getCurrentLocation();
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setCurrentLocation([latitude, longitude]);
-        },
-        (err) => {
-          if (err.code === err.PERMISSION_DENIED) {
-            console.log("User denied the request for Geolocation.");
-          } else if (err.code === err.POSITION_UNAVAILABLE) {
-            console.log("Location information is unavailable.");
-          } else if (err.code === err.TIMEOUT) {
-            console.log("The request to get user location timed out.");
-          } else {
-            console.log("An unknown error occurred.");
-          }
-        }
-      );
-    } else {
-      console.error("Geolocation not supported");
+      setCenterLocation(check);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
     }
+  };
+
+  const getMyLocation = async () => {
+    const check = await getCurrentLocation();
+    setCurrentLocation(check);
   };
 
   const onShowAll = () => {
     navigate("/location-list");
   };
 
-  
-
   return (
     <div className="container-screen relative">
-      <LoadingPage loading={chargingStationLocations?.loading} color="primary100">
+      <LoadingPage
+        loading={chargingStationLocations?.loading || loading}
+        color="primary100"
+      >
         <div className=" w-full h-full relative">
           {/* MAP */}
           <Map
             data={chargingStationLocations?.data?.data}
             myLocation={currentLocation}
+            center={centerLocation}
           />
 
           {/* SEARCH */}
@@ -88,7 +81,7 @@ const Location = () => {
 
           {/* MY LOCATION */}
           <div
-            onClick={getCurrentLocation}
+            onClick={getMyLocation}
             className="absolute left-4 bottom-[94px] bg-white p-2 rounded-lg drop-shadow cursor-pointer"
           >
             <IcMyLocationBlack />
