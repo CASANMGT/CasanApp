@@ -22,6 +22,10 @@ const Map: React.FC<MapProps> = ({ data, myLocation, center }) => {
 
   const isShowData = data && data.length ? true : false;
 
+
+  console.log('cek d', data);
+  
+
   return (
     <div className="w-full h-full">
       <MapContainer center={center} zoom={13} className="h-full w-full !z-0">
@@ -34,6 +38,7 @@ const Map: React.FC<MapProps> = ({ data, myLocation, center }) => {
           data?.map((item, index) => (
             <CustomMarkerMap key={index} data={item} />
           ))}
+          {/* {data && <CustomMarkerMap  data={data[3]} />} */}
 
         {myLocation && (
           <>

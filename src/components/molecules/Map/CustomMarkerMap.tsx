@@ -71,57 +71,57 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
   const dataChargingStation: ChargingStation[] =
     data?.Location?.ChargingStations;
 
-  if (dataChargingStation?.length) {
-    dataChargingStation.forEach((element) => {
-      const dataPriceBaseRules: PriceBaseRule[] =
-        element?.PriceSetting?.PriceBaseRules;
+  // if (dataChargingStation?.length) {
+  //   dataChargingStation.forEach((element) => {
+  //     const dataPriceBaseRules: PriceBaseRule[] =
+  //       element?.PriceSetting?.PriceBaseRules;
 
-      if (
-        dataPriceBaseRules?.length &&
-        dataPriceBaseRules[0]?.PriceBaseTime?.length
-      ) {
-        const dataPriceBaseTime: PriceBaseTime[] =
-          dataPriceBaseRules[0]?.PriceBaseTime;
+  //     if (
+  //       dataPriceBaseRules?.length &&
+  //       dataPriceBaseRules[0]?.PriceBaseTime?.length
+  //     ) {
+  //       const dataPriceBaseTime: PriceBaseTime[] =
+  //         dataPriceBaseRules[0]?.PriceBaseTime;
 
-        const filtered = dataPriceBaseTime.filter(
-          (e) =>
-            currentTime > timeToSeconds(e?.PriceTimeRule.From) &&
-            currentTime < timeToSeconds(e?.PriceTimeRule.To)
-        )[0];
+  //       const filtered = dataPriceBaseTime.filter(
+  //         (e) =>
+  //           currentTime > timeToSeconds(e?.PriceTimeRule.From) &&
+  //           currentTime < timeToSeconds(e?.PriceTimeRule.To)
+  //       )[0];
 
-        price = filtered?.Value || 0;
+  //       price = filtered?.Value || 0;
 
-        if (price > 0 && price > filtered?.Value) price = filtered?.Value;
-        else price = filtered?.Value || 0;
-      }
+  //       if (price > 0 && price > filtered?.Value) price = filtered?.Value;
+  //       else price = filtered?.Value || 0;
+  //     }
 
-      const dataDevices: Device[] | null = element?.Devices;
+  //     const dataDevices: Device[] | null = element?.Devices;
 
-      if (dataDevices?.length) {
-        totalSocket = dataDevices.reduce(
-          (accumulator, currentValue) =>
-            accumulator + (currentValue.Sockets.length || 0),
-          0
-        );
+  //     if (dataDevices?.length) {
+  //       totalSocket = dataDevices.reduce(
+  //         (accumulator, currentValue) =>
+  //           accumulator + (currentValue.Sockets.length || 0),
+  //         0
+  //       );
 
-        for (const key in dataDevices) {
-          const el = dataDevices[key];
+  //       for (const key in dataDevices) {
+  //         const el = dataDevices[key];
 
-          if (el?.Sockets && el?.Sockets?.length) {
-            for (const i in el?.Sockets) {
-              const e = el?.Sockets[i];
+  //         if (el?.Sockets && el?.Sockets?.length) {
+  //           for (const i in el?.Sockets) {
+  //             const e = el?.Sockets[i];
 
-              if (e.IsCharging === 0) totalAvailable += 1;
-            }
-          }
-        }
-      }
-    });
-  }
+  //             if (e.IsCharging === 0) totalAvailable += 1;
+  //           }
+  //         }
+  //       }
+  //     }
+  //   });
+  // }
 
   return (
     <Marker position={coordinate} icon={customIcon} ref={markerRef}>
-      <Popup
+      {/* <Popup
         keepInView={true}
         autoPan={true}
         autoClose={false}
@@ -140,7 +140,7 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
             </span>
           </div>
         </div>
-      </Popup>
+      </Popup> */}
     </Marker>
   );
 };
