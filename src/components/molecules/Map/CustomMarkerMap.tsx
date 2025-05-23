@@ -1,18 +1,11 @@
 import L from "leaflet";
 import { useEffect, useRef } from "react";
-import { Marker, Popup, useMap } from "react-leaflet";
+import { Marker, useMap } from "react-leaflet";
 import { useDispatch } from "react-redux";
-import { IcFuel } from "../../../assets";
-import {
-  ChargingStation,
-  Device,
-  LatLng,
-  PriceBaseRule,
-  PriceBaseTime,
-} from "../../../common";
+import { ChargingStation, Device, LatLng, PriceBaseRule, PriceBaseTime } from "../../../common";
 import { setFromGlobal } from "../../../features";
-import { moments, rupiah, timeToSeconds } from "../../../helpers";
 import { AppDispatch } from "../../../store";
+import { moments, timeToSeconds } from "../../../helpers";
 
 interface CustomMarkerProps {
   data: ChargingStation;
@@ -24,17 +17,6 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
   const markerRef = useRef<L.Marker>(null);
   const map = useMap();
 
-  const iconHtml = `
-    <div class="w-[18px] h-[18px] bg-primary70 border-2 border-primary100 rounded-full">
-    </div>`;
-
-  const customIcon = L.divIcon({
-    html: iconHtml,
-    className: "custom-marker",
-    iconSize: [18, 18],
-    popupAnchor: [0, 0],
-  });
-
   useEffect(() => {
     if (markerRef.current) {
       markerRef.current.openPopup();
@@ -42,8 +24,6 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
   }, [map]);
 
   const onShow = () => {
-    console.log("cek m");
-
     dispatch(
       setFromGlobal({
         type: "openChargingStation",
@@ -65,61 +45,73 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
     data?.Location?.Longitude,
   ];
 
-  // const currentTime = timeToSeconds(moments().format("HH:mm"));
-  // let price: number = 0;
-  // let totalSocket: number = 0;
-  // let totalAvailable: number = 0;
+  const currentTime = timeToSeconds(moments().format("HH:mm"));
+  let price: number = 0;
+  let totalSocket: number = 0;
+  let totalAvailable: number = 0;
 
   const dataChargingStation: ChargingStation[] =
     data?.Location?.ChargingStations;
 
-  // if (dataChargingStation?.length) {
-  //   dataChargingStation.forEach((element) => {
-  //     const dataPriceBaseRules: PriceBaseRule[] =
-  //       element?.PriceSetting?.PriceBaseRules;
+  if (dataChargingStation?.length) {
+    dataChargingStation.forEach((element) => {
+      const dataPriceBaseRules: PriceBaseRule[] =
+        element?.PriceSetting?.PriceBaseRules;
 
-  //     if (
-  //       dataPriceBaseRules?.length &&
-  //       dataPriceBaseRules[0]?.PriceBaseTime?.length
-  //     ) {
-  //       const dataPriceBaseTime: PriceBaseTime[] =
-  //         dataPriceBaseRules[0]?.PriceBaseTime;
+      if (
+        dataPriceBaseRules?.length &&
+        dataPriceBaseRules[0]?.PriceBaseTime?.length
+      ) {
+        const dataPriceBaseTime: PriceBaseTime[] =
+          dataPriceBaseRules[0]?.PriceBaseTime;
 
-  //       const filtered = dataPriceBaseTime.filter(
-  //         (e) =>
-  //           currentTime > timeToSeconds(e?.PriceTimeRule.From) &&
-  //           currentTime < timeToSeconds(e?.PriceTimeRule.To)
-  //       )[0];
+        const filtered = dataPriceBaseTime.filter(
+          (e) =>
+            currentTime > timeToSeconds(e?.PriceTimeRule.From) &&
+            currentTime < timeToSeconds(e?.PriceTimeRule.To)
+        )[0];
 
-  //       price = filtered?.Value || 0;
+        price = filtered?.Value || 0;
 
-  //       if (price > 0 && price > filtered?.Value) price = filtered?.Value;
-  //       else price = filtered?.Value || 0;
-  //     }
+        if (price > 0 && price > filtered?.Value) price = filtered?.Value;
+        else price = filtered?.Value || 0;
+      }
 
-  //     const dataDevices: Device[] | null = element?.Devices;
+      const dataDevices: Device[] | null = element?.Devices;
 
-  //     if (dataDevices?.length) {
-  //       totalSocket = dataDevices.reduce(
-  //         (accumulator, currentValue) =>
-  //           accumulator + (currentValue.Sockets.length || 0),
-  //         0
-  //       );
+      if (dataDevices?.length) {
+        totalSocket = dataDevices.reduce(
+          (accumulator, currentValue) =>
+            accumulator + (currentValue.Sockets.length || 0),
+          0
+        );
 
-  //       for (const key in dataDevices) {
-  //         const el = dataDevices[key];
+        for (const key in dataDevices) {
+          const el = dataDevices[key];
 
-  //         if (el?.Sockets && el?.Sockets?.length) {
-  //           for (const i in el?.Sockets) {
-  //             const e = el?.Sockets[i];
+          if (el?.Sockets && el?.Sockets?.length) {
+            for (const i in el?.Sockets) {
+              const e = el?.Sockets[i];
 
-  //             if (e.IsCharging === 0) totalAvailable += 1;
-  //           }
-  //         }
-  //       }
-  //     }
-  //   });
-  // }
+              if (e.IsCharging === 0) totalAvailable += 1;
+            }
+          }
+        }
+      }
+    });
+  }
+
+  const iconHtml = `
+    <div class="w-[34px] h-[34px] text-lg font-medium items-center justify-center flex bg-secondary100 border-2 border-secondary30 rounded-full">
+    ${totalAvailable}
+    </div>`;
+
+  const customIcon = L.divIcon({
+    html: iconHtml,
+    className: "custom-marker",
+    iconSize: [18, 18],
+    popupAnchor: [0, 0],
+  });
 
   return (
     <div className="cursor-pointer">

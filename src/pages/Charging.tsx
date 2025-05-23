@@ -75,7 +75,7 @@ const Charging = () => {
 
       timeoutProgress();
     }
-  }, [detailSession?.data]);
+  }, [detailSession]);
 
   useEffect(() => {
     if (startSession?.data) {
@@ -155,7 +155,7 @@ const Charging = () => {
   const timeoutProgress = () => {
     const timer = setTimeout(() => {
       getData();
-    }, 15000); // 2 second
+    }, 15000); // 15 second
 
     return () => clearTimeout(timer);
   };

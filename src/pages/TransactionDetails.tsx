@@ -88,7 +88,7 @@ const TransactionDetails = () => {
       setIsRunning(true);
     } else if (isRunning && transactionById?.data?.Status === 1) {
       setIsRunning(false);
-      navigate(`/payment-success/${transactionById?.data?.SessionID}`);
+      navigate(`/payment-success/${transactionById?.data?.Session?.ID}`);
     }
 
     if (transactionById?.data?.Status === 1) setIsShow(true);
@@ -330,7 +330,7 @@ const TransactionDetails = () => {
               {transactionType !== 1 && (
                 <BetweenText
                   labelLeft="Referensi Sesi ID"
-                  labelRight={transactionById?.data?.SessionID || "-"}
+                  labelRight={transactionById?.data?.Session?.ID || "-"}
                   className="pt-4"
                 />
               )}
@@ -348,7 +348,7 @@ const TransactionDetails = () => {
               {transactionType !== 1 && (
                 <BetweenText
                   labelLeft="Referensi Sesi ID"
-                  labelRight={transactionById?.data?.SessionID || "-"}
+                  labelRight={transactionById?.data?.Session?.ID || "-"}
                   className="py-2 border-b border-b-black10"
                 />
               )}

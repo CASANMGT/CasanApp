@@ -31,19 +31,19 @@ const InputNominal: React.FC<InputNominalProps> = ({
     <>
       <p className="text-xs text-black100/70 mb-[14px]">{description}</p>
 
-      <div className="center-y rounded-lg bg-baseGray mb-3 px-5 pt-4 pb-[14px]">
+      <div className="center-y rounded-lg bg-baseGray mb-3 px-5 pb-[14px]">
         <span
           onClick={() =>
             dispatch(setFromGlobal({ type: "openInputNominal", value: true }))
           }
-          className={`text-base font-medium cursor-pointer ${
+          className={`text-base font-medium cursor-pointer text-center w-full pt-4 pb-3 ${
             form.nominal ? "" : "text-black30"
           }`}
         >
           {form.nominal ? form.nominal : "Masukan Nominal"}
         </span>
 
-        <Separator className="bg-black10 my-3" />
+        <Separator className="bg-black10 mb-3" />
 
         <p className="text-xs text-black70">
           Kisaran Durasi{" "}
