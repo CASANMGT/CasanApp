@@ -79,6 +79,7 @@ const optionsVoltage: OptionsProps[] = [
   { name: "48V", value: 54.6 },
   { name: "60V", value: 67.2 },
   { name: "72V", value: 84 },
+  { name: "84V", value: 93 },
 ];
 
 const optionsAmpere: OptionsProps[] = Array.from({ length: 20 }, (_, i) => {

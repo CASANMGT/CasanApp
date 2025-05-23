@@ -42,6 +42,8 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
   }, [map]);
 
   const onShow = () => {
+    console.log("cek m");
+
     dispatch(
       setFromGlobal({
         type: "openChargingStation",
@@ -63,10 +65,10 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
     data?.Location?.Longitude,
   ];
 
-  const currentTime = timeToSeconds(moments().format("HH:mm"));
-  let price: number = 0;
-  let totalSocket: number = 0;
-  let totalAvailable: number = 0;
+  // const currentTime = timeToSeconds(moments().format("HH:mm"));
+  // let price: number = 0;
+  // let totalSocket: number = 0;
+  // let totalAvailable: number = 0;
 
   const dataChargingStation: ChargingStation[] =
     data?.Location?.ChargingStations;
@@ -120,8 +122,16 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
   // }
 
   return (
-    <Marker position={coordinate} icon={customIcon} ref={markerRef}>
-      {/* <Popup
+    <div className="cursor-pointer">
+      <Marker
+        position={coordinate}
+        icon={customIcon}
+        ref={markerRef}
+        eventHandlers={{
+          click: onShow,
+        }}
+      >
+        {/* <Popup
         keepInView={true}
         autoPan={true}
         autoClose={false}
@@ -141,7 +151,8 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
           </div>
         </div>
       </Popup> */}
-    </Marker>
+      </Marker>
+    </div>
   );
 };
 

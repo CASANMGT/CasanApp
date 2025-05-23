@@ -81,11 +81,12 @@ const ModalChargingStation: React.FC<ModalChargingStationProps> = ({
                   data={item}
                   loading={false}
                   currentLocation={currentLocation}
-                  onClick={() =>
+                  onClick={() => {
                     navigate(`/charging-station-details/${item?.ID}`, {
                       state: { currentLocation },
-                    })
-                  }
+                    });
+                    onDismiss();
+                  }}
                 />
               ))}
           </LoadingPage>
