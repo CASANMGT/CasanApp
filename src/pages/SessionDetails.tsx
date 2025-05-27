@@ -185,14 +185,14 @@ const SessionDetails = () => {
 
             {status !== 7 && status !== 8 && (
               <>
-                {!isFull && (
+                {/* {!isFull && (
                   <BetweenText
                     type="medium-content"
                     labelLeft="Keterangan Sesi"
                     labelRight="Dihentikan manual"
                     className="p-3"
                   />
-                )}
+                )} */}
 
                 <BetweenText
                   type="medium-content"

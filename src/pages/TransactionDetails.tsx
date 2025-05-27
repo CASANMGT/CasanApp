@@ -60,6 +60,7 @@ const TransactionDetails = () => {
   useEffect(() => {
     dispatch(resetDataAddSession());
     getData();
+
   }, []);
 
   // Manage response cancel session
@@ -80,7 +81,7 @@ const TransactionDetails = () => {
     if (transactionById?.data?.Status === 2) {
       const diff = moments(transactionById?.data?.Session?.ExpiredAt).diff(
         moments(),
-        "second"
+        "seconds"
       );
       const newDuration = diff > 0 ? diff : 0;
 

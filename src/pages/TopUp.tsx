@@ -37,6 +37,7 @@ const TopUp = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
+  const myUser = useSelector((state: RootState) => state.myUser);
   const addTransaction = useSelector(
     (state: RootState) => state?.addTransaction
   );
@@ -44,6 +45,8 @@ const TopUp = () => {
   const [form, setForm] = useForm<FormTopUp>({
     nominal: "",
   });
+
+  console.log("cek myUser", myUser);
 
   const [visiblePaymentMethod, setVisiblePaymentMethod] =
     useState<boolean>(false);
@@ -88,8 +91,11 @@ const TopUp = () => {
   };
 
   const onValidation = () => {
-    if (Number(form.nominal?.replace("Rp", "").replace(/\./g, "") || 0) < 5000)
-      setError("Min. top up saldo Rp5.000");
+    const nominal = form.nominal?.replace("Rp", "").replace(/\./g, "") || 0;
+
+    if (myUser?.data?.Phone === "+62812222222" && Number(nominal) < 100)
+      setError("Min. top up saldo Rp100");
+    else if (Number(nominal) < 5000) setError("Min. top up saldo Rp5.000");
     else setVisiblePaymentMethod(true);
   };
 
@@ -177,29 +183,31 @@ const TopUp = () => {
         </Card>
 
         {/* PAYMENT DETAILS */}
-        {false && <Card>
-          <SubTitle
-            icon={IcInfoCircleGreen}
-            label="Rincian Pembayaran"
-            className="mb-3"
-          />
+        {false && (
+          <Card>
+            <SubTitle
+              icon={IcInfoCircleGreen}
+              label="Rincian Pembayaran"
+              className="mb-3"
+            />
 
-          <BetweenText
-            type="medium-content"
-            labelLeft="Nominal Top Up"
-            labelRight={`Rp${rupiah(
-              form.nominal?.replace("Rp", "").replace(/\./g, "") || 0
-            )}`}
-            className="bg-baseLightGray p-3 rounded-t"
-          />
+            <BetweenText
+              type="medium-content"
+              labelLeft="Nominal Top Up"
+              labelRight={`Rp${rupiah(
+                form.nominal?.replace("Rp", "").replace(/\./g, "") || 0
+              )}`}
+              className="bg-baseLightGray p-3 rounded-t"
+            />
 
-          <BetweenText
-            type="medium-content"
-            labelLeft="Admin Fee"
-            labelRight={`Rp${rupiah(fee)}`}
-            className="p-3"
-          />
-        </Card>}
+            <BetweenText
+              type="medium-content"
+              labelLeft="Admin Fee"
+              labelRight={`Rp${rupiah(fee)}`}
+              className="p-3"
+            />
+          </Card>
+        )}
       </div>
 
       {/* FOOTER */}
