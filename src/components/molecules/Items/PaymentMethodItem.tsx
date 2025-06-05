@@ -47,7 +47,9 @@ const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({
       {isShowSeparator && <Separator className="my-4" />}
 
       <div
-        onClick={onSelect}
+        onClick={()=> {
+          if(!disabled) onSelect()
+        }}
         className={`between-x ${
           disabled ? "cursor-not-allowed" : "cursor-pointer"
         }`}

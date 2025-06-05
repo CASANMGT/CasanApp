@@ -4,6 +4,7 @@ export type FeeSettingsProps = {
   label: string;
   priceType: string;
   value: string;
+  disabled?: boolean;
 };
 
 export type FeeSettingsResponseProps = {

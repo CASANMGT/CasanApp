@@ -186,7 +186,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
               ) : isDisconnect ? (
                 <div className="text-black70">
                   <p className="text-xs font-semibold text-black70">
-                    Sedang Dalam Gangguan
+                    Sedang tidak tersedia
                   </p>
 
                   <p className="text-[10px]">Mohon cek berkala</p>

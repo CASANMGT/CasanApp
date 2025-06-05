@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IcClose, IcWallet } from "../../../assets";
 import { FeeSettingsProps } from "../../../common";
-import { useAlert } from "../../../context/AlertContext";
 import { useAuth } from "../../../context/AuthContext";
 import { fetchFeeSettings, fetchMyUser } from "../../../features";
 import {
@@ -14,6 +13,7 @@ import { AppDispatch, RootState } from "../../../store";
 import { Button, LoadingPage } from "../../atoms";
 import { PaymentMethodItem } from "../Items";
 import ModalContainer from "./ModalContainer";
+import { clone } from "lodash";
 
 interface ModalPaymentMethodProps {
   type?: "top-up";
@@ -36,7 +36,6 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated } = useAuth();
-  const { showAlert } = useAlert();
 
   const feeSettings = useSelector((state: RootState) => state.feeSettings);
   const myUser = useSelector((state: RootState) => state.myUser);
@@ -100,9 +99,34 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
     return value;
   };
 
+  const onChangeOptionPaymentMethod = (condition: boolean) => {
+    if (optionsPaymentMethod && optionsPaymentMethod.length) {
+      const newData: FeeSettingsProps[] = [];
+      optionsPaymentMethod.forEach((element) => {
+        const newItem: FeeSettingsProps = { ...clone(element), disabled: condition };
+        newData.push(newItem);
+      });
+
+      setOptionsPaymentMethod(newData)
+    }
+  };
+
+  const onSelectWallet = () => {
+    let value = selectedBalance > 0 ? 0 : myBalance;
+    setSelectedBalance(value);
+
+    if (!selectedBalance &&total && value >= total) {
+      setSelectedPayment(undefined);
+      onChangeOptionPaymentMethod(true)
+    }else onChangeOptionPaymentMethod(false)
+
+  };
+
   const myBalance: number = myUser?.data?.Balance || 0;
   const calculate: { total: number; fee: number } =
     checkCalculationPaymentMethod(total || 0, selectedPayment);
+
+    
 
   return (
     <ModalContainer isOpen={visible} isBottom onDismiss={onDismiss}>
@@ -133,10 +157,7 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
                     isActive={selectedBalance > 0}
                     icon={IcWallet}
                     disabled={myBalance <= 0}
-                    onSelect={() => {
-                      let value = selectedBalance > 0 ? 0 : myBalance;
-                      setSelectedBalance(value);
-                    }}
+                    onSelect={onSelectWallet}
                   />
 
                   <div className="mb-4" />
@@ -156,7 +177,12 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
                       label={item?.label}
                       position={index}
                       isActive={selectedPayment?.key === item?.key}
-                      onSelect={() => setSelectedPayment(item)}
+                      disabled={item?.disabled}
+                      onSelect={() => {
+                        setSelectedPayment(
+                          item?.key === selectedPayment?.key ? undefined : item
+                        );
+                      }}
                     />
                   );
                 })}

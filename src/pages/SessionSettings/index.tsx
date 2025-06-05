@@ -489,7 +489,7 @@ const SessionSettings = () => {
         visible={visiblePaymentMethod}
         select={form.paymentMethod}
         selectBalance={form?.balance}
-        total={totalPrice}
+        total={chargingNominal}
         onDismiss={() => setVisiblePaymentMethod(false)}
         onSelect={(select, value) => {
           const cloneData = clone(form);

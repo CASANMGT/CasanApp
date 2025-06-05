@@ -46,8 +46,6 @@ const TopUp = () => {
     nominal: "",
   });
 
-  console.log("cek myUser", myUser);
-
   const [visiblePaymentMethod, setVisiblePaymentMethod] =
     useState<boolean>(false);
   const [error, setError] = useState<string>();
