@@ -25,6 +25,7 @@ export default {
         black70: "#737480",
         black50: "#9B9CA4",
         black30: "#C3C4C9",
+        black20: "#E4E4E7",
         black10: "#EBEBED",
         black5: "#F5F5F6",
         darkMode:"#252526",
