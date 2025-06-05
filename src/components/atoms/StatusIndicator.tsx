@@ -4,6 +4,7 @@ import CountdownTimer from "./CountdownTimer";
 
 interface StatusIndicatorProps {
   className?: string;
+  maxWatt: number;
   type: number;
   port: number;
   duration: number;
@@ -17,7 +18,8 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   className,
   onFinish,
 }) => {
-  const isCharging: boolean = type === 5 || type === 6 ? true : false;
+  const isCharging: boolean =
+    type === 5 || type === 6 || type !== 2 ? true : false;
   const classNameAnimation: string = `absolute -left-[30px] -top-[30px] w-[280px] h-[280px] rounded-full ${
     isCharging
       ? "animate-soundWave bg-primary100"
@@ -44,7 +46,7 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
               />
             ) : (
               <p className="text-[34px] font-semibold">
-                {formatTime(duration)}
+                {type === 2 ? formatTime(duration) : "Persiapan..."}
               </p>
             )}
 

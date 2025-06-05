@@ -57,7 +57,6 @@ const Charging = () => {
     useState<boolean>(false);
   const [openFinished, setOpenFinished] = useState<boolean>(false);
   const [openStop, setOpenStop] = useState<boolean>(false);
-  const [openCS, setOpenCS] = useState<boolean>(false);
   const [openCantProcess, setOpenCantProcess] = useState<boolean>(false);
 
   useEffect(() => {
@@ -66,6 +65,7 @@ const Charging = () => {
 
   useEffect(() => {
     if (
+      detailSession?.data?.MaxWatt === 0 ||
       detailSession?.data?.Status === 3 ||
       detailSession?.data?.Status === 4 ||
       detailSession?.data?.Status === 5
@@ -112,6 +112,7 @@ const Charging = () => {
       dispatch(fetchDetailSession(Number(id))).then((res) => {
         const resSession: Session = res?.payload as Session;
         const currentStatus = resSession?.Status;
+        console.log("cek currentStatus", currentStatus);
 
         if (currentStatus === 6) {
           setOpenFinished(true);
@@ -217,11 +218,15 @@ const Charging = () => {
 
             <InformationItem
               icon={IcClockGreen}
-              label="Durasi Pemesanan"
+              label="Durasi Pesanan"
               content={
-                dataSession?.ExpectedDuration
-                  ? formatDuration(dataSession?.ExpectedDuration)
-                  : "-"
+                status === 2
+                  ? "-"
+                  : (detailSession?.data?.MaxWatt || 0) > 0
+                  ? dataSession?.ExpectedDuration
+                    ? formatDuration(dataSession?.ExpectedDuration)
+                    : "-"
+                  : "Persiapan..."
               }
             />
 
@@ -248,6 +253,7 @@ const Charging = () => {
           {/* STATUS */}
           <StatusIndicator
             type={status || 2}
+            maxWatt={detailSession?.data?.MaxWatt || 0}
             duration={duration > 0 ? duration : 0}
             port={dataSession?.Socket?.Port || 0}
             onFinish={getData}
@@ -398,9 +404,8 @@ const Charging = () => {
 
       <DiagnosisModal
         isOpen={openDiagnosis}
-        data={dataSession?.Device}
+        maxWatt={detailSession?.data?.MaxWatt || 0}
         onDismiss={() => setOpenDiagnosis(false)}
-        onClick={() => getData()}
       />
 
       <AlertModal

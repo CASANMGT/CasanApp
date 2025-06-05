@@ -11,31 +11,31 @@ import { IcSuccess, IcSuccessGreen } from "../../../assets";
 
 interface DiagnosisModalProps {
   isOpen: boolean;
-  data: Device | undefined;
+  maxWatt: number;
   onDismiss: () => void;
-  onClick: () => void;
 }
 
 const DiagnosisModal: React.FC<DiagnosisModalProps> = ({
   isOpen,
-  data,
-  onDismiss,
-  onClick,
+  maxWatt,
+  onDismiss
 }) => {
   return (
-    <ModalContainer isOpen={isOpen} onDismiss={() => {}}>
+    <ModalContainer isOpen={isOpen} onDismiss={onDismiss}>
       <div className="center-y gap-2">
         <div className="w-[58px] h-[58px] border-[6px] border-primary50 border-solid border-t-primary100 rounded-full animate-spin mb-2 mt-4" />
 
         <h1 className="text-base font-semibold">Memulai Sesi</h1>
 
         <p className="text-center text-black70 mb-2">
-          Memulai pengecasan. Jika melebihi batas{" "}
-          <span>{data?.MaxWatt || 0}W</span>, sesi akan dihentikan dan
-          pengembalian dana akan diproses
+          Memulai pengecasan. Jika melebihi batas
+          {maxWatt > 0 && (
+            <span className="font-bold text-black100"> {maxWatt}W</span>
+          )}
+          , sesi akan dihentikan dan pengembalian dana akan diproses
         </p>
 
-        <Button type='secondary' label="Refresh Halaman" onClick={onClick}/>
+        <Button label="Tutup" onClick={onDismiss} />
       </div>
     </ModalContainer>
   );
