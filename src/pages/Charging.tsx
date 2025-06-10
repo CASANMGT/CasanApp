@@ -71,7 +71,11 @@ const Charging = () => {
       detailSession?.data?.Status === 5
     ) {
       if (detailSession?.data?.Status === 3) setOpenDiagnosis(true);
-      else if (detailSession?.data?.Status === 5) setOpenDiagnosis(false);
+      else if (
+        detailSession?.data?.Status === 5 &&
+        (detailSession?.data?.MaxWatt || 0) > 0
+      )
+        setOpenDiagnosis(false);
 
       timeoutProgress();
     }
@@ -112,7 +116,6 @@ const Charging = () => {
       dispatch(fetchDetailSession(Number(id))).then((res) => {
         const resSession: Session = res?.payload as Session;
         const currentStatus = resSession?.Status;
-        console.log("cek currentStatus", currentStatus);
 
         if (currentStatus === 6) {
           setOpenFinished(true);
