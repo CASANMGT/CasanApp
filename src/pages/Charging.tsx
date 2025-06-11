@@ -196,18 +196,18 @@ const Charging = () => {
   return (
     <div className="background-1 pt-3 overflow-hidden flex flex-col justify-between">
       <Header
-        type={detailSession?.data?.Status !== 5 ? "cancel" : "charging"}
+        type={dataSession?.Status !== 5 ? "cancel" : "charging"}
         title="Halaman Pengisian"
         onDismiss={onDismiss}
         className="mx-4 mb-4"
         onPress={() => {
-          if (detailSession?.data?.Status !== 5) setOpenCancel(true);
+          if (dataSession?.Status !== 5) setOpenCancel(true);
           else openWhatsApp(CUSTOMER_SERVICES);
         }}
       />
 
       <LoadingPage
-        loading={!detailSession?.data && detailSession?.loading}
+        loading={!dataSession && detailSession?.loading}
         color="primary100"
       >
         <div className="flex-1 overflow-auto scrollbar-none">
@@ -225,7 +225,7 @@ const Charging = () => {
               content={
                 status === 2
                   ? "-"
-                  : (detailSession?.data?.MaxWatt || 0) > 0
+                  : (dataSession?.MaxWatt || 0) > 0
                   ? dataSession?.ExpectedDuration
                     ? formatDuration(dataSession?.ExpectedDuration)
                     : "-"
@@ -256,7 +256,7 @@ const Charging = () => {
           {/* STATUS */}
           <StatusIndicator
             type={status || 2}
-            maxWatt={detailSession?.data?.MaxWatt || 0}
+            maxWatt={dataSession?.MaxWatt || 0}
             duration={duration > 0 ? duration : 0}
             port={dataSession?.Socket?.Port || 0}
             onFinish={getData}
@@ -407,7 +407,7 @@ const Charging = () => {
 
       <DiagnosisModal
         isOpen={openDiagnosis}
-        maxWatt={detailSession?.data?.MaxWatt || 0}
+        maxWatt={dataSession?.Device?.MaxWatt || 0}
         onDismiss={() => setOpenDiagnosis(false)}
       />
 
