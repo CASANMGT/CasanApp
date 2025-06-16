@@ -81,14 +81,6 @@ const Home = () => {
     dispatch(fetchOnGoingSessionList(body));
   };
 
-  const onSearch = () => {
-    alert("coming soon");
-  };
-
-  const onNotification = () => {
-    alert("coming soon");
-  };
-
   const onLoadMore = () => {
     const nextPage: number = page + 1;
     setPage(nextPage);
