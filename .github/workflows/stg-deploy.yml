@@ -19,7 +19,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY_STG }}
           source: "."
-          target: "/home/root/casan-frontend"
+          target: "/home/william/casan-frontend-stg"
           strip_components: 1 # optional if your folder is nested
 
       - name: SSH and run Docker Compose
@@ -29,7 +29,6 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY_STG }}
           script: |
-            cd /home/root/casan-frontend
+            cd /home/william/casan-frontend-stg
             echo "${{ secrets.STG_ENV}}" > .env
-            docker-compose down
             docker-compose up -d --build
