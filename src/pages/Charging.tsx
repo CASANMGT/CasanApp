@@ -57,7 +57,6 @@ const Charging = () => {
     useState<boolean>(false);
   const [openFinished, setOpenFinished] = useState<boolean>(false);
   const [openStop, setOpenStop] = useState<boolean>(false);
-  const [openCS, setOpenCS] = useState<boolean>(false);
   const [openCantProcess, setOpenCantProcess] = useState<boolean>(false);
 
   useEffect(() => {
@@ -66,12 +65,17 @@ const Charging = () => {
 
   useEffect(() => {
     if (
+      detailSession?.data?.MaxWatt === 0 ||
       detailSession?.data?.Status === 3 ||
       detailSession?.data?.Status === 4 ||
       detailSession?.data?.Status === 5
     ) {
       if (detailSession?.data?.Status === 3) setOpenDiagnosis(true);
-      else if (detailSession?.data?.Status === 5) setOpenDiagnosis(false);
+      else if (
+        detailSession?.data?.Status === 5 &&
+        (detailSession?.data?.MaxWatt || 0) > 0
+      )
+        setOpenDiagnosis(false);
 
       timeoutProgress();
     }
@@ -192,18 +196,18 @@ const Charging = () => {
   return (
     <div className="background-1 pt-3 overflow-hidden flex flex-col justify-between">
       <Header
-        type={detailSession?.data?.Status !== 5 ? "cancel" : "charging"}
+        type={dataSession?.Status !== 5 ? "cancel" : "charging"}
         title="Halaman Pengisian"
         onDismiss={onDismiss}
         className="mx-4 mb-4"
         onPress={() => {
-          if (detailSession?.data?.Status !== 5) setOpenCancel(true);
+          if (dataSession?.Status !== 5) setOpenCancel(true);
           else openWhatsApp(CUSTOMER_SERVICES);
         }}
       />
 
       <LoadingPage
-        loading={!detailSession?.data && detailSession?.loading}
+        loading={!dataSession && detailSession?.loading}
         color="primary100"
       >
         <div className="flex-1 overflow-auto scrollbar-none">
@@ -217,11 +221,15 @@ const Charging = () => {
 
             <InformationItem
               icon={IcClockGreen}
-              label="Durasi Pemesanan"
+              label="Durasi Pesanan"
               content={
-                dataSession?.ExpectedDuration
-                  ? formatDuration(dataSession?.ExpectedDuration)
-                  : "-"
+                status === 2
+                  ? "-"
+                  : (dataSession?.MaxWatt || 0) > 0
+                  ? dataSession?.ExpectedDuration
+                    ? formatDuration(dataSession?.ExpectedDuration)
+                    : "-"
+                  : "Persiapan..."
               }
             />
 
@@ -248,6 +256,7 @@ const Charging = () => {
           {/* STATUS */}
           <StatusIndicator
             type={status || 2}
+            maxWatt={dataSession?.MaxWatt || 0}
             duration={duration > 0 ? duration : 0}
             port={dataSession?.Socket?.Port || 0}
             onFinish={getData}
@@ -398,9 +407,8 @@ const Charging = () => {
 
       <DiagnosisModal
         isOpen={openDiagnosis}
-        data={dataSession?.Device}
+        maxWatt={dataSession?.Device?.MaxWatt || 0}
         onDismiss={() => setOpenDiagnosis(false)}
-        onClick={() => getData()}
       />
 
       <AlertModal

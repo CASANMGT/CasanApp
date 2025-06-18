@@ -422,7 +422,7 @@ const SessionSettings = () => {
             </div>
 
             {/* PAYMENT DETAILS */}
-            <div className="bg-white p-3 rounded-lg mt-3 drop-shadow">
+            <div className="bg-white p-3 rounded-lg my-3 drop-shadow">
               <div className="row gap-3 mb-2">
                 <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
                   <IcInfoCircleGreen />
@@ -446,7 +446,7 @@ const SessionSettings = () => {
               />
             </div>
 
-            <div
+            {/* <div
               onClick={() => {}}
               className="row gap-3 mt-[22px] mb-5 cursor-pointer"
             >
@@ -456,7 +456,7 @@ const SessionSettings = () => {
               <div className="w-[22px] h-[22px] rounded-full bg-primary10 center">
                 <IcRightCircleGreen />
               </div>
-            </div>
+            </div> */}
 
             {/* COST INFORMATION */}
             {/* DUMMY */}
