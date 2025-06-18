@@ -80,7 +80,11 @@ const Main = () => {
       setOpenInputPhoneNumber(true);
     } else {
       setCurrentPage(select?.page);
-      navigate(`/home/${select?.page}`);
+      let to = `/home/${select?.page}`;
+
+      if (select?.page === "scan") to = `/${select?.page}`;
+
+      navigate(to);
     }
   };
 
