@@ -31,5 +31,4 @@ jobs:
           script: |
             cd /home/william/casan-frontend
             echo "${{ secrets.PRD_ENV}}" > .env
-            docker system prune -af
-            docker-compose up -d --build
+            docker compose up -d --build
