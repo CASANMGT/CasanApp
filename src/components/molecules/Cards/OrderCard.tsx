@@ -27,7 +27,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
         break;
 
       case 2:
-        value = "Menunggu Terhubung";
+        value = "Persiapan";
         break;
 
       case 5:
@@ -115,7 +115,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
               {getLabelStatus()}
             </p>
 
-            {status !== 2 && (
+            {status !== 1 && (
               <>
                 {isDark ? (
                   <p className="text-black70">
@@ -134,11 +134,13 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
                       "-"
                     )}
                   </p>
-                ) : status === 5 ? (
+                ) : status === 5 || status === 2 ? (
                   <div>
                     <p className="text-xs text-black50">
-                      Tersisa:{" "}
-                      <span className="text-black100 text-xs">{diff}</span>
+                      {status === 5 ? `Tersisa: ` : "Sistem sedang menyiapkan"}
+                      {status === 5 && (
+                        <span className="text-black100 text-xs">{diff}</span>
+                      )}
                     </p>
                   </div>
                 ) : (

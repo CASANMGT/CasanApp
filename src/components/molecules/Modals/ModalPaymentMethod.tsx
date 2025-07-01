@@ -92,7 +92,7 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
   const validation = () => {
     let value: boolean = true;
 
-    if (selectedBalance && selectedBalance > (total || 0) && !selectedPayment)
+    if (selectedBalance && selectedBalance >= (total || 0) && !selectedPayment)
       value = false;
     else if (selectedPayment) value = false;
 
