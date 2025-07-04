@@ -1,14 +1,9 @@
-version: "3.9"
+version: "3"
 
 services:
-  react-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        REACT_APP_API_URL: ${REACT_APP_API_URL}
-        REACT_APP_GOOGLE_API: ${REACT_APP_GOOGLE_API}
+  fe1:
+    build: .
     ports:
-      - "3000:80"
+      - "${APP_PORT}:8080"
     env_file:
       - .env
