@@ -1,3 +1,4 @@
+import { clone } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IcClose, IcWallet } from "../../../assets";
@@ -13,7 +14,6 @@ import { AppDispatch, RootState } from "../../../store";
 import { Button, LoadingPage } from "../../atoms";
 import { PaymentMethodItem } from "../Items";
 import ModalContainer from "./ModalContainer";
-import { clone } from "lodash";
 
 interface ModalPaymentMethodProps {
   type?: "top-up";
@@ -103,11 +103,14 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
     if (optionsPaymentMethod && optionsPaymentMethod.length) {
       const newData: FeeSettingsProps[] = [];
       optionsPaymentMethod.forEach((element) => {
-        const newItem: FeeSettingsProps = { ...clone(element), disabled: condition };
+        const newItem: FeeSettingsProps = {
+          ...clone(element),
+          disabled: condition,
+        };
         newData.push(newItem);
       });
 
-      setOptionsPaymentMethod(newData)
+      setOptionsPaymentMethod(newData);
     }
   };
 
@@ -115,18 +118,15 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
     let value = selectedBalance > 0 ? 0 : myBalance;
     setSelectedBalance(value);
 
-    if (!selectedBalance &&total && value >= total) {
+    if (!selectedBalance && total && value >= total) {
       setSelectedPayment(undefined);
-      onChangeOptionPaymentMethod(true)
-    }else onChangeOptionPaymentMethod(false)
-
+      onChangeOptionPaymentMethod(true);
+    } else onChangeOptionPaymentMethod(false);
   };
 
   const myBalance: number = myUser?.data?.Balance || 0;
   const calculate: { total: number; fee: number } =
     checkCalculationPaymentMethod(total || 0, selectedPayment);
-
-    
 
   return (
     <ModalContainer isOpen={visible} isBottom onDismiss={onDismiss}>
