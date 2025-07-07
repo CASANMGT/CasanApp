@@ -27,7 +27,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
         break;
 
       case 2:
-        value = "Persiapan";
+        value = "Menunggu Terhubung";
         break;
 
       case 5:
@@ -116,7 +116,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
               {getLabelStatus()}
             </p>
 
-            {status !== 1 && (
+            {status !== 1 && status !== 2 && (
               <>
                 {isDark ? (
                   <p className="text-black70">
@@ -135,7 +135,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
                       "-"
                     )}
                   </p>
-                ) : status === 5 || status === 2 ? (
+                ) : status === 5 ? (
                   <div>
                     <p className="text-xs text-black50">
                       {status === 5 && data?.MaxWatt > 0

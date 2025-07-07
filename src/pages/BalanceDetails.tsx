@@ -27,9 +27,6 @@ const BalanceDetails = () => {
         break;
 
       case 2:
-        nextPage = "withdraw-details";
-        break;
-
       case 3:
       case 4:
         nextPage = "session-details";
