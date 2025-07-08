@@ -16,6 +16,10 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
   const [seconds, setSeconds] = useState(initialSeconds);
 
   useEffect(() => {
+    setSeconds(initialSeconds);
+  }, [initialSeconds]);
+
+  useEffect(() => {
     if (seconds <= 0) return;
 
     const timer = setInterval(() => {
