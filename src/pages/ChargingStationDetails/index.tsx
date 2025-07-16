@@ -11,6 +11,7 @@ import {
   IcBike,
   IcDownCircleGreen,
   IcFuel,
+  IcShareGreen,
   ILNoImage,
 } from "../../assets";
 import { DeviceListItem, LoadingPage, Separator } from "../../components";
@@ -19,6 +20,7 @@ import { showToast } from "../../features/toastSlice";
 import { AppDispatch, RootState } from "../../store";
 import BasicInformation from "./BasicInformation";
 import PriceInformation from "./PriceInformation";
+import { getDistanceFromLatLonInKm, openGoogleMaps } from "../../helpers";
 
 const ChargingStationDetails = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -103,6 +105,14 @@ const ChargingStationDetails = () => {
     available = getTotalAvailable();
   }
 
+  const distance = getDistanceFromLatLonInKm(
+    {
+      lat: chargingStationById?.data?.Location?.Latitude,
+      lon: chargingStationById?.data?.Location?.Longitude,
+    },
+    location?.state?.currentLocation
+  );
+
   return (
     <LoadingPage loading={chargingStationById?.loading}>
       <div
@@ -181,11 +191,11 @@ const ChargingStationDetails = () => {
               )}
             </div>
 
-            {/* <div
+            <div
               onClick={() =>
                 openGoogleMaps(
-                  chargingStationById?.data?.Location.Latitude,
-                  chargingStationById?.data?.Location?.Longitude
+                  chargingStationById?.data?.Location.Latitude || 0,
+                  chargingStationById?.data?.Location?.Longitude || 0
                 )
               }
               className="row gap-2 cursor-pointer"
@@ -195,7 +205,7 @@ const ChargingStationDetails = () => {
               <div className="p-[5px] rounded-full bg-primary10">
                 <IcShareGreen />
               </div>
-            </div> */}
+            </div>
           </div>
         </div>
 
