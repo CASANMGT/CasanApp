@@ -31,7 +31,8 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
         break;
 
       case 5:
-        value = "Sedang Mengisi";
+        if (data?.MaxWatt > 0) value = "Sedang Mengisi";
+        else value = "Persiapan";
         break;
 
       case 6:
@@ -60,7 +61,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
 
   let diff: string = "";
 
-  if (status === 5) {
+  if (status === 5 && data?.MaxWatt > 0) {
     diff = formatDuration(
       moments(data?.StopChargingTime).diff(moments(), "second")
     );
@@ -105,7 +106,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
           <div>
             <p
               className={`font-medium ${
-                status === 5
+                status === 5 && data?.MaxWatt > 0
                   ? "text-[#129030]"
                   : status === 7 || status === 8
                   ? "text-red"
@@ -115,7 +116,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
               {getLabelStatus()}
             </p>
 
-            {status !== 2 && (
+            {status !== 1 && status !== 2 && (
               <>
                 {isDark ? (
                   <p className="text-black70">
@@ -137,8 +138,12 @@ const OrderCard: React.FC<OrderCardProps> = ({ position, data, onClick }) => {
                 ) : status === 5 ? (
                   <div>
                     <p className="text-xs text-black50">
-                      Tersisa:{" "}
-                      <span className="text-black100 text-xs">{diff}</span>
+                      {status === 5 && data?.MaxWatt > 0
+                        ? `Tersisa: `
+                        : "Sistem sedang menyiapkan"}
+                      {status === 5 && data?.MaxWatt > 0 && (
+                        <span className="text-black100 text-xs">{diff}</span>
+                      )}
                     </p>
                   </div>
                 ) : (

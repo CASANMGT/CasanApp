@@ -65,10 +65,11 @@ const Charging = () => {
 
   useEffect(() => {
     if (
-      detailSession?.data?.MaxWatt === 0 ||
-      detailSession?.data?.Status === 3 ||
-      detailSession?.data?.Status === 4 ||
-      detailSession?.data?.Status === 5
+      !detailSession?.loading &&
+      (detailSession?.data?.MaxWatt === 0 ||
+        detailSession?.data?.Status === 3 ||
+        detailSession?.data?.Status === 4 ||
+        detailSession?.data?.Status === 5)
     ) {
       if (detailSession?.data?.Status === 3) setOpenDiagnosis(true);
       else if (
@@ -79,7 +80,7 @@ const Charging = () => {
 
       timeoutProgress();
     }
-  }, [detailSession]);
+  }, [detailSession?.data]);
 
   useEffect(() => {
     if (startSession?.data) {
