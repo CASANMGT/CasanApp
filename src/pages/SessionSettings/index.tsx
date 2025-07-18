@@ -1,4 +1,4 @@
-import { clone } from "lodash";
+import { add, clone } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -145,13 +145,19 @@ const SessionSettings = () => {
     else dispatch(hideLoading());
 
     if (addSession?.data) {
-      navigate(
-        `/transaction-history/details/${addSession?.data?.TransactionID}`,
-        {
+      if (addSession?.data?.Transaction?.Status === 1) {
+        navigate(`/charging/${addSession?.data?.ID}`, {
           replace: true,
           state: { isGoOrder: true },
-        }
-      );
+        });
+      } else
+        navigate(
+          `/transaction-history/details/${addSession?.data?.TransactionID}`,
+          {
+            replace: true,
+            state: { isGoOrder: true },
+          }
+        );
     }
   }, [addSession]);
 
