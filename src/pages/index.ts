@@ -1,12 +1,12 @@
-import BalanceHistory from "./BalanceHistory";
 import BalanceDetails from "./BalanceDetails";
+import BalanceHistory from "./BalanceHistory";
 import BankAccount from "./BankAccount";
 import Charging from "./Charging";
 import ChargingStationDetails from "./ChargingStationDetails";
 import ComingSoon from "./ComingSoon";
+import ConfirmationPin from "./ConfirmationPin";
 import EditProfile from "./EditProfile";
 import Home from "./Home";
-import SettingPin from "./SettingPin";
 import Location from "./Location";
 import LocationList from "./LocationList";
 import Login from "./Login";
@@ -20,6 +20,7 @@ import Scan from "./Scan";
 import SelectBank from "./SelectBank";
 import SessionDetails from "./SessionDetails";
 import SessionSettings from "./SessionSettings";
+import SettingPin from "./SettingPin";
 import Splash from "./Splash";
 import TermCondition from "./TermCondition";
 import Test from "./Test";
@@ -28,22 +29,21 @@ import TransactionDetails from "./TransactionDetails";
 import TransactionHistory from "./TransactionHistory";
 import Vehicle from "./Vehicle";
 import VerificationNumber from "./VerificationNumber";
+import Voucher from "./Voucher";
 import Withdraw from "./Withdraw";
 import WithdrawalDetails from "./WithdrawalDetails";
 import WithdrawalHistory from "./WithdrawalHistory";
-import ConfirmationPin from "./ConfirmationPin";
 
 export {
-    ConfirmationPin,
-    BalanceHistory,
     BalanceDetails,
+    BalanceHistory,
     BankAccount,
     Charging,
     ChargingStationDetails,
     ComingSoon,
+    ConfirmationPin,
     EditProfile,
     Home,
-    SettingPin,
     Location,
     LocationList,
     Login,
@@ -57,6 +57,7 @@ export {
     SelectBank,
     SessionDetails,
     SessionSettings,
+    SettingPin,
     Splash,
     TermCondition,
     Test,
@@ -65,6 +66,7 @@ export {
     TransactionHistory,
     Vehicle,
     VerificationNumber,
+    Voucher,
     Withdraw,
     WithdrawalDetails,
     WithdrawalHistory

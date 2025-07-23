@@ -35,6 +35,7 @@ import {
   Withdraw,
   WithdrawalDetails,
   WithdrawalHistory,
+  Voucher,
 } from "../pages";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -91,6 +92,10 @@ const RoutesPage = () => {
           <Route
             path="top-up"
             element={<ProtectedRoute element={<TopUp />} />}
+          />
+          <Route
+            path="voucher"
+            element={<ProtectedRoute element={<Voucher />} />}
           />
           <Route
             path="setting-pin"
