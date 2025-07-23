@@ -4,6 +4,7 @@ import { FeeSettingsProps } from "./feeSettingsType";
 import { MetaResponseProps, OptionsProps } from "./globalType";
 import { Transaction } from "./transactionType";
 import { DataUser } from "./userType";
+import { VoucherUsage } from "./voucherType";
 
 export type SessionListResponse = {
   status: string;
@@ -90,6 +91,7 @@ export type Session = {
   TotalKwhUsed: number;
   ChargingFee: string | null;
   DeletedAt: string | null;
+  VoucherUsages: VoucherUsage[];
   ExpiredAt: string;
   CreatedAt: string;
   UpdatedAt: string;
