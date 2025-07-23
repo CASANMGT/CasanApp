@@ -31,6 +31,7 @@ import checkPinReducer from "../features/users/checkPinSlice.ts";
 import editPinReducer from "../features/users/editPinSlice.ts";
 import editUserReducer from "../features/users/editUserSlice.ts";
 import myUserReducer from "../features/users/myUserSlice.ts";
+import voucherListReducer from "../features/voucher/voucherListSlice.ts";
 import addWithdrawReducer from "../features/withdraw/addWithdrawSlice.ts";
 import withdrawListReducer from "../features/withdraw/withdrawListSlice.ts";
 
@@ -93,6 +94,9 @@ export const store = configureStore({
     // WITHDRAW
     addWithdraw: addWithdrawReducer,
     withdrawList: withdrawListReducer,
+
+    // VOUCHER
+    voucherList: voucherListReducer,
   },
 });
 

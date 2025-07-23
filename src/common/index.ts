@@ -17,4 +17,5 @@ export * from "./types/sessionType";
 export * from "./types/transactionType";
 export * from "./types/userType";
 export * from "./types/withdrawType";
+export * from './types/voucherType'
 

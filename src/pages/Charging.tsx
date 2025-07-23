@@ -31,6 +31,7 @@ import {
   fetchStartSession,
   fetchStopSession,
   hideLoading,
+  resetDataAddSession,
   resetDataCancelSession,
   resetDataStartSession,
   resetDataStopSession,
@@ -60,6 +61,7 @@ const Charging = () => {
   const [openCantProcess, setOpenCantProcess] = useState<boolean>(false);
 
   useEffect(() => {
+    dispatch(resetDataAddSession());
     getData();
   }, []);
 

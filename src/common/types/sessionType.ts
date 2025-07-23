@@ -49,6 +49,7 @@ export type FormSession = {
   paymentMethod?: FeeSettingsProps | undefined;
   phoneNumber: string;
   balance: number;
+  voucher: OptionsProps | undefined;
 };
 
 export type AddSessionBody = {
@@ -58,6 +59,7 @@ export type AddSessionBody = {
   session_method: number;
   socket_id: number;
   station_id: number;
+  voucher_id: number[];
   wallet_used_amount: number;
 };
 
