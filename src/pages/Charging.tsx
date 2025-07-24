@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { FaChevronRight } from "react-icons/fa6";
+import { HiOutlineTicket } from "react-icons/hi2";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
@@ -13,7 +15,12 @@ import {
   IcWalletGreen,
   ILCharging,
 } from "../assets";
-import { CalculateDurationBody, CUSTOMER_SERVICES, Session } from "../common";
+import {
+  CalculateDurationBody,
+  CUSTOMER_SERVICES,
+  Session,
+  VoucherUsage,
+} from "../common";
 import {
   AlertModal,
   BetweenText,
@@ -189,12 +196,16 @@ const Charging = () => {
   };
 
   const dataSession: Session | null = detailSession?.data;
+  let dataVoucher: VoucherUsage | undefined = undefined;
   const status: number | undefined = dataSession?.Status;
   const duration: number = moments(dataSession?.StartChargingTime)
     .add(dataSession?.ExpectedDuration || 0, "seconds")
     .diff(moments(), "seconds");
 
   const isCharging: boolean = status === 5 || status === 6 ? true : false;
+
+  if (dataSession?.VoucherUsages && dataSession?.VoucherUsages.length)
+    dataVoucher = dataSession?.VoucherUsages[0];
 
   return (
     <div className="background-1 pt-3 overflow-hidden flex flex-col justify-between">
@@ -282,6 +293,29 @@ const Charging = () => {
               </span>
             </div>
           </div>
+
+          {(dataSession?.MaxWatt || 0) > 1 &&
+            dataVoucher?.Status === 2 &&
+            dataVoucher?.VoucherDetails?.VoucherType === 2 && (
+              <div className="bg-white shadow px-2.5 py-3 rounded-md mb-5 mx-4">
+                <span className="font-medium text-xs">Klaim Voucher Kamu</span>
+
+                <div
+                  onClick={() =>
+                    navigate(`/voucher/details/${dataVoucher?.ID}`)
+                  }
+                  className="between-x gap-2 py-3 px-4 bg-primary100 rounded-lg mt-2.5 cursor-pointer"
+                >
+                  <HiOutlineTicket size={20} className="text-white" />
+
+                  <span className="flex-1 text-white font-medium">
+                    Voucher {dataVoucher?.VoucherDetails?.Description}
+                  </span>
+
+                  <FaChevronRight size={16} className="text-white" />
+                </div>
+              </div>
+            )}
 
           {/* DETAILS */}
           <div className="rounded-lg p-3 mb-4 bg-white drop-shadow">

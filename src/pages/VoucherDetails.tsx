@@ -77,7 +77,7 @@ const VoucherDetails = () => {
         <div className="flex flex-col bg-white mx-4 mt-8 px-4 py-6">
           <VoucherUsageCard type="secondary" data={data} />
 
-          <p className="text-center mb-4">
+          <p className="text-center">
             {`${
               status === 1
                 ? "Diklaim tanggal"
@@ -85,19 +85,23 @@ const VoucherDetails = () => {
                 ? "Expired"
                 : "Berlaku sampai"
             } ${moments(
-              status === 1 ? data?.RedeemedAt : data?.VoucherDetails?.EndDate
+              status === 1 ? data?.RedeemedAt : data?.ProductExpiredAt
             ).format("DD MMM YYYY HH:mm")}`}
           </p>
 
-          <div className="border border-primary100 rounded-md p-3 bg-primary10 mb-6">
-            <p className="text-primary100 text-xs">
-              Tunjukkan voucher ini untuk klaim produk. Tombol hanya bisa
-              dipencet oleh PIC produk agar klaim tidak void
-            </p>
-          </div>
-
           {status === 2 && (
-            <Button label="Kalim Voucher" onClick={() => setOpenClaim(true)} />
+            <>
+              <div className="border border-primary100 rounded-md p-3 bg-primary10 mb-6 mt-4">
+                <p className="text-primary100 text-xs">
+                  Tunjukkan voucher ini untuk klaim produk. Tombol hanya bisa
+                  dipencet oleh PIC produk agar klaim tidak void
+                </p>
+              </div>
+              <Button
+                label="Kalim Voucher"
+                onClick={() => setOpenClaim(true)}
+              />
+            </>
           )}
         </div>
       </LoadingPage>
