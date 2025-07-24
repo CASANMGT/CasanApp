@@ -32,7 +32,6 @@ import editPinReducer from "../features/users/editPinSlice.ts";
 import editUserReducer from "../features/users/editUserSlice.ts";
 import myUserReducer from "../features/users/myUserSlice.ts";
 import voucherAvailableReducer from "../features/voucher/voucherAvailableSlice.ts";
-import voucherUsageProductReducer from "../features/voucher/voucherUsageProductSlice.ts";
 import addWithdrawReducer from "../features/withdraw/addWithdrawSlice.ts";
 import withdrawListReducer from "../features/withdraw/withdrawListSlice.ts";
 
@@ -98,7 +97,6 @@ export const store = configureStore({
 
     // VOUCHER
     voucherAvailable: voucherAvailableReducer,
-    voucherUsageProduct: voucherUsageProductReducer,
   },
 });
 

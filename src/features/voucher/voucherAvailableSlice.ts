@@ -1,10 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  bodyListProps,
-  DataUser,
-  MetaResponseProps,
-  Voucher,
-} from "../../common";
+import { MetaResponseProps, Voucher } from "../../common";
 import { Api } from "../../services/Api";
 
 type VoucherAvailableResponseProps = {
@@ -29,11 +24,10 @@ const initialState: VoucherAvailableState = {
 // Async thunk for get voucher list
 export const fetchVoucherAvailable = createAsyncThunk(
   "fetchVoucherAvailable",
-  async (user_id: number, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const res = await Api.get({
         url: "vouchers/available",
-        params: { user_id },
       });
 
       return res as VoucherAvailableResponseProps;

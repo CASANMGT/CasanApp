@@ -88,7 +88,7 @@ const ModalVoucher: React.FC<Props> = ({
   }, [voucherAvailable?.data, total]);
 
   const setUp = () => {
-    if (userId) dispatch(fetchVoucherAvailable(userId));
+    if (userId) dispatch(fetchVoucherAvailable());
     setSelected(select);
   };
 

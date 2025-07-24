@@ -30,6 +30,7 @@ import TransactionHistory from "./TransactionHistory";
 import Vehicle from "./Vehicle";
 import VerificationNumber from "./VerificationNumber";
 import Voucher from "./Voucher";
+import VoucherDetails from "./VoucherDetails";
 import Withdraw from "./Withdraw";
 import WithdrawalDetails from "./WithdrawalDetails";
 import WithdrawalHistory from "./WithdrawalHistory";
@@ -53,8 +54,7 @@ export {
     PaymentSuccess,
     PrivacyPolice,
     Profile,
-    Scan,
-    SelectBank,
+    Scan, SelectBank,
     SessionDetails,
     SessionSettings,
     SettingPin,
@@ -66,8 +66,7 @@ export {
     TransactionHistory,
     Vehicle,
     VerificationNumber,
-    Voucher,
-    Withdraw,
+    Voucher, VoucherDetails, Withdraw,
     WithdrawalDetails,
     WithdrawalHistory
 };

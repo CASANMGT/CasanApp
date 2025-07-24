@@ -4,16 +4,26 @@ import { VoucherUsage } from "../../../common";
 import { formatDiff } from "../../../helpers";
 
 interface Props {
-  data: VoucherUsage;
-  onSelect: () => void;
+  type?: "secondary";
+  data: VoucherUsage | undefined;
+  onSelect?: () => void;
+  onSelectSK?: () => void;
 }
 
-const VoucherUsageCard: React.FC<Props> = ({ data, onSelect }) => {
+const VoucherUsageCard: React.FC<Props> = ({
+  type,
+  data,
+  onSelect,
+  onSelectSK,
+}) => {
   const status = getLabelStatus(data?.Status);
   const duration = getLabelDuration(data);
 
   return (
-    <div onClick={onSelect} className="relative flex cursor-pointer mb-4">
+    <div
+      onClick={() => onSelect && onSelect()}
+      className={`relative flex-1 flex mb-4 ${onSelect && "cursor-pointer"}`}
+    >
       <img
         src={data?.VoucherDetails?.VoucherThumbnailURL || ILNoImage}
         alt="voucher"
@@ -24,7 +34,19 @@ const VoucherUsageCard: React.FC<Props> = ({ data, onSelect }) => {
         <p className="text-blackBold font-medium">
           {data?.VoucherDetails?.VoucherName || "-"}
         </p>
-        <p className="text-xs ">{data?.VoucherDetails?.Description || "-"}</p>
+        <p className="text-xs ">
+          {data?.VoucherDetails?.Description || "-"}{" "}
+          {type === "secondary" && (
+            <button
+              type="button"
+              onClick={onSelectSK}
+              className="text-primary100 text-[10px]"
+            >
+              S&K
+            </button>
+          )}
+        </p>
+
         <div className="flex baseline">
           <div className="border border-primary100 px-1.5 py-0.5 text-primary100 text-[10px]">
             Disediakan Oleh{" "}
@@ -33,7 +55,9 @@ const VoucherUsageCard: React.FC<Props> = ({ data, onSelect }) => {
         </div>
 
         <div className="between-x">
-          <p className="text-[10px] font-medium text-black90">{duration}</p>
+          <p className="text-[10px] font-medium text-black90">
+            {type === "secondary" ? `Sesi ID ${data?.SessionID}` : duration}
+          </p>
 
           <p className={`text-xs font-medium text-${status?.color}`}>
             {status?.label}
@@ -46,7 +70,7 @@ const VoucherUsageCard: React.FC<Props> = ({ data, onSelect }) => {
 
 export default VoucherUsageCard;
 
-const getLabelStatus = (status: number) => {
+const getLabelStatus = (status: number | undefined) => {
   let label: string = "";
   let color: string = "black100";
 
@@ -72,7 +96,7 @@ const getLabelStatus = (status: number) => {
   return { label, color };
 };
 
-const getLabelDuration = (data: VoucherUsage) => {
+const getLabelDuration = (data: VoucherUsage | undefined) => {
   let label = "";
 
   if (data?.Status === 3) label = "Voucher sudah expired";
