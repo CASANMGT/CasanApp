@@ -44,6 +44,18 @@ export enum EditUserError {
   InternalServerErrorCode = "5000",
 }
 
+export enum ProvideBy {
+  ProviderCasan = 1,
+  ProviderPartner = 2,
+}
+
+export enum VoucherUsageStatus {
+  Redeemed = 1,
+  NotRedeemed = 2,
+  VoucherExpired = 3,
+  VoucherCancelled = 4,
+}
+
 export enum DaysOfWeek {
   Senin = 1,
   Selasa = 2,
@@ -59,7 +71,6 @@ export enum WithdrawRequestStatus {
   ApprovedRequest = 2,
   RejectedRequest = 3,
 }
-
 
 export enum StringNumber {
   A = 1,

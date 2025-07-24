@@ -1,64 +1,64 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { bodyListProps, DataUser, MetaResponseProps, Voucher } from "../../common";
+import { bodyListProps, DataUser, MetaResponseProps, Voucher, VoucherUsage } from "../../common";
 import { Api } from "../../services/Api";
 
 
 
-type VoucherListResponseProps = {
+type VoucherUsageProductResponseProps = {
   status: string;
   message: string;
-  data: Voucher[];
+  data: VoucherUsage[];
   meta: MetaResponseProps;
 };
 
-type VoucherListState = {
-  data: VoucherListResponseProps | null;
+type VoucherUsageProductState = {
+  data: VoucherUsageProductResponseProps | null;
   loading: boolean;
   error: string | null;
 };
 
-const initialState: VoucherListState = {
+const initialState: VoucherUsageProductState = {
   data: null,
   loading: false,
   error: null,
 };
 
 // Async thunk for get voucher list
-export const fetchVoucherList = createAsyncThunk(
-  "fetchVoucherList",
+export const fetchVoucherUsageProduct = createAsyncThunk(
+  "fetchVoucherUsageProduct",
   async (params: bodyListProps, { rejectWithValue }) => {
     try {
       const res = await Api.get({
-        url: "vouchers",
+        url: "vouchers/usage/products",
         params,
       });
 
-      return res as VoucherListResponseProps;
+      return res as VoucherUsageProductResponseProps;
     } catch (e) {
       return rejectWithValue(e);
     }
   }
 );
 
-const voucherListSlice = createSlice({
-  name: "voucherList",
+const voucherUsageProductSlice = createSlice({
+  name: "voucherUsageProduct",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchVoucherList.pending, (state) => {
+      .addCase(fetchVoucherUsageProduct.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
-        fetchVoucherList.fulfilled,
-        (state, action: PayloadAction<VoucherListResponseProps>) => {
+        fetchVoucherUsageProduct.fulfilled,
+        (state, action: PayloadAction<VoucherUsageProductResponseProps>) => {
           state.loading = false;
           state.data = action.payload;
           state.error = null;
         }
       )
-      .addCase(fetchVoucherList.rejected, (state, action) => {
+      .addCase(fetchVoucherUsageProduct.rejected, (state, action) => {
         const dataError: any = action?.payload;
         if (dataError?.message) alert(dataError?.message);
 
@@ -69,4 +69,4 @@ const voucherListSlice = createSlice({
   },
 });
 
-export default voucherListSlice.reducer;
+export default voucherUsageProductSlice.reducer;

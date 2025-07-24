@@ -423,13 +423,25 @@ const SessionSettings = () => {
                   description="Silakan masukkan nominal pengisian yang sesuai dengan kebutuhan anda"
                   dataNominal={NOMINAL_SESSION}
                   balance={myUser?.data?.Balance || 0}
-                  onChange={(value) => setForm("nominal", value)}
+                  onChange={(value) => {
+                    const cloneData = clone(form);
+                    cloneData.nominal = value;
+                    cloneData.voucher = undefined;
+
+                    setForm("all", cloneData);
+                  }}
                 />
               ) : (
                 <InputHour
                   value={form.time}
                   form={form}
-                  onChange={(value) => setForm("time", value)}
+                  onChange={(value) => {
+                    const cloneData = clone(form);
+                    cloneData.time = value;
+                    cloneData.voucher = undefined;
+
+                    setForm("all", cloneData);
+                  }}
                 />
               )}
             </div>
@@ -616,6 +628,7 @@ const SessionSettings = () => {
             visible={openVoucher}
             select={form?.voucher}
             total={chargingNominal}
+            userId={myUser?.data?.ID}
             chargingStationID={data?.ID}
             onDismiss={() => setOpenVoucher(false)}
             onSelect={(select) => {

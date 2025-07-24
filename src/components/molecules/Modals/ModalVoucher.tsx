@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IcClose } from "../../../assets";
 import { OptionsProps } from "../../../common";
-import { fetchVoucherList, setFromGlobal } from "../../../features";
+import { fetchVoucherAvailable, setFromGlobal } from "../../../features";
 import { rupiah } from "../../../helpers";
 import { AppDispatch, RootState } from "../../../store";
 import { Button, LoadingPage } from "../../atoms";
@@ -14,6 +14,7 @@ interface Props {
   total: number;
   select: OptionsProps | undefined;
   chargingStationID: number;
+  userId: number | undefined;
   onDismiss: () => void;
   onSelect: (value: OptionsProps | undefined) => void;
 }
@@ -22,13 +23,16 @@ const ModalVoucher: React.FC<Props> = ({
   visible,
   select,
   total,
-  onDismiss,
-  onSelect,
+  userId,
   chargingStationID,
+  onSelect,
+  onDismiss,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const voucherList = useSelector((state: RootState) => state.voucherList);
+  const voucherAvailable = useSelector(
+    (state: RootState) => state.voucherAvailable
+  );
   const [optionVoucherDiscount, setOptionVoucherDiscount] =
     useState<OptionsProps[]>();
   const [optionVoucherProduct, setOptionVoucherProduct] =
@@ -44,13 +48,13 @@ const ModalVoucher: React.FC<Props> = ({
     if (
       visible &&
       chargingStationID &&
-      voucherList?.data?.data &&
-      voucherList?.data?.data.length
+      voucherAvailable?.data?.data &&
+      voucherAvailable?.data?.data.length
     ) {
       const newDataDiscount: OptionsProps[] = [];
       const newDataProduct: OptionsProps[] = [];
 
-      voucherList?.data?.data.map((e) => {
+      voucherAvailable?.data?.data.map((e) => {
         const format =
           e?.VoucherType === 1
             ? ` • Discount ${
@@ -81,10 +85,10 @@ const ModalVoucher: React.FC<Props> = ({
       setOptionVoucherDiscount(newDataDiscount);
       setOptionVoucherProduct(newDataProduct);
     }
-  }, [voucherList?.data, total]);
+  }, [voucherAvailable?.data, total]);
 
   const setUp = () => {
-    dispatch(fetchVoucherList({ page: 1, limit: 10, is_active: true }));
+    if (userId) dispatch(fetchVoucherAvailable(userId));
     setSelected(select);
   };
 
@@ -115,7 +119,7 @@ const ModalVoucher: React.FC<Props> = ({
             </div>
           </div>
 
-          <LoadingPage loading={voucherList?.loading} color="primary100">
+          <LoadingPage loading={voucherAvailable?.loading} color="primary100">
             <div className="overflow-auto scrollbar-none">
               <p className="mb-2.5">Voucher Potongan Harga</p>
               {isShowVoucherDiscount &&
