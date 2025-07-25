@@ -39,18 +39,22 @@ const Voucher = () => {
       <Header title="Voucher Saya" onDismiss={onDismiss} />
 
       <LoadingPage loading={loading && !data}>
-        <div className="py-6 px-4">
+        <div className="pt-6 px-4 flex flex-col overflow-hidden ">
           <h2 className="font-medium text-sm mb-2.5">Voucher Produk</h2>
 
-          {data &&
-            data.length &&
-            data.map((item, index) => (
-              <VoucherUsageCard
-                key={index}
-                data={item}
-                onSelect={() => navigate(`details/${item?.ID}`)}
-              />
-            ))}
+          <div className="overflow-auto scrollbar-none">
+            {data &&
+              data.length &&
+              data.map((item, index) => (
+                <VoucherUsageCard
+                  key={index}
+                  data={item}
+                  onSelect={() => navigate(`details/${item?.ID}`)}
+                />
+              ))}
+
+              <div className="h-6"/>
+          </div>
         </div>
       </LoadingPage>
     </div>

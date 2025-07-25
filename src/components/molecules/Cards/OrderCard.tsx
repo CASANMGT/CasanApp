@@ -39,7 +39,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
         break;
 
       case 5:
-        if (data?.MaxWatt > 0) value = "Sedang Mengisi";
+        if (data?.MaxWatt > 1) value = "Sedang Mengisi";
         else value = "Persiapan";
         break;
 
@@ -69,7 +69,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
 
   let diff: string = "";
 
-  if (status === 5 && data?.MaxWatt > 0) {
+  if (status === 5 && data?.MaxWatt > 1) {
     diff = formatDuration(
       moments(data?.StopChargingTime).diff(moments(), "second")
     );
@@ -118,7 +118,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
             <div>
               <p
                 className={`font-medium ${
-                  status === 5 && data?.MaxWatt > 0
+                  status === 5 && data?.MaxWatt > 1
                     ? "text-[#129030]"
                     : status === 7 || status === 8
                     ? "text-red"
@@ -150,10 +150,10 @@ const OrderCard: React.FC<OrderCardProps> = ({
                   ) : status === 5 ? (
                     <div>
                       <p className="text-xs text-black50">
-                        {status === 5 && data?.MaxWatt > 0
+                        {status === 5 && data?.MaxWatt > 1
                           ? `Tersisa: `
                           : "Sistem sedang menyiapkan"}
-                        {status === 5 && data?.MaxWatt > 0 && (
+                        {status === 5 && data?.MaxWatt > 1 && (
                           <span className="text-black100 text-xs">{diff}</span>
                         )}
                       </p>
@@ -192,7 +192,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
             <HiOutlineTicket size={20} className="text-primary100" />
 
             <span className="flex-1 font-medium">
-              Kalim Voucher {dataVoucher?.VoucherDetails?.Description}
+              Klaim Voucher {dataVoucher?.VoucherDetails?.Description}
             </span>
 
             <FaChevronRight size={16} className="text-black100" />

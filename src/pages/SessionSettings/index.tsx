@@ -229,6 +229,7 @@ const SessionSettings = () => {
 
   const getTotalPrice = useCallback(() => {
     let value: number = 0;
+    let discount: number = 0;
 
     if (form?.paymentMethod?.priceType === "percentage") {
       const calculate =
@@ -236,12 +237,24 @@ const SessionSettings = () => {
       value = chargingNominal + calculate;
     } else value = chargingNominal + Number(form.paymentMethod?.value || 0);
 
-    return value;
+    if (form?.voucher?.data) {
+      const dataVoucher: Voucher = form?.voucher?.data;
+
+      if (dataVoucher?.VoucherType === 1) {
+        discount =
+          dataVoucher?.DiscountType === 1
+            ? dataVoucher?.DiscountValue
+            : (chargingNominal * dataVoucher?.DiscountValue) / 100;
+      }
+    }
+
+    return value - discount;
   }, [
     form.paymentMethod,
     form.selectedTab,
     form.nominal,
     calculateCharge?.data,
+    form?.voucher,
   ]);
 
   const onValidation = () => {
@@ -539,7 +552,7 @@ const SessionSettings = () => {
           visible={visiblePaymentMethod}
           select={form.paymentMethod}
           selectBalance={form?.balance}
-          total={chargingNominal}
+          total={totalPrice}
           onDismiss={() => setVisiblePaymentMethod(false)}
           onSelect={(select, value) => {
             const cloneData = clone(form);
@@ -668,11 +681,11 @@ const formatDiscount = (data: OptionsProps | undefined, nominal: number) => {
 
   if (data?.value) {
     if (dataVoucher?.VoucherType === 1) {
-      value = `Pot. Harga ${
+      value = `${dataVoucher?.VoucherName} (disc ${
         dataVoucher?.DiscountType === 1
           ? dataVoucher?.DiscountValue
           : (nominal * dataVoucher?.DiscountValue) / 100
-      }`;
+      })`;
     } else {
       value = dataVoucher?.VoucherName;
     }

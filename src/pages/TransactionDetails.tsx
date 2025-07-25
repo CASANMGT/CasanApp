@@ -357,13 +357,13 @@ const TransactionDetails = () => {
                 className="py-2 border-b border-b-black10"
               />
 
-              {transactionType !== 1 && (
+              {/* {transactionType !== 1 && (
                 <BetweenText
                   labelLeft="Referensi Sesi ID"
                   labelRight={transactionById?.data?.Session?.ID || "-"}
                   className="py-2 border-b border-b-black10"
                 />
-              )}
+              )} */}
 
               <BetweenText
                 labelLeft="Metode Pembayaran"
@@ -380,7 +380,7 @@ const TransactionDetails = () => {
                 labelRight=""
                 content={
                   <div className="row gap-1">
-                    <p>
+                    <p className="text-black100 text-xs">
                       {dataVoucher
                         ? dataVoucher.VoucherDetails?.DiscountType === 1
                           ? `-Rp${rupiah(

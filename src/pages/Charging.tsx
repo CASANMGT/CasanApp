@@ -75,17 +75,13 @@ const Charging = () => {
   useEffect(() => {
     if (
       !detailSession?.loading &&
-      (detailSession?.data?.MaxWatt === 0 ||
+      ((detailSession?.data?.MaxWatt || 0) <= 1 ||
         detailSession?.data?.Status === 3 ||
         detailSession?.data?.Status === 4 ||
         detailSession?.data?.Status === 5)
     ) {
-      if (detailSession?.data?.Status === 3) setOpenDiagnosis(true);
-      else if (
-        detailSession?.data?.Status === 5 &&
-        (detailSession?.data?.MaxWatt || 0) > 0
-      )
-        setOpenDiagnosis(false);
+      if ((detailSession?.data?.MaxWatt || 0) > 1) setOpenDiagnosis(false);
+      else setOpenDiagnosis(true);
 
       timeoutProgress();
     }
@@ -93,9 +89,7 @@ const Charging = () => {
 
   useEffect(() => {
     if (startSession?.data) {
-      if (detailSession?.data?.Status === 2) {
-        setOpenDiagnosis(true);
-      }
+      setOpenDiagnosis(true);
       getData();
       dispatch(resetDataStartSession());
     } else if (startSession?.error) {
@@ -239,7 +233,7 @@ const Charging = () => {
               content={
                 status === 2
                   ? "-"
-                  : (dataSession?.MaxWatt || 0) > 0
+                  : (dataSession?.MaxWatt || 0) > 1
                   ? dataSession?.ExpectedDuration
                     ? formatDuration(dataSession?.ExpectedDuration)
                     : "-"
@@ -250,7 +244,13 @@ const Charging = () => {
             <InformationItem
               icon={IcFlash}
               label="Daya"
-              content={status === 5 ? `${dataSession?.MaxWatt} Watt` : "-"}
+              content={
+                status === 5
+                  ? `${
+                      (dataSession?.MaxWatt || 0) > 1 ? dataSession?.MaxWatt : 0
+                    } Watt`
+                  : "-"
+              }
             />
           </div>
 
@@ -359,7 +359,9 @@ const Charging = () => {
               <BetweenText
                 type="medium-content"
                 labelLeft="Daya Maksimum"
-                labelRight={`${dataSession?.MaxWatt}Watt`}
+                labelRight={`${
+                  (dataSession?.MaxWatt || 0) > 1 ? dataSession?.MaxWatt : 0
+                }Watt`}
                 className="bg-baseLightGray p-3"
               />
             )}

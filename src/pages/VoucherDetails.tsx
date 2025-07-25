@@ -7,6 +7,7 @@ import {
   Button,
   Header,
   LoadingPage,
+  ModalSKVoucher,
   VoucherUsageCard,
 } from "../components";
 import { hideLoading, showLoading } from "../features";
@@ -22,6 +23,7 @@ const VoucherDetails = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<VoucherUsage>();
   const [openClaim, setOpenClaim] = useState(false);
+  const [openSKVoucher, setOpenSKVoucher] = useState(false);
 
   useEffect(() => {
     getData();
@@ -75,7 +77,11 @@ const VoucherDetails = () => {
 
       <LoadingPage loading={loading}>
         <div className="flex flex-col bg-white mx-4 mt-8 px-4 py-6">
-          <VoucherUsageCard type="secondary" data={data} />
+          <VoucherUsageCard
+            type="secondary"
+            data={data}
+            onSelectSK={() => setOpenSKVoucher(true)}
+          />
 
           <p className="text-center">
             {`${
@@ -98,7 +104,7 @@ const VoucherDetails = () => {
                 </p>
               </div>
               <Button
-                label="Kalim Voucher"
+                label="Klaim Voucher"
                 onClick={() => setOpenClaim(true)}
               />
             </>
@@ -116,6 +122,14 @@ const VoucherDetails = () => {
           labelButtonRight="Batal"
           onDismiss={() => setOpenClaim(false)}
           onClick={onClaim}
+        />
+      )}
+
+      {openSKVoucher && (
+        <ModalSKVoucher
+          visible={openSKVoucher}
+          data={data?.VoucherDetails}
+          onDismiss={() => setOpenSKVoucher(false)}
         />
       )}
       {/* END MODAL */}

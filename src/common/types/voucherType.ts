@@ -97,7 +97,7 @@ export type VoucherUsage = {
   StationID: number;
   ChargingStation: ChargingStation;
   UsedAt: string;
-  VoucherDetails: VoucherDetails;
+  VoucherDetails: Voucher;
   Session: Session;
   IsClaimed: boolean;
   Status: number;
@@ -109,31 +109,6 @@ export type VoucherUsage = {
   DeletedAt: string | null;
 };
 
-export type VoucherDetails = {
-  ID: number;
-  EndDate: string | null;
-  CreatedAt: string;
-  DeletedAt: string | null;
-  IsPublish: boolean;
-  StartDate: string;
-  TotalUsed: number;
-  UpdatedAt: string;
-  ProvidedBy: number;
-  Description: string;
-  NoEndPeriod: boolean;
-  VoucherName: string;
-  VoucherType: number;
-  DiscountType: number;
-  TargetMarket: number;
-  DiscountValue: number;
-  UnlimitedUsage: boolean;
-  MinimumCharging: number;
-  ChargingStations: ChargingStation[];
-  VoucherThumbnailURL: string;
-  AvailableToQRScanOnly: boolean;
-  ProductExpiryAfterInMin: number;
-  ChargingStationTotalUsage: number;
-};
 
 export type BodyVoucherUsage = {
   page: number;

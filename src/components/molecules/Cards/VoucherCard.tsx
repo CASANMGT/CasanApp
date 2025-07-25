@@ -37,7 +37,7 @@ const VoucherCard: React.FC<Props> = ({
         <img
           src={data?.data?.VoucherThumbnailURL || ILNoImage}
           alt="voucher"
-          className="w-[100px] h-[100px] border-l-2 border-l-primary100 border-dashed"
+          className="w-[100px] h-[100px] object-center border-l-2 border-l-primary100 border-dashed"
         />
 
         <div

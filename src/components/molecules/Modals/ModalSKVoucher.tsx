@@ -1,20 +1,23 @@
 import React from "react";
 import { IcClose } from "../../../assets";
-import { ChargingStation, Voucher } from "../../../common";
+import { Voucher } from "../../../common";
 import { moments } from "../../../helpers";
 import ModalContainer from "./ModalContainer";
 
 interface Props {
   visible: boolean;
-  data: Voucher;
+  data: Voucher | undefined;
   onDismiss: () => void;
 }
 
 const ModalSKVoucher: React.FC<Props> = ({ visible, data, onDismiss }) => {
-  let dataChargingStation: ChargingStation | null = null;
+  let location: string = "";
 
   if (data?.ChargingStations && data?.ChargingStations.length) {
-    dataChargingStation = data?.ChargingStations[0];
+    data?.ChargingStations.forEach((element) => {
+      if (location) location += `, ${element?.Name}`;
+      else location = element?.Name;
+    });
   }
 
   return (
@@ -37,24 +40,21 @@ const ModalSKVoucher: React.FC<Props> = ({ visible, data, onDismiss }) => {
           <div className="overflow-auto scrollbar-none text-black100 mb-6">
             <h2 className="font-semibold mb-2">Masa Berlaku</h2>
             <p>{`Mulai dari ${moments(data?.StartDate).format(
-              "DD MMM YYYY HH:mm"
-            )} - ${
+              "DD MMM YYYY"
+            )} 00:00 - ${
               data?.NoEndPeriod
                 ? "tanpa batas waktu"
-                : moments(data?.EndDate).format("DD MMM YYYY HH:mm")
+                : `${moments(data?.EndDate).format("DD MMM YYYY")} 23:59`
             }`}</p>
 
             <h2 className="font-semibold mb-2 mt-6">Syarat</h2>
-            <ul className="list-disc pl-5 space-y-1 text-gray-600">
+            <ul className="list-disc pl-5 space-y-1 text-black100 text-sm">
               <li>Voucher tidak dapat dikembalikan</li>
               <li>Voucher hanya dapat digunakan selama periode promo</li>
               <li>
                 Voucher tidak dapat diuangkan atau digabung dengan promo lain
               </li>
-              <li>
-                Voucher berlaku sesuai lokasi yang ditentukan{" "}
-                {dataChargingStation?.Name || "-"}
-              </li>
+              <li>Voucher berlaku sesuai lokasi yang ditentukan {location}</li>
               <li>
                 CASAN berhak mengubah atau menghentikan promo sewaktu-waktu
                 tanpa pemberitahuan sebelumnya

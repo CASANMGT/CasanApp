@@ -68,8 +68,8 @@ const ModalVoucher: React.FC<Props> = ({
 
         if (e?.ChargingStations.some((i) => i?.ID === chargingStationID || 0)) {
           if (total < e?.MinimumCharging)
-            error = `Minimum charging Rp${rupiah(e?.MinimumCharging)}`;
-        } else error = "Charging station not eligible!";
+            error = `Min. Pembayaran Rp${rupiah(e?.MinimumCharging)}`;
+        } else error = "Voucher tidak berlaku di stasiun ini!";
 
         const newItem: OptionsProps = {
           type: e?.VoucherType === 1 ? "discount" : "product",

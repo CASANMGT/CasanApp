@@ -40,11 +40,11 @@ export const formatDiff = (date: string) => {
   let message = "beberapa saat lagi";
 
   if (diffDays >= 1) {
-    message = `sisa ${diffDays} hari lagi`;
+    message = `Sisa ${diffDays} hari lagi`;
   } else if (diffHours >= 1) {
-    message = `sisa ${diffHours} jam lagi`;
+    message = `Sisa ${diffHours} jam lagi`;
   } else if (diffMinutes >= 1) {
-    message = `sisa ${diffMinutes} menit lagi`;
+    message = `Sisa ${diffMinutes} menit lagi`;
   }
 
   return message;
