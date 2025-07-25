@@ -61,6 +61,7 @@ const OngoingOrder = () => {
               data={item}
               position={index}
               onClick={() => onNext(item)}
+              onClaim={(id) => navigate(`/voucher/details/${id}`)}
             />
           ))
         ) : (
