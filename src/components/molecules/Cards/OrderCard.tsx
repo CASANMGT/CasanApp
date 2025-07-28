@@ -182,7 +182,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
         </div>
       </div>
 
-      {dataVoucher?.Status === 2 && (
+      {dataVoucher?.Status === 2 && dataVoucher?.VoucherType == 2 && (
         <>
           <Separator className="my-4" />
           <div

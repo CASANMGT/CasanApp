@@ -681,11 +681,11 @@ const formatDiscount = (data: OptionsProps | undefined, nominal: number) => {
 
   if (data?.value) {
     if (dataVoucher?.VoucherType === 1) {
-      value = `${dataVoucher?.VoucherName} (disc ${
+      value = `${dataVoucher?.VoucherName} (disc ${rupiah(
         dataVoucher?.DiscountType === 1
           ? dataVoucher?.DiscountValue
           : (nominal * dataVoucher?.DiscountValue) / 100
-      })`;
+      )})`;
     } else {
       value = dataVoucher?.VoucherName;
     }
