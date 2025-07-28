@@ -1,4 +1,6 @@
 import { capitalize } from "lodash";
+import { FaChevronRight } from "react-icons/fa6";
+import { HiOutlineTicket } from "react-icons/hi2";
 import { IcFuel, ILNoImage } from "../../../assets";
 import { Session, VoucherUsage } from "../../../common";
 import {
@@ -8,14 +10,12 @@ import {
   rupiah,
 } from "../../../helpers";
 import { Separator } from "../../atoms";
-import { HiOutlineTicket } from "react-icons/hi2";
-import { FaChevronRight } from "react-icons/fa6";
 
 interface OrderCardProps {
   position: number;
   data: Session;
   onClick: () => void;
-  onClaim: (id: number) => void;
+  onClaim?: (id: number) => void;
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({
@@ -68,6 +68,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
   );
 
   let diff: string = "";
+  let isShowClaim = false;
 
   if (status === 5 && data?.MaxWatt > 1) {
     diff = formatDuration(
@@ -80,6 +81,16 @@ const OrderCard: React.FC<OrderCardProps> = ({
 
   if (data?.VoucherUsages && data?.VoucherUsages.length)
     dataVoucher = data?.VoucherUsages[0];
+
+  if (
+    dataVoucher?.Status === 2 &&
+    dataVoucher?.VoucherType == 2 &&
+    (data?.Status === 5 || data?.Status === 6)
+  ) {
+    isShowClaim = true;
+  }
+
+  console.log("cek data", data);
 
   return (
     <div
@@ -182,11 +193,11 @@ const OrderCard: React.FC<OrderCardProps> = ({
         </div>
       </div>
 
-      {dataVoucher?.Status === 2 && dataVoucher?.VoucherType == 2 && (
+      {isShowClaim && dataVoucher && (
         <>
           <Separator className="my-4" />
           <div
-            onClick={() => onClaim(dataVoucher?.ID)}
+            onClick={() => onClaim && onClaim(dataVoucher?.ID)}
             className="between-x gap-2 px-3"
           >
             <HiOutlineTicket size={20} className="text-primary100" />

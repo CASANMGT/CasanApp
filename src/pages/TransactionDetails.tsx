@@ -77,12 +77,15 @@ const TransactionDetails = () => {
     }
   }, [cancelSession]);
 
+  console.log("cek data", transactionById?.data);
+
   useEffect(() => {
     if (transactionById?.data?.Status === 2) {
-      const diff = moments(transactionById?.data?.Session?.ExpiredAt).diff(
-        moments(),
-        "seconds"
-      );
+      const diff = moments(
+        transactionById?.data?.Type === 1
+          ? transactionById?.data?.ExpiredAt
+          : transactionById?.data?.Session?.ExpiredAt
+      ).diff(moments(), "seconds");
       const newDuration = diff > 0 ? diff : 0;
 
       setDuration(newDuration);
