@@ -276,8 +276,10 @@ const SessionSettings = () => {
     }
 
     if (!message?.title) {
-      if (isAuthenticated) setVisiblePaymentMethod(true);
-      else setOpenInputPhoneNumber(true);
+      if (isAuthenticated) {
+        if (totalPrice === 0) onPay(form);
+        else setVisiblePaymentMethod(true);
+      } else setOpenInputPhoneNumber(true);
     } else showAlert(message);
   };
 
@@ -319,7 +321,10 @@ const SessionSettings = () => {
     const body: AddSessionBody = {
       amount: chargingNominal,
       device_id: selectedDevice?.ID,
-      payment_method: select.paymentMethod?.key || "BALANCE_FU",
+      payment_method:
+        totalPrice > 0 && select.paymentMethod?.key
+          ? select.paymentMethod?.key
+          : "BALANCE_FU",
       session_method: select.selectedTab === "1" ? 1 : 2,
       socket_id: select?.selectedSocket || 0,
       station_id: data?.ID,
