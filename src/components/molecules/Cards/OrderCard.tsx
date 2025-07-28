@@ -85,7 +85,8 @@ const OrderCard: React.FC<OrderCardProps> = ({
   if (
     dataVoucher?.Status === 2 &&
     dataVoucher?.VoucherType == 2 &&
-    (data?.Status === 5 || data?.Status === 6)
+    (data?.Status === 5 || data?.Status === 6) &&
+    data?.MaxWatt > 10
   ) {
     isShowClaim = true;
   }

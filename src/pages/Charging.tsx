@@ -61,8 +61,6 @@ const Charging = () => {
   const [visibleAlert, setVisibleAlert] = useState<boolean>(false);
   const [openCancel, setOpenCancel] = useState<boolean>(false);
   const [openDiagnosis, setOpenDiagnosis] = useState<boolean>(false);
-  const [openDiagnosisFailed, setOpenDiagnosisFailed] =
-    useState<boolean>(false);
   const [openFinished, setOpenFinished] = useState<boolean>(false);
   const [openStop, setOpenStop] = useState<boolean>(false);
   const [openCantProcess, setOpenCantProcess] = useState<boolean>(false);
@@ -80,9 +78,6 @@ const Charging = () => {
         detailSession?.data?.Status === 4 ||
         detailSession?.data?.Status === 5)
     ) {
-      if ((detailSession?.data?.MaxWatt || 0) > 1) setOpenDiagnosis(false);
-      else setOpenDiagnosis(true);
-
       timeoutProgress();
     }
   }, [detailSession?.data]);
@@ -178,7 +173,9 @@ const Charging = () => {
     else if (dataSession?.ID) {
       if (status === 5) {
         dispatch(fetchStopSession(dataSession?.ID || 0));
-      } else dispatch(fetchStartSession(dataSession?.ID));
+      } else {
+        dispatch(fetchStartSession(dataSession?.ID));
+      }
     }
   };
 
@@ -420,17 +417,6 @@ const Charging = () => {
           setOpenStop(false);
           dispatch(fetchStopSession(dataSession?.ID || 0));
         }}
-      />
-
-      <AlertModal
-        visible={openDiagnosisFailed}
-        image={ILCharging}
-        title="Diagnosis Gagal"
-        description="Ups, coba cek lagi chargermu ya"
-        labelButtonLeft="Coba Lagi"
-        labelButtonRight="Tutup"
-        onDismiss={() => setOpenDiagnosisFailed(false)}
-        onClick={() => dispatch(fetchStopSession(dataSession?.ID || 0))}
       />
 
       <AlertModal
