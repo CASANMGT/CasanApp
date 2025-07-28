@@ -16,7 +16,7 @@ import {
   IcSuccessGreen,
   IcTimerCircle,
 } from "../assets";
-import { ERROR_MESSAGE } from "../common";
+import { ERROR_MESSAGE, VoucherUsage } from "../common";
 import {
   BetweenText,
   Button,
@@ -40,6 +40,7 @@ import {
   rupiah,
 } from "../helpers";
 import { AppDispatch, RootState } from "../store";
+import { FaArrowRight } from "react-icons/fa6";
 
 const TransactionDetails = () => {
   const qrRef = useRef<HTMLCanvasElement | null>(null);
@@ -60,7 +61,6 @@ const TransactionDetails = () => {
   useEffect(() => {
     dispatch(resetDataAddSession());
     getData();
-
   }, []);
 
   // Manage response cancel session
@@ -77,12 +77,15 @@ const TransactionDetails = () => {
     }
   }, [cancelSession]);
 
+  console.log("cek data", transactionById?.data);
+
   useEffect(() => {
     if (transactionById?.data?.Status === 2) {
-      const diff = moments(transactionById?.data?.Session?.ExpiredAt).diff(
-        moments(),
-        "seconds"
-      );
+      const diff = moments(
+        transactionById?.data?.Type === 1
+          ? transactionById?.data?.ExpiredAt
+          : transactionById?.data?.Session?.ExpiredAt
+      ).diff(moments(), "seconds");
       const newDuration = diff > 0 ? diff : 0;
 
       setDuration(newDuration);
@@ -196,6 +199,9 @@ const TransactionDetails = () => {
       .toLocaleLowerCase()
   );
 
+  let dataVoucher: VoucherUsage | undefined = undefined;
+  let isShowVoucher: boolean = false;
+
   const isShowRefund: boolean =
     Number(transactionById?.data?.WalletUsedAmount || 0) > 0 &&
     (status === 3 || status === 4)
@@ -206,6 +212,14 @@ const TransactionDetails = () => {
     transactionById?.data?.PaymentMethod === "QRIS_TU"
       ? true
       : false;
+
+  if (
+    transactionById?.data?.Session?.VoucherUsages &&
+    transactionById?.data?.Session?.VoucherUsages.length
+  ) {
+    isShowVoucher = true;
+    dataVoucher = transactionById?.data?.Session?.VoucherUsages[0];
+  }
 
   return (
     <div className="background-1 py-[14px] px-4">
@@ -346,13 +360,13 @@ const TransactionDetails = () => {
                 className="py-2 border-b border-b-black10"
               />
 
-              {transactionType !== 1 && (
+              {/* {transactionType !== 1 && (
                 <BetweenText
                   labelLeft="Referensi Sesi ID"
                   labelRight={transactionById?.data?.Session?.ID || "-"}
                   className="py-2 border-b border-b-black10"
                 />
-              )}
+              )} */}
 
               <BetweenText
                 labelLeft="Metode Pembayaran"
@@ -361,6 +375,33 @@ const TransactionDetails = () => {
                     .replace("_TU", "")
                     .toLocaleLowerCase()
                 )}
+                className="py-2 border-b border-b-black10"
+              />
+
+              <BetweenText
+                labelLeft="Voucher Discount"
+                labelRight=""
+                content={
+                  <div className="row gap-1">
+                    <p className="text-black100 text-xs">
+                      {dataVoucher
+                        ? dataVoucher.VoucherDetails?.DiscountType === 1
+                          ? `-Rp${rupiah(
+                              dataVoucher.VoucherDetails?.DiscountValue
+                            )}`
+                          : `[${dataVoucher.VoucherDetails?.Description}]`
+                        : 0}
+                    </p>
+
+                    {isShowVoucher &&
+                      dataVoucher?.VoucherDetails?.DiscountType === 2 && (
+                        <FaArrowRight
+                          onClick={() => alert()}
+                          className="cursor-pointer text-primary100"
+                        />
+                      )}
+                  </div>
+                }
                 className="py-2 border-b border-b-black10"
               />
 

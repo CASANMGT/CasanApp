@@ -10,7 +10,7 @@ import {
   IcSuccessGreen,
   IcTimerCircle,
 } from "../assets";
-import { Session } from "../common";
+import { Session, VoucherUsage } from "../common";
 import {
   BetweenText,
   Button,
@@ -26,6 +26,7 @@ import {
   rupiah,
 } from "../helpers";
 import { AppDispatch, RootState } from "../store";
+import { FaArrowRight } from "react-icons/fa6";
 
 const SessionDetails = () => {
   const navigate = useNavigate();
@@ -99,6 +100,8 @@ const SessionDetails = () => {
   };
 
   const dataSession: Session | null = detailSession?.data;
+  let dataVoucher: VoucherUsage | undefined = undefined;
+  let isShowVoucher: boolean = false;
   const status: number | undefined = dataSession?.Status;
   const isFull =
     (dataSession?.Transaction?.Amount || 0) -
@@ -106,6 +109,16 @@ const SessionDetails = () => {
     0
       ? true
       : false;
+
+  if (
+    dataSession?.VoucherUsages &&
+    dataSession?.VoucherUsages.length &&
+    status !== 7 &&
+    status !== 8
+  ) {
+    isShowVoucher = true;
+    dataVoucher = dataSession?.VoucherUsages[0];
+  }
 
   return (
     <div className="background-1 overflow-hidden justify-between flex flex-col">
@@ -290,28 +303,56 @@ const SessionDetails = () => {
                   .replace("_TU", "")
                   .toLocaleLowerCase()
               )}
+              className="py-2 border-b border-b-black10"
             />
 
-            <Separator className="my-2 bg-black10" />
             <BetweenText
               labelLeft="Nominal Pengisian"
               labelRight={`Rp${rupiah(dataSession?.Transaction?.Amount)}`}
+              className="py-2 border-b border-b-black10"
             />
 
-            <Separator className="my-2 bg-black10" />
+            {isShowVoucher && (
+              <BetweenText
+                labelLeft="Voucher Discount"
+                labelRight=""
+                content={
+                  <div className="row gap-1">
+                    <p>
+                      {dataVoucher
+                        ? dataVoucher.VoucherDetails?.DiscountType === 1
+                          ? `-Rp${rupiah(
+                              dataVoucher.VoucherDetails?.DiscountValue
+                            )}`
+                          : `[${dataVoucher.VoucherDetails?.Description}]`
+                        : 0}
+                    </p>
+
+                    {dataVoucher?.VoucherDetails?.DiscountType === 2 && (
+                      <FaArrowRight
+                        onClick={() => alert()}
+                        className="cursor-pointer text-primary100"
+                      />
+                    )}
+                  </div>
+                }
+                className="py-2 border-b border-b-black10"
+              />
+            )}
+
             <BetweenText
               labelLeft="Biaya Transaksi"
               labelRight={`Rp${rupiah(dataSession?.Transaction?.TotalFee)}`}
+              className="py-2"
             />
 
-            <Separator className="my-2 bg-black100" />
             <BetweenText
               labelLeft="Total Transaksi"
               labelRight={`Rp${rupiah(dataSession?.Transaction?.DueAmount)}`}
               classNameLabelLeft="text-black100"
               classNameLabelRight="text-black100"
+              className="py-2 border-y border-y-black100"
             />
-            <Separator className="mt-2 bg-black100" />
 
             {status === 8 && (
               <BetweenText

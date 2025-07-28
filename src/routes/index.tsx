@@ -35,6 +35,8 @@ import {
   Withdraw,
   WithdrawalDetails,
   WithdrawalHistory,
+  Voucher,
+  VoucherDetails,
 } from "../pages";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -53,10 +55,7 @@ const RoutesPage = () => {
           path="charging-station-details/:id"
           element={<ChargingStationDetails />}
         />
-        <Route
-          path="location-list"
-          element={<LocationList />}
-        />
+        <Route path="location-list" element={<LocationList />} />
         <Route path="login" element={<Login />} />
         <Route path="text-condition" element={<TermCondition />} />
         <Route path="privacy-police" element={<PrivacyPolice />} />
@@ -92,6 +91,15 @@ const RoutesPage = () => {
             path="top-up"
             element={<ProtectedRoute element={<TopUp />} />}
           />
+          <Route
+            path="voucher"
+            element={<ProtectedRoute element={<Voucher />} />}
+          />
+          <Route
+            path="voucher/details/:id"
+            element={<ProtectedRoute element={<VoucherDetails />} />}
+          />
+
           <Route
             path="setting-pin"
             element={<ProtectedRoute element={<SettingPin />} />}

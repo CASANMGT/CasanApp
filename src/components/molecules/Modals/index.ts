@@ -6,15 +6,16 @@ import ModalChargingStation from "./ModalChargingStation";
 import ModalContainer from "./ModalContainer";
 import ModalInputHour from "./ModalInputHour";
 import ModalInputNominal from "./ModalInputNominal";
-import ModalPaymentMethod from "./ModalPaymentMethod";
-import ModalVoltageAmpere from "./ModalVoltageAmpere";
-import RequestOTPModal from "./RequestOTPModal";
-import ModalSelectBank from "./ModalSelectBank";
 import ModalInputPin from "./ModalInputPin";
+import ModalPaymentMethod from "./ModalPaymentMethod";
+import ModalSelectBank from "./ModalSelectBank";
+import ModalSKVoucher from "./ModalSKVoucher";
+import ModalVoltageAmpere from "./ModalVoltageAmpere";
+import ModalVoucher from "./ModalVoucher";
+import RequestOTPModal from "./RequestOTPModal";
 
 export {
     AlertModal,
-    ModalSelectBank,
     DiagnosisModal,
     InputOTPModal,
     InputPhoneNumberModal,
@@ -22,9 +23,12 @@ export {
     ModalContainer,
     ModalInputHour,
     ModalInputNominal,
+    ModalInputPin,
     ModalPaymentMethod,
+    ModalSelectBank,
+    ModalSKVoucher,
     ModalVoltageAmpere,
-    RequestOTPModal,
-    ModalInputPin
+    ModalVoucher,
+    RequestOTPModal
 };
 

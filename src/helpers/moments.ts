@@ -28,6 +28,28 @@ export const setDiff = (startTime: string, endTime: string) => {
   return value;
 };
 
+export const formatDiff = (date: string) => {
+  const targetDate = moments("2025-08-15T00:00:00Z");
+  const now = moments();
+
+  const diffMs = targetDate.diff(now);
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  let message = "beberapa saat lagi";
+
+  if (diffDays >= 1) {
+    message = `Sisa ${diffDays} hari lagi`;
+  } else if (diffHours >= 1) {
+    message = `Sisa ${diffHours} jam lagi`;
+  } else if (diffMinutes >= 1) {
+    message = `Sisa ${diffMinutes} menit lagi`;
+  }
+
+  return message;
+};
+
 export const timeToSeconds = (time: string): number => {
   const [hours, minutes] = time.split(":").map(Number);
   return hours * 3600 + minutes * 60;
@@ -50,7 +72,7 @@ export const formatDuration = (seconds?: number): string => {
 
     value = `${hours ? `${hours} Jam ` : ""}`;
 
-    if(minutes>0) value +=`${minutes} Menit`
+    if (minutes > 0) value += `${minutes} Menit`;
   }
 
   return value;
@@ -70,9 +92,10 @@ export const formatTime = (seconds?: number): string => {
   ].join(":");
 };
 
-
 export const formatMinutesToHHMM = (minutes: number): string => {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+  return `${hours.toString().padStart(2, "0")}:${mins
+    .toString()
+    .padStart(2, "0")}`;
 };

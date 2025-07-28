@@ -1,5 +1,7 @@
 import { clone } from "lodash";
 import { useCallback, useEffect, useState } from "react";
+import { FaChevronRight } from "react-icons/fa6";
+import { HiOutlineTicket } from "react-icons/hi2";
 import { useDispatch, useSelector } from "react-redux";
 import {
   NavigateFunction,
@@ -10,7 +12,6 @@ import {
 import {
   IcInfoCircle,
   IcInfoCircleGreen,
-  IcRightCircleGreen,
   IcRightGreen,
   IcSocketCircleGreen,
 } from "../../assets";
@@ -24,7 +25,9 @@ import {
   FormSession,
   INVALID_TOKEN,
   NOMINAL_SESSION,
+  OptionsProps,
   Socket,
+  Voucher,
 } from "../../common";
 import {
   BetweenText,
@@ -37,7 +40,9 @@ import {
   ModalInputNominal,
   ModalInputPin,
   ModalPaymentMethod,
+  ModalSKVoucher,
   ModalVoltageAmpere,
+  ModalVoucher,
   RequestOTPModal,
   Separator,
   Signal,
@@ -120,6 +125,7 @@ const SessionSettings = () => {
   const [openRequestOTP, setOpenRequestOTP] = useState<boolean>(false);
   const [openInputOTP, setOpenInputOTP] = useState<boolean>(false);
   const [openInputPin, setOpenInputPin] = useState<boolean>(false);
+  const [openVoucher, setOpenVoucher] = useState<boolean>(false);
 
   useEffect(() => {
     if (isAuthenticated) dispatch(fetchMyUser());
@@ -145,13 +151,19 @@ const SessionSettings = () => {
     else dispatch(hideLoading());
 
     if (addSession?.data) {
-      navigate(
-        `/transaction-history/details/${addSession?.data?.TransactionID}`,
-        {
+      if (addSession?.data?.Transaction?.Status === 1) {
+        navigate(`/charging/${addSession?.data?.ID}`, {
           replace: true,
           state: { isGoOrder: true },
-        }
-      );
+        });
+      } else
+        navigate(
+          `/transaction-history/details/${addSession?.data?.TransactionID}`,
+          {
+            replace: true,
+            state: { isGoOrder: true },
+          }
+        );
     }
   }, [addSession]);
 
@@ -217,6 +229,7 @@ const SessionSettings = () => {
 
   const getTotalPrice = useCallback(() => {
     let value: number = 0;
+    let discount: number = 0;
 
     if (form?.paymentMethod?.priceType === "percentage") {
       const calculate =
@@ -224,12 +237,24 @@ const SessionSettings = () => {
       value = chargingNominal + calculate;
     } else value = chargingNominal + Number(form.paymentMethod?.value || 0);
 
-    return value;
+    if (form?.voucher?.data) {
+      const dataVoucher: Voucher = form?.voucher?.data;
+
+      if (dataVoucher?.VoucherType === 1) {
+        discount =
+          dataVoucher?.DiscountType === 1
+            ? dataVoucher?.DiscountValue
+            : (chargingNominal * dataVoucher?.DiscountValue) / 100;
+      }
+    }
+
+    return value - discount;
   }, [
     form.paymentMethod,
     form.selectedTab,
     form.nominal,
     calculateCharge?.data,
+    form?.voucher,
   ]);
 
   const onValidation = () => {
@@ -251,8 +276,10 @@ const SessionSettings = () => {
     }
 
     if (!message?.title) {
-      if (isAuthenticated) setVisiblePaymentMethod(true);
-      else setOpenInputPhoneNumber(true);
+      if (isAuthenticated) {
+        if (totalPrice === 0) onPay(form);
+        else setVisiblePaymentMethod(true);
+      } else setOpenInputPhoneNumber(true);
     } else showAlert(message);
   };
 
@@ -294,10 +321,14 @@ const SessionSettings = () => {
     const body: AddSessionBody = {
       amount: chargingNominal,
       device_id: selectedDevice?.ID,
-      payment_method: select.paymentMethod?.key || "BALANCE_FU",
+      payment_method:
+        totalPrice > 0 && select.paymentMethod?.key
+          ? select.paymentMethod?.key
+          : "BALANCE_FU",
       session_method: select.selectedTab === "1" ? 1 : 2,
       socket_id: select?.selectedSocket || 0,
       station_id: data?.ID,
+      voucher_id: [Number(form?.voucher?.value)],
       wallet_used_amount: select?.balance,
     };
 
@@ -410,13 +441,25 @@ const SessionSettings = () => {
                   description="Silakan masukkan nominal pengisian yang sesuai dengan kebutuhan anda"
                   dataNominal={NOMINAL_SESSION}
                   balance={myUser?.data?.Balance || 0}
-                  onChange={(value) => setForm("nominal", value)}
+                  onChange={(value) => {
+                    const cloneData = clone(form);
+                    cloneData.nominal = value;
+                    cloneData.voucher = undefined;
+
+                    setForm("all", cloneData);
+                  }}
                 />
               ) : (
                 <InputHour
                   value={form.time}
                   form={form}
-                  onChange={(value) => setForm("time", value)}
+                  onChange={(value) => {
+                    const cloneData = clone(form);
+                    cloneData.time = value;
+                    cloneData.voucher = undefined;
+
+                    setForm("all", cloneData);
+                  }}
                 />
               )}
             </div>
@@ -467,6 +510,30 @@ const SessionSettings = () => {
         {/* PAYMENT METHOD */}
         <div className="drop-shadow p-4 bg-white">
           <div className="between-x">
+            <div className="row gap-2">
+              <HiOutlineTicket className="text-primary100" size={16} />
+              <span className="font-medium text-blackBold">Voucher</span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setOpenVoucher(true)}
+              className="row gap-2"
+            >
+              {form?.voucher?.value ? (
+                <p className="border border-primary100 text-[10px] text-primary100 py-0.5 px-1 bg-primary10 font-medium">
+                  {formatDiscount(form.voucher, chargingNominal)}
+                </p>
+              ) : (
+                <span className="text-black90">Pilih Voucher</span>
+              )}
+              <FaChevronRight size={12} className="" />
+            </button>
+          </div>
+
+          <Separator className="my-3" />
+
+          <div className="between-x">
             <p className="text-base text-black100/70">
               Total:{" "}
               <a className="text-blackBold font-bold">{`Rp${rupiah(
@@ -485,98 +552,118 @@ const SessionSettings = () => {
       </LoadingPage>
 
       {/* MODAL */}
-      <ModalPaymentMethod
-        visible={visiblePaymentMethod}
-        select={form.paymentMethod}
-        selectBalance={form?.balance}
-        total={chargingNominal}
-        onDismiss={() => setVisiblePaymentMethod(false)}
-        onSelect={(select, value) => {
-          const cloneData = clone(form);
-          cloneData.paymentMethod = select;
-          cloneData.balance = value || 0;
+      <>
+        <ModalPaymentMethod
+          visible={visiblePaymentMethod}
+          select={form.paymentMethod}
+          selectBalance={form?.balance}
+          total={totalPrice}
+          onDismiss={() => setVisiblePaymentMethod(false)}
+          onSelect={(select, value) => {
+            const cloneData = clone(form);
+            cloneData.paymentMethod = select;
+            cloneData.balance = value || 0;
 
-          setForm("all", cloneData);
+            setForm("all", cloneData);
 
-          if (cloneData?.balance > 0) {
-            setVisiblePaymentMethod(false);
-            setOpenInputPin(true);
-          } else onPay(cloneData);
-        }}
-      />
+            if (cloneData?.balance > 0) {
+              setVisiblePaymentMethod(false);
+              setOpenInputPin(true);
+            } else onPay(cloneData);
+          }}
+        />
+        <ModalVoltageAmpere
+          visible={global?.openVA}
+          select={{
+            voltage: form.voltage,
+            ampere: form.ampere,
+          }}
+          onDismiss={() => onHideModal("openVA")}
+          onSelect={(select) => {
+            const cloneData = clone(form);
+            cloneData.voltage = select?.voltage || undefined;
+            cloneData.ampere = select?.ampere || undefined;
 
-      <ModalVoltageAmpere
-        visible={global?.openVA}
-        select={{
-          voltage: form.voltage,
-          ampere: form.ampere,
-        }}
-        onDismiss={() => onHideModal("openVA")}
-        onSelect={(select) => {
-          const cloneData = clone(form);
-          cloneData.voltage = select?.voltage || undefined;
-          cloneData.ampere = select?.ampere || undefined;
+            onHideModal("openVA");
+            setForm("all", cloneData);
+          }}
+        />
+        <ModalInputNominal
+          open={global?.openInputNominal}
+          value={form.nominal}
+          balance={myUser?.data?.Balance || 0}
+          onDismiss={() => onHideModal("openInputNominal")}
+          onChangeText={(value) => {
+            onHideModal("openInputNominal");
+            setForm("nominal", value);
+          }}
+        />
+        <ModalInputHour
+          open={global?.openInputHour}
+          value={form.time}
+          onDismiss={() => onHideModal("openInputHour")}
+          onChange={(value) => {
+            onHideModal("openInputHour");
+            setForm("time", value);
+          }}
+        />
+        <InputPhoneNumberModal
+          open={openInputPhoneNumber}
+          value={form.phoneNumber}
+          onDismiss={() => setOpenInputPhoneNumber(false)}
+          onChange={(value) => setForm("phoneNumber", value)}
+          onClick={() => {
+            setOpenInputPhoneNumber(false);
+            setOpenRequestOTP(true);
+          }}
+        />
+        <RequestOTPModal
+          open={openRequestOTP}
+          phoneNumber={`0${form.phoneNumber}`}
+          onDismiss={() => setOpenRequestOTP(false)}
+          onClick={() => {
+            const formatPhone: string = formatPhoneNumber(
+              `0${form.phoneNumber}`
+            );
 
-          onHideModal("openVA");
-          setForm("all", cloneData);
-        }}
-      />
+            dispatch(fetchSendOTP(formatPhone.replace(/\s+/g, "")));
+            setOpenRequestOTP(false);
+            setOpenInputOTP(true);
+          }}
+        />
+        <InputOTPModal
+          open={openInputOTP}
+          phoneNumber={`0${form.phoneNumber}`}
+          onDismiss={() => setOpenInputOTP(false)}
+        />
+        <ModalInputPin
+          isOpen={openInputPin}
+          onDismiss={() => setOpenInputPin(false)}
+        />
 
-      <ModalInputNominal
-        open={global?.openInputNominal}
-        value={form.nominal}
-        balance={myUser?.data?.Balance || 0}
-        onDismiss={() => onHideModal("openInputNominal")}
-        onChangeText={(value) => {
-          onHideModal("openInputNominal");
-          setForm("nominal", value);
-        }}
-      />
+        {openVoucher && (
+          <ModalVoucher
+            visible={openVoucher}
+            select={form?.voucher}
+            total={chargingNominal}
+            userId={myUser?.data?.ID}
+            chargingStationID={data?.ID}
+            onDismiss={() => setOpenVoucher(false)}
+            onSelect={(select) => {
+              setOpenVoucher(false);
+              setForm("voucher", select);
+            }}
+          />
+        )}
 
-      <ModalInputHour
-        open={global?.openInputHour}
-        value={form.time}
-        onDismiss={() => onHideModal("openInputHour")}
-        onChange={(value) => {
-          onHideModal("openInputHour");
-          setForm("time", value);
-        }}
-      />
-
-      <InputPhoneNumberModal
-        open={openInputPhoneNumber}
-        value={form.phoneNumber}
-        onDismiss={() => setOpenInputPhoneNumber(false)}
-        onChange={(value) => setForm("phoneNumber", value)}
-        onClick={() => {
-          setOpenInputPhoneNumber(false);
-          setOpenRequestOTP(true);
-        }}
-      />
-
-      <RequestOTPModal
-        open={openRequestOTP}
-        phoneNumber={`0${form.phoneNumber}`}
-        onDismiss={() => setOpenRequestOTP(false)}
-        onClick={() => {
-          const formatPhone: string = formatPhoneNumber(`0${form.phoneNumber}`);
-
-          dispatch(fetchSendOTP(formatPhone.replace(/\s+/g, "")));
-          setOpenRequestOTP(false);
-          setOpenInputOTP(true);
-        }}
-      />
-
-      <InputOTPModal
-        open={openInputOTP}
-        phoneNumber={`0${form.phoneNumber}`}
-        onDismiss={() => setOpenInputOTP(false)}
-      />
-
-      <ModalInputPin
-        isOpen={openInputPin}
-        onDismiss={() => setOpenInputPin(false)}
-      />
+        {global?.openSKVoucher && (
+          <ModalSKVoucher
+            visible={global?.openSKVoucher}
+            data={global?.data}
+            onDismiss={() => onHideModal("openSKVoucher")}
+          />
+        )}
+      </>
       {/* END MODALS */}
     </Container>
   );
@@ -591,4 +678,23 @@ export const getLabelWatt = (value: number) => {
   else label = `${value}W`;
 
   return label;
+};
+
+const formatDiscount = (data: OptionsProps | undefined, nominal: number) => {
+  const dataVoucher: Voucher = data?.data;
+  let value: string = "";
+
+  if (data?.value) {
+    if (dataVoucher?.VoucherType === 1) {
+      value = `${dataVoucher?.VoucherName} (disc ${rupiah(
+        dataVoucher?.DiscountType === 1
+          ? dataVoucher?.DiscountValue
+          : (nominal * dataVoucher?.DiscountValue) / 100
+      )})`;
+    } else {
+      value = dataVoucher?.VoucherName;
+    }
+  }
+
+  return value;
 };

@@ -39,7 +39,7 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
         <div className="relative flex items-center justify-center w-[220px] h-[220px] bg-white rounded-full shadow-md">
           <div className="text-center">
             <p className="text-black70 font-semibold mb-2">Sisa Durasi</p>
-            {type === 5 && maxWatt > 0 ? (
+            {type === 5 && maxWatt > 1 ? (
               <CountdownTimer
                 initialSeconds={duration}
                 onFinish={onFinish}

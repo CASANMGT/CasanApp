@@ -72,6 +72,7 @@ import IcRightGreen from "./right-green.svg?react";
 import IcSaveGreen from "./save-green.svg?react";
 import IcScanWhite from "./scan-white.svg?react";
 import IcScooterGreen from "./scooter-green.svg?react";
+import IcTicket from './ticket.svg?react'
 import IcSearchBlack from "./search-black.svg?react";
 import IcSearchGray from "./search-gray.svg?react";
 import IcSettingBlack from "./setting-black.svg?react";
@@ -185,5 +186,6 @@ export {
   IcDelete,
   IcCheckCircle,
   IcCreditCard,
-  IcQrisLabel
+  IcQrisLabel,
+  IcTicket
 };

@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { FaChevronRight } from "react-icons/fa6";
+import { HiOutlineTicket } from "react-icons/hi2";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
@@ -13,7 +15,12 @@ import {
   IcWalletGreen,
   ILCharging,
 } from "../assets";
-import { CalculateDurationBody, CUSTOMER_SERVICES, Session } from "../common";
+import {
+  CalculateDurationBody,
+  CUSTOMER_SERVICES,
+  Session,
+  VoucherUsage,
+} from "../common";
 import {
   AlertModal,
   BetweenText,
@@ -31,6 +38,7 @@ import {
   fetchStartSession,
   fetchStopSession,
   hideLoading,
+  resetDataAddSession,
   resetDataCancelSession,
   resetDataStartSession,
   resetDataStopSession,
@@ -53,40 +61,30 @@ const Charging = () => {
   const [visibleAlert, setVisibleAlert] = useState<boolean>(false);
   const [openCancel, setOpenCancel] = useState<boolean>(false);
   const [openDiagnosis, setOpenDiagnosis] = useState<boolean>(false);
-  const [openDiagnosisFailed, setOpenDiagnosisFailed] =
-    useState<boolean>(false);
   const [openFinished, setOpenFinished] = useState<boolean>(false);
   const [openStop, setOpenStop] = useState<boolean>(false);
   const [openCantProcess, setOpenCantProcess] = useState<boolean>(false);
 
   useEffect(() => {
+    dispatch(resetDataAddSession());
     getData();
   }, []);
 
   useEffect(() => {
     if (
       !detailSession?.loading &&
-      (detailSession?.data?.MaxWatt === 0 ||
+      ((detailSession?.data?.MaxWatt || 0) <= 1 ||
         detailSession?.data?.Status === 3 ||
         detailSession?.data?.Status === 4 ||
         detailSession?.data?.Status === 5)
     ) {
-      if (detailSession?.data?.Status === 3) setOpenDiagnosis(true);
-      else if (
-        detailSession?.data?.Status === 5 &&
-        (detailSession?.data?.MaxWatt || 0) > 0
-      )
-        setOpenDiagnosis(false);
-
       timeoutProgress();
     }
   }, [detailSession?.data]);
 
   useEffect(() => {
     if (startSession?.data) {
-      if (detailSession?.data?.Status === 2) {
-        setOpenDiagnosis(true);
-      }
+      setOpenDiagnosis(true);
       getData();
       dispatch(resetDataStartSession());
     } else if (startSession?.error) {
@@ -175,7 +173,9 @@ const Charging = () => {
     else if (dataSession?.ID) {
       if (status === 5) {
         dispatch(fetchStopSession(dataSession?.ID || 0));
-      } else dispatch(fetchStartSession(dataSession?.ID));
+      } else {
+        dispatch(fetchStartSession(dataSession?.ID));
+      }
     }
   };
 
@@ -187,12 +187,16 @@ const Charging = () => {
   };
 
   const dataSession: Session | null = detailSession?.data;
+  let dataVoucher: VoucherUsage | undefined = undefined;
   const status: number | undefined = dataSession?.Status;
   const duration: number = moments(dataSession?.StartChargingTime)
     .add(dataSession?.ExpectedDuration || 0, "seconds")
     .diff(moments(), "seconds");
 
   const isCharging: boolean = status === 5 || status === 6 ? true : false;
+
+  if (dataSession?.VoucherUsages && dataSession?.VoucherUsages.length)
+    dataVoucher = dataSession?.VoucherUsages[0];
 
   return (
     <div className="background-1 pt-3 overflow-hidden flex flex-col justify-between">
@@ -226,7 +230,7 @@ const Charging = () => {
               content={
                 status === 2
                   ? "-"
-                  : (dataSession?.MaxWatt || 0) > 0
+                  : (dataSession?.MaxWatt || 0) > 1
                   ? dataSession?.ExpectedDuration
                     ? formatDuration(dataSession?.ExpectedDuration)
                     : "-"
@@ -237,7 +241,13 @@ const Charging = () => {
             <InformationItem
               icon={IcFlash}
               label="Daya"
-              content={status === 5 ? `${dataSession?.MaxWatt} Watt` : "-"}
+              content={
+                status === 5
+                  ? `${
+                      (dataSession?.MaxWatt || 0) > 1 ? dataSession?.MaxWatt : 0
+                    } Watt`
+                  : "-"
+              }
             />
           </div>
 
@@ -281,6 +291,29 @@ const Charging = () => {
             </div>
           </div>
 
+          {(dataSession?.MaxWatt || 0) > 1 &&
+            dataVoucher?.Status === 2 &&
+            dataVoucher?.VoucherDetails?.VoucherType === 2 && (
+              <div className="bg-white shadow px-2.5 py-3 rounded-md mb-5 mx-4">
+                <span className="font-medium text-xs">Klaim Voucher Kamu</span>
+
+                <div
+                  onClick={() =>
+                    navigate(`/voucher/details/${dataVoucher?.ID}`)
+                  }
+                  className="between-x gap-2 py-3 px-4 bg-primary100 rounded-lg mt-2.5 cursor-pointer"
+                >
+                  <HiOutlineTicket size={20} className="text-white" />
+
+                  <span className="flex-1 text-white font-medium">
+                    Voucher {dataVoucher?.VoucherDetails?.Description}
+                  </span>
+
+                  <FaChevronRight size={16} className="text-white" />
+                </div>
+              </div>
+            )}
+
           {/* DETAILS */}
           <div className="rounded-lg p-3 mb-4 bg-white drop-shadow">
             <div className="row gap-2 mb-3">
@@ -323,7 +356,9 @@ const Charging = () => {
               <BetweenText
                 type="medium-content"
                 labelLeft="Daya Maksimum"
-                labelRight={`${dataSession?.MaxWatt}Watt`}
+                labelRight={`${
+                  (dataSession?.MaxWatt || 0) > 1 ? dataSession?.MaxWatt : 0
+                }Watt`}
                 className="bg-baseLightGray p-3"
               />
             )}
@@ -382,17 +417,6 @@ const Charging = () => {
           setOpenStop(false);
           dispatch(fetchStopSession(dataSession?.ID || 0));
         }}
-      />
-
-      <AlertModal
-        visible={openDiagnosisFailed}
-        image={ILCharging}
-        title="Diagnosis Gagal"
-        description="Ups, coba cek lagi chargermu ya"
-        labelButtonLeft="Coba Lagi"
-        labelButtonRight="Tutup"
-        onDismiss={() => setOpenDiagnosisFailed(false)}
-        onClick={() => dispatch(fetchStopSession(dataSession?.ID || 0))}
       />
 
       <AlertModal

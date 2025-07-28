@@ -10,6 +10,7 @@ export type MenuBottomNavigationProps = {
 export type bodyListProps = {
   page: number;
   limit: number;
+  is_active?: boolean;
 };
 
 export type AlertModalProps = {
@@ -38,6 +39,8 @@ export type OptionsProps = {
   disabled?: boolean;
   data?: any;
   icon?: any;
+  type?:string
+  error?:string
 };
 
 export type chargingLocationProps = {
