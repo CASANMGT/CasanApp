@@ -30,6 +30,7 @@ export type Transaction = {
   PaymentMethod: string;
   DeepLinkRedirectURL: string;
   GeneratedQRCodeURL: string;
+  ExpiredAt: string;
   CreatedAt: string;
   UpdatedAt: string;
 };
