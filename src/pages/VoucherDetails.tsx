@@ -28,7 +28,7 @@ const VoucherDetails = () => {
   const [openSKVoucher, setOpenSKVoucher] = useState(false);
 
   useEffect(() => {
-    // getData();
+    getData();
   }, []);
 
   const getData = async () => {
