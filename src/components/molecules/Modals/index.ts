@@ -2,6 +2,7 @@ import AlertModal from "./AlertModal";
 import DiagnosisModal from "./DiagnosisModal";
 import InputOTPModal from "./InputOTPModal";
 import InputPhoneNumberModal from "./InputPhoneNumberModal";
+import ModalCarouselDetails from "./ModalCarouselDetails";
 import ModalChargingStation from "./ModalChargingStation";
 import ModalContainer from "./ModalContainer";
 import ModalInputHour from "./ModalInputHour";
@@ -19,6 +20,7 @@ export {
     DiagnosisModal,
     InputOTPModal,
     InputPhoneNumberModal,
+    ModalCarouselDetails,
     ModalChargingStation,
     ModalContainer,
     ModalInputHour,

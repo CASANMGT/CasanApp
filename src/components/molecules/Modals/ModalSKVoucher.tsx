@@ -13,6 +13,9 @@ interface Props {
 const ModalSKVoucher: React.FC<Props> = ({ visible, data, onDismiss }) => {
   let location: string = "";
 
+  console.log('cek data?.ChargingStations', data);
+  
+
   if (data?.ChargingStations && data?.ChargingStations.length) {
     data?.ChargingStations.forEach((element) => {
       if (location) location += `, ${element?.Name}`;
