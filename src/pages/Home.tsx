@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { IcBike, IcPinWhite } from "../assets";
+import { IcBike, IcPinWhite, ILCarousel1, ILCarousel2 } from "../assets";
 import {
   ChargingStationBody,
   GeocodeResult,
@@ -10,11 +10,16 @@ import {
   OptionsProps,
   SessionListBody,
 } from "../common";
-import { ChargingLocationCard, LoadingPage, OngoingItem } from "../components";
+import {
+  Carousel,
+  ChargingLocationCard,
+  LoadingPage,
+  OngoingItem,
+} from "../components";
 import { useAuth } from "../context/AuthContext";
 import { fetchChargingStation, fetchOnGoingSessionList } from "../features";
-import { AppDispatch, RootState } from "../store";
 import { getCurrentLocation, getGeoCode } from "../services/ApiAddress";
+import { AppDispatch, RootState } from "../store";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -100,7 +105,7 @@ const Home = () => {
       <div className="px-4 py-3 flex flex-col w-full overflow-hidden">
         <div>
           {/* LOCATION */}
-          <div className="row gap-1">
+          <div className="row gap-1 mb-2">
             <IcPinWhite />
             <span className="opacity-90 text-white font-semibold">
               {detailLocation?.city}
@@ -129,7 +134,7 @@ const Home = () => {
           </div> */}
 
           {/* CAROUSEL */}
-          {/* <Carousel slides={slidesDummy} /> */}
+          <Carousel slides={slidesDummy} />
 
           {/* ONGOING */}
           {isShowOngoing && (
@@ -214,4 +219,9 @@ const optionsPlace: OptionsProps[] = [
 const optionsTypeVehicle: OptionsProps[] = [
   { name: "Motor", value: "bike", icon: IcBike },
   // { name: "Mobile", value: "car", icon: IcCar },
+];
+
+const slidesDummy = [
+  { id: 1, image: ILCarousel1, title: "Carousel 1" },
+  { id: 1, image: ILCarousel2, title: "Carousel 2" },
 ];

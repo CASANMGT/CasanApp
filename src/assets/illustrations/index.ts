@@ -6,15 +6,18 @@ import ILLogoSlogan from "./logo-slogan.png";
 import ILLogo from "./logo.png";
 import ILNoImage from "./no-image.png";
 import ILOrderEmpty from "./order-empty.png";
+import ILCarousel1 from "./carousel-1.png";
+import ILCarousel2 from "./carousel-2.png";
 
 export {
-    ILCharging,
-    ILComingSoon,
-    ILComingSoonLabel,
-    ILFlashLogo,
-    ILLogo,
-    ILLogoSlogan,
-    ILNoImage,
-    ILOrderEmpty
+  ILCharging,
+  ILComingSoon,
+  ILComingSoonLabel,
+  ILFlashLogo,
+  ILLogo,
+  ILLogoSlogan,
+  ILNoImage,
+  ILOrderEmpty,
+  ILCarousel1,
+  ILCarousel2,
 };
-
