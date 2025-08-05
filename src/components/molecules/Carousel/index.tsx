@@ -1,14 +1,29 @@
+import { useDispatch } from "react-redux";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Autoplay, Pagination } from "swiper/modules"; // Import Swiper modules
 import { Swiper, SwiperSlide } from "swiper/react";
+import { setFromGlobal } from "../../../features";
+import { AppDispatch } from "../../../store";
 import "../../../styles/swiper.css";
 
+export interface Slides {
+  id: number;
+  image: string;
+  title: string;
+  details: {
+    validityPeriod: string;
+    termsCondition: string[];
+  };
+}
+
 interface CarouselProps {
-  slides: { id: number; image: string; title: string }[];
+  slides: Slides[];
 }
 
 const Carousel: React.FC<CarouselProps> = ({ slides }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   return (
     <Swiper
       modules={[Pagination, Autoplay]}
@@ -23,7 +38,18 @@ const Carousel: React.FC<CarouselProps> = ({ slides }) => {
     >
       {slides.map((slide) => (
         <SwiperSlide key={slide.id}>
-          <div className="w-full h-[36%]  ">
+          <div
+            onClick={() => {
+              dispatch(
+                setFromGlobal({
+                  type: "openCarousel",
+                  value: true,
+                  data: slide,
+                })
+              );
+            }}
+            className="w-full h-[36%] cursor-pointer "
+          >
             <img
               src={slide.image}
               alt={slide.title}

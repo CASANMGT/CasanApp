@@ -14,10 +14,15 @@ import {
   Carousel,
   ChargingLocationCard,
   LoadingPage,
+  ModalCarouselDetails,
   OngoingItem,
 } from "../components";
 import { useAuth } from "../context/AuthContext";
-import { fetchChargingStation, fetchOnGoingSessionList } from "../features";
+import {
+  fetchChargingStation,
+  fetchOnGoingSessionList,
+  setFromGlobal,
+} from "../features";
 import { getCurrentLocation, getGeoCode } from "../services/ApiAddress";
 import { AppDispatch, RootState } from "../store";
 
@@ -29,6 +34,7 @@ const Home = () => {
   const chargingStation = useSelector(
     (state: RootState) => state.chargingStation
   );
+  const global = useSelector((state: RootState) => state.global);
   const onGoingSessionList = useSelector(
     (state: RootState) => state.onGoingSessionList
   );
@@ -204,6 +210,21 @@ const Home = () => {
           </LoadingPage>
         </div>
       </div>
+
+      {/* MODAL */}
+      <ModalCarouselDetails
+        visible={global?.openCarousel}
+        data={global?.data}
+        onDismiss={() =>
+          dispatch(
+            setFromGlobal({
+              type: "openCarousel",
+              value: false,
+            })
+          )
+        }
+      />
+      {/* END MODAL */}
     </div>
   );
 };
@@ -222,6 +243,36 @@ const optionsTypeVehicle: OptionsProps[] = [
 ];
 
 const slidesDummy = [
-  { id: 1, image: ILCarousel1, title: "Carousel 1" },
-  { id: 1, image: ILCarousel2, title: "Carousel 2" },
+  {
+    id: 1,
+    image: ILCarousel1,
+    title: "Carousel 1",
+    details: {
+      validityPeriod: "4 Agustus 2025 00:00 - 31 Agustus 2025 2025 23:59",
+      termsCondition: [
+        "Voucher berlaku untuk pengguna baru tanpa ada minimal charging.",
+        "Diskon hanya berlaku satu kali per transaksi pengecasan.",
+        "Tidak dapat digabungkan dengan promo atau voucher lain.",
+        "Voucher tidak dapat diuangkan atau dikembalikan dalam bentuk uang.",
+        "Berlaku di seluruh stasiun pengecasan resmi yang bekerja sama dengan aplikasi.",
+        "Pihak penyedia layanan berhak membatalkan voucher apabila ditemukan kecurangan atau pelanggaran terhadap syarat & ketentuan penggunaan.",
+      ],
+    },
+  },
+  {
+    id: 1,
+    image: ILCarousel2,
+    title: "Carousel 2",
+    details: {
+      validityPeriod: "4 Agustus 2025 00:00 - 31 Agustus 2025 2025 23:59",
+      termsCondition: [
+        "Voucher berlaku untuk pembayaran dengan minimal charging Rp5.000.",
+        "Tunjukkan voucher ke kasir untuk penukaran maksimal 1x24 jam.",
+        "Tidak dapat digabungkan dengan promo atau voucher lain.",
+        "Voucher tidak dapat diuangkan atau dikembalikan dalam bentuk uang.",
+        "Berlaku khusus di stasiun pengecasan Warkop Cerdig.",
+        "Pihak penyedia layanan berhak membatalkan voucher apabila ditemukan kecurangan atau pelanggaran terhadap syarat & ketentuan penggunaan.",
+      ],
+    },
+  },
 ];

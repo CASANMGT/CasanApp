@@ -659,7 +659,7 @@ const SessionSettings = () => {
         {global?.openSKVoucher && (
           <ModalSKVoucher
             visible={global?.openSKVoucher}
-            data={global?.data}
+            data={global?.data?.data}
             onDismiss={() => onHideModal("openSKVoucher")}
           />
         )}
