@@ -23,7 +23,7 @@ const Carousel: React.FC<CarouselProps> = ({ slides }) => {
     >
       {slides.map((slide) => (
         <SwiperSlide key={slide.id}>
-          <div className="w-full h-[140px]  ">
+          <div className="w-full h-[36%]  ">
             <img
               src={slide.image}
               alt={slide.title}
