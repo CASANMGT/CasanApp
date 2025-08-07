@@ -77,7 +77,10 @@ const Login = () => {
           type={"secondary"}
           label="Lanjut Sebagai Tamu"
           iconRight={IcRightGreen}
-          onClick={() => navigate("/home", { replace: true })}
+          onClick={() => {
+            window.fbq?.("track", "ViewContent");
+            navigate("/home", { replace: true });
+          }}
         />
       </div>
     </div>
