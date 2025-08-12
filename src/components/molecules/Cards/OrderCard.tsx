@@ -91,8 +91,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
     isShowClaim = true;
   }
 
-  console.log("cek data", data);
-
   return (
     <div
       className={`bg-white p-3 mx-4 mb-3 rounded-lg drop-shadow cursor-pointer ${

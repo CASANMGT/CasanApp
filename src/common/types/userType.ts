@@ -1,3 +1,4 @@
+
 export type DataUser = {
   ID: number;
   Name: string;
@@ -12,4 +13,6 @@ export type DataUser = {
   CreatedAt: string;
   UpdatedAt: string;
   DeletedAt: string | null;
+  MilestoneID: number;
+  Milestone: Milestone;
 };

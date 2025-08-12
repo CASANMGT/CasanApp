@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import { AuthProvider } from "../context/AuthContext";
 import {
-  BalanceHistory,
   BalanceDetails,
+  BalanceHistory,
   BankAccount,
   Charging,
   ChargingStationDetails,
@@ -19,6 +19,7 @@ import {
   PaymentSuccess,
   PrivacyPolice,
   Profile,
+  ProgressDetails,
   Scan,
   SelectBank,
   SessionDetails,
@@ -32,11 +33,11 @@ import {
   TransactionHistory,
   Vehicle,
   VerificationNumber,
+  Voucher,
+  VoucherDetails,
   Withdraw,
   WithdrawalDetails,
   WithdrawalHistory,
-  Voucher,
-  VoucherDetails,
 } from "../pages";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -90,6 +91,10 @@ const RoutesPage = () => {
           <Route
             path="top-up"
             element={<ProtectedRoute element={<TopUp />} />}
+          />
+          <Route
+            path="progress-details"
+            element={<ProtectedRoute element={<ProgressDetails />} />}
           />
           <Route
             path="voucher"

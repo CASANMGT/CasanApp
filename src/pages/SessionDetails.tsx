@@ -1,4 +1,6 @@
 import html2canvas from "html2canvas";
+import { RiTreeFill } from "react-icons/ri";
+import { IoLeaf } from "react-icons/io5";
 import { capitalize } from "lodash";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -145,6 +147,32 @@ const SessionDetails = () => {
                   : "Selesai"
               }`}
             </span>
+          </div>
+
+          {/* CO2 */}
+          <div className="bg-primary10 rounded-lg py-4 px-2.5 mb-4 flex flex-col items-center">
+            <div className="row gap-1">
+              <IoLeaf className="text-green" />
+
+              <span>Selamat! kamu telah menghemat</span>
+            </div>
+
+            <span className="text-2xl font-semibold my-3">
+              {dataSession?.User?.Milestone?.MinCO2Saved}kg CO₂
+            </span>
+
+            <div className="row gap-1 text-black70 text-xs">
+              <span>Setara dengan menanam</span>
+
+              <RiTreeFill />
+
+              <span className="font-medium">
+                {(
+                  (dataSession?.User?.Milestone?.MinCO2Saved || 0) / 20
+                ).toFixed(3)}
+              </span>
+              <span>pohon</span>
+            </div>
           </div>
 
           {/* TOOL INFORMATION */}
@@ -343,6 +371,16 @@ const SessionDetails = () => {
             <BetweenText
               labelLeft="Biaya Transaksi"
               labelRight={`Rp${rupiah(dataSession?.Transaction?.TotalFee)}`}
+              className="py-2 border-b border-b-black10"
+            />
+
+            <BetweenText
+              labelLeft={`${dataSession?.User?.Milestone?.Name} ${dataSession?.User?.Milestone?.DiscountPercent}% Disc`}
+              labelRight={
+                dataSession?.Transaction?.MilestoneDiscount
+                  ? `-Rp${rupiah(dataSession?.Transaction?.MilestoneDiscount)}`
+                  : "Rp0"
+              }
               className="py-2"
             />
 

@@ -7,6 +7,7 @@ import ComingSoon from "./ComingSoon";
 import ConfirmationPin from "./ConfirmationPin";
 import EditProfile from "./EditProfile";
 import Home from "./Home";
+import ProgressDetails from "./ProgressDetails";
 import Location from "./Location";
 import LocationList from "./LocationList";
 import Login from "./Login";
@@ -68,6 +69,7 @@ export {
     VerificationNumber,
     Voucher, VoucherDetails, Withdraw,
     WithdrawalDetails,
-    WithdrawalHistory
+    WithdrawalHistory,
+    ProgressDetails
 };
 

@@ -19,6 +19,8 @@ import {
   QRIS,
   SHOPEEPAY,
 } from "../common";
+import { FaLeaf, FaTree } from "react-icons/fa6";
+import { RiMotorbikeFill, RiShieldCheckFill, RiTreeFill } from "react-icons/ri";
 
 interface TokenPayload {
   id: string;
@@ -116,6 +118,35 @@ export const getLabelPaymentMethod: (type: string) => string = (
 
   return label;
 };
+
+export const getIconMilestone = (position: number) => {
+  let icon: any;
+
+  switch (position) {
+    case 2:
+      icon = FaLeaf;
+      break;
+
+    case 3:
+      icon = RiTreeFill;
+      break;
+
+    case 4:
+      icon = FaTree;
+      break;
+
+    case 5:
+      icon = RiShieldCheckFill;
+      break;
+
+    default:
+      icon = RiMotorbikeFill;
+      break;
+  }
+
+  return icon;
+};
+
 
 export const decodeToken = (token: string): TokenPayload | null => {
   try {
