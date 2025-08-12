@@ -31,4 +31,5 @@ jobs:
           script: |
             cd /home/william/casan-frontend-stg
             echo "${{ secrets.STG_ENV}}" > .env
+            docker system prune -af
             docker compose up -d --build
