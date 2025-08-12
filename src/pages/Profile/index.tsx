@@ -33,6 +33,8 @@ const Profile = () => {
   const navigate: NavigateFunction = useNavigate();
 
   useEffect(() => {
+    console.log('cek masuk profile');
+    
     getData();
   }, []);
 
@@ -49,6 +51,8 @@ const Profile = () => {
     logout();
     navigate("/login", { replace: true });
   };
+
+  const isGreenRider: boolean = myUser?.data?.MilestoneID?true:false
 
   return (
     <div className="container-screen flex flex-col overflow-auto scrollbar-none">
@@ -75,11 +79,11 @@ const Profile = () => {
                   />
                 </div>
 
-                <div className="row gap-1">
+                {isGreenRider && <div className="row gap-1">
                   <FaLeaf size={16} className="text-white" />
 
                   <span className="text-white font-medium">Green Rider</span>
-                </div>
+                </div>}
               </div>
             </div>
 
