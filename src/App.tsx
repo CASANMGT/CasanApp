@@ -15,6 +15,7 @@ dayjs.extend(relativeTime);
 dayjs.locale("id");
 
 function App() {
+  console.log("apps start");
   const { loading } = useSelector((state: RootState) => state.global);
 
   const [darkMode, setDarkMode] = useState(
