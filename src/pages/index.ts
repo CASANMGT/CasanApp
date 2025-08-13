@@ -1,4 +1,5 @@
 import BalanceDetails from "./BalanceDetails";
+import Profile from "./Profile";
 import BalanceHistory from "./BalanceHistory";
 import BankAccount from "./BankAccount";
 import Charging from "./Charging";
@@ -68,6 +69,7 @@ export {
     Voucher, VoucherDetails, Withdraw,
     WithdrawalDetails,
     WithdrawalHistory,
+    Profile,
     ProgressDetails
 };
 
