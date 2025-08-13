@@ -23,7 +23,7 @@ import { formatPhoneNumber, openWhatsApp, rupiah } from "../../helpers";
 import { AppDispatch, RootState } from "../../store";
 import Milestone from "./Milestone";
 
-const Profile = () => {
+const ProfileNew = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { logout } = useAuth();
 
@@ -224,4 +224,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default ProfileNew;

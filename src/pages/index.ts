@@ -35,6 +35,7 @@ import VoucherDetails from "./VoucherDetails";
 import Withdraw from "./Withdraw";
 import WithdrawalDetails from "./WithdrawalDetails";
 import WithdrawalHistory from "./WithdrawalHistory";
+import ProfileNew from "./ProfileNew";
 
 export {
     BalanceDetails,
@@ -70,6 +71,7 @@ export {
     WithdrawalDetails,
     WithdrawalHistory,
     Profile,
+    ProfileNew,
     ProgressDetails
 };
 
