@@ -32,4 +32,5 @@ jobs:
             cd /home/william/casan-frontend-stg
             echo "${{ secrets.STG_ENV}}" > .env
             docker compose build --no-cache
+            docker compose down 
             docker compose up -d
