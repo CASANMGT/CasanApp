@@ -33,7 +33,6 @@ const Profile = () => {
   const navigate: NavigateFunction = useNavigate();
 
   useEffect(() => {
-    console.log("cek masuk profile-1");
     getData();
   }, []);
 
