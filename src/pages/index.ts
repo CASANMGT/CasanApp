@@ -1,5 +1,4 @@
 import BalanceDetails from "./BalanceDetails";
-import Profile from "./Profile";
 import BalanceHistory from "./BalanceHistory";
 import BankAccount from "./BankAccount";
 import Charging from "./Charging";
@@ -8,7 +7,6 @@ import ComingSoon from "./ComingSoon";
 import ConfirmationPin from "./ConfirmationPin";
 import EditProfile from "./EditProfile";
 import Home from "./Home";
-import ProgressDetails from "./ProgressDetails";
 import Location from "./Location";
 import LocationList from "./LocationList";
 import Login from "./Login";
@@ -17,6 +15,8 @@ import NotFound from "./NotFound";
 import Order from "./Order";
 import PaymentSuccess from "./PaymentSuccess";
 import PrivacyPolice from "./PrivacyPolice";
+import ProfileNew from "./ProfileNew";
+import ProgressDetails from "./ProgressDetails";
 import Scan from "./Scan";
 import SelectBank from "./SelectBank";
 import SessionDetails from "./SessionDetails";
@@ -35,7 +35,6 @@ import VoucherDetails from "./VoucherDetails";
 import Withdraw from "./Withdraw";
 import WithdrawalDetails from "./WithdrawalDetails";
 import WithdrawalHistory from "./WithdrawalHistory";
-import ProfileNew from "./ProfileNew";
 
 export {
     BalanceDetails,
@@ -54,8 +53,9 @@ export {
     NotFound,
     Order,
     PaymentSuccess,
-    PrivacyPolice,
-    Scan, SelectBank,
+    PrivacyPolice, ProfileNew,
+    ProgressDetails, Scan,
+    SelectBank,
     SessionDetails,
     SessionSettings,
     SettingPin,
@@ -67,11 +67,10 @@ export {
     TransactionHistory,
     Vehicle,
     VerificationNumber,
-    Voucher, VoucherDetails, Withdraw,
+    Voucher,
+    VoucherDetails,
+    Withdraw,
     WithdrawalDetails,
-    WithdrawalHistory,
-    Profile,
-    ProfileNew,
-    ProgressDetails
+    WithdrawalHistory
 };
 

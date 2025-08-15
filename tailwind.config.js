@@ -47,6 +47,7 @@ export default {
         secondary10: "#FDFBEA",
 
         // OTHER
+        gold:'#D79D20',
         orange: "#FFBE4D",
         strokeOrange: "#FFE5B8",
         lightOrange: "#FFFAF1",

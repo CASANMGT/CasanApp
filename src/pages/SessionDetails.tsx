@@ -2,7 +2,7 @@ import html2canvas from "html2canvas";
 import { RiTreeFill } from "react-icons/ri";
 import { IoLeaf } from "react-icons/io5";
 import { capitalize } from "lodash";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
@@ -122,6 +122,15 @@ const SessionDetails = () => {
     dataVoucher = dataSession?.VoucherUsages[0];
   }
 
+  const isShowMilestone: boolean = useMemo(
+    () => (dataSession?.User?.Milestone ? true : false),
+    [dataSession?.User?.Milestone]
+  );
+
+  const co2: number = Number(
+    ((dataSession?.TotalKwhUsed || 0) * 1.5).toFixed(3)
+  );
+
   return (
     <div className="background-1 overflow-hidden justify-between flex flex-col">
       <Header type="secondary" title="Detail Sesi" onDismiss={onDismiss} />
@@ -150,30 +159,26 @@ const SessionDetails = () => {
           </div>
 
           {/* CO2 */}
-          <div className="bg-primary10 rounded-lg py-4 px-2.5 mb-4 flex flex-col items-center">
-            <div className="row gap-1">
-              <IoLeaf className="text-green" />
+          {isShowMilestone && (
+            <div className="bg-primary10 rounded-lg py-4 px-2.5 mb-4 flex flex-col items-center">
+              <div className="row gap-1">
+                <IoLeaf className="text-green" />
 
-              <span>Selamat! kamu telah menghemat</span>
+                <span>Selamat! kamu telah menghemat</span>
+              </div>
+
+              <span className="text-2xl font-semibold my-3">{co2}kg CO₂</span>
+
+              <div className="row gap-1 text-black70 text-xs">
+                <span>Setara dengan menanam</span>
+
+                <RiTreeFill />
+
+                <span className="font-medium">{(co2 / 20).toFixed(3)}</span>
+                <span>pohon</span>
+              </div>
             </div>
-
-            <span className="text-2xl font-semibold my-3">
-              {dataSession?.User?.Milestone?.MinCO2Saved}kg CO₂
-            </span>
-
-            <div className="row gap-1 text-black70 text-xs">
-              <span>Setara dengan menanam</span>
-
-              <RiTreeFill />
-
-              <span className="font-medium">
-                {(
-                  (dataSession?.User?.Milestone?.MinCO2Saved || 0) / 20
-                ).toFixed(3)}
-              </span>
-              <span>pohon</span>
-            </div>
-          </div>
+          )}
 
           {/* TOOL INFORMATION */}
           <div className="bg-white p-3 rounded-lg mb-4 drop-shadow">
@@ -374,15 +379,19 @@ const SessionDetails = () => {
               className="py-2 border-b border-b-black10"
             />
 
-            <BetweenText
-              labelLeft={`${dataSession?.User?.Milestone?.Name} ${dataSession?.User?.Milestone?.DiscountPercent}% Disc`}
-              labelRight={
-                dataSession?.Transaction?.MilestoneDiscount
-                  ? `-Rp${rupiah(dataSession?.Transaction?.MilestoneDiscount)}`
-                  : "Rp0"
-              }
-              className="py-2"
-            />
+            {isShowMilestone && (
+              <BetweenText
+                labelLeft={`${dataSession?.User?.Milestone?.Name} ${dataSession?.User?.Milestone?.DiscountPercent}% Disc`}
+                labelRight={
+                  dataSession?.Transaction?.MilestoneDiscount
+                    ? `-Rp${rupiah(
+                        dataSession?.Transaction?.MilestoneDiscount
+                      )}`
+                    : "Rp0"
+                }
+                className="py-2"
+              />
+            )}
 
             <BetweenText
               labelLeft="Total Transaksi"

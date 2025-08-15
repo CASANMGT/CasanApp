@@ -1,6 +1,4 @@
 import { useEffect } from "react";
-import { FaLeaf, FaTree } from "react-icons/fa6";
-import { RiMotorbikeFill, RiShieldCheckFill, RiTreeFill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -14,34 +12,6 @@ import { fetchMilestoneList, fetchMyUser } from "../../features";
 import { getIconMilestone } from "../../helpers";
 import { AppDispatch, RootState } from "../../store";
 import ProgressBar from "./ProgressBar";
-
-const steps = [
-  {
-    title: "Eco Explorer",
-    description: "0 kg",
-    icon: FaLeaf,
-  },
-  {
-    title: "Green Rider",
-    description: "50 kg",
-    icon: RiMotorbikeFill,
-  },
-  {
-    title: "Forest Friend",
-    description: "150 kg",
-    icon: RiTreeFill,
-  },
-  {
-    title: "Oxigen Hero",
-    description: "500 kg",
-    icon: FaTree,
-  },
-  {
-    title: "Planet Protector",
-    description: "1000 kg",
-    icon: RiShieldCheckFill,
-  },
-];
 
 const ProgressDetails = () => {
   const navigate = useNavigate();
@@ -65,17 +35,17 @@ const ProgressDetails = () => {
   let isFinish: boolean = false;
   let label: string = "";
 
-  if (myUser?.data && milestoneList?.data?.length) {
-    currentStep = milestoneList?.data?.findIndex(
-      (e) => e?.ID === myUser?.data?.MilestoneID
-    );
+  const milestones = milestoneList?.data ?? [];
+  const milestoneID = myUser?.data?.MilestoneID;
 
-    max = milestoneList?.data[currentStep]?.MinCO2Saved || 0;
-    if (currentStep > 0)
-      min = milestoneList?.data[currentStep - 1]?.MinCO2Saved || 0;
+  if (milestones.length && milestoneID != null) {
+    currentStep = milestones.findIndex((e) => e?.ID === milestoneID);
 
-    isFinish = currentStep === milestoneList?.data.length - 1;
-    label = milestoneList?.data[currentStep]?.Name;
+    max = milestones[currentStep === 0 ? 1 : currentStep]?.MinCO2Saved ?? 0;
+    min = currentStep > 0 ? milestones[currentStep - 1]?.MinCO2Saved ?? 0 : 0;
+
+    isFinish = currentStep === milestones.length - 1;
+    label = milestones[currentStep]?.Name ?? "";
   }
 
   const Icon = getIconMilestone(currentStep + 1);
@@ -100,13 +70,13 @@ const ProgressDetails = () => {
               <div
                 className={`rounded-full p-3 shadow ${
                   isFinish
-                    ? "bg-gradient-to-b from-white to-[#D79D20]"
+                    ? "bg-gradient-to-b from-white to-gold"
                     : "bg-primary30"
                 }`}
               >
                 <Icon
                   size={36}
-                  className={`text-${isFinish ? "[#D79D20]" : "primary100"}`}
+                  className={`${isFinish ? "text-gold" : "text-primary100"}`}
                 />
               </div>
               <span className="text-blackBold text-lg font-semibold mt-3">
@@ -120,7 +90,7 @@ const ProgressDetails = () => {
               <ProgressBar
                 min={min}
                 max={max}
-                value={myUser?.data?.Milestone?.MinCO2Saved || 0}
+                value={myUser?.data?.TotalCO2Saved || 0}
               />
 
               <Separator className="my-4" />
@@ -132,9 +102,9 @@ const ProgressDetails = () => {
             </div>
 
             <div className="flex-1 bg-white py-6 px-4">
-              <span className="font-medium text-blackBold mb-8">
+              <p className="font-medium text-blackBold mb-8">
                 Informasi Reward
-              </span>
+              </p>
 
               {milestoneList?.data &&
                 milestoneList?.data?.length &&
@@ -149,7 +119,7 @@ const ProgressDetails = () => {
               buttonType="lg"
               label={isFinish ? "Mulai Charging" : "Lihat Stasiun Pengecasan"}
               loading={false}
-              onClick={() => {}}
+              onClick={() => navigate("/home/index", { replace: true })}
             />
           </div>
         </div>

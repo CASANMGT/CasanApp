@@ -42,7 +42,15 @@ const ProgressSteps: React.FC<Props> = ({ currentStep, dataMilestone }) => {
                     }`}
                   />
                 </div>
-                <span className="text-[10px] text-primary100 font-medium mt-1 mb-0.5">
+                <span
+                  className={`text-[10px] font-medium mt-1 mb-0.5 text-${
+                    isActive
+                      ? "primary100"
+                      : isRightActive
+                      ? "black100"
+                      : "black70"
+                  }`}
+                >
                   {step?.Name}
                 </span>
                 <span className="text-[10px] text-black70">
@@ -54,13 +62,13 @@ const ProgressSteps: React.FC<Props> = ({ currentStep, dataMilestone }) => {
               {!isLast && (
                 <div
                   className={`flex w-full h-[2px] mx-2 mt-4 border-b border-${
-                    isActive ? "primary100" : "black30"
-                  } border-${
                     isActive
-                      ? index === currentStep
-                        ? "dashed"
-                        : "solid"
-                      : "dashed"
+                      ? "primary100"
+                      : isRightActive
+                      ? "primary100"
+                      : "black30"
+                  } border-${
+                    isActive ? "solid" : "dashed"
                   }`}
                 />
               )}

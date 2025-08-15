@@ -18,7 +18,6 @@ import {
   Order,
   PaymentSuccess,
   PrivacyPolice,
-  Profile,
   ProfileNew,
   ProgressDetails,
   Scan,
@@ -38,7 +37,7 @@ import {
   VoucherDetails,
   Withdraw,
   WithdrawalDetails,
-  WithdrawalHistory,
+  WithdrawalHistory
 } from "../pages";
 import ProtectedRoute from "./ProtectedRoute";
 

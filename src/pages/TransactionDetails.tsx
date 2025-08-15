@@ -1,5 +1,5 @@
 import html2canvas from "html2canvas";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FaArrowRight } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -219,6 +219,11 @@ const TransactionDetails = () => {
     dataVoucher = transactionById?.data?.Session?.VoucherUsages[0];
   }
 
+  const isShowMilestone: boolean = useMemo(
+    () => (transactionById?.data?.User?.Milestone ? true : false),
+    [transactionById?.data?.User?.Milestone]
+  );
+
   return (
     <div className="background-1 py-[14px] px-4">
       <Header type="secondary" title="Detail Transaksi" onDismiss={onDismiss} />
@@ -411,21 +416,17 @@ const TransactionDetails = () => {
                 className="py-2 border-b border-b-black10"
               />
 
-              <BetweenText
-                labelLeft="Eco Explorer 2% Disc"
-                labelRight={`-Rp${rupiah(0)}`}
-                className="py-2 border-b border-b-black10"
-              />
-
-              <BetweenText
-                labelLeft={`${transactionById?.data?.User?.Milestone?.Name} ${transactionById?.data?.User?.Milestone?.DiscountPercent}% Disc`}
-                labelRight={
-                  transactionById?.data?.MilestoneDiscount
-                    ? `-Rp${rupiah(transactionById?.data?.MilestoneDiscount)}`
-                    : "Rp0"
-                }
-                className="py-2"
-              />
+              {isShowMilestone && (
+                <BetweenText
+                  labelLeft={`${transactionById?.data?.User?.Milestone?.Name} ${transactionById?.data?.User?.Milestone?.DiscountPercent}% Disc`}
+                  labelRight={
+                    transactionById?.data?.MilestoneDiscount
+                      ? `-Rp${rupiah(transactionById?.data?.MilestoneDiscount)}`
+                      : "Rp0"
+                  }
+                  className="py-2"
+                />
+              )}
 
               <BetweenText
                 labelLeft="Admin Fee"
