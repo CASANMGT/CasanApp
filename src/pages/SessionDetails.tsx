@@ -123,8 +123,13 @@ const SessionDetails = () => {
   }
 
   const isShowMilestone: boolean = useMemo(
-    () => (dataSession?.User?.Milestone ? true : false),
-    [dataSession?.User?.Milestone]
+    () =>
+      dataSession?.User?.Milestone &&
+      dataSession?.User?.Milestone?.DiscountPercent > 0 &&
+      status === 6
+        ? true
+        : false,
+    [dataSession?.User?.Milestone, status]
   );
 
   const co2: number = Number(
@@ -351,7 +356,7 @@ const SessionDetails = () => {
                 labelRight=""
                 content={
                   <div className="row gap-1">
-                    <p>
+                    <p className="text-black100 text-xs">
                       {dataVoucher
                         ? dataVoucher.VoucherDetails?.DiscountType === 1
                           ? `-Rp${rupiah(

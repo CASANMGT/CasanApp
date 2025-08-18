@@ -220,7 +220,11 @@ const TransactionDetails = () => {
   }
 
   const isShowMilestone: boolean = useMemo(
-    () => (transactionById?.data?.User?.Milestone ? true : false),
+    () =>
+      transactionById?.data?.User?.Milestone &&
+      transactionById?.data?.User?.Milestone?.DiscountPercent > 0
+        ? true
+        : false,
     [transactionById?.data?.User?.Milestone]
   );
 

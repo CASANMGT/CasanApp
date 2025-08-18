@@ -40,10 +40,10 @@ const ProgressDetails = () => {
 
   if (milestones.length && milestoneID != null) {
     currentStep = milestones.findIndex((e) => e?.ID === milestoneID);
-
-    max = milestones[currentStep === 0 ? 1 : currentStep]?.MinCO2Saved ?? 0;
-    min = currentStep > 0 ? milestones[currentStep - 1]?.MinCO2Saved ?? 0 : 0;
-
+    
+    const nextStepIndex = Math.min(currentStep + 1, milestones.length - 1);
+    min = currentStep > 0 ? milestones[currentStep]?.MinCO2Saved ?? 0 : 0;
+    max = milestones[nextStepIndex]?.MinCO2Saved ?? 0;
     isFinish = currentStep === milestones.length - 1;
     label = milestones[currentStep]?.Name ?? "";
   }
