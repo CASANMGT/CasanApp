@@ -125,11 +125,10 @@ const SessionDetails = () => {
   const isShowMilestone: boolean = useMemo(
     () =>
       dataSession?.User?.Milestone &&
-      dataSession?.User?.Milestone?.DiscountPercent > 0 &&
-      status === 6
+      dataSession?.User?.Milestone?.DiscountPercent > 0
         ? true
         : false,
-    [dataSession?.User?.Milestone, status]
+    [dataSession?.User?.Milestone]
   );
 
   const co2: number = Number(
@@ -164,7 +163,7 @@ const SessionDetails = () => {
           </div>
 
           {/* CO2 */}
-          {isShowMilestone && (
+          {status === 6 && (
             <div className="bg-primary10 rounded-lg py-4 px-2.5 mb-4 flex flex-col items-center">
               <div className="row gap-1">
                 <IoLeaf className="text-green" />
