@@ -9,12 +9,7 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import {
-  IcInfoCircle,
-  IcInfoCircleGreen,
-  IcRightGreen,
-  IcSocketCircleGreen,
-} from "../../assets";
+import { IcInfoCircle, IcRightGreen, IcSocketCircleGreen } from "../../assets";
 import {
   AddSessionBody,
   CalculateChargeBody,
@@ -30,7 +25,6 @@ import {
   Voucher,
 } from "../../common";
 import {
-  BetweenText,
   Button,
   Container,
   InputOTPModal,
@@ -76,6 +70,7 @@ import { AppDispatch, RootState } from "../../store";
 import PriceInformation from "../ChargingStationDetails/PriceInformation";
 import InputHour from "./InputHour";
 import InputNominal from "./InputNominal";
+import PaymentDetails from "./PaymentDetails";
 
 const tabsNominalHour = [
   {
@@ -240,7 +235,7 @@ const SessionSettings = () => {
     if (form?.voucher?.data) {
       const dataVoucher: Voucher = form?.voucher?.data;
 
-      if (dataVoucher?.VoucherType === 1) {
+      if (dataVoucher?.VoucherType === 1 || dataVoucher?.VoucherType === 3) {
         discount =
           dataVoucher?.DiscountType === 1
             ? dataVoucher?.DiscountValue
@@ -248,13 +243,17 @@ const SessionSettings = () => {
       }
     }
 
-    return value - discount;
+    const discountMilestone: number =
+      (chargingNominal * (myUser?.data?.Milestone?.DiscountPercent || 0)) / 100;
+
+    return value - discount - discountMilestone;
   }, [
     form.paymentMethod,
     form.selectedTab,
     form.nominal,
     calculateCharge?.data,
     form?.voucher,
+    myUser?.data?.Milestone,
   ]);
 
   const onValidation = () => {
@@ -465,29 +464,12 @@ const SessionSettings = () => {
             </div>
 
             {/* PAYMENT DETAILS */}
-            <div className="bg-white p-3 rounded-lg my-3 drop-shadow">
-              <div className="row gap-3 mb-2">
-                <div className="w-[30px] h-[30px] rounded-full center bg-primary10">
-                  <IcInfoCircleGreen />
-                </div>
-
-                <p className="text-blackBold font-medium">Rincian Pembayaran</p>
-              </div>
-
-              <BetweenText
-                type="medium-content"
-                labelLeft="Nominal Pengecasan"
-                labelRight={`Rp${rupiah(chargingNominal)}`}
-                className="bg-baseLightGray p-3 rounded-t"
-              />
-
-              <BetweenText
-                type="medium-content"
-                labelLeft="Biaya Layanan"
-                labelRight={`Rp${rupiah(form.paymentMethod?.value || 0)}`}
-                className="p-3"
-              />
-            </div>
+            <PaymentDetails
+              chargingNominal={chargingNominal}
+              fee={Number(form.paymentMethod?.value || 0)}
+              milestone={myUser?.data?.Milestone}
+              voucher={form?.voucher?.data}
+            />
 
             {/* <div
               onClick={() => {}}
@@ -685,7 +667,7 @@ const formatDiscount = (data: OptionsProps | undefined, nominal: number) => {
   let value: string = "";
 
   if (data?.value) {
-    if (dataVoucher?.VoucherType === 1) {
+    if (dataVoucher?.VoucherType === 1 || dataVoucher?.VoucherType === 3) {
       value = `${dataVoucher?.VoucherName} (disc Rp${rupiah(
         dataVoucher?.DiscountType === 1
           ? dataVoucher?.DiscountValue

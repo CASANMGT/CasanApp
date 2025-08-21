@@ -33,4 +33,5 @@ export type Transaction = {
   ExpiredAt: string;
   CreatedAt: string;
   UpdatedAt: string;
+  MilestoneDiscount: number
 };

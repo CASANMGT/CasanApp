@@ -5,6 +5,9 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
-    "moduleResolution": "node"
-  }
+    "moduleResolution": "node",
+    "typeRoots": ["src/types", "node_modules/@types"],
+    "strict": true
+  },
+  "include": ["src"]
 }

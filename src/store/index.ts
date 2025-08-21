@@ -14,6 +14,7 @@ import deviceByIdReducer from "../features/device/deviceByIdSlice.ts";
 import feeSettingsReducer from "../features/feeSettings/feeSettingsSlice";
 import globalReducer from "../features/globalSlice";
 import locationByIdReducer from "../features/location/locationByIdSlice.tsx";
+import milestoneListReducer from "../features/milestone/milestoneListSlice.ts";
 import calculateChargeReducer from "../features/priceRule/calculateChargeSlice";
 import calculateDurationReducer from "../features/priceRule/calculateDurationSlice";
 import addSessionReducer from "../features/sessions/addSessionSlice.ts";
@@ -97,6 +98,9 @@ export const store = configureStore({
 
     // VOUCHER
     voucherAvailable: voucherAvailableReducer,
+
+    // MILESTONE
+    milestoneList: milestoneListReducer,
   },
 });
 

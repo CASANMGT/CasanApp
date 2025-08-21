@@ -147,23 +147,6 @@ const VoucherDetails = () => {
               />
             )}
           </div>
-
-          <p className="text-center">{format?.label}</p>
-
-          {format?.isShow && (
-            <>
-              <div className="border border-primary100 rounded-md p-3 bg-primary10 mb-6 mt-4">
-                <p className="text-primary100 text-xs">
-                  Tunjukkan voucher ini untuk klaim produk. Tombol hanya bisa
-                  dipencet oleh PIC produk agar klaim tidak void
-                </p>
-              </div>
-              <Button
-                label="Klaim Voucher"
-                onClick={() => setOpenClaim(true)}
-              />
-            </>
-          )}
         </div>
       </LoadingPage>
 

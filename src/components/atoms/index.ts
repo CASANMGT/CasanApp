@@ -16,10 +16,12 @@ import Signal from "./Signal";
 import Spinner from "./Spinner";
 import StatusIndicator from "./StatusIndicator";
 import SubTitle from "./SubTitle";
+import { MetaPixel } from "./MetaPixel";
 import WheelPicker from "./WheelPicker";
 
 export {
   BetweenText,
+  MetaPixel,
   Button,
   Container,
   CountdownTimer,

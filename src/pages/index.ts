@@ -15,7 +15,8 @@ import NotFound from "./NotFound";
 import Order from "./Order";
 import PaymentSuccess from "./PaymentSuccess";
 import PrivacyPolice from "./PrivacyPolice";
-import Profile from "./Profile";
+import ProfileNew from "./ProfileNew";
+import ProgressDetails from "./ProgressDetails";
 import Scan from "./Scan";
 import SelectBank from "./SelectBank";
 import SessionDetails from "./SessionDetails";
@@ -52,9 +53,9 @@ export {
     NotFound,
     Order,
     PaymentSuccess,
-    PrivacyPolice,
-    Profile,
-    Scan, SelectBank,
+    PrivacyPolice, ProfileNew,
+    ProgressDetails, Scan,
+    SelectBank,
     SessionDetails,
     SessionSettings,
     SettingPin,
@@ -66,7 +67,9 @@ export {
     TransactionHistory,
     Vehicle,
     VerificationNumber,
-    Voucher, VoucherDetails, Withdraw,
+    Voucher,
+    VoucherDetails,
+    Withdraw,
     WithdrawalDetails,
     WithdrawalHistory
 };

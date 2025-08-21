@@ -56,9 +56,9 @@ const ModalVoucher: React.FC<Props> = ({
 
       voucherAvailable?.data?.data.map((e) => {
         const format =
-          e?.VoucherType === 1
+          e?.VoucherType === 1 || e?.VoucherType === 3
             ? ` • Discount ${
-                e?.DiscountType === 1
+                e?.DiscountType === 1 || e?.VoucherType === 3
                   ? `Rp${rupiah(e?.DiscountValue)}`
                   : `${e?.DiscountValue}%`
               }`
@@ -72,14 +72,20 @@ const ModalVoucher: React.FC<Props> = ({
         } else error = "Voucher tidak berlaku di stasiun ini!";
 
         const newItem: OptionsProps = {
-          type: e?.VoucherType === 1 ? "discount" : "product",
+          type:
+            e?.VoucherType === 1 || e?.VoucherType === 1
+              ? "discount"
+              : "product",
           name: `ID${e?.ID} • ${e?.VoucherName}${format}`,
           value: e?.ID,
           error,
           data: e,
         };
 
-        (e?.VoucherType === 1 ? newDataDiscount : newDataProduct).push(newItem);
+        (e?.VoucherType === 1 || e?.VoucherType === 3
+          ? newDataDiscount
+          : newDataProduct
+        ).push(newItem);
       });
 
       setOptionVoucherDiscount(newDataDiscount);

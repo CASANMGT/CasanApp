@@ -1,15 +1,21 @@
+
 export type DataUser = {
-  ID: number;
-  Name: string;
-  Phone: string;
-  IsVerified: boolean;
-  Email: string;
-  Balance: number;
-  Status: number;
-  WithdrawPIN: string;
-  WithdrawPINCooldownUntil: string
+  ID: number
+  Name: string
+  Phone: string
+  IsVerified: boolean
+  Email: string
+  Balance: number
+  Status: number
+  WithdrawPIN: string
+  BankAccounts: any
   WithdrawPINFailedAttempts: number
-  CreatedAt: string;
-  UpdatedAt: string;
-  DeletedAt: string | null;
+  WithdrawPINCooldownUntil: any
+  VoucherUsages: any
+  TotalCO2Saved: number
+  MilestoneID: number
+  Milestone: Milestone
+  CreatedAt: string
+  UpdatedAt: string
+  DeletedAt: any
 };

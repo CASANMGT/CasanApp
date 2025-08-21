@@ -1,15 +1,15 @@
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { Flip, ToastContainer } from "react-toastify";
-import { LoadingModal } from "./components";
+import { LoadingModal, MetaPixel } from "./components";
+import PopupAlert from "./components/atoms/PopupAlert";
 import RoutesPage from "./routes";
 import { RootState } from "./store";
-import { AuthProvider } from "./context/AuthContext";
-import PopupAlert from "./components/atoms/PopupAlert";
-import { useEffect, useState } from "react";
+const metaID = import.meta.env.VITE_META_ID;
 
 dayjs.extend(relativeTime);
 dayjs.locale("id");
@@ -35,7 +35,10 @@ function App() {
 
   return (
     <div className="relative">
-    {/* <div className="relative bg-white dark:bg-[#22303C] text-black100 dark:text-white"> */}
+      {/* <div className="relative bg-white dark:bg-[#22303C] text-black100 dark:text-white"> */}
+
+      <MetaPixel pixelId={metaID} />
+
       <BrowserRouter>
         <RoutesPage />
       </BrowserRouter>

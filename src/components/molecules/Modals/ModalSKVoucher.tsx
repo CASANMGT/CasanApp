@@ -13,9 +13,6 @@ interface Props {
 const ModalSKVoucher: React.FC<Props> = ({ visible, data, onDismiss }) => {
   let location: string = "";
 
-  console.log('cek data?.ChargingStations', data);
-  
-
   if (data?.ChargingStations && data?.ChargingStations.length) {
     data?.ChargingStations.forEach((element) => {
       if (location) location += `, ${element?.Name}`;
@@ -57,7 +54,9 @@ const ModalSKVoucher: React.FC<Props> = ({ visible, data, onDismiss }) => {
               <li>
                 Voucher tidak dapat diuangkan atau digabung dengan promo lain
               </li>
-              <li>Voucher berlaku sesuai lokasi yang ditentukan ({location})</li>
+              <li>
+                Voucher berlaku sesuai lokasi yang ditentukan ({location})
+              </li>
               <li>
                 CASAN berhak mengubah atau menghentikan promo sewaktu-waktu
                 tanpa pemberitahuan sebelumnya
