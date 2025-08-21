@@ -47,7 +47,7 @@ const PaymentDetails: React.FC<Props> = ({
       });
     }
 
-    if (voucher && voucher?.VoucherType === 1) {
+    if (voucher?.VoucherType === 1 || voucher?.VoucherType === 3) {
       const discountVoucher: number =
         voucher?.DiscountType === 1
           ? voucher?.DiscountValue

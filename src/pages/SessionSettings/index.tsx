@@ -235,7 +235,7 @@ const SessionSettings = () => {
     if (form?.voucher?.data) {
       const dataVoucher: Voucher = form?.voucher?.data;
 
-      if (dataVoucher?.VoucherType === 1) {
+      if (dataVoucher?.VoucherType === 1 || dataVoucher?.VoucherType === 3) {
         discount =
           dataVoucher?.DiscountType === 1
             ? dataVoucher?.DiscountValue
@@ -667,7 +667,7 @@ const formatDiscount = (data: OptionsProps | undefined, nominal: number) => {
   let value: string = "";
 
   if (data?.value) {
-    if (dataVoucher?.VoucherType === 1) {
+    if (dataVoucher?.VoucherType === 1 || dataVoucher?.VoucherType === 3) {
       value = `${dataVoucher?.VoucherName} (disc Rp${rupiah(
         dataVoucher?.DiscountType === 1
           ? dataVoucher?.DiscountValue
