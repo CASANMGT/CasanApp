@@ -72,6 +72,11 @@ export enum WithdrawRequestStatus {
   RejectedRequest = 3,
 }
 
+export enum OTPChannel {
+  SMS = 1,
+  WA = 2,
+}
+
 export enum StringNumber {
   A = 1,
   B = 2,

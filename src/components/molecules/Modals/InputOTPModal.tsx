@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchLogin,
-  fetchSendOTP,
   hideLoading,
   LoginRequest,
   resetDataLogin,
   showLoading,
 } from "../../../features";
 import { formatPhoneNumber } from "../../../helpers";
+import { Api } from "../../../services";
 import { AppDispatch, RootState } from "../../../store";
 import { InputCode, Separator } from "../../atoms";
 import ModalContainer from "./ModalContainer";
@@ -62,8 +62,11 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
     }
   }, [dataLogin]);
 
-  const getOTP = (phone: string) => {
-    dispatch(fetchSendOTP(phone.replace(/\s+/g, "")));
+  const getOTP = async (phone: string) => {
+    await Api.post({
+      url: "send-otp",
+      body: { phone_number: phone.replace(/\s+/g, ""), channel: 2 },
+    });
   };
 
   const onCounter = () => {
@@ -100,6 +103,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
     const body: LoginRequest = {
       code: code.join(""),
       phone_number: formatPhone.replace(/\s+/g, ""),
+      channel: 1,
     };
 
     dispatch(fetchLogin(body));

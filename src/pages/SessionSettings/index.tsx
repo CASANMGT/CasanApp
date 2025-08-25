@@ -51,7 +51,6 @@ import {
   fetchCalculateDuration,
   fetchDeviceById,
   fetchMyUser,
-  fetchSendOTP,
   hideLoading,
   resetDataCalculateCharge,
   resetDataCalculateDuration,
@@ -66,6 +65,7 @@ import {
   rupiah,
   useForm,
 } from "../../helpers";
+import { Api } from "../../services";
 import { AppDispatch, RootState } from "../../store";
 import PriceInformation from "../ChargingStationDetails/PriceInformation";
 import InputHour from "./InputHour";
@@ -603,12 +603,18 @@ const SessionSettings = () => {
           open={openRequestOTP}
           phoneNumber={`0${form.phoneNumber}`}
           onDismiss={() => setOpenRequestOTP(false)}
-          onClick={() => {
+          onClick={async () => {
             const formatPhone: string = formatPhoneNumber(
               `0${form.phoneNumber}`
             );
 
-            dispatch(fetchSendOTP(formatPhone.replace(/\s+/g, "")));
+            await Api.post({
+              url: "send-otp",
+              body: {
+                phone_number: formatPhone.replace(/\s+/g, ""),
+                channel: 2,
+              },
+            });
             setOpenRequestOTP(false);
             setOpenInputOTP(true);
           }}
