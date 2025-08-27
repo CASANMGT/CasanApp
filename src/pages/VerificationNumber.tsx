@@ -67,6 +67,7 @@ const VerificationNumber = () => {
       login();
       navigate("/home/index", { replace: true });
     } else if (dataLogin?.error) {
+      setCodes(["", "", "", ""]);
       dispatch(resetDataLogin());
       setLabelError("kode verifikasi tidak valid");
     }
@@ -129,6 +130,8 @@ const VerificationNumber = () => {
   const onRequestCode = async () => {
     await getOTP(phoneNumber);
     setChannel((prev) => (prev === 1 ? 2 : 1));
+    setCodes(["", "", "", ""]);
+    setLabelError("");
 
     if (counter === 0) {
       setCounter(60);
@@ -190,7 +193,7 @@ const VerificationNumber = () => {
 
         <Button
           type="secondary"
-          label="Kirim OTP lewat SMS"
+          label={`Kirim OTP lewat ${channel === 2 ? "WA" : "SMS"}`}
           disabled={counter !== 0}
           onClick={onRequestCode}
           iconRight={channel === 2 ? FaWhatsapp : CiMail}
