@@ -10,8 +10,10 @@ import {
 import { formatPhoneNumber } from "../../../helpers";
 import { Api } from "../../../services";
 import { AppDispatch, RootState } from "../../../store";
-import { InputCode, Separator } from "../../atoms";
+import { Button, InputCode, Separator } from "../../atoms";
 import ModalContainer from "./ModalContainer";
+import { FaWhatsapp } from "react-icons/fa6";
+import { CiMail } from "react-icons/ci";
 
 interface InputOTPProps {
   open: boolean;
@@ -33,6 +35,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
   const [labelError, setLabelError] = useState<string>();
   const [counter, setCounter] = useState<number>(60);
   const [formatPhone, setFormatPhone] = useState<string>("");
+  const [channel, setChannel] = useState<number>(2);
 
   useEffect(() => {
     if (open && phoneNumber) {
@@ -67,6 +70,8 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
       url: "send-otp",
       body: { phone_number: phone.replace(/\s+/g, ""), channel: 2 },
     });
+
+    setChannel((prev) => (prev === 1 ? 2 : 1));
   };
 
   const onCounter = () => {
@@ -137,6 +142,15 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
             </a>
           </span>
         </div>
+
+        <Button
+          type="secondary"
+          label={`Kirim OTP lewat ${channel === 2 ? "WA" : "SMS"}`}
+          disabled={counter !== 0}
+          onClick={onRequestCode}
+          iconRight={channel === 2 ? FaWhatsapp : CiMail}
+          className="mt-4"
+        />
       </>
     </ModalContainer>
   );

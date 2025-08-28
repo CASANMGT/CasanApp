@@ -97,6 +97,8 @@ const VerificationNumber = () => {
       url: "send-otp",
       body: { phone_number: phone.replace(/\s+/g, ""), channel },
     });
+
+    setChannel((prev) => (prev === 1 ? 2 : 1));
   };
 
   /* format counter timer */
@@ -129,7 +131,7 @@ const VerificationNumber = () => {
 
   const onRequestCode = async () => {
     await getOTP(phoneNumber);
-    setChannel((prev) => (prev === 1 ? 2 : 1));
+
     setCodes(["", "", "", ""]);
     setLabelError("");
 

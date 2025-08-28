@@ -121,6 +121,7 @@ const SessionSettings = () => {
   const [openInputOTP, setOpenInputOTP] = useState<boolean>(false);
   const [openInputPin, setOpenInputPin] = useState<boolean>(false);
   const [openVoucher, setOpenVoucher] = useState<boolean>(false);
+  const [channel, setChannel] = useState<number>(2);
 
   useEffect(() => {
     if (isAuthenticated) dispatch(fetchMyUser());
@@ -612,9 +613,11 @@ const SessionSettings = () => {
               url: "send-otp",
               body: {
                 phone_number: formatPhone.replace(/\s+/g, ""),
-                channel: 2,
+                channel,
               },
             });
+
+            setChannel((prev) => (prev === 1 ? 2 : 1));
             setOpenRequestOTP(false);
             setOpenInputOTP(true);
           }}
