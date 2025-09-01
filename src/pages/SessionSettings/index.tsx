@@ -617,7 +617,7 @@ const SessionSettings = () => {
               },
             });
 
-            setChannel((prev) => (prev === 1 ? 2 : 1));
+            // setChannel((prev) => (prev === 1 ? 2 : 1));
             setOpenRequestOTP(false);
             setOpenInputOTP(true);
           }}

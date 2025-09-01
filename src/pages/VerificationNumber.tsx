@@ -98,7 +98,7 @@ const VerificationNumber = () => {
       body: { phone_number: phone.replace(/\s+/g, ""), channel },
     });
 
-    setChannel((prev) => (prev === 1 ? 2 : 1));
+    // setChannel((prev) => (prev === 1 ? 2 : 1));
   };
 
   /* format counter timer */

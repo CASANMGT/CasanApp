@@ -71,7 +71,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
       body: { phone_number: phone.replace(/\s+/g, ""), channel: 2 },
     });
 
-    setChannel((prev) => (prev === 1 ? 2 : 1));
+    // setChannel((prev) => (prev === 1 ? 2 : 1));
   };
 
   const onCounter = () => {
