@@ -10,12 +10,10 @@ export * from "./types/chargingStationsType";
 export * from "./types/chargingType";
 export * from "./types/deviceType";
 export * from "./types/feeSettingsType";
-export * from "./types/globalType";
 export * from "./types/locationType";
 export * from "./types/priceRuleType";
-export * from "./types/sessionType";
 export * from "./types/transactionType";
 export * from "./types/userType";
+export * from "./types/voucherType";
 export * from "./types/withdrawType";
-export * from './types/voucherType'
 

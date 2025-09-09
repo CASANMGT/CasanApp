@@ -1,4 +1,3 @@
-import { MenuBottomNavigationProps } from "../../../common";
 import BottomNavigationItem from "./BottomNavigationItem";
 
 interface BottomNavigationProps {

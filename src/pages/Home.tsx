@@ -2,14 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { IcBike, IcPinWhite, ILCarousel1, ILCarousel2 } from "../assets";
-import {
-  ChargingStationBody,
-  GeocodeResult,
-  LatLng,
-  LIMIT_LIST,
-  OptionsProps,
-  SessionListBody,
-} from "../common";
+import { ChargingStationBody, GeocodeResult, LIMIT_LIST } from "../common";
 import {
   Carousel,
   ChargingLocationCard,
@@ -84,7 +77,7 @@ const Home = () => {
   };
 
   const getOngoing = () => {
-    const body: SessionListBody = {
+    const body = {
       page: 1,
       limit: 10,
       is_finish: 0,
@@ -147,13 +140,15 @@ const Home = () => {
             <div className="bg-white rounded-lg p-3 mt-5">
               <p className="font-medium mb-3">Sedang berlangsung</p>
               <div className="row gap-2 overflow-x-auto scrollbar-none">
-                {onGoingSessionList?.data?.data.map((item, index: number) => (
-                  <OngoingItem
-                    key={index}
-                    data={item}
-                    onClick={() => navigate(`/charging/${item?.ID}`)}
-                  />
-                ))}
+                {onGoingSessionList?.data?.data.map(
+                  (item: any, index: number) => (
+                    <OngoingItem
+                      key={index}
+                      data={item}
+                      onClick={() => navigate(`/charging/${item?.ID}`)}
+                    />
+                  )
+                )}
               </div>
             </div>
           )}

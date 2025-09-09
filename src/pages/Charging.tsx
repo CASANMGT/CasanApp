@@ -18,7 +18,6 @@ import {
 import {
   CalculateDurationBody,
   CUSTOMER_SERVICES,
-  Session,
   VoucherUsage,
 } from "../common";
 import {
@@ -32,7 +31,6 @@ import {
   StatusIndicator,
 } from "../components";
 import {
-  fetchCalculateDuration,
   fetchCancelSession,
   fetchDetailSession,
   fetchStartSession,
@@ -145,7 +143,7 @@ const Charging = () => {
             watt: Number(resSession?.MaxWatt),
           };
 
-          dispatch(fetchCalculateDuration(body));
+          // dispatch(fetchCalculateDuration(body));
         }
       });
     } else {

@@ -1,6 +1,4 @@
 import { ChargingStation } from "./chargingStationsType";
-import { OptionsProps } from "./globalType";
-import { Session } from "./sessionType";
 
 export type FormVoucher = {
   voucherName: string;

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AddWithdrawBody, ResponseSuccess } from "../../common";
+import { AddWithdrawBody } from "../../common";
 import { Api } from "../../services/Api";
 
 type AddWithdrawState = {

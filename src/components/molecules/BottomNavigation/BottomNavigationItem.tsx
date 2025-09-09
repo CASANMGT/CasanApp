@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { Link } from "react-router-dom";
 import {
   IcHistoryActive,
   IcHistoryInactive,
@@ -11,7 +10,6 @@ import {
   IcProfileInactive,
   IcScanWhite,
 } from "../../../assets";
-import { MenuBottomNavigationProps } from "../../../common";
 import { useAuth } from "../../../context/AuthContext";
 
 interface BottomNavigationItemProps {

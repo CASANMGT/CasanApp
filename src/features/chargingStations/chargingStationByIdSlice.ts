@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ChargingStation, MetaResponseProps } from "../../common";
+import { ChargingStation } from "../../common";
 import { Api } from "../../services/Api";
 
 type ChargingStationByIdState = {

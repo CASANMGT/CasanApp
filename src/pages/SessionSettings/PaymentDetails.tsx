@@ -31,11 +31,6 @@ const PaymentDetails: React.FC<Props> = ({
       value: chargingNominal,
     });
 
-    newData.push({
-      name: "Biaya Layanan",
-      value: fee,
-    });
-
     if (milestone && milestone?.DiscountPercent) {
       const discountMilestone: number =
         (chargingNominal * (milestone?.DiscountPercent || 0)) / 100;

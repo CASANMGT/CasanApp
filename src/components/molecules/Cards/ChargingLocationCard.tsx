@@ -5,7 +5,7 @@ import {
   IcLineDown,
   ILNoImage,
 } from "../../../assets";
-import { ChargingStation, LatLng } from "../../../common";
+import { ChargingStation } from "../../../common";
 import {
   getDistanceFromLatLonInKm,
   moments,

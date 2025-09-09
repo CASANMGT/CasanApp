@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { MetaResponseProps, Voucher } from "../../common";
+import { Voucher } from "../../common";
 import { Api } from "../../services/Api";
 
 type VoucherAvailableResponseProps = {

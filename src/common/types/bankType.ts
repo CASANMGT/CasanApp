@@ -1,5 +1,3 @@
-import { OptionsProps } from "./globalType";
-
 export type FormSelectBank = {
   bankName: OptionsProps;
   accountNumber: string;

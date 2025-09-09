@@ -12,8 +12,6 @@ export * from "./feeSettings/feeSettingsSlice";
 export * from "./globalSlice";
 export * from "./location/locationByIdSlice";
 export * from "./milestone/milestoneListSlice";
-export * from "./priceRule/calculateChargeSlice";
-export * from "./priceRule/calculateDurationSlice";
 export * from "./sessions/addSessionSlice";
 export * from "./sessions/cancelSessionSlice";
 export * from "./sessions/completeSessionListSlice";

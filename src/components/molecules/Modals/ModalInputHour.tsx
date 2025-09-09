@@ -3,8 +3,8 @@ import { IcClose } from "../../../assets";
 import { HOUR_SESSION } from "../../../common";
 import { convertToHours, formatMinutesToHHMM } from "../../../helpers";
 import { Button, Separator, WheelPicker } from "../../atoms";
-import { NominalTopUpItem } from "../Items";
 import ModalContainer from "./ModalContainer";
+import { NominalTopUpItem } from "../Items";
 
 interface ModalInputHourProps {
   open: boolean;
@@ -24,7 +24,7 @@ const ModalInputHour: React.FC<ModalInputHourProps> = ({
   useEffect(() => {
     if (open) {
       const split = value.split(":");
-      setSelectTime([split[0], split[1]]);
+      setSelectTime([split[0] || "00", split[1] || "00"]);
     }
   }, [open]);
 
@@ -44,7 +44,6 @@ const ModalInputHour: React.FC<ModalInputHourProps> = ({
       setSelectTime([newValue[0], newValue[1]]);
     }
   };
-
 
   const isError: boolean = totalMinute(selectTime) > 720 ? true : false;
 
@@ -88,9 +87,9 @@ const ModalInputHour: React.FC<ModalInputHourProps> = ({
             {HOUR_SESSION.map((item, index: number) => (
               <NominalTopUpItem
                 key={index}
+                type="hour"
                 value={item}
                 isActive={validation(item)}
-                isHour
                 onClick={() => {
                   handleChange(item);
                 }}

@@ -1,6 +1,6 @@
-import { IcBike, IcFlash, IcFuel, IcRight } from "../../../assets";
-import { Device, StringNumber } from "../../../common";
-import { formatSpaceNumber, moments } from "../../../helpers";
+import { IcFlash, IcFuel } from "../../../assets";
+import { Device } from "../../../common";
+import { moments } from "../../../helpers";
 import { Separator, Signal } from "../../atoms";
 
 interface DeviceListItemProps {

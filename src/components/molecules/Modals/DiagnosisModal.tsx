@@ -1,13 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { Button } from "../../atoms";
 import ModalContainer from "./ModalContainer";
-import { BetweenText, Button, ProgressBar } from "../../atoms";
-import { useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store";
-import { CalculateDurationBody, Device } from "../../../common";
-import { useDispatch } from "react-redux";
-import { fetchCalculateDuration, fetchDetailSession } from "../../../features";
-import { formatDuration, rupiah } from "../../../helpers";
-import { IcSuccess, IcSuccessGreen } from "../../../assets";
 
 interface DiagnosisModalProps {
   isOpen: boolean;

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { IcFlashCircleGreen } from "../../../assets";
-import { OptionsProps } from "../../../common";
 import { Button, Dropdown } from "../../atoms";
 import ModalContainer from "./ModalContainer";
 

@@ -1,8 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
-  bodyListProps,
   DataTransaction,
-  MetaResponseProps
 } from "../../common";
 import { Api } from "../../services/Api";
 

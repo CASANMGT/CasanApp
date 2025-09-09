@@ -4,7 +4,6 @@ import { Marker, useMap } from "react-leaflet";
 import { useDispatch } from "react-redux";
 import {
   ChargingStation,
-  LatLng
 } from "../../../common";
 import { setFromGlobal } from "../../../features";
 import { AppDispatch } from "../../../store";

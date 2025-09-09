@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { ButtonType } from "../../common";
 
 interface SizeButtonStyleProps {
   buttonStyle: string;

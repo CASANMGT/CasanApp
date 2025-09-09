@@ -1,5 +1,4 @@
 import { Device } from "./deviceType";
-import { LocationResponse } from "./globalType";
 
 export type ChargingStationBody = {
   page: number;
@@ -88,6 +87,12 @@ export type PriceSetting = {
   DeletedAt: string | null;
   CreatedAt: string;
   UpdatedAt: string;
+  PJU: number;
+  PPN: number;
+  BikePriceType: number;
+  CarBaseFare: number;
+  BikeBaseFare: number;
+  OtherFees: OtherFeesProps[];
 };
 
 export interface PriceBaseRule {
@@ -136,6 +141,16 @@ export type ChargingStation = {
   Devices: Device[] | null;
   PriceSetting: PriceSetting;
   DeletedAt: string | null;
+  CreatedAt: string;
+  UpdatedAt: string;
+};
+
+export type OtherFeesProps = {
+  ID: number;
+  Type: number;
+  Name: string;
+  Value: number;
+  PriceSettingID: number;
   CreatedAt: string;
   UpdatedAt: string;
 };

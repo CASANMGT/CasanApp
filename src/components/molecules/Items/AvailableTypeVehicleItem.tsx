@@ -1,5 +1,4 @@
 import React from "react";
-import { OptionsProps } from "../../../common";
 
 interface AvailableTypeVehicleItemProps {
   isActive: boolean;

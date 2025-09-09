@@ -1,8 +1,8 @@
 import html2canvas from "html2canvas";
-import { RiTreeFill } from "react-icons/ri";
-import { IoLeaf } from "react-icons/io5";
-import { capitalize } from "lodash";
 import { useEffect, useMemo } from "react";
+import { FaArrowRight } from "react-icons/fa6";
+import { IoLeaf } from "react-icons/io5";
+import { RiTreeFill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
@@ -12,7 +12,7 @@ import {
   IcSuccessGreen,
   IcTimerCircle,
 } from "../assets";
-import { Session, VoucherUsage } from "../common";
+import { VoucherUsage } from "../common";
 import {
   BetweenText,
   Button,
@@ -28,7 +28,6 @@ import {
   rupiah,
 } from "../helpers";
 import { AppDispatch, RootState } from "../store";
-import { FaArrowRight } from "react-icons/fa6";
 
 const SessionDetails = () => {
   const navigate = useNavigate();
