@@ -8,6 +8,8 @@ interface StatusIndicatorProps {
   type: number;
   port: number;
   duration: number;
+  priceType: number;
+  kwh: number;
   onFinish: () => void;
 }
 
@@ -17,6 +19,8 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   duration,
   className,
   maxWatt,
+  priceType,
+  kwh,
   onFinish,
 }) => {
   const isCharging: boolean =
@@ -26,6 +30,7 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
       ? "animate-soundWave bg-primary100"
       : "animate-charging bg-secondary100"
   }`;
+  const totalKwh = kwh < 0 ? 0 : kwh;
 
   return (
     <div className={`center h-[288px] w-full ${className}`}>
@@ -38,16 +43,26 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
         {/* Inner Static Circle */}
         <div className="relative flex items-center justify-center w-[220px] h-[220px] bg-white rounded-full shadow-md">
           <div className="text-center">
-            <p className="text-black70 font-semibold mb-2">Sisa Durasi</p>
+            <p className="text-black70 font-semibold mb-2">
+              {priceType === 2 ? "Kecepatan" : "Sisa Durasi"}
+            </p>
             {type === 5 && maxWatt > 1 ? (
-              <CountdownTimer
-                initialSeconds={duration}
-                onFinish={onFinish}
-                className="text-[34px] font-semibold"
-              />
+              priceType === 2 ? (
+                <p className="text-[34px] font-semibold">{`${totalKwh}kWh`}</p>
+              ) : (
+                <CountdownTimer
+                  initialSeconds={duration}
+                  onFinish={onFinish}
+                  className="text-[34px] font-semibold"
+                />
+              )
             ) : (
               <p className="text-[34px] font-semibold">
-                {type === 2 ? formatTime(duration) : "Persiapan..."}
+                {type === 2
+                  ? priceType === 2
+                    ? `${totalKwh}kWh`
+                    : formatTime(duration)
+                  : "Persiapan..."}
               </p>
             )}
 

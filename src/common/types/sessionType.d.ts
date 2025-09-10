@@ -61,12 +61,14 @@ declare global {
     StopChargingTime: string | null;
     StopReason: string | null;
     TotalKwhUsed: number;
+    PaidKWH: number;
     Transaction: Transaction;
     TransactionID: number;
     UpdatedAt: string;
     UsedAmount: number;
     User: DataUser;
     UserID: number;
+    PriceType: number;
     VehicleType: number;
     VoucherUsages: VoucherUsage[] | null;
   };

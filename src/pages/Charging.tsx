@@ -114,6 +114,8 @@ const Charging = () => {
         const resSession: Session = res?.payload as Session;
         const currentStatus = resSession?.Status;
 
+        return; // dummy
+
         if (currentStatus === 6) {
           setOpenFinished(true);
         } else if (
@@ -268,7 +270,12 @@ const Charging = () => {
             maxWatt={dataSession?.MaxWatt || 0}
             duration={duration > 0 ? duration : 0}
             port={dataSession?.Socket?.Port || 0}
+            priceType={detailSession?.data?.PriceType || 0}
             onFinish={getData}
+            kwh={
+              (detailSession?.data?.TotalKwhUsed || 0) -
+              (detailSession?.data?.PaidKWH || 0)
+            }
             className="my-5"
           />
 
