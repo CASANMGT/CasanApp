@@ -1,11 +1,9 @@
-import { ChargingStation, Socket } from "./chargingStationsType";
-import { Device } from "./deviceType";
 import { FeeSettingsProps } from "./feeSettingsType";
 import { Transaction } from "./transactionType";
 import { DataUser } from "./userType";
 import { VoucherUsage } from "./voucherType";
 
-export {};
+export { };
 
 declare global {
   type FormSession = {
@@ -53,7 +51,7 @@ declare global {
     MaxWatt: number;
     Method: number;
     Name: string;
-    PriceSetting: any;
+    PriceSetting: PriceSetting;
     RefundAmount: number;
     Socket: Socket;
     SocketID: number;

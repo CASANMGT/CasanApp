@@ -1,6 +1,5 @@
 import React from "react";
 import { IcClose } from "../../../assets";
-import { ChargingStation } from "../../../common";
 import { rupiah } from "../../../helpers";
 import { BetweenText } from "../../atoms";
 import ModalContainer from "./ModalContainer";
@@ -8,18 +7,39 @@ import ModalContainer from "./ModalContainer";
 interface Props {
   isOpen: boolean;
   dataStation: ChargingStation;
+  dataDevice: Device;
   total: number;
+  watt: number;
   onClose: () => void;
 }
 
 const ModalPriceDetails: React.FC<Props> = ({
   isOpen,
   total,
+  watt,
   dataStation,
+  dataDevice,
   onClose,
 }) => {
   const pju: number = (total * dataStation?.PriceSetting?.PJU) / 100;
   const ppn: number = (total * dataStation?.PriceSetting?.PPN) / 100;
+
+  const baseFare: number =
+    dataDevice?.VehicleType === 1
+      ? dataStation?.PriceSetting?.BikeBaseFare
+      : dataStation?.PriceSetting?.CarBaseFare;
+
+  console.log("cek station", dataStation);
+  // console.log("cek device", dataDevice);
+
+  const selectedBaseRule: PriceBaseRule | null =
+    dataStation?.PriceSetting?.PriceBaseRules.find(
+      (item) => watt >= item.From && watt <= item.To
+    ) ?? null;
+  const selectedPriceTimeRule: PriceBaseTime | undefined =
+    getCurrentSlot(selectedBaseRule);
+  const dataOtherFee: OtherFeesProps[] | undefined =
+    dataStation?.PriceSetting?.OtherFees;
 
   return (
     <ModalContainer
@@ -40,35 +60,37 @@ const ModalPriceDetails: React.FC<Props> = ({
 
           <BetweenText
             labelLeft="Harga Energi Dasar"
-            labelRight={"-"}
+            labelRight={`Rp${rupiah(baseFare)}`}
             classNameLabelRight="font-medium text-black100"
             className="py-2 border-b border-b-black10"
           />
 
           <BetweenText
-            labelLeft="Harga 0-200W"
-            labelRight={"-"}
+            labelLeft={`Harga ${selectedBaseRule?.From || 0}-${
+              selectedBaseRule?.To || 0
+            }W`}
+            labelRight={`Rp${rupiah(selectedPriceTimeRule?.Value || 0)}`}
             classNameLabelRight="font-medium text-black100"
             className="py-2 border-b border-b-black10"
           />
 
           <BetweenText
             labelLeft="Biaya Jasa"
-            labelRight={"-"}
+            labelRight={`Rp${rupiah()}`}
             classNameLabelRight="font-medium text-black100"
             className="py-2 border-b border-b-black10"
           />
 
           <BetweenText
             labelLeft="Biaya Aplikasi"
-            labelRight={"-"}
+            labelRight={`Rp${rupiah()}`}
             classNameLabelRight="font-medium text-black100"
             className="py-2 border-b border-b-black10"
           />
 
           <BetweenText
             labelLeft="Biaya Alat"
-            labelRight={"-"}
+            labelRight={`Rp${rupiah()}`}
             classNameLabelRight="font-medium text-black100"
             className="py-2 border-b border-b-black10"
           />
@@ -89,14 +111,14 @@ const ModalPriceDetails: React.FC<Props> = ({
 
           <BetweenText
             labelLeft="Energi Digunakan"
-            labelRight={"-"}
+            labelRight={`Rp${rupiah()}`}
             classNameLabelRight="font-medium text-black100"
             className="py-2 border-b border-b-black10"
           />
 
           <BetweenText
             labelLeft="Waktu Pengisian"
-            labelRight={"-"}
+            labelRight={`Rp${rupiah()}`}
             classNameLabelRight="font-medium text-black100"
             className="py-2"
           />
@@ -125,3 +147,34 @@ const ModalPriceDetails: React.FC<Props> = ({
 };
 
 export default ModalPriceDetails;
+
+function timeToMinutes(time: string): number {
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
+}
+
+function getCurrentSlot(
+  priceBase: PriceBaseRule | null
+): PriceBaseTime | undefined {
+  if (!priceBase?.PriceBaseTime?.length) return undefined;
+
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+  const matchedSlot = priceBase.PriceBaseTime.find((slot) => {
+    const fromMinutes = timeToMinutes(slot?.PriceTimeRule?.From);
+    const toMinutes = timeToMinutes(slot?.PriceTimeRule?.To);
+
+    if (isNaN(fromMinutes) || isNaN(toMinutes)) return false;
+
+    // Normal same-day range
+    if (fromMinutes <= toMinutes) {
+      return currentMinutes >= fromMinutes && currentMinutes <= toMinutes;
+    }
+
+    // Overnight range
+    return currentMinutes >= fromMinutes || currentMinutes <= toMinutes;
+  });
+
+  return matchedSlot;
+}

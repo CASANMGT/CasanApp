@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { IcBike, IcPinWhite, ILCarousel1, ILCarousel2 } from "../assets";
-import { ChargingStationBody, GeocodeResult, LIMIT_LIST } from "../common";
+import { GeocodeResult, LIMIT_LIST } from "../common";
 import {
   Carousel,
   ChargingLocationCard,

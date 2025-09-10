@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { IcBackBlack, IcPinGreen } from "../assets";
-import { ChargingStationBody, GeocodeResult, LIMIT_LIST } from "../common";
+import { GeocodeResult, LIMIT_LIST } from "../common";
 import { ChargingLocationCard, Label, LoadingPage } from "../components";
 import { fetchChargingStationLocations } from "../features";
 import { getCurrentLocation, getGeoCode } from "../services/ApiAddress";

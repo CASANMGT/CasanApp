@@ -1,5 +1,4 @@
 import { IcFlash, IcFuel } from "../../../assets";
-import { Device } from "../../../common";
 import { moments } from "../../../helpers";
 import { Separator, Signal } from "../../atoms";
 

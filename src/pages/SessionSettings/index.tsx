@@ -16,13 +16,10 @@ import {
   IcSocketCircleGreen,
 } from "../../assets";
 import {
-  ChargingStation,
-  Device,
   ERROR_MESSAGE,
   FormDefaultSession,
   INVALID_TOKEN,
   REGEX_TIME,
-  Socket,
   Voucher,
 } from "../../common";
 import {
@@ -797,12 +794,18 @@ const SessionSettings = () => {
           <ModalPriceDetails
             isOpen={openPriceDetails}
             dataStation={data}
-            total={6000}
-            // total={Number(
-            //   form?.selectedTab
-            //     ? form.value.replace("Rp", "").replace(/\./g, "")
-            //     : valueCalculate
-            // )}
+            dataDevice={selectedDevice}
+            total={Number(
+              form?.selectedTab
+                ? form.value.replace("Rp", "").replace(/\./g, "")
+                : valueCalculate
+            )}
+            watt={Number(
+              (
+                Number(form?.voltage?.value || 0) *
+                Number(form?.ampere?.value || 0)
+              ).toFixed(0) || 0
+            )}
             onClose={() => setOpenPriceDetails(false)}
           />
         )}

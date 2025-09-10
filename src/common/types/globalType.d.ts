@@ -1,5 +1,3 @@
-import { ChargingStation } from "./chargingStationsType";
-
 export { };
 
 declare global {

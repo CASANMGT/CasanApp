@@ -1,5 +1,5 @@
 import { IcCustomerServiceBlack } from "../../assets";
-import { DaysOfWeek, OperationalHour } from "../../common";
+import { DaysOfWeek } from "../../common";
 import { Button, Separator } from "../../components";
 import {
   convertToReadableHours,

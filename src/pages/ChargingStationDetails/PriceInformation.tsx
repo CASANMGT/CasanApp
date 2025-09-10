@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { ChargingStation, OperationalHour, TabItemProps } from "../../common";
 import { Separator, Tabs } from "../../components";
 import { moments, rupiah, timeToSeconds } from "../../helpers";
 

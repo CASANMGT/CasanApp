@@ -1,8 +1,4 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  ChargingStation,
-  ChargingStationBody,
-} from "../../common";
 import { Api } from "../../services/Api";
 
 type ChargingStationLocationsResponseProps = {

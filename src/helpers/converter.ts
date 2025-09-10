@@ -1,4 +1,6 @@
 import { jwtDecode } from "jwt-decode";
+import { FaLeaf, FaTree } from "react-icons/fa6";
+import { RiMotorbikeFill, RiShieldCheckFill, RiTreeFill } from "react-icons/ri";
 import {
   IcAstraPay,
   IcDana,
@@ -14,13 +16,10 @@ import {
   DANA,
   GOPAY,
   LINK_AJA,
-  OperationalHour,
   OVO,
   QRIS,
   SHOPEEPAY,
 } from "../common";
-import { FaLeaf, FaTree } from "react-icons/fa6";
-import { RiMotorbikeFill, RiShieldCheckFill, RiTreeFill } from "react-icons/ri";
 
 interface TokenPayload {
   id: string;
@@ -146,7 +145,6 @@ export const getIconMilestone = (position: number) => {
 
   return icon;
 };
-
 
 export const decodeToken = (token: string): TokenPayload | null => {
   try {

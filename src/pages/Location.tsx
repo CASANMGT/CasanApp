@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { IcMenuWhite, IcMyLocationBlack } from "../assets";
-import { ChargingStationBody,  LIMIT_LIST } from "../common";
+import { LIMIT_LIST } from "../common";
 import { LoadingPage, Map, ModalChargingStation } from "../components";
 import { fetchChargingStationLocations, setFromGlobal } from "../features";
 import { getCurrentLocation } from "../services/ApiAddress";

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IcClose } from "../../../assets";
-import { ChargingStation } from "../../../common";
 import { LoadingPage } from "../../atoms";
 import { ChargingLocationCard } from "../Cards";
 import ModalContainer from "./ModalContainer";

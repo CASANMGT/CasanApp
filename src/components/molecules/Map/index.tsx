@@ -2,7 +2,7 @@ import L from "leaflet";
 import { useEffect } from "react";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import { IcMyLocation } from "../../../assets";
-import { ChargingStation, ERROR_MESSAGE } from "../../../common";
+import { ERROR_MESSAGE } from "../../../common";
 import CustomMarkerMap from "./CustomMarkerMap";
 
 interface MapProps {

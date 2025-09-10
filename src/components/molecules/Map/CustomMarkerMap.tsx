@@ -2,9 +2,6 @@ import L from "leaflet";
 import { useEffect, useRef } from "react";
 import { Marker, useMap } from "react-leaflet";
 import { useDispatch } from "react-redux";
-import {
-  ChargingStation,
-} from "../../../common";
 import { setFromGlobal } from "../../../features";
 import { AppDispatch } from "../../../store";
 
