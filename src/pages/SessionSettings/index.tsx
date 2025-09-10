@@ -60,6 +60,7 @@ import {
   formatPhoneNumber,
   openGoogleMaps,
   rupiah,
+  timeToSeconds,
   useForm,
 } from "../../helpers";
 import { Api } from "../../services";
@@ -795,17 +796,28 @@ const SessionSettings = () => {
             isOpen={openPriceDetails}
             dataStation={data}
             dataDevice={selectedDevice}
-            total={Number(
-              form?.selectedTab
-                ? form.value.replace("Rp", "").replace(/\./g, "")
-                : valueCalculate
-            )}
+            power={
+              form?.selectedTab === "nominal"
+                ? valueCalculate
+                : form?.value.replace(" kWh", "")
+            }
             watt={Number(
               (
                 Number(form?.voltage?.value || 0) *
                 Number(form?.ampere?.value || 0)
               ).toFixed(0) || 0
             )}
+            duration={
+              form.selectedTab === "duration"
+                ? timeToSeconds(form?.value || "00:00")
+                : valueCalculate
+            }
+            total={
+              form?.selectedTab === "duration" ||
+              (priceType === 2 && form?.selectedTab === "power")
+                ? valueCalculate
+                : Number(form?.value.replace("Rp", "").replace(/\./g, ""))
+            }
             onClose={() => setOpenPriceDetails(false)}
           />
         )}

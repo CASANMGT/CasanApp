@@ -1,6 +1,6 @@
 import React from "react";
 import { IcClose } from "../../../assets";
-import { rupiah } from "../../../helpers";
+import { formatDuration, rupiah } from "../../../helpers";
 import { BetweenText } from "../../atoms";
 import ModalContainer from "./ModalContainer";
 
@@ -10,36 +10,50 @@ interface Props {
   dataDevice: Device;
   total: number;
   watt: number;
+  power: number | string;
+  duration: number;
   onClose: () => void;
 }
 
 const ModalPriceDetails: React.FC<Props> = ({
   isOpen,
-  total,
   watt,
+  duration,
+  power,
+  total,
   dataStation,
   dataDevice,
   onClose,
 }) => {
-  const pju: number = (total * dataStation?.PriceSetting?.PJU) / 100;
-  const ppn: number = (total * dataStation?.PriceSetting?.PPN) / 100;
-
-  const baseFare: number =
-    dataDevice?.VehicleType === 1
-      ? dataStation?.PriceSetting?.BikeBaseFare
-      : dataStation?.PriceSetting?.CarBaseFare;
-
-  console.log("cek station", dataStation);
-  // console.log("cek device", dataDevice);
-
   const selectedBaseRule: PriceBaseRule | null =
     dataStation?.PriceSetting?.PriceBaseRules.find(
       (item) => watt >= item.From && watt <= item.To
     ) ?? null;
   const selectedPriceTimeRule: PriceBaseTime | undefined =
     getCurrentSlot(selectedBaseRule);
-  const dataOtherFee: OtherFeesProps[] | undefined =
-    dataStation?.PriceSetting?.OtherFees;
+  const dataOtherFee: OtherFeesProps[] = dataStation?.PriceSetting?.OtherFees;
+
+  const baseFare: number =
+    dataDevice?.VehicleType === 1
+      ? dataStation?.PriceSetting?.BikeBaseFare
+      : dataStation?.PriceSetting?.CarBaseFare;
+  const priceWatt: number = selectedPriceTimeRule?.Value || 0;
+  const totalFee: number = dataOtherFee.reduce(
+    (sum, item) => sum + item.Value,
+    0
+  );
+  const pju: number = Number(
+    ((baseFare * dataStation?.PriceSetting?.PJU) / 100).toFixed(0)
+  );
+  const ppn: number = Number(
+    ((baseFare + priceWatt + pju + totalFee) / 100).toFixed(0)
+  );
+  const formattedDuration = formatDuration(duration || 0);
+  const priceType: number = dataStation?.PriceSetting?.BikePriceType;
+  const labelPrice =
+    priceType === 1
+      ? `${selectedBaseRule?.From || 0}-${selectedBaseRule?.To || 0}W`
+      : "Tambahan";
 
   return (
     <ModalContainer
@@ -66,34 +80,21 @@ const ModalPriceDetails: React.FC<Props> = ({
           />
 
           <BetweenText
-            labelLeft={`Harga ${selectedBaseRule?.From || 0}-${
-              selectedBaseRule?.To || 0
-            }W`}
+            labelLeft={`Harga ${labelPrice}`}
             labelRight={`Rp${rupiah(selectedPriceTimeRule?.Value || 0)}`}
             classNameLabelRight="font-medium text-black100"
             className="py-2 border-b border-b-black10"
           />
 
-          <BetweenText
-            labelLeft="Biaya Jasa"
-            labelRight={`Rp${rupiah()}`}
-            classNameLabelRight="font-medium text-black100"
-            className="py-2 border-b border-b-black10"
-          />
-
-          <BetweenText
-            labelLeft="Biaya Aplikasi"
-            labelRight={`Rp${rupiah()}`}
-            classNameLabelRight="font-medium text-black100"
-            className="py-2 border-b border-b-black10"
-          />
-
-          <BetweenText
-            labelLeft="Biaya Alat"
-            labelRight={`Rp${rupiah()}`}
-            classNameLabelRight="font-medium text-black100"
-            className="py-2 border-b border-b-black10"
-          />
+          {dataOtherFee.map((item, index) => (
+            <BetweenText
+              key={index}
+              labelLeft={`Biaya ${item?.Name}`}
+              labelRight={`Rp${rupiah(item?.Value)}`}
+              classNameLabelRight="font-medium text-black100"
+              className="py-2 border-b border-b-black10"
+            />
+          ))}
 
           <BetweenText
             labelLeft="PJU"
@@ -109,23 +110,35 @@ const ModalPriceDetails: React.FC<Props> = ({
             className="py-2 border-b border-b-black10"
           />
 
-          <BetweenText
-            labelLeft="Energi Digunakan"
-            labelRight={`Rp${rupiah()}`}
-            classNameLabelRight="font-medium text-black100"
-            className="py-2 border-b border-b-black10"
-          />
+          {priceType === 1 && (
+            <>
+              <BetweenText
+                labelLeft="Energi Digunakan"
+                labelRight={`${watt}W`}
+                classNameLabelRight="font-medium text-black100"
+                className="py-2 border-b border-b-black10"
+              />
+              <BetweenText
+                labelLeft="Waktu Pengisian"
+                labelRight={formattedDuration || "0"}
+                classNameLabelRight="font-medium text-black100"
+                className="py-2"
+              />
+            </>
+          )}
 
-          <BetweenText
-            labelLeft="Waktu Pengisian"
-            labelRight={`Rp${rupiah()}`}
-            classNameLabelRight="font-medium text-black100"
-            className="py-2"
-          />
+          {priceType === 2 && (
+            <BetweenText
+              labelLeft="Energi Terisi"
+              labelRight={`${power} kWh`}
+              classNameLabelRight="font-medium text-black100"
+              className="py-2"
+            />
+          )}
 
           <BetweenText
             labelLeft="Total"
-            labelRight={`Rp${rupiah(0)}`}
+            labelRight={`Rp${rupiah(total)}`}
             className="border-y border-black100 py-2"
             classNameLabelLeft="text-black100"
             classNameLabelRight="text-black100 font-medium"
