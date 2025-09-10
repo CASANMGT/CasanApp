@@ -6,8 +6,8 @@ import ModalContainer from "./ModalContainer";
 
 interface Props {
   isOpen: boolean;
-  dataStation: ChargingStation;
-  dataDevice: Device;
+  dataStation: ChargingStation | undefined;
+  dataDevice: Device | undefined|null;
   total: number;
   watt: number;
   power: number | string;
@@ -31,25 +31,25 @@ const ModalPriceDetails: React.FC<Props> = ({
     ) ?? null;
   const selectedPriceTimeRule: PriceBaseTime | undefined =
     getCurrentSlot(selectedBaseRule);
-  const dataOtherFee: OtherFeesProps[] = dataStation?.PriceSetting?.OtherFees;
+  const dataOtherFee: OtherFeesProps[] | undefined =
+    dataStation?.PriceSetting?.OtherFees;
 
   const baseFare: number =
-    dataDevice?.VehicleType === 1
+    (dataDevice?.VehicleType === 1
       ? dataStation?.PriceSetting?.BikeBaseFare
-      : dataStation?.PriceSetting?.CarBaseFare;
+      : dataStation?.PriceSetting?.CarBaseFare) ?? 0;
   const priceWatt: number = selectedPriceTimeRule?.Value || 0;
-  const totalFee: number = dataOtherFee.reduce(
-    (sum, item) => sum + item.Value,
-    0
-  );
+  const totalFee: number = dataOtherFee?.length
+    ? dataOtherFee.reduce((sum, item) => sum + item.Value, 0)
+    : 0;
   const pju: number = Number(
-    ((baseFare * dataStation?.PriceSetting?.PJU) / 100).toFixed(0)
+    ((baseFare * (dataStation?.PriceSetting?.PJU || 0)) / 100).toFixed(0)
   );
   const ppn: number = Number(
     ((baseFare + priceWatt + pju + totalFee) / 100).toFixed(0)
   );
   const formattedDuration = formatDuration(duration || 0);
-  const priceType: number = dataStation?.PriceSetting?.BikePriceType;
+  const priceType: number = dataStation?.PriceSetting?.BikePriceType || 0;
   const labelPrice =
     priceType === 1
       ? `${selectedBaseRule?.From || 0}-${selectedBaseRule?.To || 0}W`
@@ -86,15 +86,16 @@ const ModalPriceDetails: React.FC<Props> = ({
             className="py-2 border-b border-b-black10"
           />
 
-          {dataOtherFee.map((item, index) => (
-            <BetweenText
-              key={index}
-              labelLeft={`Biaya ${item?.Name}`}
-              labelRight={`Rp${rupiah(item?.Value)}`}
-              classNameLabelRight="font-medium text-black100"
-              className="py-2 border-b border-b-black10"
-            />
-          ))}
+          {dataOtherFee &&
+            dataOtherFee.map((item, index) => (
+              <BetweenText
+                key={index}
+                labelLeft={`Biaya ${item?.Name}`}
+                labelRight={`Rp${rupiah(item?.Value)}`}
+                classNameLabelRight="font-medium text-black100"
+                className="py-2 border-b border-b-black10"
+              />
+            ))}
 
           <BetweenText
             labelLeft="PJU"

@@ -1,4 +1,3 @@
-import { Session } from "./sessionType";
 import { DataUser } from "./userType";
 
 export type AddTransactionBody = {
