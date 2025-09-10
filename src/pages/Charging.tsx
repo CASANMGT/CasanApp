@@ -114,8 +114,6 @@ const Charging = () => {
         const resSession: Session = res?.payload as Session;
         const currentStatus = resSession?.Status;
 
-        return; // dummy
-
         if (currentStatus === 6) {
           setOpenFinished(true);
         } else if (
