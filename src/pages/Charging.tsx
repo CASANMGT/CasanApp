@@ -264,16 +264,10 @@ const Charging = () => {
 
           {/* STATUS */}
           <StatusIndicator
+            data={dataSession}
             type={status || 2}
-            maxWatt={dataSession?.MaxWatt || 0}
             duration={duration > 0 ? duration : 0}
-            port={dataSession?.Socket?.Port || 0}
-            priceType={detailSession?.data?.PriceType || 0}
             onFinish={getData}
-            kwh={
-              (detailSession?.data?.TotalKwhUsed || 0) -
-              (detailSession?.data?.PaidKWH || 0)
-            }
             className="my-5"
           />
 

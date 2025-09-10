@@ -1,26 +1,20 @@
-import { IcBattery, IcStandBy } from "../../assets";
+import { IcBattery, IcCashBlack, IcStandBy } from "../../assets";
 import { formatTime } from "../../helpers";
 import CountdownTimer from "./CountdownTimer";
 
 interface StatusIndicatorProps {
   className?: string;
-  maxWatt: number;
+  data: Session | null;
   type: number;
-  port: number;
   duration: number;
-  priceType: number;
-  kwh: number;
   onFinish: () => void;
 }
 
 const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   type,
-  port,
+  data,
   duration,
   className,
-  maxWatt,
-  priceType,
-  kwh,
   onFinish,
 }) => {
   const isCharging: boolean =
@@ -30,7 +24,18 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
       ? "animate-soundWave bg-primary100"
       : "animate-charging bg-secondary100"
   }`;
-  const totalKwh = kwh < 0 ? 0 : kwh;
+  const maxWatt: number = data?.MaxWatt || 0;
+  const port: number = data?.Socket?.Port || 0;
+  let totalKwh: number = 0;
+  let chargingPercentage: number = 0;
+  let priceType = data?.PriceType;
+
+  if (priceType === 2) {
+    totalKwh = (data?.PaidKWH || 0) - (data?.TotalKwhUsed || 0);
+    chargingPercentage = Number(
+      (((data?.TotalKwhUsed || 0) / (data?.PaidKWH || 0)) * 100).toFixed(0)
+    );
+  }
 
   return (
     <div className={`center h-[288px] w-full ${className}`}>
@@ -72,12 +77,16 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
                   isCharging ? "bg-primary10" : "bg-secondary10"
                 }`}
               >
+                {isCharging && <IcBattery />}
+
                 <span
                   className={`text-xs font-medium ${
                     isCharging ? "text-primary100" : "text-[#E8A126]"
                   }`}
                 >
-                  {`Socket ${port}`}
+                  {isCharging
+                    ? `Charging ${chargingPercentage}%`
+                    : `Socket ${port}`}
                 </span>
               </div>
             </div>

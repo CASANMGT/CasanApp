@@ -94,10 +94,11 @@ const ModalInputNominal: React.FC<ModalInputNominalProps> = ({
             {NOMINAL_SESSION.map((item, index: number) => (
               <NominalTopUpItem
                 key={index}
+                type="nominal"
                 value={item}
                 isActive={
                   Number(item) ===
-                Number(nominal.replace("Rp", "").replace(/\./g, ""))
+                  Number(nominal.replace("Rp", "").replace(/\./g, ""))
                 }
                 onClick={() => setNominal(`Rp${rupiah(item)}`)}
               />

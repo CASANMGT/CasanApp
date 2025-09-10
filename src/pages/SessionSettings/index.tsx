@@ -224,7 +224,7 @@ const SessionSettings = () => {
   const getChargingNominal = useCallback(() => {
     let value: number = 0;
 
-    if (form.selectedTab === "1") value = Number(form.value);
+    if (form.selectedTab === "nominal") value = Number(form.value.replace("Rp", "").replace(/\./g, ""));
     else if (valueCalculate) value = valueCalculate || 0;
 
     return value;
