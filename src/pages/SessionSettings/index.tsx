@@ -122,13 +122,13 @@ const SessionSettings = () => {
         const _priceType: number = data?.PriceSetting?.BikePriceType;
 
         const newTabs: TabItemProps[] = [
+          _priceType === 2 && { id: "power", label: "Daya", content: "" },
           { id: "nominal", label: "Nominal", content: "" },
           _priceType === 1 && {
             id: "duration",
             label: "Duration",
             content: "",
           },
-          _priceType === 2 && { id: "power", label: "Daya", content: "" },
         ].filter(Boolean) as TabItemProps[];
 
         setTabs(newTabs);
@@ -224,7 +224,8 @@ const SessionSettings = () => {
   const getChargingNominal = useCallback(() => {
     let value: number = 0;
 
-    if (form.selectedTab === "nominal") value = Number(form.value.replace("Rp", "").replace(/\./g, ""));
+    if (form.selectedTab === "nominal")
+      value = Number(form.value.replace("Rp", "").replace(/\./g, ""));
     else if (valueCalculate) value = valueCalculate || 0;
 
     return value;

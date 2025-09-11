@@ -31,7 +31,9 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   let priceType = data?.PriceType;
 
   if (priceType === 2) {
-    totalKwh = (data?.PaidKWH || 0) - (data?.TotalKwhUsed || 0);
+    totalKwh = Number(
+      ((data?.PaidKWH || 0) - (data?.TotalKwhUsed || 0)).toFixed()
+    );
     chargingPercentage = Number(
       (((data?.TotalKwhUsed || 0) / (data?.PaidKWH || 0)) * 100).toFixed(0)
     );
