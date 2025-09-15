@@ -58,6 +58,7 @@ import {
 import {
   convertToHours,
   formatPhoneNumber,
+  getCurrentSlot,
   openGoogleMaps,
   rupiah,
   timeToSeconds,
@@ -232,31 +233,76 @@ const SessionSettings = () => {
     return value;
   }, [form.value, valueCalculate]);
 
-  const getTotalPrice = useCallback(() => {
-    let value: number = 0;
-    let discount: number = 0;
+  const getTotalPrice: () => number = useCallback(() => {
+    const dataOtherFee: OtherFeesProps[] | undefined =
+      data?.PriceSetting?.OtherFees;
+    const power: number =
+      form?.selectedTab === "nominal"
+        ? valueCalculate
+        : form?.selectedTab === "power"
+        ? Number(form?.value.replace(" kWh", ""))
+        : Number(
+            (
+              Number(form?.voltage?.value || 0) *
+              Number(form?.ampere?.value || 0)
+            ).toFixed(0) || 0
+          );
 
-    if (form?.paymentMethod?.priceType === "percentage") {
-      const calculate =
-        (chargingNominal * Number(form?.paymentMethod?.value || 0)) / 100;
-      value = chargingNominal + calculate;
-    } else value = chargingNominal + Number(form.paymentMethod?.value || 0);
+    const selectedBaseRule: PriceBaseRule | null =
+      data?.PriceSetting?.PriceBaseRules.find(
+        (item) => power >= item.From && power <= item.To
+      ) ?? null;
+    const selectedPriceTimeRule: PriceBaseTime | undefined =
+      getCurrentSlot(selectedBaseRule);
 
-    if (form?.voucher?.data) {
-      const dataVoucher: Voucher = form?.voucher?.data;
+    const totalBasicEnergyPrice: number =
+      form?.selectedTab === "nominal"
+        ? Number(form?.value.replace("Rp", "").replace(/\./g, ""))
+        : valueCalculate;
+    const timeSlotFee: number = selectedPriceTimeRule?.Value || 0;
+    const totalFee: number = dataOtherFee?.length
+      ? dataOtherFee.reduce(
+          (sum, item) =>
+            sum +
+            (item?.Type === 1
+              ? item.Value
+              : (item.Value * totalBasicEnergyPrice) / 100),
+          0
+        )
+      : 0;
+    const milestone: number =
+      ((totalBasicEnergyPrice + timeSlotFee) *
+        (myUser?.data?.Milestone?.DiscountPercent || 0)) /
+      100;
+    const voucher: number =
+      form?.voucher?.data?.VoucherType === 1 ||
+      form?.voucher?.data?.VoucherType === 3
+        ? form?.voucher?.data?.DiscountType === 1
+          ? form?.voucher?.data?.DiscountValue
+          : ((totalBasicEnergyPrice + timeSlotFee) *
+              form?.voucher?.data?.DiscountValue) /
+            100
+        : 0;
+    const pju: number = Number(
+      ((totalBasicEnergyPrice * (data?.PriceSetting?.PJU || 0)) / 100).toFixed(
+        0
+      )
+    );
+    const subTotal: number = Number(
+      (
+        totalBasicEnergyPrice +
+        timeSlotFee +
+        totalFee -
+        milestone -
+        voucher +
+        pju
+      ).toFixed(0)
+    );
+    const ppn: number = Number(
+      ((subTotal * (data?.PriceSetting?.PPN || 0)) / 100).toFixed(0)
+    );
 
-      if (dataVoucher?.VoucherType === 1 || dataVoucher?.VoucherType === 3) {
-        discount =
-          dataVoucher?.DiscountType === 1
-            ? dataVoucher?.DiscountValue
-            : (chargingNominal * dataVoucher?.DiscountValue) / 100;
-      }
-    }
-
-    const discountMilestone: number =
-      (chargingNominal * (myUser?.data?.Milestone?.DiscountPercent || 0)) / 100;
-
-    return value - discount - discountMilestone;
+    return subTotal + ppn;
   }, [
     form.paymentMethod,
     form.value,
@@ -585,12 +631,12 @@ const SessionSettings = () => {
             </div>
 
             {/* PAYMENT DETAILS */}
-            <PaymentDetails
+            {/* <PaymentDetails
               chargingNominal={chargingNominal}
               fee={Number(form.paymentMethod?.value || 0)}
               milestone={myUser?.data?.Milestone}
               voucher={form?.voucher?.data}
-            />
+            /> */}
           </div>
         </div>
 
@@ -796,29 +842,31 @@ const SessionSettings = () => {
         {openPriceDetails && (
           <ModalPriceDetails
             isOpen={openPriceDetails}
+            dataUser={myUser?.data}
             dataStation={data}
+            dataVoucher={form?.voucher?.data}
             dataDevice={selectedDevice}
             power={
               form?.selectedTab === "nominal"
                 ? valueCalculate
-                : form?.value.replace(" kWh", "")
+                : form?.selectedTab === "power"
+                ? form?.value.replace(" kWh", "")
+                : Number(
+                    (
+                      Number(form?.voltage?.value || 0) *
+                      Number(form?.ampere?.value || 0)
+                    ).toFixed(0) || 0
+                  )
             }
-            watt={Number(
-              (
-                Number(form?.voltage?.value || 0) *
-                Number(form?.ampere?.value || 0)
-              ).toFixed(0) || 0
-            )}
             duration={
               form.selectedTab === "duration"
                 ? timeToSeconds(form?.value || "00:00")
                 : valueCalculate
             }
-            total={
-              form?.selectedTab === "duration" ||
-              (priceType === 2 && form?.selectedTab === "power")
-                ? valueCalculate
-                : Number(form?.value.replace("Rp", "").replace(/\./g, ""))
+            price={
+              form?.selectedTab === "nominal"
+                ? form?.value.replace("Rp", "").replace(/\./g, "")
+                : valueCalculate
             }
             onClose={() => setOpenPriceDetails(false)}
           />

@@ -171,3 +171,34 @@ export const convertToReadableHours = (data?: OperationalHour[]) => {
   // fallback (optional): format each day
   return value;
 };
+
+function timeToMinutes(time: string): number {
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
+}
+
+export function getCurrentSlot(
+  priceBase: PriceBaseRule | null
+): PriceBaseTime | undefined {
+  if (!priceBase?.PriceBaseTime?.length) return undefined;
+
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+  const matchedSlot = priceBase.PriceBaseTime.find((slot) => {
+    const fromMinutes = timeToMinutes(slot?.PriceTimeRule?.From);
+    const toMinutes = timeToMinutes(slot?.PriceTimeRule?.To);
+
+    if (isNaN(fromMinutes) || isNaN(toMinutes)) return false;
+
+    // Normal same-day range
+    if (fromMinutes <= toMinutes) {
+      return currentMinutes >= fromMinutes && currentMinutes <= toMinutes;
+    }
+
+    // Overnight range
+    return currentMinutes >= fromMinutes || currentMinutes <= toMinutes;
+  });
+
+  return matchedSlot;
+}

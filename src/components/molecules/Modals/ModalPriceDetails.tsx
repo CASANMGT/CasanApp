@@ -1,59 +1,90 @@
 import React from "react";
 import { IcClose } from "../../../assets";
-import { formatDuration, rupiah } from "../../../helpers";
+import { formatDuration, getCurrentSlot, rupiah } from "../../../helpers";
 import { BetweenText } from "../../atoms";
 import ModalContainer from "./ModalContainer";
+import { DataUser, Voucher } from "../../../common";
 
 interface Props {
   isOpen: boolean;
   dataStation: ChargingStation | undefined;
-  dataDevice: Device | undefined|null;
-  total: number;
-  watt: number;
+  dataDevice: Device | undefined | null;
+  dataUser: DataUser | null;
+  dataVoucher: Voucher | undefined;
   power: number | string;
+  price: number | string;
   duration: number;
   onClose: () => void;
 }
 
 const ModalPriceDetails: React.FC<Props> = ({
   isOpen,
-  watt,
   duration,
   power,
-  total,
+  price,
   dataStation,
   dataDevice,
+  dataUser,
+  dataVoucher,
   onClose,
 }) => {
   const selectedBaseRule: PriceBaseRule | null =
     dataStation?.PriceSetting?.PriceBaseRules.find(
-      (item) => watt >= item.From && watt <= item.To
+      (item) => Number(power) >= item.From && Number(power) <= item.To
     ) ?? null;
   const selectedPriceTimeRule: PriceBaseTime | undefined =
     getCurrentSlot(selectedBaseRule);
   const dataOtherFee: OtherFeesProps[] | undefined =
     dataStation?.PriceSetting?.OtherFees;
-
   const baseFare: number =
     (dataDevice?.VehicleType === 1
       ? dataStation?.PriceSetting?.BikeBaseFare
       : dataStation?.PriceSetting?.CarBaseFare) ?? 0;
-  const priceWatt: number = selectedPriceTimeRule?.Value || 0;
-  const totalFee: number = dataOtherFee?.length
-    ? dataOtherFee.reduce((sum, item) => sum + item.Value, 0)
-    : 0;
-  const pju: number = Number(
-    ((baseFare * (dataStation?.PriceSetting?.PJU || 0)) / 100).toFixed(0)
-  );
-  const ppn: number = Number(
-    ((baseFare + priceWatt + pju + totalFee) / 100).toFixed(0)
-  );
   const formattedDuration = formatDuration(duration || 0);
   const priceType: number = dataStation?.PriceSetting?.BikePriceType || 0;
-  const labelPrice =
-    priceType === 1
-      ? `${selectedBaseRule?.From || 0}-${selectedBaseRule?.To || 0}W`
-      : "Tambahan";
+  const totalBasicEnergyPrice: number = Number(price || 0);
+  const timeSlotFee: number = selectedPriceTimeRule?.Value || 0;
+  const totalFee: number = dataOtherFee?.length
+    ? dataOtherFee.reduce(
+        (sum, item) =>
+          sum +
+          (item?.Type === 1
+            ? item.Value
+            : (item.Value * totalBasicEnergyPrice) / 100),
+        0
+      )
+    : 0;
+  const milestone: number =
+    ((totalBasicEnergyPrice + timeSlotFee) *
+      (dataUser?.Milestone?.DiscountPercent || 0)) /
+    100;
+  const voucher: number =
+    dataVoucher?.VoucherType === 1 || dataVoucher?.VoucherType === 3
+      ? dataVoucher?.DiscountType === 1
+        ? dataVoucher?.DiscountValue
+        : ((totalBasicEnergyPrice + timeSlotFee) * dataVoucher?.DiscountValue) /
+          100
+      : 0;
+  const pju: number = Number(
+    (
+      (totalBasicEnergyPrice * (dataStation?.PriceSetting?.PJU || 0)) /
+      100
+    ).toFixed(0)
+  );
+  const subTotal: number = Number(
+    (
+      totalBasicEnergyPrice +
+      timeSlotFee +
+      totalFee -
+      milestone -
+      voucher +
+      pju
+    ).toFixed(0)
+  );
+  const ppn: number = Number(
+    ((subTotal * (dataStation?.PriceSetting?.PPN || 0)) / 100).toFixed(0)
+  );
+  const total: number = subTotal + ppn;
 
   return (
     <ModalContainer
@@ -80,8 +111,22 @@ const ModalPriceDetails: React.FC<Props> = ({
           />
 
           <BetweenText
-            labelLeft={`Harga ${labelPrice}`}
-            labelRight={`Rp${rupiah(selectedPriceTimeRule?.Value || 0)}`}
+            labelLeft="Pesanan Energi"
+            labelRight={priceType === 2 ? `${power}kWh` : formattedDuration}
+            classNameLabelRight="font-medium text-black100"
+            className="py-2 border-b border-b-black100"
+          />
+
+          <BetweenText
+            labelLeft="Total Harga Energi Dasar"
+            labelRight={`Rp${rupiah(totalBasicEnergyPrice)}`}
+            classNameLabelRight="font-medium text-black100"
+            className="py-2 border-b border-b-black10"
+          />
+
+          <BetweenText
+            labelLeft="Biaya Slot Waktu"
+            labelRight={`Rp${rupiah(timeSlotFee)}`}
             classNameLabelRight="font-medium text-black100"
             className="py-2 border-b border-b-black10"
           />
@@ -90,55 +135,56 @@ const ModalPriceDetails: React.FC<Props> = ({
             dataOtherFee.map((item, index) => (
               <BetweenText
                 key={index}
-                labelLeft={`Biaya ${item?.Name}`}
-                labelRight={`Rp${rupiah(item?.Value)}`}
+                labelLeft={`Biaya ${item?.Name} ${
+                  item?.Type === 2 ? `(${item?.Value}%)` : ""
+                }`}
+                labelRight={`Rp${rupiah(
+                  item?.Type === 2
+                    ? (item?.Value * totalBasicEnergyPrice) / 100
+                    : item?.Value
+                )}`}
                 classNameLabelRight="font-medium text-black100"
                 className="py-2 border-b border-b-black10"
               />
             ))}
 
           <BetweenText
-            labelLeft="PJU"
-            labelRight={pju}
+            labelLeft="Diskon Milestone"
+            labelRight={`-Rp${rupiah(milestone)}`}
+            classNameLabelRight="font-medium text-primary100"
+            className="py-2 border-b border-b-black10"
+          />
+
+          <BetweenText
+            labelLeft="Diskon Voucher"
+            labelRight={`-Rp${rupiah(voucher)}`}
+            classNameLabelRight="font-medium text-primary100"
+            className="py-2 border-b border-b-black10"
+          />
+
+          <BetweenText
+            labelLeft={`PJU (${dataStation?.PriceSetting?.PJU}%)`}
+            labelRight={`Rp${rupiah(pju)}`}
+            classNameLabelRight="font-medium text-black100"
+            className="py-2 border-b border-b-black100"
+          />
+
+          <BetweenText
+            labelLeft="Subtotal"
+            labelRight={`Rp${rupiah(subTotal)}`}
             classNameLabelRight="font-medium text-black100"
             className="py-2 border-b border-b-black10"
           />
 
           <BetweenText
-            labelLeft="PPN"
-            labelRight={ppn}
+            labelLeft={`PPN (${dataStation?.PriceSetting?.PPN}%)`}
+            labelRight={`Rp${rupiah(ppn)}`}
             classNameLabelRight="font-medium text-black100"
             className="py-2 border-b border-b-black10"
           />
 
-          {priceType === 1 && (
-            <>
-              <BetweenText
-                labelLeft="Energi Digunakan"
-                labelRight={`${watt}W`}
-                classNameLabelRight="font-medium text-black100"
-                className="py-2 border-b border-b-black10"
-              />
-              <BetweenText
-                labelLeft="Waktu Pengisian"
-                labelRight={formattedDuration || "0"}
-                classNameLabelRight="font-medium text-black100"
-                className="py-2"
-              />
-            </>
-          )}
-
-          {priceType === 2 && (
-            <BetweenText
-              labelLeft="Energi Terisi"
-              labelRight={`${power} kWh`}
-              classNameLabelRight="font-medium text-black100"
-              className="py-2"
-            />
-          )}
-
           <BetweenText
-            labelLeft="Total"
+            labelLeft="Total Pembayaran"
             labelRight={`Rp${rupiah(total)}`}
             className="border-y border-black100 py-2"
             classNameLabelLeft="text-black100"
@@ -161,34 +207,3 @@ const ModalPriceDetails: React.FC<Props> = ({
 };
 
 export default ModalPriceDetails;
-
-function timeToMinutes(time: string): number {
-  const [h, m] = time.split(":").map(Number);
-  return h * 60 + m;
-}
-
-function getCurrentSlot(
-  priceBase: PriceBaseRule | null
-): PriceBaseTime | undefined {
-  if (!priceBase?.PriceBaseTime?.length) return undefined;
-
-  const now = new Date();
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-  const matchedSlot = priceBase.PriceBaseTime.find((slot) => {
-    const fromMinutes = timeToMinutes(slot?.PriceTimeRule?.From);
-    const toMinutes = timeToMinutes(slot?.PriceTimeRule?.To);
-
-    if (isNaN(fromMinutes) || isNaN(toMinutes)) return false;
-
-    // Normal same-day range
-    if (fromMinutes <= toMinutes) {
-      return currentMinutes >= fromMinutes && currentMinutes <= toMinutes;
-    }
-
-    // Overnight range
-    return currentMinutes >= fromMinutes || currentMinutes <= toMinutes;
-  });
-
-  return matchedSlot;
-}
