@@ -133,6 +133,7 @@ const SessionSettings = () => {
 
         setTabs(newTabs);
         setPriceType(_priceType);
+        setForm("selectedTab", _priceType === 2 ? "power" : "nominal");
       };
 
       setUp();
