@@ -843,7 +843,7 @@ const SessionSettings = () => {
           <ModalPriceDetails
             isOpen={openPriceDetails}
             dataUser={myUser?.data}
-            dataStation={data}
+            dataPriceSetting={data?.PriceSetting}
             dataVoucher={form?.voucher?.data}
             dataDevice={selectedDevice}
             power={
