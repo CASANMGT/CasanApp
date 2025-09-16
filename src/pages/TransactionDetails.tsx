@@ -226,6 +226,8 @@ const TransactionDetails = () => {
     dataVoucher = dataSession?.VoucherUsages[0];
   }
 
+  console.log("cek res", transactionById?.data);
+
   return (
     <div className="background-1 py-[14px] px-4">
       <Header type="secondary" title="Detail Transaksi" onDismiss={onDismiss} />
@@ -581,12 +583,13 @@ const TransactionDetails = () => {
       {openPriceDetails && (
         <ModalPriceDetails
           isOpen={openPriceDetails}
-          dataStation={dataSession?.ChargingStation}
+          dataPriceSetting={dataSession?.PriceSetting}
           dataDevice={dataSession?.Device}
-          power={dataSession?.TotalKwhUsed || 0}
-          watt={(dataSession?.TotalKwhUsed || 0) * 100}
+          dataVoucher={undefined} // dummy
+          dataUser={transactionById?.data?.User}
+          price={transactionById?.data?.TotalFare || 0}
+          power={dataSession?.PaidKWH || 0}
           duration={dataSession?.Duration || 0}
-          total={dataSession?.UsedAmount || 0}
           onClose={() => setOpenPriceDetails(false)}
         />
       )}

@@ -33,4 +33,5 @@ export type Transaction = {
   CreatedAt: string;
   UpdatedAt: string;
   MilestoneDiscount: number
+  TotalFare: number
 };

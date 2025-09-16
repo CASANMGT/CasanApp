@@ -7,10 +7,10 @@ import { DataUser, Voucher } from "../../../common";
 
 interface Props {
   isOpen: boolean;
-  dataStation: ChargingStation | undefined;
+  dataPriceSetting: PriceSetting | undefined;
   dataDevice: Device | undefined | null;
-  dataUser: DataUser | null;
-  dataVoucher: Voucher | undefined;
+  dataUser: DataUser | undefined | null;
+  dataVoucher: Voucher | undefined|null;
   power: number | string;
   price: number | string;
   duration: number;
@@ -22,26 +22,26 @@ const ModalPriceDetails: React.FC<Props> = ({
   duration,
   power,
   price,
-  dataStation,
+  dataPriceSetting,
   dataDevice,
   dataUser,
   dataVoucher,
   onClose,
 }) => {
   const selectedBaseRule: PriceBaseRule | null =
-    dataStation?.PriceSetting?.PriceBaseRules.find(
+    dataPriceSetting?.PriceBaseRules.find(
       (item) => Number(power) >= item.From && Number(power) <= item.To
     ) ?? null;
   const selectedPriceTimeRule: PriceBaseTime | undefined =
     getCurrentSlot(selectedBaseRule);
   const dataOtherFee: OtherFeesProps[] | undefined =
-    dataStation?.PriceSetting?.OtherFees;
+    dataPriceSetting?.OtherFees;
   const baseFare: number =
     (dataDevice?.VehicleType === 1
-      ? dataStation?.PriceSetting?.BikeBaseFare
-      : dataStation?.PriceSetting?.CarBaseFare) ?? 0;
+      ? dataPriceSetting?.BikeBaseFare
+      : dataPriceSetting?.CarBaseFare) ?? 0;
   const formattedDuration = formatDuration(duration || 0);
-  const priceType: number = dataStation?.PriceSetting?.BikePriceType || 0;
+  const priceType: number = dataPriceSetting?.BikePriceType || 0;
   const totalBasicEnergyPrice: number = Number(price || 0);
   const timeSlotFee: number = selectedPriceTimeRule?.Value || 0;
   const totalFee: number = dataOtherFee?.length
@@ -66,10 +66,7 @@ const ModalPriceDetails: React.FC<Props> = ({
           100
       : 0;
   const pju: number = Number(
-    (
-      (totalBasicEnergyPrice * (dataStation?.PriceSetting?.PJU || 0)) /
-      100
-    ).toFixed(0)
+    ((totalBasicEnergyPrice * (dataPriceSetting?.PJU || 0)) / 100).toFixed(0)
   );
   const subTotal: number = Number(
     (
@@ -82,7 +79,7 @@ const ModalPriceDetails: React.FC<Props> = ({
     ).toFixed(0)
   );
   const ppn: number = Number(
-    ((subTotal * (dataStation?.PriceSetting?.PPN || 0)) / 100).toFixed(0)
+    ((subTotal * (dataPriceSetting?.PPN || 0)) / 100).toFixed(0)
   );
   const total: number = subTotal + ppn;
 
@@ -163,7 +160,7 @@ const ModalPriceDetails: React.FC<Props> = ({
           />
 
           <BetweenText
-            labelLeft={`PJU (${dataStation?.PriceSetting?.PJU}%)`}
+            labelLeft={`PJU (${dataPriceSetting?.PJU}%)`}
             labelRight={`Rp${rupiah(pju)}`}
             classNameLabelRight="font-medium text-black100"
             className="py-2 border-b border-b-black100"
@@ -177,7 +174,7 @@ const ModalPriceDetails: React.FC<Props> = ({
           />
 
           <BetweenText
-            labelLeft={`PPN (${dataStation?.PriceSetting?.PPN}%)`}
+            labelLeft={`PPN (${dataPriceSetting?.PPN}%)`}
             labelRight={`Rp${rupiah(ppn)}`}
             classNameLabelRight="font-medium text-black100"
             className="py-2 border-b border-b-black10"
