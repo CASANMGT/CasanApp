@@ -338,14 +338,14 @@ const Charging = () => {
             <BetweenText
               type="medium-content"
               labelLeft="Total Transaksi"
-              labelRight={`Rp${rupiah(dataSession?.Transaction?.Amount)}`}
+              labelRight={`Rp${rupiah(dataSession?.Transaction?.NetCharge)}`}
               className="p-3"
             />
 
             <BetweenText
               type="medium-content"
               labelLeft="Tarif Pengecasan"
-              labelRight={dataSession?.ChargingFee || "-"}
+              labelRight={`Rp${rupiah(dataSession?.Transaction?.BaseFare)}`}
               className="bg-baseLightGray p-3"
             />
 

@@ -226,7 +226,7 @@ const TransactionDetails = () => {
     dataVoucher = dataSession?.VoucherUsages[0];
   }
 
-  console.log("cek res", transactionById?.data);
+  console.log("cek res", dataSession);
 
   return (
     <div className="background-1 py-[14px] px-4">

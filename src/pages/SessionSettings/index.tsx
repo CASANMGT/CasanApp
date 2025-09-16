@@ -1,5 +1,5 @@
 import { clone } from "lodash";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FaChevronRight } from "react-icons/fa6";
 import { HiOutlineTicket } from "react-icons/hi2";
 import { useDispatch, useSelector } from "react-redux";
@@ -69,7 +69,6 @@ import { AppDispatch, RootState } from "../../store";
 import InputHour from "./InputHour";
 import InputNominal from "./InputNominal";
 import InputPower from "./InputPower";
-import PaymentDetails from "./PaymentDetails";
 
 const SessionSettings = () => {
   const navigate: NavigateFunction = useNavigate();
@@ -234,6 +233,8 @@ const SessionSettings = () => {
   }, [form.value, valueCalculate]);
 
   const getTotalPrice: () => number = useCallback(() => {
+    if (!isShowTotal) return 0;
+
     const dataOtherFee: OtherFeesProps[] | undefined =
       data?.PriceSetting?.OtherFees;
     const power: number =
@@ -433,6 +434,13 @@ const SessionSettings = () => {
     dispatch(fetchAddSession(body));
   };
 
+  const isShowTotal = useMemo(
+    () =>
+      Number(
+        form?.value.replace("Rp", "").replace(/\./g, "").replace(" kWh", "")
+      ) > 0,
+    [form?.value]
+  );
   const chargingNominal: number = getChargingNominal();
   const totalPrice: number = getTotalPrice();
 
@@ -612,18 +620,16 @@ const SessionSettings = () => {
                 </div>
               )}
 
-              <p className="mt-3 text-black90 text-xs">
-                *Durasi masih{" "}
-                <span className="text-black100 font-medium text-xs">
-                  perkiraan
-                </span>
-                , bukan angka yang sesungguhnya.
-              </p>
-
               <div className="flex justify-end mt-5">
                 <span
-                  onClick={() => setOpenPriceDetails(true)}
-                  className="font-medium text-primary100 cursor-pointer"
+                  onClick={() => {
+                    if (isShowTotal) setOpenPriceDetails(true);
+                  }}
+                  className={`font-medium ${
+                    isShowTotal
+                      ? "text-primary100 cursor-pointer"
+                      : "text-black50 cursor-not-allowed"
+                  }`}
                 >
                   {"Lihat Rincian ->"}
                 </span>

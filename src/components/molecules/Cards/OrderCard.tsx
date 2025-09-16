@@ -187,7 +187,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
           </div>
 
           <span className="font-semibold">
-            Rp{rupiah(data?.Transaction?.Amount)}
+            Rp{rupiah(data?.Transaction?.NetCharge)}
           </span>
         </div>
       </div>
