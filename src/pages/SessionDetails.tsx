@@ -133,6 +133,13 @@ const SessionDetails = () => {
   const co2: number = Number(
     ((dataSession?.TotalKwhUsed || 0) * 1.5).toFixed(3)
   );
+  const percentage: number = Number(
+    (
+      ((dataSession?.UsedAmount || 1) /
+        (dataSession?.Transaction?.NetCharge || 1)) *
+      100
+    ).toFixed(0)
+  );
 
   return (
     <div className="background-1 overflow-hidden justify-between flex flex-col">
@@ -375,7 +382,9 @@ const SessionDetails = () => {
 
             <BetweenText
               labelLeft="Biaya Transaksi"
-              labelRight={`Rp${rupiah(dataSession?.Transaction?.PaymentMethodFee)}`}
+              labelRight={`Rp${rupiah(
+                dataSession?.Transaction?.PaymentMethodFee
+              )}`}
               className="py-2 border-b border-b-black10"
             />
 
@@ -401,7 +410,7 @@ const SessionDetails = () => {
               className="py-2 border-y border-y-black100"
             />
 
-            {status === 8 && (
+            {(status === 8 || (status === 2 && percentage < 100)) && (
               <BetweenText
                 labelLeft="Pengembalian Dana"
                 labelRight={`Rp${rupiah(dataSession?.RefundAmount)}`}
