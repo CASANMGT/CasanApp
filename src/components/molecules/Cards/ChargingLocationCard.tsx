@@ -7,6 +7,7 @@ import {
 } from "../../../assets";
 import {
   getDistanceFromLatLonInKm,
+  getLabelWatt,
   moments,
   rupiah,
   timeToSeconds,
@@ -40,6 +41,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   );
   const dataMaxWatt = data?.Devices?.map((device) => device?.MaxWatt);
 
+  const priceType: number = data?.PriceSetting?.BikePriceType;
   let isFull: boolean = false;
   let isDisconnect: boolean = false;
   let price: number = 0;
@@ -69,7 +71,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
         currentTime < timeToSeconds(e?.PriceTimeRule.To)
     )[0];
 
-    price = filtered?.Value || 0;
+    price =
+      priceType === 2 ? data.PriceSetting?.BikeBaseFare : filtered?.Value || 0;
     watt = `${data?.PriceSetting?.PriceBaseRules[0].From}-${data?.PriceSetting?.PriceBaseRules[0].To}W`;
   }
 
@@ -211,7 +214,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
             <p className="text-xs text-primary100 font-semibold">Rp</p>
             <p className="text-lg text-primary100 font-semibold mr-1">{`${rupiah(
               price
-            )}/jam`}</p>
+            )}/${priceType === 2 ? "kWh" : "jam"}`}</p>
           </div>
 
           <div className="bg-primary100 rounded-md row">
@@ -242,16 +245,3 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
 };
 
 export default ChargingLocationCard;
-
-const getLabelWatt = (min: number, max: number) => {
-  let value: string = "";
-
-  if (min === max) {
-    if (min < 1) value = `${min * 1000}w`;
-    else value = `${min}kW`;
-  } else {
-    value = `${min}-${max}kW`;
-  }
-
-  return value;
-};

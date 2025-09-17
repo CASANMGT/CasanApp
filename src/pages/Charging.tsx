@@ -229,9 +229,11 @@ const Charging = () => {
                 status === 2
                   ? "-"
                   : (dataSession?.MaxWatt || 0) > 1
-                  ? dataSession?.ExpectedDuration
-                    ? formatDuration(dataSession?.ExpectedDuration)
-                    : "-"
+                  ? formatDuration(
+                      dataSession?.PriceType === 2
+                        ? dataSession?.Duration
+                        : dataSession?.ExpectedDuration
+                    ) ?? "-"
                   : "Persiapan..."
               }
             />
@@ -345,7 +347,7 @@ const Charging = () => {
             <BetweenText
               type="medium-content"
               labelLeft="Tarif Pengecasan"
-              labelRight={`Rp${rupiah(dataSession?.Transaction?.BaseFare)}`}
+              labelRight={`Rp${rupiah(dataSession?.Transaction?.BaseFare)}/kWh`}
               className="bg-baseLightGray p-3"
             />
 

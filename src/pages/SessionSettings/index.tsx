@@ -229,7 +229,36 @@ const SessionSettings = () => {
       value = Number(form.value.replace("Rp", "").replace(/\./g, ""));
     else if (valueCalculate) value = valueCalculate || 0;
 
-    return value;
+    const power: number =
+      form?.selectedTab === "nominal"
+        ? valueCalculate
+        : form?.selectedTab === "power"
+        ? Number(form?.value.replace(" kWh", ""))
+        : Number(
+            (
+              Number(form?.voltage?.value || 0) *
+              Number(form?.ampere?.value || 0)
+            ).toFixed(0) || 0
+          );
+
+    const dataOtherFee: OtherFeesProps[] | undefined =
+      data?.PriceSetting?.OtherFees;
+    const selectedBaseRule: PriceBaseRule | null =
+      data?.PriceSetting?.PriceBaseRules.find(
+        (item) => power >= item.From && power <= item.To
+      ) ?? null;
+    const selectedPriceTimeRule: PriceBaseTime | undefined =
+      getCurrentSlot(selectedBaseRule);
+    const timeSlotFee: number = selectedPriceTimeRule?.Value || 0;
+    const totalFee: number = dataOtherFee?.length
+      ? dataOtherFee.reduce(
+          (sum, item) =>
+            sum + (item?.Type === 1 ? item.Value : (item.Value * value) / 100),
+          0
+        )
+      : 0;
+
+    return value + totalFee + timeSlotFee;
   }, [form.value, valueCalculate]);
 
   const getTotalPrice: () => number = useCallback(() => {
@@ -272,7 +301,7 @@ const SessionSettings = () => {
         )
       : 0;
     const milestone: number =
-      ((totalBasicEnergyPrice + timeSlotFee) *
+      ((totalBasicEnergyPrice + timeSlotFee + totalFee) *
         (myUser?.data?.Milestone?.DiscountPercent || 0)) /
       100;
     const voucher: number =
@@ -280,7 +309,7 @@ const SessionSettings = () => {
       form?.voucher?.data?.VoucherType === 3
         ? form?.voucher?.data?.DiscountType === 1
           ? form?.voucher?.data?.DiscountValue
-          : ((totalBasicEnergyPrice + timeSlotFee) *
+          : ((totalBasicEnergyPrice + timeSlotFee + totalFee) *
               form?.voucher?.data?.DiscountValue) /
             100
         : 0;
@@ -417,8 +446,13 @@ const SessionSettings = () => {
   };
 
   const onPay = (select: FormSession) => {
+    const amount =
+      form.selectedTab === "nominal"
+        ? Number(form.value.replace("Rp", "").replace(/\./g, ""))
+        : valueCalculate || 0;
+
     const body: AddSessionBody = {
-      amount: chargingNominal,
+      amount,
       device_id: selectedDevice?.ID,
       payment_method:
         totalPrice > 0 && select.paymentMethod?.key
@@ -428,7 +462,7 @@ const SessionSettings = () => {
       socket_id: select?.selectedSocket || 0,
       station_id: data?.ID,
       voucher_id: [Number(form?.voucher?.value)],
-      wallet_used_amount: select?.balance,
+      wallet_used_amount: Number(select?.balance.toFixed(0)),
     };
 
     dispatch(fetchAddSession(body));
@@ -636,13 +670,6 @@ const SessionSettings = () => {
               </div>
             </div>
 
-            {/* PAYMENT DETAILS */}
-            {/* <PaymentDetails
-              chargingNominal={chargingNominal}
-              fee={Number(form.paymentMethod?.value || 0)}
-              milestone={myUser?.data?.Milestone}
-              voucher={form?.voucher?.data}
-            /> */}
           </div>
         </div>
 
@@ -885,7 +912,7 @@ const SessionSettings = () => {
 
 export default SessionSettings;
 
-export const getLabelWatt = (value: number) => {
+const getLabelWatt = (value: number) => {
   let label: string = "";
 
   if (value >= 1000) label = `${value / 1000}kW`;

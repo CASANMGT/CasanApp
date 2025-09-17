@@ -202,3 +202,17 @@ export function getCurrentSlot(
 
   return matchedSlot;
 }
+
+
+export const getLabelWatt = (min: number, max: number) => {
+  let value: string = "";
+
+  if (min === max) {
+    if (min < 1) value = `${min * 1000}w`;
+    else value = `${min}kW`;
+  } else {
+    value = `${min}-${max}kW`;
+  }
+
+  return value;
+};

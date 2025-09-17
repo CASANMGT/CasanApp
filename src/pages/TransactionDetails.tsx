@@ -1,6 +1,5 @@
 import html2canvas from "html2canvas";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { FaArrowRight } from "react-icons/fa6";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   NavigateFunction,
@@ -212,21 +211,10 @@ const TransactionDetails = () => {
       ? true
       : false;
 
-  const isShowMilestone: boolean = useMemo(
-    () =>
-      transactionById?.data?.User?.Milestone &&
-      transactionById?.data?.User?.Milestone?.DiscountPercent > 0
-        ? true
-        : false,
-    [transactionById?.data?.User?.Milestone]
-  );
-
   if (dataSession?.VoucherUsages && dataSession?.VoucherUsages.length) {
     isShowVoucher = true;
     dataVoucher = dataSession?.VoucherUsages[0];
   }
-
-  console.log("cek res", dataSession);
 
   return (
     <div className="background-1 py-[14px] px-4">
@@ -386,55 +374,18 @@ const TransactionDetails = () => {
               />
 
               <BetweenText
-                labelLeft="Voucher Discount"
-                labelRight=""
-                content={
-                  <div className="row gap-1">
-                    <p className="text-black100 text-xs">
-                      {dataVoucher
-                        ? dataVoucher.VoucherDetails?.DiscountType === 1
-                          ? `-Rp${rupiah(
-                              dataVoucher.VoucherDetails?.DiscountValue
-                            )}`
-                          : `[${dataVoucher.VoucherDetails?.Description}]`
-                        : 0}
-                    </p>
-
-                    {isShowVoucher &&
-                      dataVoucher?.VoucherDetails?.DiscountType === 2 && (
-                        <FaArrowRight
-                          onClick={() => alert()}
-                          className="cursor-pointer text-primary100"
-                        />
-                      )}
-                  </div>
-                }
-                className="py-2 border-b border-b-black10"
-              />
-
-              <BetweenText
                 labelLeft={`Nominal ${
                   transactionType === 1 ? "Topup" : "Pengecasan"
                 }`}
-                labelRight={`Rp${rupiah(transactionById?.data?.Amount)}`}
+                labelRight={`Rp${rupiah(transactionById?.data?.NetCharge)}`}
                 className="py-2 border-b border-b-black10"
               />
 
-              {isShowMilestone && (
-                <BetweenText
-                  labelLeft={`${transactionById?.data?.User?.Milestone?.Name} ${transactionById?.data?.User?.Milestone?.DiscountPercent}% Disc`}
-                  labelRight={
-                    transactionById?.data?.MilestoneDiscount
-                      ? `-Rp${rupiah(transactionById?.data?.MilestoneDiscount)}`
-                      : "Rp0"
-                  }
-                  className="py-2"
-                />
-              )}
-
               <BetweenText
                 labelLeft="Admin Fee"
-                labelRight={`Rp${rupiah(transactionById?.data?.TotalFee)}`}
+                labelRight={`Rp${rupiah(
+                  transactionById?.data?.PaymentMethodFee
+                )}`}
                 className="py-2 border-b border-b-black10"
               />
 

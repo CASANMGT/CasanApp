@@ -261,13 +261,6 @@ const SessionDetails = () => {
                   className="bg-baseLightGray p-3"
                 />
 
-                <BetweenText
-                  type="medium-content"
-                  labelLeft={`Durasi ${!isFull && "Pesanan"}`}
-                  labelRight={formatDuration(dataSession?.ExpectedDuration)}
-                  className="p-3"
-                />
-
                 {!isFull && (
                   <BetweenText
                     type="medium-content"
@@ -287,14 +280,18 @@ const SessionDetails = () => {
                 <BetweenText
                   type="medium-content"
                   labelLeft="Tarif Pengecasan"
-                  labelRight={dataSession?.ChargingFee || "-"}
+                  labelRight={`Rp${rupiah(
+                    dataSession?.Transaction?.Amount
+                  )}/kWh`}
                   className="p-3"
                 />
 
                 <BetweenText
                   type="medium-content"
                   labelLeft="Nominal Pesanan"
-                  labelRight={`Rp${rupiah(dataSession?.Transaction?.Amount)}`}
+                  labelRight={`Rp${rupiah(
+                    dataSession?.Transaction?.NetCharge
+                  )}`}
                   className="bg-baseLightGray p-3"
                 />
 
@@ -344,7 +341,7 @@ const SessionDetails = () => {
 
             <BetweenText
               labelLeft="Nominal Pengisian"
-              labelRight={`Rp${rupiah(dataSession?.Transaction?.Amount)}`}
+              labelRight={`Rp${rupiah(dataSession?.Transaction?.NetCharge)}`}
               className="py-2 border-b border-b-black10"
             />
 
@@ -378,7 +375,7 @@ const SessionDetails = () => {
 
             <BetweenText
               labelLeft="Biaya Transaksi"
-              labelRight={`Rp${rupiah(dataSession?.Transaction?.TotalFee)}`}
+              labelRight={`Rp${rupiah(dataSession?.Transaction?.PaymentMethodFee)}`}
               className="py-2 border-b border-b-black10"
             />
 

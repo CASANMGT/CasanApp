@@ -51,7 +51,7 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
         <div className="relative flex items-center justify-center w-[220px] h-[220px] bg-white rounded-full shadow-md">
           <div className="text-center">
             <p className="text-black70 font-semibold mb-2">
-              {priceType === 2 ? "Kecepatan" : "Sisa Durasi"}
+              {priceType === 2 ? "Sisa Energi" : "Sisa Durasi"}
             </p>
             {type === 5 && maxWatt > 1 ? (
               priceType === 2 ? (

@@ -10,6 +10,7 @@ import {
   IcBackBlack,
   IcBike,
   IcDownCircleGreen,
+  IcFlash,
   IcFuel,
   IcShareGreen,
   ILNoImage,
@@ -20,7 +21,11 @@ import { showToast } from "../../features/toastSlice";
 import { AppDispatch, RootState } from "../../store";
 import BasicInformation from "./BasicInformation";
 import PriceInformation from "./PriceInformation";
-import { getDistanceFromLatLonInKm, openGoogleMaps } from "../../helpers";
+import {
+  getDistanceFromLatLonInKm,
+  getLabelWatt,
+  openGoogleMaps,
+} from "../../helpers";
 
 const ChargingStationDetails = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -112,6 +117,19 @@ const ChargingStationDetails = () => {
     },
     location?.state?.currentLocation
   );
+
+  const dataMaxWatt = chargingStationById?.data?.Devices?.map(
+    (device) => device?.MaxWatt
+  );
+  let minWatt: number = 0;
+  let maxWatt: number = 0;
+
+  if (dataMaxWatt?.length) {
+    minWatt = Math.min(...dataMaxWatt) / 1000;
+    maxWatt = Math.max(...dataMaxWatt) / 1000;
+  }
+
+  const labelWatt = getLabelWatt(minWatt, maxWatt);
 
   return (
     <LoadingPage loading={chargingStationById?.loading}>
@@ -211,21 +229,21 @@ const ChargingStationDetails = () => {
 
         {/* INFORMATION */}
         <div className="p-4">
-          {/* COST INFORMATION */}
-
-          <PriceInformation data={chargingStationById?.data} />
-
-          {/* BASIC INFORMATION  */}
-          <BasicInformation
-            phone={chargingStationById?.data?.Phone || ""}
-            data={chargingStationById?.data?.OperationalHours}
-          />
-
           {/* DEVICE LIST */}
           <div className="bg-white p-3 rounded-lg mt-[14px] border drop-shadow">
             <div className="row gap-2 mb-4">
               <IcBike className="text-primary100" />
-              <p className="font-medium">Device List</p>
+              <p className="font-medium flex-1">Device List</p>
+
+              <div className="bg-primary100 rounded-md row">
+                <div className="py-0.5 px-1 row gap-1">
+                  <IcFlash className="text-white" />
+                </div>
+
+                <div className="text-primary100 bg-primary10 px-1 rounded-md rounded-l-[40px] gap-1 flex items-center py-0.5">
+                  <span className="font-medium">{labelWatt}</span>
+                </div>
+              </div>
             </div>
 
             {chargingStationById?.data?.Devices &&
@@ -266,6 +284,16 @@ const ChargingStationDetails = () => {
               </>
             )}
           </div>
+
+          {/* COST INFORMATION */}
+
+          <PriceInformation data={chargingStationById?.data} />
+
+          {/* BASIC INFORMATION  */}
+          <BasicInformation
+            phone={chargingStationById?.data?.Phone || ""}
+            data={chargingStationById?.data?.OperationalHours}
+          />
         </div>
       </div>
     </LoadingPage>

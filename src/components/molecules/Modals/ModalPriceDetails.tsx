@@ -1,16 +1,16 @@
 import React from "react";
 import { IcClose } from "../../../assets";
+import { DataUser, Voucher } from "../../../common";
 import { formatDuration, getCurrentSlot, rupiah } from "../../../helpers";
 import { BetweenText } from "../../atoms";
 import ModalContainer from "./ModalContainer";
-import { DataUser, Voucher } from "../../../common";
 
 interface Props {
   isOpen: boolean;
   dataPriceSetting: PriceSetting | undefined;
   dataDevice: Device | undefined | null;
   dataUser: DataUser | undefined | null;
-  dataVoucher: Voucher | undefined|null;
+  dataVoucher: Voucher | undefined | null;
   power: number | string;
   price: number | string;
   duration: number;
@@ -55,14 +55,15 @@ const ModalPriceDetails: React.FC<Props> = ({
       )
     : 0;
   const milestone: number =
-    ((totalBasicEnergyPrice + timeSlotFee) *
+    ((totalBasicEnergyPrice + timeSlotFee + totalFee) *
       (dataUser?.Milestone?.DiscountPercent || 0)) /
     100;
   const voucher: number =
     dataVoucher?.VoucherType === 1 || dataVoucher?.VoucherType === 3
       ? dataVoucher?.DiscountType === 1
         ? dataVoucher?.DiscountValue
-        : ((totalBasicEnergyPrice + timeSlotFee) * dataVoucher?.DiscountValue) /
+        : ((totalBasicEnergyPrice + timeSlotFee + totalFee) *
+            dataVoucher?.DiscountValue) /
           100
       : 0;
   const pju: number = Number(
@@ -102,7 +103,7 @@ const ModalPriceDetails: React.FC<Props> = ({
 
           <BetweenText
             labelLeft="Harga Energi Dasar"
-            labelRight={`Rp${rupiah(baseFare)}`}
+            labelRight={`Rp${rupiah(baseFare)}/kWh`}
             classNameLabelRight="font-medium text-black100"
             className="py-2 border-b border-b-black10"
           />
