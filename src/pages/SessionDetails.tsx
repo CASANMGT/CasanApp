@@ -1,5 +1,5 @@
 import html2canvas from "html2canvas";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FaArrowRight } from "react-icons/fa6";
 import { IoLeaf } from "react-icons/io5";
 import { RiTreeFill } from "react-icons/ri";
@@ -18,6 +18,7 @@ import {
   Button,
   Header,
   LoadingPage,
+  ModalPriceDetails,
   Separator,
 } from "../components";
 import { fetchDetailSession } from "../features";
@@ -36,6 +37,8 @@ const SessionDetails = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const detailSession = useSelector((state: RootState) => state.detailSession);
+
+  const [openPriceDetails, setOpenPriceDetails] = useState<boolean>(false);
 
   useEffect(() => {
     getData();
@@ -418,6 +421,15 @@ const SessionDetails = () => {
               />
             )}
 
+            <div className="flex justify-end mt-5">
+              <span
+                onClick={() => setOpenPriceDetails(true)}
+                className="font-medium text-primary100 cursor-pointer"
+              >
+                {"Lihat Rincian ->"}
+              </span>
+            </div>
+
             {status !== 7 && status !== 8 && (
               <>
                 <Separator className="my-6 bg-black10" />
@@ -452,6 +464,22 @@ const SessionDetails = () => {
           </div>
         )}
       </LoadingPage>
+
+      {/* MODAL */}
+      {openPriceDetails && (
+        <ModalPriceDetails
+          isOpen={openPriceDetails}
+          dataPriceSetting={dataSession?.PriceSetting}
+          dataDevice={dataSession?.Device}
+          dataVoucher={undefined} // dummy
+          dataUser={dataSession?.User}
+          price={dataSession?.Transaction?.TotalFare || 0}
+          power={dataSession?.PaidKWH || 0}
+          duration={dataSession?.Duration || 0}
+          onClose={() => setOpenPriceDetails(false)}
+        />
+      )}
+      {/* END MODAL */}
     </div>
   );
 };
