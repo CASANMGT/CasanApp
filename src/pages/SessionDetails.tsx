@@ -1,5 +1,5 @@
 import html2canvas from "html2canvas";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa6";
 import { IoLeaf } from "react-icons/io5";
 import { RiTreeFill } from "react-icons/ri";
@@ -124,15 +124,6 @@ const SessionDetails = () => {
     dataVoucher = dataSession?.VoucherUsages[0];
   }
 
-  const isShowMilestone: boolean = useMemo(
-    () =>
-      dataSession?.User?.Milestone &&
-      dataSession?.User?.Milestone?.DiscountPercent > 0
-        ? true
-        : false,
-    [dataSession?.User?.Milestone]
-  );
-
   const co2: number = Number(
     ((dataSession?.TotalKwhUsed || 0) * 1.5).toFixed(3)
   );
@@ -144,9 +135,8 @@ const SessionDetails = () => {
     ).toFixed(0)
   );
 
-  console.log('cek dataSession', dataSession);
-  console.log('cek status', status);
-  
+  console.log("cek dataSession", dataSession);
+  console.log("cek status", status);
 
   return (
     <div className="background-1 overflow-hidden justify-between flex flex-col">
@@ -394,20 +384,6 @@ const SessionDetails = () => {
               )}`}
               className="py-2 border-b border-b-black10"
             />
-
-            {isShowMilestone && (
-              <BetweenText
-                labelLeft={`${dataSession?.User?.Milestone?.Name} ${dataSession?.User?.Milestone?.DiscountPercent}% Disc`}
-                labelRight={
-                  dataSession?.Transaction?.MilestoneDiscount
-                    ? `-Rp${rupiah(
-                        dataSession?.Transaction?.MilestoneDiscount
-                      )}`
-                    : "Rp0"
-                }
-                className="py-2"
-              />
-            )}
 
             <BetweenText
               labelLeft="Total Transaksi"
