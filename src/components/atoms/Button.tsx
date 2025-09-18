@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { ButtonType } from "../../common";
 
 interface SizeButtonStyleProps {
   buttonStyle: string;
@@ -87,7 +86,7 @@ const Button: React.FC<ButtonProps> = ({
     if (!disabled && !loading) onClick();
   };
 
-  const IconRight: string | undefined = iconRight;
+  const IconRight: any | undefined = iconRight;
   const classNameTypeButton: string = getTypeButton();
   const classNameSizeButton: SizeButtonStyleProps = getSizeButton();
 
@@ -103,7 +102,7 @@ const Button: React.FC<ButtonProps> = ({
           className={`flex flex-row gap-2 items-center whitespace-nowrap  ${classNameSizeButton.labelStyle}`}
         >
           {label}
-          {IconRight && <IconRight />}
+          {IconRight && <IconRight size={20} />}
         </div>
       )}
     </button>

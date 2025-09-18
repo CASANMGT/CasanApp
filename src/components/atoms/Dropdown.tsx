@@ -1,8 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
 import { IcDownGray } from "../../assets";
-import { OptionsProps } from "../../common";
-import Separator from "./Separator";
-import { SwitchLayoutGroupContext } from "framer-motion";
 
 interface DropdownProps {
   className?: string;

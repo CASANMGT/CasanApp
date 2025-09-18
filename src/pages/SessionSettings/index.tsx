@@ -1,5 +1,5 @@
 import { clone } from "lodash";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FaChevronRight } from "react-icons/fa6";
 import { HiOutlineTicket } from "react-icons/hi2";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,19 +9,17 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import { IcInfoCircle, IcRightGreen, IcSocketCircleGreen } from "../../assets";
 import {
-  AddSessionBody,
-  CalculateChargeBody,
-  CalculateDurationBody,
-  ChargingStation,
-  Device,
+  IcEditGreen,
+  IcInfoCircle,
+  IcRightGreen,
+  IcSocketCircleGreen,
+} from "../../assets";
+import {
+  ERROR_MESSAGE,
   FormDefaultSession,
-  FormSession,
   INVALID_TOKEN,
-  NOMINAL_SESSION,
-  OptionsProps,
-  Socket,
+  REGEX_TIME,
   Voucher,
 } from "../../common";
 import {
@@ -33,7 +31,9 @@ import {
   ModalInputHour,
   ModalInputNominal,
   ModalInputPin,
+  ModalInputPower,
   ModalPaymentMethod,
+  ModalPriceDetails,
   ModalSKVoucher,
   ModalVoltageAmpere,
   ModalVoucher,
@@ -47,45 +47,28 @@ import { useAlert } from "../../context/AlertContext";
 import { useAuth } from "../../context/AuthContext";
 import {
   fetchAddSession,
-  fetchCalculateCharge,
-  fetchCalculateDuration,
   fetchDeviceById,
   fetchMyUser,
-  fetchSendOTP,
   hideLoading,
-  resetDataCalculateCharge,
-  resetDataCalculateDuration,
   resetDataEditPin,
   resetDataLogin,
   setFromGlobal,
   showLoading,
 } from "../../features";
 import {
+  convertToHours,
   formatPhoneNumber,
+  getCurrentSlot,
   openGoogleMaps,
   rupiah,
+  timeToSeconds,
   useForm,
 } from "../../helpers";
+import { Api } from "../../services";
 import { AppDispatch, RootState } from "../../store";
-import PriceInformation from "../ChargingStationDetails/PriceInformation";
 import InputHour from "./InputHour";
 import InputNominal from "./InputNominal";
-import PaymentDetails from "./PaymentDetails";
-
-const tabsNominalHour = [
-  {
-    id: "1",
-    label: "Masukkan Nominal",
-    content: "",
-    // content: <InputNominal />,
-  },
-  {
-    id: "2",
-    label: "Masukkan Jam",
-    content: "",
-    // content: <InputHour />,
-  },
-];
+import InputPower from "./InputPower";
 
 const SessionSettings = () => {
   const navigate: NavigateFunction = useNavigate();
@@ -98,9 +81,7 @@ const SessionSettings = () => {
   const global = useSelector((state: RootState) => state.global);
   const dataLogin = useSelector((state: RootState) => state.login);
   const addSession = useSelector((state: RootState) => state.addSession);
-  const calculateCharge = useSelector(
-    (state: RootState) => state.calculateCharge
-  );
+
   const myUser = useSelector((state: RootState) => state.myUser);
   const deviceById = useSelector((state: RootState) => state.deviceById);
   const checkPin = useSelector((state: RootState) => state.checkPin);
@@ -109,26 +90,55 @@ const SessionSettings = () => {
   const [form, setForm] = useForm<FormSession>(FormDefaultSession);
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [visiblePaymentMethod, setVisiblePaymentMethod] =
-    useState<boolean>(false);
+
   const [data, setData] = useState<ChargingStation>(location?.state?.data);
   const [selectedDevice, setSelectedDevice] = useState<Device>(
     location?.state?.selectedDevice
   );
+  const [channel, setChannel] = useState<number>(2);
+  const [valueCalculate, setValueCalculate] = useState<number>(0);
+  const [loadingCalculate, setLoadingCalculate] = useState<boolean>(false);
+  const [visiblePaymentMethod, setVisiblePaymentMethod] =
+    useState<boolean>(false);
   const [openInputPhoneNumber, setOpenInputPhoneNumber] =
     useState<boolean>(false);
   const [openRequestOTP, setOpenRequestOTP] = useState<boolean>(false);
   const [openInputOTP, setOpenInputOTP] = useState<boolean>(false);
   const [openInputPin, setOpenInputPin] = useState<boolean>(false);
   const [openVoucher, setOpenVoucher] = useState<boolean>(false);
+  const [openPriceDetails, setOpenPriceDetails] = useState<boolean>(false);
+  const [openVA, setOpenVA] = useState<boolean>(false);
+  const [priceType, setPriceType] = useState<number>();
+  const [tabs, setTabs] = useState<TabItemProps[]>();
 
   useEffect(() => {
     if (isAuthenticated) dispatch(fetchMyUser());
     if (id) dispatch(fetchDeviceById(id));
-
-    dispatch(resetDataCalculateCharge());
-    dispatch(resetDataCalculateDuration());
   }, []);
+
+  useEffect(() => {
+    if (data?.ID) {
+      const setUp = () => {
+        const _priceType: number = data?.PriceSetting?.BikePriceType;
+
+        const newTabs: TabItemProps[] = [
+          _priceType === 2 && { id: "power", label: "Daya", content: "" },
+          { id: "nominal", label: "Nominal", content: "" },
+          _priceType === 1 && {
+            id: "duration",
+            label: "Duration",
+            content: "",
+          },
+        ].filter(Boolean) as TabItemProps[];
+
+        setTabs(newTabs);
+        setPriceType(_priceType);
+        setForm("selectedTab", _priceType === 2 ? "power" : "nominal");
+      };
+
+      setUp();
+    }
+  }, [data]);
 
   useEffect(() => {
     if (
@@ -170,17 +180,6 @@ const SessionSettings = () => {
   }, [myUser?.error]);
 
   useEffect(() => {
-    if (form.time !== "00:00" && form.selectedTab === "2")
-      onCalculate("charge");
-  }, [form.time, form?.ampere, form?.voltage]);
-
-  useEffect(() => {
-    if (form.nominal && form.nominal !== "Rp0" && form.selectedTab === "1") {
-      onCalculate("duration");
-    }
-  }, [form.nominal, form?.ampere, form?.voltage]);
-
-  useEffect(() => {
     if (dataLogin?.data) {
       dispatch(resetDataLogin());
       login();
@@ -208,6 +207,17 @@ const SessionSettings = () => {
     }
   }, [editPin]);
 
+  useEffect(() => {
+    const isTime = REGEX_TIME.test(form?.value);
+    let v: string | number = "";
+
+    if (isTime) v = convertToHours(form?.value);
+    else
+      v = form?.value.replace("Rp", "").replace(/\./g, "").replace(" kWh", "");
+
+    if (Number(v || 0) > 0) onCalculate(v);
+  }, [form.value, form?.ampere, form?.voltage]);
+
   const onDismiss = () => {
     navigate(-1);
   };
@@ -215,43 +225,118 @@ const SessionSettings = () => {
   const getChargingNominal = useCallback(() => {
     let value: number = 0;
 
-    if (form.selectedTab === "1")
-      value = Number(form?.nominal.replace("Rp", "").replace(/\./g, ""));
-    else if (calculateCharge?.data) value = calculateCharge?.data || 0;
+    if (form.selectedTab === "nominal")
+      value = Number(form.value.replace("Rp", "").replace(/\./g, ""));
+    else if (valueCalculate) value = valueCalculate || 0;
 
-    return value;
-  }, [form.selectedTab, form.nominal, calculateCharge?.data]);
+    const power: number =
+      form?.selectedTab === "nominal"
+        ? valueCalculate
+        : form?.selectedTab === "power"
+        ? Number(form?.value.replace(" kWh", ""))
+        : Number(
+            (
+              Number(form?.voltage?.value || 0) *
+              Number(form?.ampere?.value || 0)
+            ).toFixed(0) || 0
+          );
 
-  const getTotalPrice = useCallback(() => {
-    let value: number = 0;
-    let discount: number = 0;
+    const dataOtherFee: OtherFeesProps[] | undefined =
+      data?.PriceSetting?.OtherFees;
+    const selectedBaseRule: PriceBaseRule | null =
+      data?.PriceSetting?.PriceBaseRules.find(
+        (item) => power >= item.From && power <= item.To
+      ) ?? null;
+    const selectedPriceTimeRule: PriceBaseTime | undefined =
+      getCurrentSlot(selectedBaseRule);
+    const timeSlotFee: number = selectedPriceTimeRule?.Value || 0;
+    const totalFee: number = dataOtherFee?.length
+      ? dataOtherFee.reduce(
+          (sum, item) =>
+            sum + (item?.Type === 1 ? item.Value : (item.Value * value) / 100),
+          0
+        )
+      : 0;
 
-    if (form?.paymentMethod?.priceType === "percentage") {
-      const calculate =
-        (chargingNominal * Number(form?.paymentMethod?.value || 0)) / 100;
-      value = chargingNominal + calculate;
-    } else value = chargingNominal + Number(form.paymentMethod?.value || 0);
+    return value + totalFee + timeSlotFee;
+  }, [form.value, valueCalculate]);
 
-    if (form?.voucher?.data) {
-      const dataVoucher: Voucher = form?.voucher?.data;
+  const getTotalPrice: () => number = useCallback(() => {
+    if (!isShowTotal) return 0;
 
-      if (dataVoucher?.VoucherType === 1 || dataVoucher?.VoucherType === 3) {
-        discount =
-          dataVoucher?.DiscountType === 1
-            ? dataVoucher?.DiscountValue
-            : (chargingNominal * dataVoucher?.DiscountValue) / 100;
-      }
-    }
+    const dataOtherFee: OtherFeesProps[] | undefined =
+      data?.PriceSetting?.OtherFees;
+    const power: number =
+      form?.selectedTab === "nominal"
+        ? valueCalculate
+        : form?.selectedTab === "power"
+        ? Number(form?.value.replace(" kWh", ""))
+        : Number(
+            (
+              Number(form?.voltage?.value || 0) *
+              Number(form?.ampere?.value || 0)
+            ).toFixed(0) || 0
+          );
 
-    const discountMilestone: number =
-      (chargingNominal * (myUser?.data?.Milestone?.DiscountPercent || 0)) / 100;
+    const selectedBaseRule: PriceBaseRule | null =
+      data?.PriceSetting?.PriceBaseRules.find(
+        (item) => power >= item.From && power <= item.To
+      ) ?? null;
+    const selectedPriceTimeRule: PriceBaseTime | undefined =
+      getCurrentSlot(selectedBaseRule);
 
-    return value - discount - discountMilestone;
+    const totalBasicEnergyPrice: number =
+      form?.selectedTab === "nominal"
+        ? Number(form?.value.replace("Rp", "").replace(/\./g, ""))
+        : valueCalculate;
+    const timeSlotFee: number = selectedPriceTimeRule?.Value || 0;
+    const totalFee: number = dataOtherFee?.length
+      ? dataOtherFee.reduce(
+          (sum, item) =>
+            sum +
+            (item?.Type === 1
+              ? item.Value
+              : (item.Value * totalBasicEnergyPrice) / 100),
+          0
+        )
+      : 0;
+    const milestone: number =
+      ((totalBasicEnergyPrice + timeSlotFee + totalFee) *
+        (myUser?.data?.Milestone?.DiscountPercent || 0)) /
+      100;
+    const voucher: number =
+      form?.voucher?.data?.VoucherType === 1 ||
+      form?.voucher?.data?.VoucherType === 3
+        ? form?.voucher?.data?.DiscountType === 1
+          ? form?.voucher?.data?.DiscountValue
+          : ((totalBasicEnergyPrice + timeSlotFee + totalFee) *
+              form?.voucher?.data?.DiscountValue) /
+            100
+        : 0;
+    const pju: number = Number(
+      ((totalBasicEnergyPrice * (data?.PriceSetting?.PJU || 0)) / 100).toFixed(
+        0
+      )
+    );
+    const subTotal: number = Number(
+      (
+        totalBasicEnergyPrice +
+        timeSlotFee +
+        totalFee -
+        milestone -
+        voucher +
+        pju
+      ).toFixed(0)
+    );
+    const ppn: number = Number(
+      ((subTotal * (data?.PriceSetting?.PPN || 0)) / 100).toFixed(0)
+    );
+
+    return subTotal + ppn;
   }, [
     form.paymentMethod,
-    form.selectedTab,
-    form.nominal,
-    calculateCharge?.data,
+    form.value,
+    valueCalculate,
     form?.voucher,
     myUser?.data?.Milestone,
   ]);
@@ -266,10 +351,10 @@ const SessionSettings = () => {
       message.title = "Pilih Socket Terlebih Dahulu";
       message.body =
         "Silakan pilih Socket sesuai yang akan anda gunakan untuk pengisian";
-    } else if (form.selectedTab === "1" && !form?.nominal) {
+    } else if (form.selectedTab === "1" && !form?.value) {
       message.title = "Nominal Belum Terpilih";
       message.body = "Masukkan Nominal Terlebih Dahulu";
-    } else if (form.selectedTab === "2" && form.time === "00:00") {
+    } else if (form.selectedTab === "2" && form.value === "00:00") {
       message.title = "Jam Belum Terpilih";
       message.body = "Masukkan Jam Terlebih Dahulu";
     }
@@ -282,58 +367,114 @@ const SessionSettings = () => {
     } else showAlert(message);
   };
 
-  const onCalculate = (type: "duration" | "charge") => {
-    if (type === "charge") {
-      const splitTime = form.time.split(":");
-      const duration =
-        Number(splitTime[0] || 0) * 3600 + Number(splitTime[1] || 0) * 60;
+  const onCalculate = async (value: string | number) => {
+    try {
+      setLoadingCalculate(true);
 
-      const body: CalculateChargeBody = {
-        id: data.PriceSettingID,
-        vehicle_type: 1,
-        duration,
-        watt: Number(
-          (
-            Number(form?.voltage?.value || 0) * Number(form?.ampere?.value || 0)
-          ).toFixed(0)
-        ),
-      };
+      if (form?.selectedTab === "nominal") {
+        let url: string = "";
+        const body: CalculateDurationOrEnergyBody = {
+          vehicle_type: selectedDevice?.VehicleType,
+        };
 
-      dispatch(fetchCalculateCharge(body));
-    } else if (type === "duration") {
-      const body: CalculateDurationBody = {
-        id: data.PriceSettingID,
-        total_charge: Number(form.nominal.replace("Rp", "").replace(/\./g, "")),
-        vehicle_type: 1,
-        watt: Number(
-          (
-            Number(form?.voltage?.value || 0) * Number(form?.ampere?.value || 0)
-          ).toFixed(0)
-        ),
-      };
+        if (priceType === 1) {
+          url = "price-settings/calculate-duration";
+          body.id = data?.PriceSettingID;
+          body.total_charge = Number(value || 0);
+          body.watt = Number(
+            (
+              Number(form?.voltage?.value || 0) *
+              Number(form?.ampere?.value || 0)
+            ).toFixed(0)
+          );
+        } else if (priceType === 2) {
+          url = "sessions/calculate-energy";
+          body.price_setting_id = data?.PriceSettingID;
+          body.charge = Number(value || 0);
+          body.watt = selectedDevice?.SocketRating;
+        }
 
-      dispatch(fetchCalculateDuration(body));
+        const res = await Api.post({
+          url,
+          body,
+        });
+
+        setValueCalculate(res?.data?.energy_kwh || res?.data?.duration);
+      } else if (form?.selectedTab === "duration") {
+        const splitTime = form?.value.split(":");
+        const duration =
+          Number(splitTime[0] || 0) * 3600 + Number(splitTime[1] || 0) * 60;
+
+        const body: CalculateChargeBody = {
+          id: data.PriceSettingID,
+          vehicle_type: selectedDevice?.VehicleType,
+          duration,
+          watt: Number(
+            (
+              Number(form?.voltage?.value || 0) *
+              Number(form?.ampere?.value || 0)
+            ).toFixed(0)
+          ),
+        };
+        const res = await Api.post({
+          url: "price-settings/calculate-charge",
+          body,
+        });
+
+        setValueCalculate(res?.data?.charge);
+      } else if (form?.selectedTab === "power") {
+        const body: CalculateChargeBody = {
+          energy: Number(value || 0),
+          price_setting_id: data?.PriceSettingID,
+          vehicle_type: selectedDevice?.VehicleType,
+          watt: selectedDevice?.SocketRating,
+        };
+
+        const res = await Api.post({
+          url: "sessions/calculate-charge",
+          body,
+        });
+
+        setValueCalculate(res?.data?.charge);
+      }
+
+      setLoadingCalculate(false);
+    } catch (error) {
+      alert(ERROR_MESSAGE);
+      setLoadingCalculate(false);
     }
   };
 
   const onPay = (select: FormSession) => {
+    const amount =
+      form.selectedTab === "nominal"
+        ? Number(form.value.replace("Rp", "").replace(/\./g, ""))
+        : valueCalculate || 0;
+
     const body: AddSessionBody = {
-      amount: chargingNominal,
+      amount,
       device_id: selectedDevice?.ID,
       payment_method:
         totalPrice > 0 && select.paymentMethod?.key
           ? select.paymentMethod?.key
           : "BALANCE_FU",
-      session_method: select.selectedTab === "1" ? 1 : 2,
+      session_method: select?.selectedTab === "1" ? 1 : 2,
       socket_id: select?.selectedSocket || 0,
       station_id: data?.ID,
       voucher_id: [Number(form?.voucher?.value)],
-      wallet_used_amount: select?.balance,
+      wallet_used_amount: Number(select?.balance.toFixed(0)),
     };
 
     dispatch(fetchAddSession(body));
   };
 
+  const isShowTotal = useMemo(
+    () =>
+      Number(
+        form?.value.replace("Rp", "").replace(/\./g, "").replace(" kWh", "")
+      ) > 0,
+    [form?.value]
+  );
   const chargingNominal: number = getChargingNominal();
   const totalPrice: number = getTotalPrice();
 
@@ -429,63 +570,106 @@ const SessionSettings = () => {
 
             {/* INPUT NOMINAL */}
             <div className="bg-white py-4 px-3 rounded-lg mb-3">
-              <Tabs
-                tabs={tabsNominalHour}
-                onSelect={(select) => setForm("selectedTab", select)}
-              />
-
-              {form?.selectedTab === "1" ? (
-                <InputNominal
-                  form={form}
-                  description="Silakan masukkan nominal pengisian yang sesuai dengan kebutuhan anda"
-                  dataNominal={NOMINAL_SESSION}
-                  balance={myUser?.data?.Balance || 0}
-                  onChange={(value) => {
+              {tabs && (
+                <Tabs
+                  tabs={tabs}
+                  onSelect={(select) => {
                     const cloneData = clone(form);
-                    cloneData.nominal = value;
-                    cloneData.voucher = undefined;
+                    cloneData.selectedTab = select;
+                    cloneData.value = "";
 
+                    setValueCalculate(0);
                     setForm("all", cloneData);
                   }}
                 />
-              ) : (
-                <InputHour
-                  value={form.time}
+              )}
+
+              {form?.selectedTab === "nominal" && (
+                <InputNominal
+                  value={form.value}
                   form={form}
+                  calculate={valueCalculate}
+                  priceType={priceType}
                   onChange={(value) => {
                     const cloneData = clone(form);
-                    cloneData.time = value;
+                    cloneData.value = value;
                     cloneData.voucher = undefined;
 
                     setForm("all", cloneData);
                   }}
                 />
               )}
+
+              {form?.selectedTab === "duration" && (
+                <InputHour
+                  value={form.value || "00:00"}
+                  form={form}
+                  calculate={valueCalculate}
+                  onChange={(value) => {
+                    const cloneData = clone(form);
+                    cloneData.value = value;
+                    cloneData.voucher = undefined;
+
+                    setForm("all", cloneData);
+                  }}
+                />
+              )}
+
+              {form?.selectedTab === "power" && (
+                <InputPower
+                  value={form.value}
+                  form={form}
+                  calculate={valueCalculate}
+                  onChange={(value) => {
+                    const cloneData = clone(form);
+                    cloneData.value = value;
+                    cloneData.voucher = undefined;
+
+                    setForm("all", cloneData);
+                  }}
+                />
+              )}
+
+              <Separator className="my-4" />
+
+              {priceType === 1 && (
+                <div className="between-x p-3 rounded-lg bg-primary10 ">
+                  <span className="text-xs text-black70">Spesifikasi:</span>
+                  <div className="row font-medium">
+                    <span className="text-xs">{form.voltage?.name}</span>
+                    <span className="text-xs ml-1.5 mr-3">
+                      {form.ampere?.name}
+                    </span>
+                    <span className="text-xs mr-2.5">{`${(
+                      Number(form?.voltage?.value || 0) *
+                      Number(form?.ampere?.value || 0)
+                    ).toFixed(0)}W`}</span>
+                    <div
+                      onClick={() => setOpenVA(true)}
+                      className="cursor-pointer"
+                    >
+                      <IcEditGreen />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-end mt-5">
+                <span
+                  onClick={() => {
+                    if (isShowTotal) setOpenPriceDetails(true);
+                  }}
+                  className={`font-medium ${
+                    isShowTotal
+                      ? "text-primary100 cursor-pointer"
+                      : "text-black50 cursor-not-allowed"
+                  }`}
+                >
+                  {"Lihat Rincian ->"}
+                </span>
+              </div>
             </div>
 
-            {/* PAYMENT DETAILS */}
-            <PaymentDetails
-              chargingNominal={chargingNominal}
-              fee={Number(form.paymentMethod?.value || 0)}
-              milestone={myUser?.data?.Milestone}
-              voucher={form?.voucher?.data}
-            />
-
-            {/* <div
-              onClick={() => {}}
-              className="row gap-3 mt-[22px] mb-5 cursor-pointer"
-            >
-              <span className="text-primary100 font-medium">
-                Informasi biaya
-              </span>
-              <div className="w-[22px] h-[22px] rounded-full bg-primary10 center">
-                <IcRightCircleGreen />
-              </div>
-            </div> */}
-
-            {/* COST INFORMATION */}
-            {/* DUMMY */}
-            {false && <PriceInformation data={data} isHideParking />}
           </div>
         </div>
 
@@ -525,7 +709,7 @@ const SessionSettings = () => {
 
             <Button
               className="!w-[130px]"
-              loading={loading}
+              loading={false}
               label="Bayar"
               onClick={onValidation}
             />
@@ -535,93 +719,135 @@ const SessionSettings = () => {
 
       {/* MODAL */}
       <>
-        <ModalPaymentMethod
-          visible={visiblePaymentMethod}
-          select={form.paymentMethod}
-          selectBalance={form?.balance}
-          total={totalPrice}
-          onDismiss={() => setVisiblePaymentMethod(false)}
-          onSelect={(select, value) => {
-            const cloneData = clone(form);
-            cloneData.paymentMethod = select;
-            cloneData.balance = value || 0;
+        {visiblePaymentMethod && (
+          <ModalPaymentMethod
+            visible={visiblePaymentMethod}
+            select={form.paymentMethod}
+            selectBalance={form?.balance}
+            total={totalPrice}
+            onDismiss={() => setVisiblePaymentMethod(false)}
+            onSelect={(select, value) => {
+              const cloneData = clone(form);
+              cloneData.paymentMethod = select;
+              cloneData.balance = value || 0;
 
-            setForm("all", cloneData);
+              setForm("all", cloneData);
 
-            if (cloneData?.balance > 0) {
-              setVisiblePaymentMethod(false);
-              setOpenInputPin(true);
-            } else onPay(cloneData);
-          }}
-        />
-        <ModalVoltageAmpere
-          visible={global?.openVA}
-          select={{
-            voltage: form.voltage,
-            ampere: form.ampere,
-          }}
-          onDismiss={() => onHideModal("openVA")}
-          onSelect={(select) => {
-            const cloneData = clone(form);
-            cloneData.voltage = select?.voltage || undefined;
-            cloneData.ampere = select?.ampere || undefined;
+              if (cloneData?.balance > 0) {
+                setVisiblePaymentMethod(false);
+                setOpenInputPin(true);
+              } else onPay(cloneData);
+            }}
+          />
+        )}
 
-            onHideModal("openVA");
-            setForm("all", cloneData);
-          }}
-        />
-        <ModalInputNominal
-          open={global?.openInputNominal}
-          value={form.nominal}
-          balance={myUser?.data?.Balance || 0}
-          onDismiss={() => onHideModal("openInputNominal")}
-          onChangeText={(value) => {
-            onHideModal("openInputNominal");
-            setForm("nominal", value);
-          }}
-        />
-        <ModalInputHour
-          open={global?.openInputHour}
-          value={form.time}
-          onDismiss={() => onHideModal("openInputHour")}
-          onChange={(value) => {
-            onHideModal("openInputHour");
-            setForm("time", value);
-          }}
-        />
-        <InputPhoneNumberModal
-          open={openInputPhoneNumber}
-          value={form.phoneNumber}
-          onDismiss={() => setOpenInputPhoneNumber(false)}
-          onChange={(value) => setForm("phoneNumber", value)}
-          onClick={() => {
-            setOpenInputPhoneNumber(false);
-            setOpenRequestOTP(true);
-          }}
-        />
-        <RequestOTPModal
-          open={openRequestOTP}
-          phoneNumber={`0${form.phoneNumber}`}
-          onDismiss={() => setOpenRequestOTP(false)}
-          onClick={() => {
-            const formatPhone: string = formatPhoneNumber(
-              `0${form.phoneNumber}`
-            );
+        {global?.openInputNominal && (
+          <ModalInputNominal
+            open={global?.openInputNominal}
+            value={form.value}
+            balance={myUser?.data?.Balance || 0}
+            onDismiss={() => onHideModal("openInputNominal")}
+            onChangeText={(value) => {
+              onHideModal("openInputNominal");
+              setForm("value", value);
+            }}
+          />
+        )}
 
-            dispatch(fetchSendOTP(formatPhone.replace(/\s+/g, "")));
-            setOpenRequestOTP(false);
-            setOpenInputOTP(true);
-          }}
-        />
-        <InputOTPModal
-          open={openInputOTP}
-          phoneNumber={`0${form.phoneNumber}`}
-          onDismiss={() => setOpenInputOTP(false)}
-        />
-        <ModalInputPin
-          isOpen={openInputPin}
-          onDismiss={() => setOpenInputPin(false)}
-        />
+        {global?.openInputHour && (
+          <ModalInputHour
+            open={global?.openInputHour}
+            value={form.value}
+            onDismiss={() => onHideModal("openInputHour")}
+            onChange={(value) => {
+              onHideModal("openInputHour");
+              setForm("value", value);
+            }}
+          />
+        )}
+
+        {global?.openInputPower && (
+          <ModalInputPower
+            open={global?.openInputPower}
+            value={form.value}
+            onDismiss={() => onHideModal("openInputPower")}
+            onChange={(value) => {
+              onHideModal("openInputPower");
+              setForm("value", value);
+            }}
+          />
+        )}
+
+        {openVA && (
+          <ModalVoltageAmpere
+            visible={openVA}
+            select={{
+              voltage: form.voltage,
+              ampere: form.ampere,
+            }}
+            onDismiss={() => setOpenVA(false)}
+            onSelect={(select) => {
+              const cloneData = clone(form);
+              cloneData.voltage = select?.voltage || undefined;
+              cloneData.ampere = select?.ampere || undefined;
+
+              setOpenVA(false);
+              setForm("all", cloneData);
+            }}
+          />
+        )}
+
+        {openInputPhoneNumber && (
+          <InputPhoneNumberModal
+            open={openInputPhoneNumber}
+            value={form.phoneNumber}
+            onDismiss={() => setOpenInputPhoneNumber(false)}
+            onChange={(value) => setForm("phoneNumber", value)}
+            onClick={() => {
+              setOpenInputPhoneNumber(false);
+              setOpenRequestOTP(true);
+            }}
+          />
+        )}
+        {openRequestOTP && (
+          <RequestOTPModal
+            open={openRequestOTP}
+            phoneNumber={`0${form.phoneNumber}`}
+            onDismiss={() => setOpenRequestOTP(false)}
+            onClick={async () => {
+              const formatPhone: string = formatPhoneNumber(
+                `0${form.phoneNumber}`
+              );
+
+              await Api.post({
+                url: "send-otp",
+                body: {
+                  phone_number: formatPhone.replace(/\s+/g, ""),
+                  channel,
+                },
+              });
+
+              // setChannel((prev) => (prev === 1 ? 2 : 1));
+              setOpenRequestOTP(false);
+              setOpenInputOTP(true);
+            }}
+          />
+        )}
+
+        {openInputOTP && (
+          <InputOTPModal
+            open={openInputOTP}
+            phoneNumber={`0${form.phoneNumber}`}
+            onDismiss={() => setOpenInputOTP(false)}
+          />
+        )}
+
+        {openInputPin && (
+          <ModalInputPin
+            isOpen={openInputPin}
+            onDismiss={() => setOpenInputPin(false)}
+          />
+        )}
 
         {openVoucher && (
           <ModalVoucher
@@ -645,6 +871,39 @@ const SessionSettings = () => {
             onDismiss={() => onHideModal("openSKVoucher")}
           />
         )}
+
+        {openPriceDetails && (
+          <ModalPriceDetails
+            isOpen={openPriceDetails}
+            dataUser={myUser?.data}
+            dataPriceSetting={data?.PriceSetting}
+            dataVoucher={form?.voucher?.data}
+            dataDevice={selectedDevice}
+            power={
+              form?.selectedTab === "nominal"
+                ? valueCalculate
+                : form?.selectedTab === "power"
+                ? form?.value.replace(" kWh", "")
+                : Number(
+                    (
+                      Number(form?.voltage?.value || 0) *
+                      Number(form?.ampere?.value || 0)
+                    ).toFixed(0) || 0
+                  )
+            }
+            duration={
+              form.selectedTab === "duration"
+                ? timeToSeconds(form?.value || "00:00")
+                : valueCalculate
+            }
+            price={
+              form?.selectedTab === "nominal"
+                ? form?.value.replace("Rp", "").replace(/\./g, "")
+                : valueCalculate
+            }
+            onClose={() => setOpenPriceDetails(false)}
+          />
+        )}
       </>
       {/* END MODALS */}
     </Container>
@@ -653,7 +912,7 @@ const SessionSettings = () => {
 
 export default SessionSettings;
 
-export const getLabelWatt = (value: number) => {
+const getLabelWatt = (value: number) => {
   let label: string = "";
 
   if (value >= 1000) label = `${value / 1000}kW`;

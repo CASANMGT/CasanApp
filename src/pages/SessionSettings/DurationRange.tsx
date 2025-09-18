@@ -1,10 +1,8 @@
 import React, { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { IcEditGreen, IcInfoCircleGreen } from "../../assets";
-import { FormSession } from "../../common";
 import { setFromGlobal } from "../../features";
-import { formatDuration, rupiah } from "../../helpers";
-import { AppDispatch, RootState } from "../../store";
+import { AppDispatch } from "../../store";
 
 interface DurationRangeProps {
   form: FormSession;
@@ -13,29 +11,11 @@ interface DurationRangeProps {
 const DurationRange: React.FC<DurationRangeProps> = ({ form }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const calculateCharge = useSelector(
-    (state: RootState) => state.calculateCharge
-  );
-  const calculateDuration = useSelector(
-    (state: RootState) => state.calculateDuration
-  );
-
   const formateCalculate = useCallback(() => {
     let value: string = "-";
-    if (form.selectedTab === "2" && calculateCharge?.data) {
-      value = `Rp${rupiah(calculateCharge?.data)}`;
-    } else if (calculateDuration?.data) {
-      value = formatDuration(calculateDuration?.data || 0);
-    }
 
     return value;
-  }, [
-    form?.nominal,
-    form.time,
-    form.selectedTab,
-    calculateCharge?.data,
-    calculateDuration?.data,
-  ]);
+  }, [form.selectedTab]);
 
   return (
     <div className="bg-white p-3 rounded-lg mb-3 drop-shadow">
@@ -75,7 +55,7 @@ const DurationRange: React.FC<DurationRangeProps> = ({ form }) => {
             }
             className="row gap-2.5 cursor-pointer"
           >
-            <p className="font-medium">{`${form?.voltage}V ${form?.ampere}A`}</p>
+            <p className="font-medium">{`${0}V ${0}A`}</p>
 
             <IcEditGreen />
           </div>

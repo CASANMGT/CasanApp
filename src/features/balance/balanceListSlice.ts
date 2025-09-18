@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Balance, bodyListProps, MetaResponseProps } from "../../common";
+import { Balance } from "../../common";
 import { Api } from "../../services/Api";
 
 type BalanceListResponse = {

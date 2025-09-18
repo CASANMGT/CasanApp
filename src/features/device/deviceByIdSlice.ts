@@ -1,8 +1,4 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  Device,
-  MetaResponseProps
-} from "../../common";
 import { Api } from "../../services/Api";
 
 type DeviceByIdResponse = {

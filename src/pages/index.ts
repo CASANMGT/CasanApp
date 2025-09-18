@@ -15,7 +15,7 @@ import NotFound from "./NotFound";
 import Order from "./Order";
 import PaymentSuccess from "./PaymentSuccess";
 import PrivacyPolice from "./PrivacyPolice";
-import ProfileNew from "./ProfileNew";
+import Profile from "./Profile";
 import ProgressDetails from "./ProgressDetails";
 import Scan from "./Scan";
 import SelectBank from "./SelectBank";
@@ -53,7 +53,7 @@ export {
     NotFound,
     Order,
     PaymentSuccess,
-    PrivacyPolice, ProfileNew,
+    PrivacyPolice, Profile,
     ProgressDetails, Scan,
     SelectBank,
     SessionDetails,

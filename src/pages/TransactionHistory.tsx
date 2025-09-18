@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import { bodyListProps } from "../common";
+import {  } from "../common";
 import { Header, LoadingPage, TransactionHistoryItem } from "../components";
 import { fetchTransactionList } from "../features";
 import { AppDispatch, RootState } from "../store";

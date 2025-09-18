@@ -1,42 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { IcClose } from "../../../assets";
-import { NOMINAL_SESSION, REGEX_NUMBERS } from "../../../common";
-import { replaceNominal, rupiah } from "../../../helpers";
+import { POWER_SESSION, REGEX_NUMBERS } from "../../../common";
 import { Button, Separator } from "../../atoms";
 import { NominalTopUpItem } from "../Items";
 import ModalContainer from "./ModalContainer";
 
-interface ModalInputNominalProps {
+interface ModalInputHourProps {
   open: boolean;
   value: string;
-  balance?: number;
   onDismiss: () => void;
-  onChangeText: (value: string) => void;
+  onChange: (value: string) => void;
 }
 
-const ModalInputNominal: React.FC<ModalInputNominalProps> = ({
+const ModalInputHour: React.FC<ModalInputHourProps> = ({
   open,
   value,
-  balance,
   onDismiss,
-  onChangeText,
+  onChange,
 }) => {
-  const [nominal, setNominal] = useState<string>("Rp0");
+  const [power, setPower] = useState<string>("");
 
   useEffect(() => {
     if (open) {
-      setNominal(value);
+      setPower(value.replace(" kWh", ""));
     }
   }, [open]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e?.target?.value.replace(REGEX_NUMBERS, "");
-    const formatted: string = `Rp${rupiah(value)}`;
 
-    setNominal(formatted);
+    setPower(value);
   };
 
-  const isError: boolean = replaceNominal(nominal) > 120000 ? true : false;
+  const isError: boolean = false;
 
   return (
     <ModalContainer
@@ -48,7 +44,7 @@ const ModalInputNominal: React.FC<ModalInputNominalProps> = ({
       <div className="w-full bg-white p-4 rounded-t-xl between-y">
         <div className="flex-1 flex flex-col overflow-hidden relative">
           <div className="between-x mb-2.5">
-            <label className="text-base font-semibold">Masukan Nominal</label>
+            <label className="text-base font-semibold">Masukan Daya</label>
 
             <div onClick={onDismiss} className="cursor-pointer">
               <IcClose className="text-black100" />
@@ -56,7 +52,7 @@ const ModalInputNominal: React.FC<ModalInputNominalProps> = ({
           </div>
 
           <p className="text-xs text-black90 mb-[14px]">
-            Silakan <span className="font-bold text-xs">masukkan nominal</span>{" "}
+            Silakan <span className="font-bold text-xs">masukkan daya</span>{" "}
             pengisian yang sesuai dengan kebutuhan anda
           </p>
 
@@ -65,7 +61,7 @@ const ModalInputNominal: React.FC<ModalInputNominalProps> = ({
               type={"text"}
               inputMode="numeric"
               placeholder={"0"}
-              value={nominal}
+              value={power}
               onChange={handleChange}
               className="z-10 w-auto text-center p-4 w-full text-base font-semibold bg-transparent"
             />
@@ -83,7 +79,7 @@ const ModalInputNominal: React.FC<ModalInputNominalProps> = ({
           {isError && (
             <div className="border-t border-t-red bg-lightRed px-3 py-1.5 rounded-b-sm text-red text-xs">
               <p>
-                Max. <span className="font-semibold">Rp120.000</span>
+                Max. <span className="font-semibold">12 Jam</span>
               </p>
             </div>
           )}
@@ -91,16 +87,13 @@ const ModalInputNominal: React.FC<ModalInputNominalProps> = ({
           <Separator className="my-4" />
 
           <div className="grid grid-cols-2 gap-3 ">
-            {NOMINAL_SESSION.map((item, index: number) => (
+            {POWER_SESSION.map((item, index: number) => (
               <NominalTopUpItem
                 key={index}
-                type="nominal"
                 value={item}
-                isActive={
-                  Number(item) ===
-                  Number(nominal.replace("Rp", "").replace(/\./g, ""))
-                }
-                onClick={() => setNominal(`Rp${rupiah(item)}`)}
+                isActive={Number(item) === Number(power.replace(" kWh", ""))}
+                isPower
+                onClick={() => setPower(item)}
               />
             ))}
           </div>
@@ -112,7 +105,7 @@ const ModalInputNominal: React.FC<ModalInputNominalProps> = ({
             buttonType="lg"
             label="Pilih"
             disabled={isError}
-            onClick={() => onChangeText(nominal || "Rp0")}
+            onClick={() => onChange(`${power} kWh`)}
           />
         </div>
       </div>
@@ -120,4 +113,4 @@ const ModalInputNominal: React.FC<ModalInputNominalProps> = ({
   );
 };
 
-export default ModalInputNominal;
+export default ModalInputHour;

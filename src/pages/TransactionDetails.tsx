@@ -1,6 +1,5 @@
 import html2canvas from "html2canvas";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { FaArrowRight } from "react-icons/fa6";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   NavigateFunction,
@@ -24,6 +23,7 @@ import {
   CountdownTimer,
   Header,
   LoadingPage,
+  ModalPriceDetails,
   Separator,
 } from "../components";
 import {
@@ -57,6 +57,7 @@ const TransactionDetails = () => {
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isShow, setIsShow] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>();
+  const [openPriceDetails, setOpenPriceDetails] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(resetDataAddSession());
@@ -178,11 +179,9 @@ const TransactionDetails = () => {
   const onViewSession = () => {
     let nextPage = "charging";
 
-    if (transactionById?.data?.Session?.Status === 6)
-      nextPage = "session-details";
+    if (dataSession?.Status === 6) nextPage = "session-details";
 
-    if (transactionById?.data?.Session?.ID)
-      navigate(`/${nextPage}/${transactionById?.data?.Session?.ID}`);
+    if (dataSession?.ID) navigate(`/${nextPage}/${dataSession?.ID}`);
     else alert(ERROR_MESSAGE);
   };
 
@@ -197,6 +196,7 @@ const TransactionDetails = () => {
       .toLocaleLowerCase()
   );
 
+  const dataSession: Session | undefined = transactionById?.data?.Session;
   let dataVoucher: VoucherUsage | undefined = undefined;
   let isShowVoucher: boolean = false;
 
@@ -211,22 +211,10 @@ const TransactionDetails = () => {
       ? true
       : false;
 
-  if (
-    transactionById?.data?.Session?.VoucherUsages &&
-    transactionById?.data?.Session?.VoucherUsages.length
-  ) {
+  if (dataSession?.VoucherUsages && dataSession?.VoucherUsages.length) {
     isShowVoucher = true;
-    dataVoucher = transactionById?.data?.Session?.VoucherUsages[0];
+    dataVoucher = dataSession?.VoucherUsages[0];
   }
-
-  const isShowMilestone: boolean = useMemo(
-    () =>
-      transactionById?.data?.User?.Milestone &&
-      transactionById?.data?.User?.Milestone?.DiscountPercent > 0
-        ? true
-        : false,
-    [transactionById?.data?.User?.Milestone]
-  );
 
   return (
     <div className="background-1 py-[14px] px-4">
@@ -352,7 +340,7 @@ const TransactionDetails = () => {
               {transactionType !== 1 && (
                 <BetweenText
                   labelLeft="Referensi Sesi ID"
-                  labelRight={transactionById?.data?.Session?.ID || "-"}
+                  labelRight={dataSession?.ID || "-"}
                   className="pt-4"
                 />
               )}
@@ -370,7 +358,7 @@ const TransactionDetails = () => {
               {/* {transactionType !== 1 && (
                 <BetweenText
                   labelLeft="Referensi Sesi ID"
-                  labelRight={transactionById?.data?.Session?.ID || "-"}
+                  labelRight={dataSession?.ID || "-"}
                   className="py-2 border-b border-b-black10"
                 />
               )} */}
@@ -386,61 +374,24 @@ const TransactionDetails = () => {
               />
 
               <BetweenText
-                labelLeft="Voucher Discount"
-                labelRight=""
-                content={
-                  <div className="row gap-1">
-                    <p className="text-black100 text-xs">
-                      {dataVoucher
-                        ? dataVoucher.VoucherDetails?.DiscountType === 1
-                          ? `-Rp${rupiah(
-                              dataVoucher.VoucherDetails?.DiscountValue
-                            )}`
-                          : `[${dataVoucher.VoucherDetails?.Description}]`
-                        : 0}
-                    </p>
-
-                    {isShowVoucher &&
-                      dataVoucher?.VoucherDetails?.DiscountType === 2 && (
-                        <FaArrowRight
-                          onClick={() => alert()}
-                          className="cursor-pointer text-primary100"
-                        />
-                      )}
-                  </div>
-                }
-                className="py-2 border-b border-b-black10"
-              />
-
-              <BetweenText
                 labelLeft={`Nominal ${
                   transactionType === 1 ? "Topup" : "Pengecasan"
                 }`}
-                labelRight={`Rp${rupiah(transactionById?.data?.Amount)}`}
+                labelRight={`Rp${rupiah(transactionById?.data?.NetCharge)}`}
                 className="py-2 border-b border-b-black10"
               />
 
-              {isShowMilestone && (
-                <BetweenText
-                  labelLeft={`${transactionById?.data?.User?.Milestone?.Name} ${transactionById?.data?.User?.Milestone?.DiscountPercent}% Disc`}
-                  labelRight={
-                    transactionById?.data?.MilestoneDiscount
-                      ? `-Rp${rupiah(transactionById?.data?.MilestoneDiscount)}`
-                      : "Rp0"
-                  }
-                  className="py-2"
-                />
-              )}
-
               <BetweenText
                 labelLeft="Admin Fee"
-                labelRight={`Rp${rupiah(transactionById?.data?.TotalFee)}`}
+                labelRight={`Rp${rupiah(
+                  transactionById?.data?.PaymentMethodFee
+                )}`}
                 className="py-2 border-b border-b-black10"
               />
 
               {/* <BetweenText
             labelLeft="Service Fee"
-            labelRight={transactionById?.data?.Session?.ChargingFee || "-"}
+            labelRight={dataSession?.ChargingFee || "-"}
             className="py-2 border-b border-b-black10"
           /> */}
 
@@ -465,12 +416,19 @@ const TransactionDetails = () => {
               {isShowRefund && (
                 <BetweenText
                   labelLeft="Pengembalian Dana"
-                  labelRight={`Rp${rupiah(
-                    transactionById?.data?.Session?.RefundAmount
-                  )}`}
+                  labelRight={`Rp${rupiah(dataSession?.RefundAmount)}`}
                   className="my-2"
                 />
               )}
+
+              <div className="flex justify-end mt-5">
+                <span
+                  onClick={() => setOpenPriceDetails(true)}
+                  className="font-medium text-primary100 cursor-pointer"
+                >
+                  {"Lihat Rincian ->"}
+                </span>
+              </div>
             </>
           )}
 
@@ -525,12 +483,8 @@ const TransactionDetails = () => {
                         type="secondary"
                         label="Cancel"
                         onClick={() => {
-                          if (transactionById?.data?.Session?.ID)
-                            dispatch(
-                              fetchCancelSession(
-                                transactionById?.data?.Session?.ID
-                              )
-                            );
+                          if (dataSession?.ID)
+                            dispatch(fetchCancelSession(dataSession?.ID));
                         }}
                       />
                     )}
@@ -562,12 +516,8 @@ const TransactionDetails = () => {
                       type="danger"
                       label="Cancel"
                       onClick={() => {
-                        if (transactionById?.data?.Session?.ID)
-                          dispatch(
-                            fetchCancelSession(
-                              transactionById?.data?.Session?.ID
-                            )
-                          );
+                        if (dataSession?.ID)
+                          dispatch(fetchCancelSession(dataSession?.ID));
                       }}
                     />
                   )}
@@ -579,6 +529,22 @@ const TransactionDetails = () => {
           {isShow && <div className="mb-2" />}
         </div>
       </LoadingPage>
+
+      {/* MODAL */}
+      {openPriceDetails && (
+        <ModalPriceDetails
+          isOpen={openPriceDetails}
+          dataPriceSetting={dataSession?.PriceSetting}
+          dataDevice={dataSession?.Device}
+          dataVoucher={undefined} // dummy
+          dataUser={transactionById?.data?.User}
+          price={transactionById?.data?.TotalFare || 0}
+          power={dataSession?.PaidKWH || 0}
+          duration={dataSession?.Duration || 0}
+          onClose={() => setOpenPriceDetails(false)}
+        />
+      )}
+      {/* END MODAL */}
     </div>
   );
 };

@@ -1,8 +1,8 @@
 import html2canvas from "html2canvas";
-import { RiTreeFill } from "react-icons/ri";
+import { useEffect, useState } from "react";
+import { FaArrowRight } from "react-icons/fa6";
 import { IoLeaf } from "react-icons/io5";
-import { capitalize } from "lodash";
-import { useEffect, useMemo } from "react";
+import { RiTreeFill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
@@ -12,12 +12,13 @@ import {
   IcSuccessGreen,
   IcTimerCircle,
 } from "../assets";
-import { Session, VoucherUsage } from "../common";
+import { VoucherUsage } from "../common";
 import {
   BetweenText,
   Button,
   Header,
   LoadingPage,
+  ModalPriceDetails,
   Separator,
 } from "../components";
 import { fetchDetailSession } from "../features";
@@ -28,7 +29,6 @@ import {
   rupiah,
 } from "../helpers";
 import { AppDispatch, RootState } from "../store";
-import { FaArrowRight } from "react-icons/fa6";
 
 const SessionDetails = () => {
   const navigate = useNavigate();
@@ -37,6 +37,8 @@ const SessionDetails = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const detailSession = useSelector((state: RootState) => state.detailSession);
+
+  const [openPriceDetails, setOpenPriceDetails] = useState<boolean>(false);
 
   useEffect(() => {
     getData();
@@ -122,18 +124,19 @@ const SessionDetails = () => {
     dataVoucher = dataSession?.VoucherUsages[0];
   }
 
-  const isShowMilestone: boolean = useMemo(
-    () =>
-      dataSession?.User?.Milestone &&
-      dataSession?.User?.Milestone?.DiscountPercent > 0
-        ? true
-        : false,
-    [dataSession?.User?.Milestone]
-  );
-
   const co2: number = Number(
     ((dataSession?.TotalKwhUsed || 0) * 1.5).toFixed(3)
   );
+  const percentage: number = Number(
+    (
+      ((dataSession?.UsedAmount || 1) /
+        (dataSession?.Transaction?.NetCharge || 1)) *
+      100
+    ).toFixed(0)
+  );
+
+  console.log("cek dataSession", dataSession);
+  console.log("cek status", status);
 
   return (
     <div className="background-1 overflow-hidden justify-between flex flex-col">
@@ -262,13 +265,6 @@ const SessionDetails = () => {
                   className="bg-baseLightGray p-3"
                 />
 
-                <BetweenText
-                  type="medium-content"
-                  labelLeft={`Durasi ${!isFull && "Pesanan"}`}
-                  labelRight={formatDuration(dataSession?.ExpectedDuration)}
-                  className="p-3"
-                />
-
                 {!isFull && (
                   <BetweenText
                     type="medium-content"
@@ -288,14 +284,18 @@ const SessionDetails = () => {
                 <BetweenText
                   type="medium-content"
                   labelLeft="Tarif Pengecasan"
-                  labelRight={dataSession?.ChargingFee || "-"}
+                  labelRight={`Rp${rupiah(
+                    dataSession?.Transaction?.Amount
+                  )}/kWh`}
                   className="p-3"
                 />
 
                 <BetweenText
                   type="medium-content"
                   labelLeft="Nominal Pesanan"
-                  labelRight={`Rp${rupiah(dataSession?.Transaction?.Amount)}`}
+                  labelRight={`Rp${rupiah(
+                    dataSession?.Transaction?.NetCharge
+                  )}`}
                   className="bg-baseLightGray p-3"
                 />
 
@@ -345,7 +345,7 @@ const SessionDetails = () => {
 
             <BetweenText
               labelLeft="Nominal Pengisian"
-              labelRight={`Rp${rupiah(dataSession?.Transaction?.Amount)}`}
+              labelRight={`Rp${rupiah(dataSession?.Transaction?.NetCharge)}`}
               className="py-2 border-b border-b-black10"
             />
 
@@ -379,23 +379,11 @@ const SessionDetails = () => {
 
             <BetweenText
               labelLeft="Biaya Transaksi"
-              labelRight={`Rp${rupiah(dataSession?.Transaction?.TotalFee)}`}
+              labelRight={`Rp${rupiah(
+                dataSession?.Transaction?.PaymentMethodFee
+              )}`}
               className="py-2 border-b border-b-black10"
             />
-
-            {isShowMilestone && (
-              <BetweenText
-                labelLeft={`${dataSession?.User?.Milestone?.Name} ${dataSession?.User?.Milestone?.DiscountPercent}% Disc`}
-                labelRight={
-                  dataSession?.Transaction?.MilestoneDiscount
-                    ? `-Rp${rupiah(
-                        dataSession?.Transaction?.MilestoneDiscount
-                      )}`
-                    : "Rp0"
-                }
-                className="py-2"
-              />
-            )}
 
             <BetweenText
               labelLeft="Total Transaksi"
@@ -405,13 +393,22 @@ const SessionDetails = () => {
               className="py-2 border-y border-y-black100"
             />
 
-            {status === 8 && (
+            {(status === 8 || (status === 6 && percentage < 100)) && (
               <BetweenText
                 labelLeft="Pengembalian Dana"
                 labelRight={`Rp${rupiah(dataSession?.RefundAmount)}`}
                 className="mt-2"
               />
             )}
+
+            <div className="flex justify-end mt-5">
+              <span
+                onClick={() => setOpenPriceDetails(true)}
+                className="font-medium text-primary100 cursor-pointer"
+              >
+                {"Lihat Rincian ->"}
+              </span>
+            </div>
 
             {status !== 7 && status !== 8 && (
               <>
@@ -447,6 +444,22 @@ const SessionDetails = () => {
           </div>
         )}
       </LoadingPage>
+
+      {/* MODAL */}
+      {openPriceDetails && (
+        <ModalPriceDetails
+          isOpen={openPriceDetails}
+          dataPriceSetting={dataSession?.PriceSetting}
+          dataDevice={dataSession?.Device}
+          dataVoucher={undefined} // dummy
+          dataUser={dataSession?.User}
+          price={dataSession?.Transaction?.TotalFare || 0}
+          power={dataSession?.PaidKWH || 0}
+          duration={dataSession?.Duration || 0}
+          onClose={() => setOpenPriceDetails(false)}
+        />
+      )}
+      {/* END MODAL */}
     </div>
   );
 };

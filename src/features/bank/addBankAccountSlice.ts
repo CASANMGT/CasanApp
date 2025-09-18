@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AddBankAccountBody, ResponseSuccess } from "../../common";
 import { Api } from "../../services/Api";
+import { AddBankAccountBody } from "../../common";
 
 type AddBankAccountState = {
   data: ResponseSuccess | null;

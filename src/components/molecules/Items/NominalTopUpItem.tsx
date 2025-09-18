@@ -1,18 +1,20 @@
 import { rupiah } from "../../../helpers";
 
 interface NominalTopUpItemProps {
+  type: "nominal" | "hour" | "power";
   isActive: boolean;
-  isHour?: boolean;
   value: string;
   onClick: () => void;
 }
 
 const NominalTopUpItem: React.FC<NominalTopUpItemProps> = ({
+  type,
   value,
   isActive,
-  isHour,
   onClick,
 }) => {
+  const unit = type === "power" ? "kWh" : type === "hour" ? "Menit" : "";
+  
   return (
     <div
       onClick={onClick}
@@ -24,9 +26,9 @@ const NominalTopUpItem: React.FC<NominalTopUpItemProps> = ({
     >
       {value === "full"
         ? "isi sampai penuh"
-        : isHour
-        ? `${value} menit`
-        : `Rp${rupiah(value)}`}
+        : type === "nominal"
+        ? `Rp${rupiah(value)}`
+        : `${value} ${unit}`}
     </div>
   );
 };

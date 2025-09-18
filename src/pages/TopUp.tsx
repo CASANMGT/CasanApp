@@ -169,6 +169,7 @@ const TopUp = () => {
           <div className="grid grid-cols-2 gap-3 mt-3">
             {NOMINAL_TOP_UP.map((item, index: number) => (
               <NominalTopUpItem
+                type="nominal"
                 key={index}
                 value={item}
                 isActive={

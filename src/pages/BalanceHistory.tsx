@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { bodyListProps } from "../common";
 import { Header, LoadingPage, TransactionHistoryItem } from "../components";
 import { useAuth } from "../context/AuthContext";
 import { fetchBalanceList } from "../features";

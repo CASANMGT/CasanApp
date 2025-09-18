@@ -1,22 +1,20 @@
-import { IcBattery, IcStandBy } from "../../assets";
+import { IcBattery, IcCashBlack, IcStandBy } from "../../assets";
 import { formatTime } from "../../helpers";
 import CountdownTimer from "./CountdownTimer";
 
 interface StatusIndicatorProps {
   className?: string;
-  maxWatt: number;
+  data: Session | null;
   type: number;
-  port: number;
   duration: number;
   onFinish: () => void;
 }
 
 const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   type,
-  port,
+  data,
   duration,
   className,
-  maxWatt,
   onFinish,
 }) => {
   const isCharging: boolean =
@@ -26,6 +24,20 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
       ? "animate-soundWave bg-primary100"
       : "animate-charging bg-secondary100"
   }`;
+  const maxWatt: number = data?.MaxWatt || 0;
+  const port: number = data?.Socket?.Port || 0;
+  let totalKwh: number = 0;
+  let chargingPercentage: number = 0;
+  let priceType = data?.PriceType;
+
+  if (priceType === 2) {
+    totalKwh = Number(
+      ((data?.PaidKWH || 0) - (data?.TotalKwhUsed || 0)).toFixed()
+    );
+    chargingPercentage = Number(
+      (((data?.TotalKwhUsed || 0) / (data?.PaidKWH || 0)) * 100).toFixed(0)
+    );
+  }
 
   return (
     <div className={`center h-[288px] w-full ${className}`}>
@@ -38,16 +50,26 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
         {/* Inner Static Circle */}
         <div className="relative flex items-center justify-center w-[220px] h-[220px] bg-white rounded-full shadow-md">
           <div className="text-center">
-            <p className="text-black70 font-semibold mb-2">Sisa Durasi</p>
+            <p className="text-black70 font-semibold mb-2">
+              {priceType === 2 ? "Sisa Energi" : "Sisa Durasi"}
+            </p>
             {type === 5 && maxWatt > 1 ? (
-              <CountdownTimer
-                initialSeconds={duration}
-                onFinish={onFinish}
-                className="text-[34px] font-semibold"
-              />
+              priceType === 2 ? (
+                <p className="text-[34px] font-semibold">{`${totalKwh}kWh`}</p>
+              ) : (
+                <CountdownTimer
+                  initialSeconds={duration}
+                  onFinish={onFinish}
+                  className="text-[34px] font-semibold"
+                />
+              )
             ) : (
               <p className="text-[34px] font-semibold">
-                {type === 2 ? formatTime(duration) : "Persiapan..."}
+                {type === 2
+                  ? priceType === 2
+                    ? `${totalKwh}kWh`
+                    : formatTime(duration)
+                  : "Persiapan..."}
               </p>
             )}
 
@@ -57,12 +79,16 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
                   isCharging ? "bg-primary10" : "bg-secondary10"
                 }`}
               >
+                {isCharging && <IcBattery />}
+
                 <span
                   className={`text-xs font-medium ${
                     isCharging ? "text-primary100" : "text-[#E8A126]"
                   }`}
                 >
-                  {`Socket ${port}`}
+                  {isCharging
+                    ? `Charging ${chargingPercentage}%`
+                    : `Socket ${port}`}
                 </span>
               </div>
             </div>

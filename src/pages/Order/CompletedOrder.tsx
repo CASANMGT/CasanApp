@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Session, SessionListBody } from "../../common";
 import { EmptyList, LoadingPage, OrderCard } from "../../components";
 import { fetchCompleteSessionList } from "../../features";
 import { AppDispatch, RootState } from "../../store";
@@ -20,7 +19,7 @@ const CompletedOrder = () => {
   }, []);
 
   const getData = () => {
-    const body: SessionListBody = {
+    const body = {
       page: 1,
       limit: 10,
       is_finish: 1,
@@ -55,7 +54,7 @@ const CompletedOrder = () => {
       <div className="mb-[100px]">
         {completeSessionList?.data?.data &&
         completeSessionList?.data?.data.length ? (
-          completeSessionList?.data.data.map((item, index) => (
+          completeSessionList?.data.data.map((item: Session, index: number) => (
             <OrderCard
               key={index}
               data={item}

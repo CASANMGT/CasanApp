@@ -1,4 +1,3 @@
-import { AlertModalProps } from "../../../common";
 import { Button, Separator } from "../../atoms";
 import ModalContainer from "./ModalContainer";
 

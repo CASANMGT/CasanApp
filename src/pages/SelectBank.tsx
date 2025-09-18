@@ -5,7 +5,6 @@ import { IcCheckCircle } from "../assets";
 import {
   FeeSettingsResponseProps,
   FormSelectBank,
-  OptionsProps,
   REGEX_PHONE_NUMBER_HALF,
   ValidateBankBody,
 } from "../common";

@@ -18,7 +18,7 @@ import {
   Order,
   PaymentSuccess,
   PrivacyPolice,
-  ProfileNew,
+  Profile,
   ProgressDetails,
   Scan,
   SelectBank,
@@ -168,7 +168,7 @@ const RoutesPage = () => {
           />
           <Route
             path="profile"
-            element={<ProtectedRoute element={<ProfileNew />} />}
+            element={<ProtectedRoute element={<Profile />} />}
           />
         </Route>
 

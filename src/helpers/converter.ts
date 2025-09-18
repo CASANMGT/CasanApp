@@ -1,4 +1,6 @@
 import { jwtDecode } from "jwt-decode";
+import { FaLeaf, FaTree } from "react-icons/fa6";
+import { RiMotorbikeFill, RiShieldCheckFill, RiTreeFill } from "react-icons/ri";
 import {
   IcAstraPay,
   IcDana,
@@ -14,13 +16,10 @@ import {
   DANA,
   GOPAY,
   LINK_AJA,
-  OperationalHour,
   OVO,
   QRIS,
   SHOPEEPAY,
 } from "../common";
-import { FaLeaf, FaTree } from "react-icons/fa6";
-import { RiMotorbikeFill, RiShieldCheckFill, RiTreeFill } from "react-icons/ri";
 
 interface TokenPayload {
   id: string;
@@ -147,7 +146,6 @@ export const getIconMilestone = (position: number) => {
   return icon;
 };
 
-
 export const decodeToken = (token: string): TokenPayload | null => {
   try {
     return jwtDecode<TokenPayload>(token);
@@ -171,5 +169,50 @@ export const convertToReadableHours = (data?: OperationalHour[]) => {
   }
 
   // fallback (optional): format each day
+  return value;
+};
+
+function timeToMinutes(time: string): number {
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
+}
+
+export function getCurrentSlot(
+  priceBase: PriceBaseRule | null
+): PriceBaseTime | undefined {
+  if (!priceBase?.PriceBaseTime?.length) return undefined;
+
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+  const matchedSlot = priceBase.PriceBaseTime.find((slot) => {
+    const fromMinutes = timeToMinutes(slot?.PriceTimeRule?.From);
+    const toMinutes = timeToMinutes(slot?.PriceTimeRule?.To);
+
+    if (isNaN(fromMinutes) || isNaN(toMinutes)) return false;
+
+    // Normal same-day range
+    if (fromMinutes <= toMinutes) {
+      return currentMinutes >= fromMinutes && currentMinutes <= toMinutes;
+    }
+
+    // Overnight range
+    return currentMinutes >= fromMinutes || currentMinutes <= toMinutes;
+  });
+
+  return matchedSlot;
+}
+
+
+export const getLabelWatt = (min: number, max: number) => {
+  let value: string = "";
+
+  if (min === max) {
+    if (min < 1) value = `${min * 1000}w`;
+    else value = `${min}kW`;
+  } else {
+    value = `${min}-${max}kW`;
+  }
+
   return value;
 };

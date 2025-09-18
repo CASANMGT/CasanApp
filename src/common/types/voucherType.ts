@@ -1,7 +1,3 @@
-import { ChargingStation } from "./chargingStationsType";
-import { OptionsProps } from "./globalType";
-import { Session } from "./sessionType";
-
 export type FormVoucher = {
   voucherName: string;
   providedBy: string | number;
@@ -108,7 +104,6 @@ export type VoucherUsage = {
   UpdatedAt: string;
   DeletedAt: string | null;
 };
-
 
 export type BodyVoucherUsage = {
   page: number;

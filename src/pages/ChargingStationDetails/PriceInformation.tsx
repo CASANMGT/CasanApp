@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { ChargingStation, OperationalHour, TabItemProps } from "../../common";
 import { Separator, Tabs } from "../../components";
 import { moments, rupiah, timeToSeconds } from "../../helpers";
 
@@ -11,7 +10,7 @@ interface PriceInformationProps {
 interface TransformedData {
   id: number;
   title: string;
-  content: { watt: string; price: number }[];
+  content: { watt: string; price: number; isPower: boolean }[];
 }
 
 const PriceInformation: React.FC<PriceInformationProps> = ({
@@ -46,10 +45,21 @@ const PriceInformation: React.FC<PriceInformationProps> = ({
             newData.push(existingSlot);
           }
 
-          existingSlot.content.push({
-            watt: isLast ? `>${rule.From - 1}` : `${rule.From}-${rule.To}`,
-            price: timeSlot.Value,
-          });
+          if (rule?.VehicleType === 1) {
+            existingSlot.content.push({
+              watt:
+                data?.PriceSetting?.BikePriceType === 2
+                  ? "Tarif"
+                  : isLast
+                  ? `>${rule.From - 1}W`
+                  : `${rule.From}-${rule.To}W`,
+              isPower: data?.PriceSetting?.BikePriceType === 2 ? true : false,
+              price:
+                data?.PriceSetting?.BikePriceType === 2
+                  ? data?.PriceSetting.BikeBaseFare
+                  : timeSlot.Value,
+            });
+          }
         });
       });
 
@@ -125,7 +135,7 @@ const PriceInformation: React.FC<PriceInformationProps> = ({
 export default PriceInformation;
 
 interface PriceInformationTabProps {
-  data: { watt: string; price: number }[];
+  data: { watt: string; price: number; isPower: boolean }[];
 }
 
 const PriceInformationTab: React.FC<PriceInformationTabProps> = ({ data }) => {
@@ -139,11 +149,11 @@ const PriceInformationTab: React.FC<PriceInformationTabProps> = ({ data }) => {
 
             <div className="between-x">
               <span className="text-xs font-medium text-primary100">
-                {`${item?.watt}W`}
+                {`${item?.watt}`}
               </span>
               <span className="text-primary100 font-semibold row">
                 <a className="text-[10px] mr-1">Rp</a>{" "}
-                {`${rupiah(item?.price)}/jam`}
+                {`${rupiah(item?.price)}/${item?.isPower ? "kWh" : "jam"}`}
               </span>
             </div>
           </div>

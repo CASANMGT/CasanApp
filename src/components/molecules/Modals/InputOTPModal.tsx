@@ -2,16 +2,18 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchLogin,
-  fetchSendOTP,
   hideLoading,
   LoginRequest,
   resetDataLogin,
   showLoading,
 } from "../../../features";
 import { formatPhoneNumber } from "../../../helpers";
+import { Api } from "../../../services";
 import { AppDispatch, RootState } from "../../../store";
-import { InputCode, Separator } from "../../atoms";
+import { Button, InputCode, Separator } from "../../atoms";
 import ModalContainer from "./ModalContainer";
+import { FaWhatsapp } from "react-icons/fa6";
+import { CiMail } from "react-icons/ci";
 
 interface InputOTPProps {
   open: boolean;
@@ -33,6 +35,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
   const [labelError, setLabelError] = useState<string>();
   const [counter, setCounter] = useState<number>(60);
   const [formatPhone, setFormatPhone] = useState<string>("");
+  const [channel, setChannel] = useState<number>(2);
 
   useEffect(() => {
     if (open && phoneNumber) {
@@ -62,8 +65,13 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
     }
   }, [dataLogin]);
 
-  const getOTP = (phone: string) => {
-    dispatch(fetchSendOTP(phone.replace(/\s+/g, "")));
+  const getOTP = async (phone: string) => {
+    await Api.post({
+      url: "send-otp",
+      body: { phone_number: phone.replace(/\s+/g, ""), channel: 2 },
+    });
+
+    // setChannel((prev) => (prev === 1 ? 2 : 1));
   };
 
   const onCounter = () => {
@@ -100,6 +108,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
     const body: LoginRequest = {
       code: code.join(""),
       phone_number: formatPhone.replace(/\s+/g, ""),
+      channel: 1,
     };
 
     dispatch(fetchLogin(body));
@@ -133,6 +142,15 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
             </a>
           </span>
         </div>
+
+        <Button
+          type="secondary"
+          label={`Kirim OTP lewat ${channel === 2 ? "WA" : "SMS"}`}
+          disabled={counter !== 0}
+          onClick={onRequestCode}
+          iconRight={channel === 2 ? FaWhatsapp : CiMail}
+          className="mt-4"
+        />
       </>
     </ModalContainer>
   );

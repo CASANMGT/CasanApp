@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ResponseSuccess } from "../../common";
 import { Api } from "../../services/Api";
 
 type DeleteBankAccountState = {

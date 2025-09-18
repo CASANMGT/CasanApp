@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Location, MetaResponseProps } from "../../common";
+import { Location } from "../../common";
 import { Api } from "../../services/Api";
 
 type LocationByIdResponse = {

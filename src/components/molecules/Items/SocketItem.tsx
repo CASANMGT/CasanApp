@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { Socket } from "../../../common";
 
 interface SocketItemProps {
   data: Socket;

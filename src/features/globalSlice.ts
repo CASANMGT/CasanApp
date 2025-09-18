@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { initialStateFormProps } from "../common";
 
 const initialState: initialStateFormProps = {
   loading: false,

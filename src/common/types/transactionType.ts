@@ -1,4 +1,3 @@
-import { Session } from "./sessionType";
 import { DataUser } from "./userType";
 
 export type AddTransactionBody = {
@@ -34,4 +33,8 @@ export type Transaction = {
   CreatedAt: string;
   UpdatedAt: string;
   MilestoneDiscount: number
+  TotalFare: number
+  PaymentMethodFee: number
+  BaseFare: number
+  NetCharge: number
 };

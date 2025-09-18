@@ -1,5 +1,3 @@
-import { ChargingStation } from "./chargingStationsType";
-
 export type GeocodeResult = {
   place_id: string;
   district: string;

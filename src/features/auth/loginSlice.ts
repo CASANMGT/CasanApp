@@ -4,6 +4,7 @@ import { Api } from "../../services";
 export type LoginRequest = {
   code: string;
   phone_number: string;
+  channel: number
 };
 
 type LoginResponseProps = {

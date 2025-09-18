@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Location,
   NavigateFunction,
@@ -7,16 +7,14 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
-import { MenuBottomNavigationProps } from "../common";
 import {
   BottomNavigation,
   InputOTPModal,
   InputPhoneNumberModal,
 } from "../components";
 import { useAuth } from "../context/AuthContext";
-import { AppDispatch, RootState } from "../store";
-import { useSelector } from "react-redux";
 import { resetDataLogin } from "../features";
+import { AppDispatch, RootState } from "../store";
 
 const Main = () => {
   const location: Location = useLocation();

@@ -23,7 +23,7 @@ import { formatPhoneNumber, openWhatsApp, rupiah } from "../../helpers";
 import { AppDispatch, RootState } from "../../store";
 import Milestone from "./Milestone";
 
-const ProfileNew = () => {
+const Profile = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { logout } = useAuth();
 
@@ -35,6 +35,13 @@ const ProfileNew = () => {
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    if (myUser?.error === "not authorized") {
+      logout();
+      navigate("/login", { replace: true });
+    }
+  }, [myUser?.error]);
 
   const getData = async () => {
     dispatch(fetchMyUser());
@@ -224,4 +231,4 @@ const ProfileNew = () => {
   );
 };
 
-export default ProfileNew;
+export default Profile;

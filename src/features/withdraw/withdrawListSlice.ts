@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { bodyListProps, MetaResponseProps, WithdrawList } from "../../common";
+import { WithdrawList } from "../../common";
 import { Api } from "../../services/Api";
 
 type WithdrawListResponseProps = {

@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
+import { CiMail } from "react-icons/ci";
+import { FaWhatsapp } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import { AddBankAccountBody, FormSelectBank } from "../common";
-import { Header, InputCode, Separator } from "../components";
+import { Button, Header, InputCode, Separator } from "../components";
 import { useAuth } from "../context/AuthContext";
 import {
   fetchAddBankAccount,
   fetchLogin,
-  fetchSendOTP,
   hideLoading,
   LoginRequest,
   resetDataAddBankAccount,
@@ -15,6 +16,7 @@ import {
   showLoading,
 } from "../features";
 import { formatPhoneNumber } from "../helpers/formatter";
+import { Api } from "../services";
 import { AppDispatch, RootState } from "../store";
 
 const VerificationNumber = () => {
@@ -35,6 +37,7 @@ const VerificationNumber = () => {
   const [labelTime, setLabelTime] = useState<string>("Kirim Ulang dalam 01:00");
   const [labelError, setLabelError] = useState<string>();
   const [counter, setCounter] = useState<number>(60);
+  const [channel, setChannel] = useState<number>(2);
 
   useEffect(() => {
     getData();
@@ -64,6 +67,7 @@ const VerificationNumber = () => {
       login();
       navigate("/home/index", { replace: true });
     } else if (dataLogin?.error) {
+      setCodes(["", "", "", ""]);
       dispatch(resetDataLogin());
       setLabelError("kode verifikasi tidak valid");
     }
@@ -88,8 +92,13 @@ const VerificationNumber = () => {
     } else navigate(-1);
   };
 
-  const getOTP = (phone: string) => {
-    dispatch(fetchSendOTP(phone.replace(/\s+/g, "")));
+  const getOTP = async (phone: string) => {
+    await Api.post({
+      url: "send-otp",
+      body: { phone_number: phone.replace(/\s+/g, ""), channel },
+    });
+
+    // setChannel((prev) => (prev === 1 ? 2 : 1));
   };
 
   /* format counter timer */
@@ -120,8 +129,11 @@ const VerificationNumber = () => {
     else navigate("/login", { replace: true });
   };
 
-  const onRequestCode = () => {
-    getOTP(phoneNumber);
+  const onRequestCode = async () => {
+    await getOTP(phoneNumber);
+
+    setCodes(["", "", "", ""]);
+    setLabelError("");
 
     if (counter === 0) {
       setCounter(60);
@@ -146,6 +158,7 @@ const VerificationNumber = () => {
       const body: LoginRequest = {
         code: code.join(""),
         phone_number: phoneNumber.replace(/\s+/g, ""),
+        channel,
       };
 
       dispatch(fetchLogin(body));
@@ -179,6 +192,15 @@ const VerificationNumber = () => {
             {labelTime}
           </a>
         </span>
+
+        <Button
+          type="secondary"
+          label={`Kirim OTP lewat ${channel === 2 ? "WA" : "SMS"}`}
+          disabled={counter !== 0}
+          onClick={onRequestCode}
+          iconRight={channel === 2 ? FaWhatsapp : CiMail}
+          className="mt-4"
+        />
       </div>
     </div>
   );

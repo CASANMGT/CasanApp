@@ -2,7 +2,7 @@ import { capitalize } from "lodash";
 import { FaChevronRight } from "react-icons/fa6";
 import { HiOutlineTicket } from "react-icons/hi2";
 import { IcFuel, ILNoImage } from "../../../assets";
-import { Session, VoucherUsage } from "../../../common";
+import { VoucherUsage } from "../../../common";
 import {
   formatDuration,
   getIconPaymentMethod,
@@ -187,7 +187,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
           </div>
 
           <span className="font-semibold">
-            Rp{rupiah(data?.Transaction?.Amount)}
+            Rp{rupiah(data?.Transaction?.NetCharge)}
           </span>
         </div>
       </div>

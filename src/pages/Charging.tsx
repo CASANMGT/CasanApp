@@ -18,7 +18,6 @@ import {
 import {
   CalculateDurationBody,
   CUSTOMER_SERVICES,
-  Session,
   VoucherUsage,
 } from "../common";
 import {
@@ -32,7 +31,6 @@ import {
   StatusIndicator,
 } from "../components";
 import {
-  fetchCalculateDuration,
   fetchCancelSession,
   fetchDetailSession,
   fetchStartSession,
@@ -145,7 +143,7 @@ const Charging = () => {
             watt: Number(resSession?.MaxWatt),
           };
 
-          dispatch(fetchCalculateDuration(body));
+          // dispatch(fetchCalculateDuration(body));
         }
       });
     } else {
@@ -231,9 +229,11 @@ const Charging = () => {
                 status === 2
                   ? "-"
                   : (dataSession?.MaxWatt || 0) > 1
-                  ? dataSession?.ExpectedDuration
-                    ? formatDuration(dataSession?.ExpectedDuration)
-                    : "-"
+                  ? formatDuration(
+                      dataSession?.PriceType === 2
+                        ? dataSession?.Duration
+                        : dataSession?.ExpectedDuration
+                    ) ?? "-"
                   : "Persiapan..."
               }
             />
@@ -266,10 +266,9 @@ const Charging = () => {
 
           {/* STATUS */}
           <StatusIndicator
+            data={dataSession}
             type={status || 2}
-            maxWatt={dataSession?.MaxWatt || 0}
             duration={duration > 0 ? duration : 0}
-            port={dataSession?.Socket?.Port || 0}
             onFinish={getData}
             className="my-5"
           />
@@ -341,14 +340,14 @@ const Charging = () => {
             <BetweenText
               type="medium-content"
               labelLeft="Total Transaksi"
-              labelRight={`Rp${rupiah(dataSession?.Transaction?.Amount)}`}
+              labelRight={`Rp${rupiah(dataSession?.Transaction?.NetCharge)}`}
               className="p-3"
             />
 
             <BetweenText
               type="medium-content"
               labelLeft="Tarif Pengecasan"
-              labelRight={dataSession?.ChargingFee || "-"}
+              labelRight={`Rp${rupiah(dataSession?.Transaction?.BaseFare)}/kWh`}
               className="bg-baseLightGray p-3"
             />
 

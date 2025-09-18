@@ -1,6 +1,5 @@
 import React from "react";
 import { IcRadioActive, IcRadioInactive, ILNoImage } from "../../../assets";
-import { OptionsProps } from "../../../common";
 import { formatDiff } from "../../../helpers";
 
 interface Props {

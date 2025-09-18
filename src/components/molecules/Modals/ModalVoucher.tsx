@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IcClose } from "../../../assets";
-import { OptionsProps } from "../../../common";
 import { fetchVoucherAvailable, setFromGlobal } from "../../../features";
 import { rupiah } from "../../../helpers";
 import { AppDispatch, RootState } from "../../../store";
