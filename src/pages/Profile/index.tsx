@@ -21,6 +21,7 @@ import { useAuth } from "../../context/AuthContext";
 import { fetchMilestoneList, fetchMyUser } from "../../features";
 import { formatPhoneNumber, openWhatsApp, rupiah } from "../../helpers";
 import { AppDispatch, RootState } from "../../store";
+import Milestone from "./MilestoneView";
 
 const Profile = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -141,7 +142,14 @@ const Profile = () => {
           </div>
         </div>
 
-        <span>Delete Milestone</span>
+        <Separator />
+
+        {/* CO2 */}
+        <Milestone
+          navigate={navigate}
+          dataUser={myUser?.data}
+          dataMilestone={milestoneList?.data}
+        />
 
         {/* MENU 1 */}
         <div className="mx-4 mt-3 px-3 py-4 bg-white rounded-lg">
