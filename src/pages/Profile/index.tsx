@@ -104,7 +104,7 @@ const Profile = () => {
         </div>
 
         {/* BALANCE */}
-        <div className="mx-4 -mt-[62px] bg-secondary100 rounded-lg">
+        {/* <div className="mx-4 -mt-[62px] bg-secondary100 rounded-lg">
           <div className="bg-white rounded-lg px-2.5 py-4 between-x">
             <div>
               <p className="text-xs">Saldo Tersimpan</p>
@@ -140,7 +140,7 @@ const Profile = () => {
               Sisa pengecasan akan terkonversi menjadi saldo
             </p>
           </div>
-        </div>
+        </div> */}
 
         <span>Percobaan</span>
 
