@@ -9,10 +9,10 @@ interface Props {
   dataMilestone: Milestone[] | null;
 }
 
-const Milestone: React.FC<Props> = ({ navigate, dataUser, dataMilestone }) => {
+const MilestoneView: React.FC<Props> = ({ navigate, dataUser, dataMilestone }) => {
   let currentStep: number = -1;
 
-  if (dataUser && dataMilestone?.length) {
+  if (dataUser && dataMilestone && dataMilestone?.length) {
     currentStep = dataMilestone?.findIndex(
       (e) => e?.ID === dataUser?.MilestoneID
     );
@@ -39,12 +39,9 @@ const Milestone: React.FC<Props> = ({ navigate, dataUser, dataMilestone }) => {
 
       <Separator className="my-4" />
 
-      <ProgressSteps
-        currentStep={currentStep}
-        dataMilestone={dataMilestone}
-      />
+      <ProgressSteps currentStep={currentStep} dataMilestone={dataMilestone} />
     </div>
   );
 };
 
-export default Milestone;
+export default MilestoneView;
