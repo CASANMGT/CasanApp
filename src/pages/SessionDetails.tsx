@@ -135,9 +135,6 @@ const SessionDetails = () => {
     ).toFixed(0)
   );
 
-  console.log("cek dataSession", dataSession);
-  console.log("cek status", status);
-
   return (
     <div className="background-1 overflow-hidden justify-between flex flex-col">
       <Header type="secondary" title="Detail Sesi" onDismiss={onDismiss} />
