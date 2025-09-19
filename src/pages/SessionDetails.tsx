@@ -285,7 +285,7 @@ const SessionDetails = () => {
                   type="medium-content"
                   labelLeft="Tarif Pengecasan"
                   labelRight={`Rp${rupiah(
-                    dataSession?.Transaction?.Amount
+                    dataSession?.Transaction?.BaseFare
                   )}/kWh`}
                   className="p-3"
                 />
