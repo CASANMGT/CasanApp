@@ -142,7 +142,7 @@ const Profile = () => {
           </div>
         </div>
 
-        <Separator />
+        <span>Percobaan</span>
 
         {/* CO2 */}
         <Milestone
