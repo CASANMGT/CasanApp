@@ -142,7 +142,6 @@ const Profile = () => {
           </div>
         </div>
 
-        <span>Milestone</span>
         {/* CO2 */}
         <Milestone
           navigate={navigate}

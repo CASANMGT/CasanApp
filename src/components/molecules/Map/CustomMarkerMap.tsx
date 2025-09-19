@@ -4,6 +4,7 @@ import { Marker, useMap } from "react-leaflet";
 import { useDispatch } from "react-redux";
 import { setFromGlobal } from "../../../features";
 import { AppDispatch } from "../../../store";
+import { IcStation } from "../../../assets";
 
 interface CustomMarkerProps {
   data: ChargingStation;
@@ -58,11 +59,17 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
     popupAnchor: [0, 0],
   });
 
+  const customMyLocationIcon = L.icon({
+    iconUrl: IcStation,
+    iconSize: [40, 40],
+    iconAnchor: [22, 40],
+  });
+
   return (
     <div className="cursor-pointer">
       <Marker
         position={coordinate}
-        icon={customIcon}
+        icon={customMyLocationIcon}
         ref={markerRef}
         eventHandlers={{
           click: onShow,
