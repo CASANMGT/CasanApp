@@ -16,7 +16,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ phone, data }) => {
   const isAllSame: boolean = convertToReadableHours(data);
 
   return (
-    <div className="rounded-lg p-3 bg-white drop-shadow mt-3">
+    <div className="p-3 bg-white drop-shadow mt-3">
       <p className="font-medium mb-1">Informasi Dasar</p>
 
       {data?.length && (

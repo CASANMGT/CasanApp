@@ -117,7 +117,7 @@ const PriceInformation: React.FC<PriceInformationProps> = ({
   if (!data || !tabItem || !tabItem.length) return null;
 
   return (
-    <div className="rounded-lg p-3 bg-white drop-shadow">
+    <div className=" p-3 bg-white drop-shadow">
       <p className="font-medium mb-1">Informasi Biaya</p>
 
       <Tabs type="flex" tabs={tabItem} />
