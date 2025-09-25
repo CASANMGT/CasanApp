@@ -159,27 +159,27 @@ const ModalPriceDetails: React.FC<Props> = ({
             classNameLabelRight="font-medium text-primary100"
             className="py-2 border-b border-b-black10"
           />
-
+{/* 
           <BetweenText
             labelLeft={`PJU (${dataPriceSetting?.PJU}%)`}
             labelRight={`Rp${rupiah(pju)}`}
             classNameLabelRight="font-medium text-black100"
             className="py-2 border-b border-b-black100"
-          />
+          /> */}
 
-          <BetweenText
+          {/* <BetweenText
             labelLeft="Subtotal"
             labelRight={`Rp${rupiah(subTotal)}`}
             classNameLabelRight="font-medium text-black100"
             className="py-2 border-b border-b-black10"
-          />
+          /> */}
 
-          <BetweenText
+          {/* <BetweenText
             labelLeft={`PPN (${dataPriceSetting?.PPN}%)`}
             labelRight={`Rp${rupiah(ppn)}`}
             classNameLabelRight="font-medium text-black100"
             className="py-2 border-b border-b-black10"
-          />
+          /> */}
 
           <BetweenText
             labelLeft="Total Pembayaran"
