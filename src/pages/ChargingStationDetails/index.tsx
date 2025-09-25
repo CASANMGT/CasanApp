@@ -228,9 +228,9 @@ const ChargingStationDetails = () => {
         </div>
 
         {/* INFORMATION */}
-        <div className="p-4">
+        <div className="space-y-4 mb-10">
           {/* DEVICE LIST */}
-          <div className="bg-white p-3 rounded-lg mt-[14px] border drop-shadow">
+          <div className="bg-white p-3 mt-4  border drop-shadow">
             <div className="row gap-2 mb-4">
               <IcBike className="text-primary100" />
               <p className="font-medium flex-1">Device List</p>
@@ -286,7 +286,6 @@ const ChargingStationDetails = () => {
           </div>
 
           {/* COST INFORMATION */}
-
           <PriceInformation data={chargingStationById?.data} />
 
           {/* BASIC INFORMATION  */}

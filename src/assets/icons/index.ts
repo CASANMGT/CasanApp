@@ -51,6 +51,7 @@ import IcMoneyReceive from "./money-recive.svg?react";
 import IcMoneySend from "./money-send.svg?react";
 import IcMyLocationBlack from "./my-location-black.svg?react";
 import IcMyLocation from "./my-location.png";
+import IcStation from './station.png'
 import IcNoImage from "./no-image.svg?react";
 import IcNoInternet from "./no-internet.svg?react";
 import IcNotificationBadgesGreen from "./notificaiton-badges-green.svg?react";
@@ -189,6 +190,7 @@ export {
   IcVehicleBlack,
   IcWallet,
   IcWalletGreen,
-  IcWalletGreen2
+  IcWalletGreen2,
+  IcStation
 };
 

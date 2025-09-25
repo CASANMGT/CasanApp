@@ -62,7 +62,7 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
       onClick={() => {
         if (!isFull && total > 0) onClick();
       }}
-      className={` bg-white py-2 px-3.5 rounded-lg border border-${
+      className={` bg-white py-2 px-3.5 rounded-lg shadow-lg border border-${
         isFull || !total ? "black10" : "primary30"
       } ${!isLast ? "mb-2.5" : ""} ${
         isFull || !total ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
