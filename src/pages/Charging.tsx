@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { FaChevronRight } from "react-icons/fa6";
+import { FaAngleRight, FaChevronRight } from "react-icons/fa6";
+import { FiInfo } from "react-icons/fi";
 import { HiOutlineTicket } from "react-icons/hi2";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -27,6 +28,7 @@ import {
   DiagnosisModal,
   Header,
   LoadingPage,
+  ModalInstructions,
   Signal,
   StatusIndicator,
 } from "../components";
@@ -62,6 +64,7 @@ const Charging = () => {
   const [openFinished, setOpenFinished] = useState<boolean>(false);
   const [openStop, setOpenStop] = useState<boolean>(false);
   const [openCantProcess, setOpenCantProcess] = useState<boolean>(false);
+  const [openInstruction, setOpenInstruction] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(resetDataAddSession());
@@ -195,6 +198,8 @@ const Charging = () => {
 
   if (dataSession?.VoucherUsages && dataSession?.VoucherUsages.length)
     dataVoucher = dataSession?.VoucherUsages[0];
+
+  console.log("cek d", dataSession);
 
   return (
     <div className="background-1 pt-3 overflow-hidden flex flex-col justify-between">
@@ -366,19 +371,33 @@ const Charging = () => {
 
         {/* FOOTER */}
         <div className="container-button-footer">
-          <Button
-            type={status === 2 || status === 6 ? "primary" : "danger"}
-            buttonType="lg"
-            label={
-              status === 2
-                ? "Mulai Pengisian"
-                : status === 6
-                ? "Kembali"
-                : "Selesaikan Pengisian"
-            }
-            loading={startSession?.loading || stopSession?.loading}
-            onClick={onStartStop}
-          />
+          {status === 2 && dataSession?.Device?.Protocol === 3 ? (
+            <button
+              type="button"
+              className="h-[48px] w-full border rounded-full text-sm font-medium justify-center items-center flex drop-shadow btn-primary100 px-5"
+              onClick={() => setOpenInstruction(true)}
+            >
+              <div className="row gap-2 flex-1">
+                <FiInfo size={20} />
+                <span className="text-white font-medium">Lihat Instruksi</span>
+              </div>
+              <FaAngleRight size={20} />
+            </button>
+          ) : (
+            <Button
+              type={status === 2 || status === 6 ? "primary" : "danger"}
+              buttonType="lg"
+              label={
+                status === 2
+                  ? "Mulai Pengisian"
+                  : status === 6
+                  ? "Kembali"
+                  : "Selesaikan Pengisian"
+              }
+              loading={startSession?.loading || stopSession?.loading}
+              onClick={onStartStop}
+            />
+          )}
         </div>
       </LoadingPage>
 
@@ -444,6 +463,14 @@ const Charging = () => {
         typeButtonRight="primary"
         onDismiss={() => setOpenCantProcess(false)}
       />
+
+      {openInstruction && (
+        <ModalInstructions
+          isOpen={openInstruction}
+          onClose={() => setOpenInstruction(false)}
+        />
+      )}
+
       {/* END */}
     </div>
   );
