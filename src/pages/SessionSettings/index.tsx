@@ -1,4 +1,4 @@
-import { clone } from "lodash";
+import { add, clone } from "lodash";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FaChevronRight } from "react-icons/fa6";
 import { HiOutlineTicket } from "react-icons/hi2";
@@ -153,7 +153,10 @@ const SessionSettings = () => {
 
   useEffect(() => {
     if (addSession?.loading) dispatch(showLoading());
-    else dispatch(hideLoading());
+    else {
+      setLoading(false);
+      dispatch(hideLoading());
+    }
 
     if (addSession?.data) {
       if (addSession?.data?.Transaction?.Status === 1) {
@@ -446,6 +449,7 @@ const SessionSettings = () => {
   };
 
   const onPay = (select: FormSession) => {
+    setLoading(true);
     const amount =
       form.selectedTab === "nominal"
         ? Number(form.value.replace("Rp", "").replace(/\./g, ""))
@@ -669,7 +673,6 @@ const SessionSettings = () => {
                 </span>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -725,6 +728,7 @@ const SessionSettings = () => {
             select={form.paymentMethod}
             selectBalance={form?.balance}
             total={totalPrice}
+            loading={loading || addSession?.loading}
             onDismiss={() => setVisiblePaymentMethod(false)}
             onSelect={(select, value) => {
               const cloneData = clone(form);

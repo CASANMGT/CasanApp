@@ -68,7 +68,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
   const getOTP = async (phone: string) => {
     await Api.post({
       url: "send-otp",
-      body: { phone_number: phone.replace(/\s+/g, ""), channel: 2 },
+      body: { phone_number: phone.replace(/\s+/g, ""), channel },
     });
 
     // setChannel((prev) => (prev === 1 ? 2 : 1));
@@ -108,7 +108,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
     const body: LoginRequest = {
       code: code.join(""),
       phone_number: formatPhone.replace(/\s+/g, ""),
-      channel: 1,
+      channel,
     };
 
     dispatch(fetchLogin(body));
