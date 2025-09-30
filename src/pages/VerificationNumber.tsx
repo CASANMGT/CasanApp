@@ -151,6 +151,7 @@ const VerificationNumber = () => {
           data?.accountNumber
         }`,
         otp_code: code.join(""),
+        channel,
       };
 
       dispatch(fetchAddBankAccount(body));

@@ -377,7 +377,10 @@ const TransactionDetails = () => {
                 labelLeft={`Nominal ${
                   transactionType === 1 ? "Topup" : "Pengecasan"
                 }`}
-                labelRight={`Rp${rupiah(transactionById?.data?.NetCharge)}`}
+                labelRight={`Rp${rupiah(
+                  (transactionById?.data?.NetCharge || 0) -
+                    (transactionById?.data?.PaymentMethodFee || 0)
+                )}`}
                 className="py-2 border-b border-b-black10"
               />
 

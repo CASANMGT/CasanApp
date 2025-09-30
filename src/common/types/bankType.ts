@@ -22,6 +22,7 @@ export type AddBankAccountBody = {
   number: string;
   otp_code: string;
   user_id?: number;
+  channel: number;
 };
 
 export type BankAccountList = {

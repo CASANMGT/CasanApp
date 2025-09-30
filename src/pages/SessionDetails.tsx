@@ -291,7 +291,8 @@ const SessionDetails = () => {
                   type="medium-content"
                   labelLeft="Nominal Pesanan"
                   labelRight={`Rp${rupiah(
-                    dataSession?.Transaction?.NetCharge
+                    (dataSession?.Transaction?.NetCharge || 0) -
+                      (dataSession?.Transaction?.PaymentMethodFee || 0)
                   )}`}
                   className="bg-baseLightGray p-3"
                 />

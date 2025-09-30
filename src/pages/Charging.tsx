@@ -199,8 +199,6 @@ const Charging = () => {
   if (dataSession?.VoucherUsages && dataSession?.VoucherUsages.length)
     dataVoucher = dataSession?.VoucherUsages[0];
 
-  console.log("cek d", dataSession);
-
   return (
     <div className="background-1 pt-3 overflow-hidden flex flex-col justify-between">
       <Header
