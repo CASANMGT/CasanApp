@@ -122,7 +122,7 @@ const PriceInformation: React.FC<PriceInformationProps> = ({
 
       <Tabs type="flex" tabs={tabItem} />
 
-      {!isHideParking && (
+      {false && (
         <>
           <p className="font-medium mt-3 mb-2">Biaya Parkir</p>
           <p className="text-xs text-black90">Gratis Parkir</p>
