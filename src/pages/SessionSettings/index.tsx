@@ -1,4 +1,4 @@
-import { add, clone } from "lodash";
+import { clone } from "lodash";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FaChevronRight } from "react-icons/fa6";
 import { HiOutlineTicket } from "react-icons/hi2";
@@ -402,7 +402,7 @@ const SessionSettings = () => {
           body,
         });
 
-        setValueCalculate(res?.data?.energy_kwh || res?.data?.duration);
+        setValueCalculate(res?.data?.energy_kwh || res?.data?.duration || 0);
       } else if (form?.selectedTab === "duration") {
         const splitTime = form?.value.split(":");
         const duration =
@@ -424,7 +424,7 @@ const SessionSettings = () => {
           body,
         });
 
-        setValueCalculate(res?.data?.charge);
+        setValueCalculate(res?.data?.charge || 0);
       } else if (form?.selectedTab === "power") {
         const body: CalculateChargeBody = {
           energy: Number(value || 0),
@@ -438,7 +438,7 @@ const SessionSettings = () => {
           body,
         });
 
-        setValueCalculate(res?.data?.charge);
+        setValueCalculate(res?.data?.charge || 0);
       }
 
       setLoadingCalculate(false);
@@ -456,7 +456,7 @@ const SessionSettings = () => {
         : valueCalculate || 0;
 
     const paid_kwh: number =
-      form.selectedTab  === "power" ? Number(form.value) : valueCalculate || 0;
+      form.selectedTab === "power" ? Number(form.value) : valueCalculate || 0;
 
     const body: AddSessionBody = {
       amount,
