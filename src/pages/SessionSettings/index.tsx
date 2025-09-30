@@ -455,8 +455,12 @@ const SessionSettings = () => {
         ? Number(form.value.replace("Rp", "").replace(/\./g, ""))
         : valueCalculate || 0;
 
+    const paid_kwh: number =
+      form.selectedTab  === "power" ? Number(form.value) : valueCalculate || 0;
+
     const body: AddSessionBody = {
       amount,
+      paid_kwh,
       device_id: selectedDevice?.ID,
       payment_method:
         totalPrice > 0 && select.paymentMethod?.key
