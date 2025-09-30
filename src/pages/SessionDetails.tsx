@@ -291,8 +291,7 @@ const SessionDetails = () => {
                   type="medium-content"
                   labelLeft="Nominal Pesanan"
                   labelRight={`Rp${rupiah(
-                    (dataSession?.Transaction?.NetCharge || 0) -
-                      (dataSession?.Transaction?.PaymentMethodFee || 0)
+                    dataSession?.Transaction?.NetCharge
                   )}`}
                   className="bg-baseLightGray p-3"
                 />
@@ -343,7 +342,10 @@ const SessionDetails = () => {
 
             <BetweenText
               labelLeft="Nominal Pengisian"
-              labelRight={`Rp${rupiah(dataSession?.Transaction?.NetCharge)}`}
+              labelRight={`Rp${rupiah(
+                (dataSession?.Transaction?.NetCharge || 0) -
+                  (dataSession?.Transaction?.PaymentMethodFee || 0)
+              )}`}
               className="py-2 border-b border-b-black10"
             />
 
