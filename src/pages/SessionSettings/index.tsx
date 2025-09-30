@@ -345,29 +345,31 @@ const SessionSettings = () => {
   ]);
 
   const onValidation = () => {
-    let message = {
-      title: "",
-      body: "",
-    };
+    try {
+      let message = {
+        title: "",
+        body: "",
+      };
 
-    if (form?.selectedSocket == undefined) {
-      message.title = "Pilih Socket Terlebih Dahulu";
-      message.body =
-        "Silakan pilih Socket sesuai yang akan anda gunakan untuk pengisian";
-    } else if (form.selectedTab === "1" && !form?.value) {
-      message.title = "Nominal Belum Terpilih";
-      message.body = "Masukkan Nominal Terlebih Dahulu";
-    } else if (form.selectedTab === "2" && form.value === "00:00") {
-      message.title = "Jam Belum Terpilih";
-      message.body = "Masukkan Jam Terlebih Dahulu";
-    }
+      if (form?.selectedSocket == undefined) {
+        message.title = "Pilih Socket Terlebih Dahulu";
+        message.body =
+          "Silakan pilih Socket sesuai yang akan anda gunakan untuk pengisian";
+      } else if (form.selectedTab === "1" && !form?.value) {
+        message.title = "Nominal Belum Terpilih";
+        message.body = "Masukkan Nominal Terlebih Dahulu";
+      } else if (form.selectedTab === "2" && form.value === "00:00") {
+        message.title = "Jam Belum Terpilih";
+        message.body = "Masukkan Jam Terlebih Dahulu";
+      }
 
-    if (!message?.title) {
-      if (isAuthenticated) {
-        if (totalPrice === 0) onPay(form);
-        else setVisiblePaymentMethod(true);
-      } else setOpenInputPhoneNumber(true);
-    } else showAlert(message);
+      if (!message?.title) {
+        if (isAuthenticated) {
+          if (totalPrice === 0) onPay(form);
+          else setVisiblePaymentMethod(true);
+        } else setOpenInputPhoneNumber(true);
+      } else showAlert(message);
+    } catch (error) {}
   };
 
   const onCalculate = async (value: string | number) => {
@@ -449,31 +451,35 @@ const SessionSettings = () => {
   };
 
   const onPay = (select: FormSession) => {
-    setLoading(true);
-    const amount =
-      form.selectedTab === "nominal"
-        ? Number(form.value.replace("Rp", "").replace(/\./g, ""))
-        : valueCalculate || 0;
+    try {
+      setLoading(true);
+      const amount =
+        form.selectedTab === "nominal"
+          ? Number(form.value.replace("Rp", "").replace(/\./g, ""))
+          : valueCalculate || 0;
 
-    const paid_kwh: number =
-      form.selectedTab === "power" ? Number(form.value) : valueCalculate || 0;
+      const paid_kwh: number =
+        form.selectedTab === "power"
+          ? Number(form.value.replace(" kWh", ""))
+          : valueCalculate || 0;
 
-    const body: AddSessionBody = {
-      amount,
-      paid_kwh,
-      device_id: selectedDevice?.ID,
-      payment_method:
-        totalPrice > 0 && select.paymentMethod?.key
-          ? select.paymentMethod?.key
-          : "BALANCE_FU",
-      session_method: select?.selectedTab === "1" ? 1 : 2,
-      socket_id: select?.selectedSocket || 0,
-      station_id: data?.ID,
-      voucher_id: [Number(form?.voucher?.value)],
-      wallet_used_amount: Number(select?.balance.toFixed(0)),
-    };
+      const body: AddSessionBody = {
+        amount,
+        paid_kwh,
+        device_id: selectedDevice?.ID,
+        payment_method:
+          totalPrice > 0 && select.paymentMethod?.key
+            ? select.paymentMethod?.key
+            : "BALANCE_FU",
+        session_method: select?.selectedTab === "1" ? 1 : 2,
+        socket_id: select?.selectedSocket || 0,
+        station_id: data?.ID,
+        voucher_id: [Number(form?.voucher?.value)],
+        wallet_used_amount: Number(select?.balance.toFixed(0)),
+      };
 
-    dispatch(fetchAddSession(body));
+      dispatch(fetchAddSession(body));
+    } catch (error) {}
   };
 
   const isShowTotal = useMemo(
