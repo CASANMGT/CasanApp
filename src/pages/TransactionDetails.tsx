@@ -539,7 +539,7 @@ const TransactionDetails = () => {
           isOpen={openPriceDetails}
           dataPriceSetting={dataSession?.PriceSetting}
           dataDevice={dataSession?.Device}
-          dataVoucher={undefined} // dummy
+          dataVoucher={undefined}
           dataUser={transactionById?.data?.User}
           price={transactionById?.data?.TotalFare || 0}
           power={dataSession?.PaidKWH || 0}

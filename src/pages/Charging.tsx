@@ -175,6 +175,8 @@ const Charging = () => {
       if (status === 5) {
         dispatch(fetchStopSession(dataSession?.ID || 0));
       } else {
+        if (status === 2 && dataSession?.Device?.Protocol === 3)
+          setOpenInstruction(true);
         dispatch(fetchStartSession(dataSession?.ID));
       }
     }
@@ -369,7 +371,7 @@ const Charging = () => {
 
         {/* FOOTER */}
         <div className="container-button-footer">
-          {status === 2 && dataSession?.Device?.Protocol === 3 ? (
+          {status === 2 && dataSession?.Device?.Protocol === -999 ? ( // hide
             <button
               type="button"
               className="h-[48px] w-full border rounded-full text-sm font-medium justify-center items-center flex drop-shadow btn-primary100 px-5"
