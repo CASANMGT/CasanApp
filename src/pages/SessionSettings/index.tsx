@@ -334,8 +334,9 @@ const SessionSettings = () => {
     const ppn: number = Number(
       ((subTotal * (data?.PriceSetting?.PPN || 0)) / 100).toFixed(0)
     );
+    const total: number = subTotal + ppn;
 
-    return subTotal + ppn;
+    return total >= 0 ? total : 0;
   }, [
     form.paymentMethod,
     form.value,
