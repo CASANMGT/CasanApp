@@ -1,4 +1,7 @@
 import IcAstraPay from "./astrapay.svg?react";
+import IcChargeUnited from './charge-united.png'
+import IcTablet from './tablet.png'
+import IcTap from './tap.png'
 import IcBalance from "./balance.svg?react";
 import IcBank from "./bank.svg?react";
 import IcBattery from "./battery.svg?react";
@@ -191,6 +194,9 @@ export {
   IcWallet,
   IcWalletGreen,
   IcWalletGreen2,
-  IcStation
+  IcStation,
+  IcTap,
+  IcTablet,
+  IcChargeUnited
 };
 

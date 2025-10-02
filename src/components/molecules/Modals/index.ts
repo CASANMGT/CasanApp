@@ -15,12 +15,14 @@ import ModalSelectBank from "./ModalSelectBank";
 import ModalSKVoucher from "./ModalSKVoucher";
 import ModalVoltageAmpere from "./ModalVoltageAmpere";
 import ModalVoucher from "./ModalVoucher";
+import ModalInstructions from "./ModalInstructions";
 import RequestOTPModal from "./RequestOTPModal";
 
 export {
   AlertModal,
   DiagnosisModal,
   InputOTPModal,
+  ModalInstructions,
   InputPhoneNumberModal,
   ModalCarouselDetails,
   ModalChargingStation,

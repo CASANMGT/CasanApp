@@ -105,3 +105,9 @@ export enum StringNumber {
   Y = 25,
   Z = 26,
 }
+
+enum DeviceProtocol {
+  YKC = 1,
+  OCPP = 2,
+  ESP = 3,
+}

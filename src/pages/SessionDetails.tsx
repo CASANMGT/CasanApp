@@ -342,7 +342,10 @@ const SessionDetails = () => {
 
             <BetweenText
               labelLeft="Nominal Pengisian"
-              labelRight={`Rp${rupiah(dataSession?.Transaction?.NetCharge)}`}
+              labelRight={`Rp${rupiah(
+                (dataSession?.Transaction?.NetCharge || 0) -
+                  (dataSession?.Transaction?.PaymentMethodFee || 0)
+              )}`}
               className="py-2 border-b border-b-black10"
             />
 
@@ -448,7 +451,7 @@ const SessionDetails = () => {
           isOpen={openPriceDetails}
           dataPriceSetting={dataSession?.PriceSetting}
           dataDevice={dataSession?.Device}
-          dataVoucher={undefined} // dummy
+          dataVoucher={undefined} 
           dataUser={dataSession?.User}
           price={dataSession?.Transaction?.TotalFare || 0}
           power={dataSession?.PaidKWH || 0}

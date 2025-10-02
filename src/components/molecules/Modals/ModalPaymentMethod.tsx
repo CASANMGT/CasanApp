@@ -18,6 +18,7 @@ import ModalContainer from "./ModalContainer";
 interface ModalPaymentMethodProps {
   type?: "top-up";
   visible: boolean;
+  loading: boolean
   select: FeeSettingsProps | undefined;
   selectBalance?: number;
   total?: number;
@@ -29,6 +30,7 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
   type,
   visible,
   select,
+  loading,
   selectBalance,
   total,
   onDismiss,
@@ -205,6 +207,7 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
             <Button
               label="Pilih"
               disabled={validation()}
+              loading={loading}
               onClick={() => onSelect(selectedPayment, selectedBalance)}
               className="!w-[130px]"
             />

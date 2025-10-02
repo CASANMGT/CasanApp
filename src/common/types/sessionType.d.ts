@@ -21,6 +21,7 @@ declare global {
   type AddSessionBody = {
     id?: number;
     amount: number;
+    paid_kwh: number;
     device_id: number;
     payment_method: string;
     session_method: number;

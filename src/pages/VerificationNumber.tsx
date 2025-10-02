@@ -147,10 +147,11 @@ const VerificationNumber = () => {
 
       const body: AddBankAccountBody = {
         code: data?.bankName?.data?.ExternalCode,
-        number: `${data?.bankName?.data?.IsEWallet ? "62" : ""}${
+        number: `${data?.bankName?.data?.IsEWallet ? "+62" : ""}${
           data?.accountNumber
         }`,
         otp_code: code.join(""),
+        channel,
       };
 
       dispatch(fetchAddBankAccount(body));
