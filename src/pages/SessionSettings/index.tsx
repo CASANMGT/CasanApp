@@ -476,7 +476,7 @@ const SessionSettings = () => {
         socket_id: select?.selectedSocket || 0,
         station_id: data?.ID,
         voucher_id: [Number(form?.voucher?.value)],
-        wallet_used_amount: Number(select?.balance.toFixed(0)),
+        wallet_used_amount: Math.floor(select?.balance || 0),
       };
 
       dispatch(fetchAddSession(body));
