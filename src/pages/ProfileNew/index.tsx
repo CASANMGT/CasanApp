@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { FaLeaf } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   IcBalance,
   IcBank,
@@ -21,7 +21,7 @@ import { useAuth } from "../../context/AuthContext";
 import { fetchMilestoneList, fetchMyUser } from "../../features";
 import { formatPhoneNumber, openWhatsApp, rupiah } from "../../helpers";
 import { AppDispatch, RootState } from "../../store";
-import MilestoneView from "../Profile/MilestoneView";
+import MilestoneView from "./MilestoneView";
 
 const ProfileNew = () => {
   const navigate = useNavigate();
