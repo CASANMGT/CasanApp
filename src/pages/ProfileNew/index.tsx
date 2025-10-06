@@ -102,11 +102,117 @@ const ProfileNew = () => {
           </div>
         </div>
 
+        {/* BALANCE */}
+        <div className="mx-4 -mt-[62px] bg-secondary100 rounded-lg">
+          <div className="bg-white rounded-lg px-2.5 py-4 between-x">
+            <div>
+              <p className="text-xs">Saldo Tersimpan</p>
+              <div className="font-semibold text-blackBold row gap-0.5">
+                <p className="text-xs">Rp</p>
+                <p className="text-lg">{rupiah(myUser?.data?.Balance)}</p>
+              </div>
+
+              <div className="row gap-1.5 mt-3">
+                <p className="text-[10px] text-black100/70">Sedang Terpakai</p>
+                <p className="text-red text-xs">Rp{rupiah(0)}</p>
+              </div>
+            </div>
+
+            <div className="row gap-3">
+              <Button
+                type="secondary"
+                buttonType="sm"
+                label="Withdraw"
+                onClick={() => navigate("/withdraw")}
+              />
+              <Button
+                buttonType="sm"
+                label="Top Up"
+                onClick={() => navigate("/top-up")}
+              />
+            </div>
+          </div>
+
+          <div className="row gap-1 px-3 py-2">
+            <IcElectricityBlack />
+            <p className="text-xs text-blackBold font-medium">
+              Sisa pengecasan akan terkonversi menjadi saldo
+            </p>
+          </div>
+        </div>
+
+        {/* CO2 */}
         <MilestoneView
           navigate={navigate}
           dataUser={myUser?.data}
           dataMilestone={milestoneList?.data}
         />
+
+        {/* MENU 1 */}
+        <div className="mx-4 mt-3 px-3 py-4 bg-white rounded-lg">
+          <MenuItem
+            icon={IcTicket}
+            label="Voucher Saya"
+            onClick={() => onNext("voucher")}
+          />
+
+          <Separator className="my-4" />
+
+          <MenuItem
+            icon={IcPasswordBlack}
+            label="Atur Pin Cazz"
+            onClick={() => onNext("setting-pin")}
+          />
+        </div>
+
+        {/* MENU 2 */}
+        <div className="mx-4 mt-4 px-3 py-4 bg-white rounded-lg">
+          <MenuItem
+            icon={IcBalance}
+            label="Riwayat Saldo"
+            onClick={() => onNext("balance-history")}
+          />
+
+          <Separator className="my-4" />
+
+          <MenuItem
+            icon={IcCashBlack}
+            label="Riwayat Transaksi"
+            onClick={() => onNext("transaction-history")}
+          />
+
+          <Separator className="my-4" />
+
+          <MenuItem
+            icon={IcCreditCard}
+            label="Riwayat Penarikan Saldo"
+            onClick={() => onNext("withdrawal-history")}
+          />
+
+          <Separator className="my-4" />
+
+          <MenuItem
+            icon={IcBank}
+            label="Akun Bank"
+            onClick={() => navigate("/bank-account")}
+          />
+
+          <Separator className="my-4" />
+
+          <MenuItem
+            icon={IcChatBlack}
+            label="Customer Support"
+            onClick={() => openWhatsApp(CUSTOMER_SERVICES)}
+          />
+
+          {/* <Separator className="my-4" />
+
+        <MenuItem
+          icon={IcSettingBlack}
+          label="Pengaturan"
+          onClick={onMyVehicle}
+        /> */}
+        </div>
 
         <div
           onClick={onLogout}
