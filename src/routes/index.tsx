@@ -18,7 +18,7 @@ import {
   Order,
   PaymentSuccess,
   PrivacyPolice,
-  Profile,
+  ProfileNew,
   ProgressDetails,
   Scan,
   SelectBank,
@@ -37,7 +37,7 @@ import {
   VoucherDetails,
   Withdraw,
   WithdrawalDetails,
-  WithdrawalHistory
+  WithdrawalHistory,
 } from "../pages";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -168,7 +168,7 @@ const RoutesPage = () => {
           />
           <Route
             path="profile"
-            element={<ProtectedRoute element={<Profile />} />}
+            element={<ProtectedRoute element={<ProfileNew />} />}
           />
         </Route>
 
