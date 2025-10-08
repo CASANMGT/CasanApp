@@ -133,9 +133,7 @@ const ModalPriceDetails: React.FC<Props> = ({
             dataOtherFee.map((item, index) => (
               <BetweenText
                 key={index}
-                labelLeft={`Biaya ${item?.Name} ${
-                  item?.Type === 2 ? `(${item?.Value}%)` : ""
-                }`}
+                labelLeft={`Biaya ${item?.Name}`}
                 labelRight={`Rp${rupiah(
                   item?.Type === 2
                     ? (item?.Value * totalBasicEnergyPrice) / 100
@@ -159,7 +157,7 @@ const ModalPriceDetails: React.FC<Props> = ({
             classNameLabelRight="font-medium text-primary100"
             className="py-2 border-b border-b-black10"
           />
-{/* 
+          {/* 
           <BetweenText
             labelLeft={`PJU (${dataPriceSetting?.PJU}%)`}
             labelRight={`Rp${rupiah(pju)}`}
