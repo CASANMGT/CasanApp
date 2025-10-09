@@ -26,7 +26,7 @@ export const fetchChargingStation = createAsyncThunk(
   async (params: ChargingStationBody, { rejectWithValue }) => {
     try {
       const res = await Api.get({
-        url: "stations",
+        url: "stations/locations",
         params,
       });
 
