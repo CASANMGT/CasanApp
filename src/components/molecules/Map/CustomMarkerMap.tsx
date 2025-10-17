@@ -45,19 +45,7 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
   ];
 
   const dataChargingStation: ChargingStation[] =
-    data?.Location?.ChargingStations;
-
-  const iconHtml = `
-    <div class="w-[34px] h-[34px] text-lg font-medium items-center justify-center flex bg-secondary100 border-2 border-secondary30 rounded-full">
-    ${dataChargingStation.length || 1}
-    </div>`;
-
-  const customIcon = L.divIcon({
-    html: iconHtml,
-    className: "custom-marker",
-    iconSize: [18, 18],
-    popupAnchor: [0, 0],
-  });
+    data?.Location?.ChargingStations ?? [];
 
   const customMyLocationIcon = L.icon({
     iconUrl: IcStation,

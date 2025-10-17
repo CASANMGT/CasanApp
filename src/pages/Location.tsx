@@ -56,6 +56,9 @@ const Location = () => {
     navigate("/location-list");
   };
 
+  console.log('cek d', chargingStationLocations?.data?.data);
+  
+
   return (
     <div className="container-screen relative">
       <LoadingPage
