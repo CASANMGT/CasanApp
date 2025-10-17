@@ -1,4 +1,5 @@
 import {
+  IcBattery2,
   IcBike,
   IcFlash,
   IcFuel,
@@ -129,6 +130,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   }
 
   const labelWatt = getLabelWatt(minWatt, maxWatt);
+  const isUltraFast = !!data?.Devices?.some((e) => e?.Protocol === 3);
+
 
   return (
     <>
@@ -136,7 +139,22 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
         onClick={onClick}
         className="mb-3 shadow-md rounded-lg cursor-pointer"
       >
-        <div className="p-3 bg-chargingLocation bg-center rounded-t-lg">
+        <div className="p-3 pt-6 bg-chargingLocation bg-center rounded-t-lg relative ">
+          <div
+            className="absolute top-0 right-0 rounded-tr-lg rounded-bl-lg row px-3 py-1"
+            style={{
+              background: `linear-gradient(270deg, #${
+                isUltraFast ? "DE0E11" : "2dba9d"
+              } 0%, #${isUltraFast ? "C0D749" : "327478"} 100%)`,
+            }}
+          >
+            <IcBattery2 className="text-white" />
+
+            <span className="text-white ml-1.5 font-medium text-xs">
+              {isUltraFast ? "Ultra Fast Charging" : "Fast Charging"}
+            </span>
+          </div>
+
           <div className="row gap-3">
             <img
               src={data?.Image ? data?.Image : ILNoImage}

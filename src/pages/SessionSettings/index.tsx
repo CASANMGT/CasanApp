@@ -10,6 +10,7 @@ import {
   useParams,
 } from "react-router-dom";
 import {
+  IcBattery2,
   IcEditGreen,
   IcInfoCircle,
   IcRightGreen,
@@ -150,6 +151,13 @@ const SessionSettings = () => {
       setSelectedDevice(deviceById?.data?.data);
     }
   }, [deviceById]);
+
+  useEffect(() => {
+    const sockets = selectedDevice?.Sockets;
+    if (selectedDevice?.ID && sockets?.length === 1) {
+      setForm("selectedSocket", sockets[0]?.ID);
+    }
+  }, [selectedDevice]);
 
   useEffect(() => {
     if (addSession?.loading) dispatch(showLoading());
@@ -548,15 +556,24 @@ const SessionSettings = () => {
             </div>
           </div>
 
-          <div className="bg-primary10 row gap-1.5 px-4">
-            <IcInfoCircle className="w-5 text-primary100" />
+          <div className="bg-primary10 between-x px-4">
+            <div className="row gap-1.5">
+              <IcInfoCircle className="w-5 text-primary100" />
 
-            <p className="text-primary100 font-medium">
-              Charger tidak boleh melebihi{" "}
-              <span className="font-semibold">
-                {getLabelWatt(selectedDevice?.MaxWatt)}
-              </span>
-            </p>
+              <p className="text-primary100 font-medium">
+                Charger tidak boleh melebihi{" "}
+                <span className="font-semibold">
+                  {getLabelWatt(selectedDevice?.MaxWatt)}
+                </span>
+              </p>
+            </div>
+
+            {!!data?.Devices?.some((e) => e?.Protocol === 3) && (
+              <div className="row gap-1.5">
+                <IcBattery2 className="text-primary100" />
+                <span className="text-xs font-medium">Ultra Fast Charging</span>
+              </div>
+            )}
           </div>
 
           <div className="p-4 mt-2">

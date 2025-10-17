@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { INVALID_TOKEN } from "../../common";
 import { Api } from "../../services/Api";
 
 type MilestoneListState = {
@@ -51,10 +50,6 @@ const milestoneListSlice = createSlice({
       )
       .addCase(fetchMilestoneList.rejected, (state, action) => {
         const dataError: any = action?.payload;
-
-        if (dataError?.message) {
-          if (dataError?.message !== INVALID_TOKEN) alert(dataError?.message);
-        }
 
         state.loading = false;
         state.data = null;

@@ -31,6 +31,7 @@ export default {
         darkMode:"#252526",
 
         // PRIMARY
+        primaryDark: "#327478",
         primary100: "#2dba9d",
         primary90: "#30B4BD",
         primary70: "#5EC5CC",

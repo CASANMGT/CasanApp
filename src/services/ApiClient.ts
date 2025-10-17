@@ -1,4 +1,7 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const ApiClient = axios.create({
@@ -50,3 +53,32 @@ ApiClient.interceptors.response.use(
 );
 
 export default ApiClient;
+
+export const useAxiosInterceptor = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { logout } = useAuth();
+
+  useEffect(() => {
+    const interceptor = ApiClient.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        const message = error?.response?.data?.message;
+
+        if (
+          message === "invalid token" &&
+          location?.pathname !== "/home/index"
+        ) {
+          logout();
+          navigate("/login", { replace: true });
+        }
+
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      ApiClient.interceptors.response.eject(interceptor);
+    };
+  }, [logout, navigate]);
+};
