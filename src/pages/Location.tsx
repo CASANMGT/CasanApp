@@ -55,8 +55,6 @@ const Location = () => {
   const onShowAll = () => {
     navigate("/location-list");
   };
-
-  console.log('cek d', chargingStationLocations?.data?.data);
   
 
   return (
