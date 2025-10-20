@@ -64,9 +64,6 @@ const onGoingSessionListSlice = createSlice({
         }
       )
       .addCase(fetchOnGoingSessionList.rejected, (state, action) => {
-        const dataError: any = action?.payload;
-        if (dataError?.message) alert(dataError?.message);
-
         state.loading = false;
         state.data = null;
         state.error = action.error.message ?? "failed";

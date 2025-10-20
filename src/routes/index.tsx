@@ -1,5 +1,4 @@
 import { Route, Routes } from "react-router-dom";
-import { AuthProvider } from "../context/AuthContext";
 import {
   BalanceDetails,
   BalanceHistory,
@@ -39,145 +38,140 @@ import {
   WithdrawalDetails,
   WithdrawalHistory,
 } from "../pages";
+import { useAxiosInterceptor } from "../services/ApiClient";
 import ProtectedRoute from "./ProtectedRoute";
 
 const RoutesPage = () => {
+  useAxiosInterceptor();
+  
   return (
-    <AuthProvider>
-      <Routes>
-        <Route index element={<Splash />} />
-        <Route path="coming-soon" element={<ComingSoon />} />
+    <Routes>
+      <Route index element={<Splash />} />
+      <Route path="coming-soon" element={<ComingSoon />} />
 
+      <Route
+        path="charging/:id"
+        element={<ProtectedRoute element={<Charging />} />}
+      />
+      <Route
+        path="charging-station-details/:id"
+        element={<ChargingStationDetails />}
+      />
+      <Route path="location-list" element={<LocationList />} />
+      <Route path="login" element={<Login />} />
+      <Route path="text-condition" element={<TermCondition />} />
+      <Route path="privacy-police" element={<PrivacyPolice />} />
+      <Route path="scan" element={<Scan />} />
+      <Route path="session-settings/:id?" element={<SessionSettings />} />
+      <Route
+        path="payment-success/:id"
+        element={<ProtectedRoute element={<PaymentSuccess />} />}
+      />
+      <Route
+        path="session-details/:id"
+        element={<ProtectedRoute element={<SessionDetails />} />}
+      />
+
+      <Route path="vehicle" element={<Vehicle />} />
+      <Route path="verification" element={<VerificationNumber />} />
+
+      {/* PROFILE TAB */}
+      <>
         <Route
-          path="charging/:id"
-          element={<ProtectedRoute element={<Charging />} />}
+          path="edit-profile"
+          element={
+            <ProtectedRoute
+              element={<ProtectedRoute element={<EditProfile />} />}
+            />
+          }
         />
         <Route
-          path="charging-station-details/:id"
-          element={<ChargingStationDetails />}
+          path="withdraw"
+          element={<ProtectedRoute element={<Withdraw />} />}
         />
-        <Route path="location-list" element={<LocationList />} />
-        <Route path="login" element={<Login />} />
-        <Route path="text-condition" element={<TermCondition />} />
-        <Route path="privacy-police" element={<PrivacyPolice />} />
-        <Route path="scan" element={<Scan />} />
-        <Route path="session-settings/:id?" element={<SessionSettings />} />
+        <Route path="top-up" element={<ProtectedRoute element={<TopUp />} />} />
         <Route
-          path="payment-success/:id"
-          element={<ProtectedRoute element={<PaymentSuccess />} />}
+          path="progress-details"
+          element={<ProtectedRoute element={<ProgressDetails />} />}
         />
         <Route
-          path="session-details/:id"
-          element={<ProtectedRoute element={<SessionDetails />} />}
+          path="voucher"
+          element={<ProtectedRoute element={<Voucher />} />}
+        />
+        <Route
+          path="voucher/details/:id"
+          element={<ProtectedRoute element={<VoucherDetails />} />}
         />
 
-        <Route path="vehicle" element={<Vehicle />} />
-        <Route path="verification" element={<VerificationNumber />} />
+        <Route
+          path="setting-pin"
+          element={<ProtectedRoute element={<SettingPin />} />}
+        />
+        <Route
+          path="confirmation-pin"
+          element={<ProtectedRoute element={<ConfirmationPin />} />}
+        />
+        <Route
+          path="balance-history"
+          element={<ProtectedRoute element={<BalanceHistory />} />}
+        />
 
-        {/* PROFILE TAB */}
-        <>
-          <Route
-            path="edit-profile"
-            element={
-              <ProtectedRoute
-                element={<ProtectedRoute element={<EditProfile />} />}
-              />
-            }
-          />
-          <Route
-            path="withdraw"
-            element={<ProtectedRoute element={<Withdraw />} />}
-          />
-          <Route
-            path="top-up"
-            element={<ProtectedRoute element={<TopUp />} />}
-          />
-          <Route
-            path="progress-details"
-            element={<ProtectedRoute element={<ProgressDetails />} />}
-          />
-          <Route
-            path="voucher"
-            element={<ProtectedRoute element={<Voucher />} />}
-          />
-          <Route
-            path="voucher/details/:id"
-            element={<ProtectedRoute element={<VoucherDetails />} />}
-          />
+        <Route
+          path="balance-history/details"
+          element={<ProtectedRoute element={<BalanceDetails />} />}
+        />
 
-          <Route
-            path="setting-pin"
-            element={<ProtectedRoute element={<SettingPin />} />}
-          />
-          <Route
-            path="confirmation-pin"
-            element={<ProtectedRoute element={<ConfirmationPin />} />}
-          />
-          <Route
-            path="balance-history"
-            element={<ProtectedRoute element={<BalanceHistory />} />}
-          />
+        <Route
+          path="transaction-history"
+          element={<ProtectedRoute element={<TransactionHistory />} />}
+        />
+        <Route
+          path="transaction-history/details/:id"
+          element={<ProtectedRoute element={<TransactionDetails />} />}
+        />
+        <Route
+          path="withdrawal-history"
+          element={
+            <ProtectedRoute
+              element={<ProtectedRoute element={<WithdrawalHistory />} />}
+            />
+          }
+        />
+        <Route
+          path="withdrawal-history/details"
+          element={
+            <ProtectedRoute
+              element={<ProtectedRoute element={<WithdrawalDetails />} />}
+            />
+          }
+        />
+        <Route
+          path="bank-account"
+          element={<ProtectedRoute element={<BankAccount />} />}
+        />
+        <Route
+          path="select-bank"
+          element={<ProtectedRoute element={<SelectBank />} />}
+        />
+      </>
+      {/* END PROFILE TAB */}
 
-          <Route
-            path="balance-history/details"
-            element={<ProtectedRoute element={<BalanceDetails />} />}
-          />
+      {/* BOTTOM NAVIGATION */}
+      <Route path="home" element={<Main />}>
+        <Route path="index" element={<Home />} />
+        <Route path="location" element={<Location />} />
+        <Route path="order" element={<ProtectedRoute element={<Order />} />} />
+        <Route
+          path="profile"
+          element={<ProtectedRoute element={<ProfileNew />} />}
+        />
+      </Route>
 
-          <Route
-            path="transaction-history"
-            element={<ProtectedRoute element={<TransactionHistory />} />}
-          />
-          <Route
-            path="transaction-history/details/:id"
-            element={<ProtectedRoute element={<TransactionDetails />} />}
-          />
-          <Route
-            path="withdrawal-history"
-            element={
-              <ProtectedRoute
-                element={<ProtectedRoute element={<WithdrawalHistory />} />}
-              />
-            }
-          />
-          <Route
-            path="withdrawal-history/details"
-            element={
-              <ProtectedRoute
-                element={<ProtectedRoute element={<WithdrawalDetails />} />}
-              />
-            }
-          />
-          <Route
-            path="bank-account"
-            element={<ProtectedRoute element={<BankAccount />} />}
-          />
-          <Route
-            path="select-bank"
-            element={<ProtectedRoute element={<SelectBank />} />}
-          />
-        </>
-        {/* END PROFILE TAB */}
+      {/* HANDLE PATH NOT FOUND */}
+      <Route path="test" element={<Test />} />
 
-        {/* BOTTOM NAVIGATION */}
-        <Route path="home" element={<Main />}>
-          <Route path="index" element={<Home />} />
-          <Route path="location" element={<Location />} />
-          <Route
-            path="order"
-            element={<ProtectedRoute element={<Order />} />}
-          />
-          <Route
-            path="profile"
-            element={<ProtectedRoute element={<ProfileNew />} />}
-          />
-        </Route>
-
-        {/* HANDLE PATH NOT FOUND */}
-        <Route path="test" element={<Test />} />
-
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </AuthProvider>
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
 

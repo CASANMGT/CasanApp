@@ -1,13 +1,13 @@
 import IcAstraPay from "./astrapay.svg?react";
-import IcChargeUnited from './charge-united.png'
-import IcTablet from './tablet.png'
-import IcTap from './tap.png'
 import IcBalance from "./balance.svg?react";
 import IcBank from "./bank.svg?react";
+import IcBattery2 from "./battery-2.svg?react";
+import IcBattery3 from "./battery-3.svg?react";
 import IcBattery from "./battery.svg?react";
 import IcBike from "./bike.svg?react";
 import IcCar from "./car.svg?react";
 import IcCashBlack from "./cash-black.svg?react";
+import IcChargeUnited from "./charge-united.png";
 import IcChatBlack from "./chat-black.svg?react";
 import IcCheckCircle from "./check-circle.svg?react";
 import IcCheckboxActive from "./checkbox-active.svg?react";
@@ -54,7 +54,6 @@ import IcMoneyReceive from "./money-recive.svg?react";
 import IcMoneySend from "./money-send.svg?react";
 import IcMyLocationBlack from "./my-location-black.svg?react";
 import IcMyLocation from "./my-location.png";
-import IcStation from './station.png'
 import IcNoImage from "./no-image.svg?react";
 import IcNoInternet from "./no-internet.svg?react";
 import IcNotificationBadgesGreen from "./notificaiton-badges-green.svg?react";
@@ -88,8 +87,11 @@ import IcShopeePay from "./shopeepay.svg?react";
 import IcSocketCircleGreen from "./socket-circle-green.svg?react";
 import IcSolarGreen from "./solar-green.svg?react";
 import IcStandBy from "./stand-by.svg?react";
+import IcStation from "./station.png";
 import IcSuccessGreen from "./success-green.svg?react";
 import IcSuccess from "./success.svg?react";
+import IcTablet from "./tablet.png";
+import IcTap from "./tap.png";
 import IcTicket from "./ticket.svg?react";
 import IcTimerCircle from "./timer-circle.svg?react";
 import IcUser from "./user.svg?react";
@@ -105,9 +107,12 @@ export {
   IcBalance,
   IcBank,
   IcBattery,
+  IcBattery2,
+  IcBattery3,
   IcBike,
   IcCar,
   IcCashBlack,
+  IcChargeUnited,
   IcChatBlack,
   IcCheckboxActive,
   IcCheckboxInactive,
@@ -185,18 +190,17 @@ export {
   IcSocketCircleGreen,
   IcSolarGreen,
   IcStandBy,
+  IcStation,
   IcSuccess,
   IcSuccessGreen,
+  IcTablet,
+  IcTap,
   IcTicket,
   IcTimerCircle,
   IcUser,
   IcVehicleBlack,
   IcWallet,
   IcWalletGreen,
-  IcWalletGreen2,
-  IcStation,
-  IcTap,
-  IcTablet,
-  IcChargeUnited
+  IcWalletGreen2
 };
 

@@ -18,14 +18,14 @@ import {
 import { DeviceListItem, LoadingPage, Separator } from "../../components";
 import { fetchChargingStationById } from "../../features";
 import { showToast } from "../../features/toastSlice";
-import { AppDispatch, RootState } from "../../store";
-import BasicInformation from "./BasicInformation";
-import PriceInformation from "./PriceInformation";
 import {
   getDistanceFromLatLonInKm,
   getLabelWatt,
   openGoogleMaps,
 } from "../../helpers";
+import { AppDispatch, RootState } from "../../store";
+import BasicInformation from "./BasicInformation";
+import PriceInformation from "./PriceInformation";
 
 const ChargingStationDetails = () => {
   const dispatch = useDispatch<AppDispatch>();

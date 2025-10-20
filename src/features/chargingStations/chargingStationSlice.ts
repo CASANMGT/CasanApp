@@ -26,7 +26,7 @@ export const fetchChargingStation = createAsyncThunk(
   async (params: ChargingStationBody, { rejectWithValue }) => {
     try {
       const res = await Api.get({
-        url: "stations",
+        url: "stations/locations",
         params,
       });
 
@@ -70,9 +70,6 @@ const chargingStationSlice = createSlice({
         }
       )
       .addCase(fetchChargingStation.rejected, (state, action) => {
-        const dataError: any = action?.payload;
-        if (dataError?.message) alert(dataError?.message);
-
         state.loading = false;
         state.data = null;
         state.error = action.error.message ?? "failed";

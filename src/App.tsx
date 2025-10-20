@@ -9,6 +9,7 @@ import { LoadingModal, MetaPixel } from "./components";
 import PopupAlert from "./components/atoms/PopupAlert";
 import RoutesPage from "./routes";
 import { RootState } from "./store";
+import { AuthProvider } from "./context/AuthContext";
 const metaID = import.meta.env.VITE_META_ID;
 
 dayjs.extend(relativeTime);
@@ -40,7 +41,9 @@ function App() {
       <MetaPixel pixelId={metaID} />
 
       <BrowserRouter>
-        <RoutesPage />
+        <AuthProvider>
+          <RoutesPage />
+        </AuthProvider>
       </BrowserRouter>
 
       <ToastContainer

@@ -55,6 +55,7 @@ const Location = () => {
   const onShowAll = () => {
     navigate("/location-list");
   };
+  
 
   return (
     <div className="container-screen relative">
