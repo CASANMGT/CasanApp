@@ -5,34 +5,36 @@ import CountdownTimer from "./CountdownTimer";
 import Dropdown from "./Dropdown";
 import EmptyList from "./EmptyList";
 import Header from "./Header";
+import IconText from "./IconText";
 import Input from "./Input";
 import InputCode from "./InputCode";
 import Label from "./Label";
 import LoadingModal from "./LoadingModal";
 import LoadingPage from "./LoadingPage";
+import { MetaPixel } from "./MetaPixel";
 import ProgressBar from "./ProgressBar";
 import Separator from "./Separator";
 import Signal from "./Signal";
 import Spinner from "./Spinner";
 import StatusIndicator from "./StatusIndicator";
 import SubTitle from "./SubTitle";
-import { MetaPixel } from "./MetaPixel";
 import WheelPicker from "./WheelPicker";
 
 export {
   BetweenText,
-  MetaPixel,
   Button,
   Container,
   CountdownTimer,
   Dropdown,
   EmptyList,
   Header,
+  IconText,
   Input,
   InputCode,
   Label,
   LoadingModal,
   LoadingPage,
+  MetaPixel,
   ProgressBar,
   Separator,
   Signal,

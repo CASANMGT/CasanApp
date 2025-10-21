@@ -102,7 +102,7 @@ const Button: React.FC<ButtonProps> = ({
           className={`flex flex-row gap-2 items-center whitespace-nowrap  ${classNameSizeButton.labelStyle}`}
         >
           {label}
-          {IconRight && <IconRight size={20} />}
+          {IconRight && <IconRight size={16} />}
         </div>
       )}
     </button>

@@ -1,5 +1,6 @@
 import BalanceDetails from "./BalanceDetails";
 import BalanceHistory from "./BalanceHistory";
+import BookingDetails from "./BookingDetails";
 import BankAccount from "./BankAccount";
 import Charging from "./Charging";
 import ChargingStationDetails from "./ChargingStationDetails";
@@ -73,6 +74,7 @@ export {
   VoucherDetails,
   Withdraw,
   WithdrawalDetails,
-  WithdrawalHistory
+  WithdrawalHistory,
+  BookingDetails
 };
 

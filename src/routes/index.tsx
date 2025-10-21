@@ -3,6 +3,7 @@ import {
   BalanceDetails,
   BalanceHistory,
   BankAccount,
+  BookingDetails,
   Charging,
   ChargingStationDetails,
   ComingSoon,
@@ -43,7 +44,7 @@ import ProtectedRoute from "./ProtectedRoute";
 
 const RoutesPage = () => {
   useAxiosInterceptor();
-  
+
   return (
     <Routes>
       <Route index element={<Splash />} />
@@ -70,6 +71,10 @@ const RoutesPage = () => {
       <Route
         path="session-details/:id"
         element={<ProtectedRoute element={<SessionDetails />} />}
+      />
+      <Route
+        path="booking-details"
+        element={<ProtectedRoute element={<BookingDetails />} />}
       />
 
       <Route path="vehicle" element={<Vehicle />} />

@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
+import { FaAngleRight } from "react-icons/fa6";
+import { IoTime } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { IcBike, IcPinWhite, ILCarousel1, ILCarousel2 } from "../assets";
+import {
+  IcBike,
+  IcPinWhite,
+  ILCarousel1,
+  ILCarousel2,
+  ILNoImage,
+} from "../assets";
 import { GeocodeResult, LIMIT_LIST } from "../common";
 import {
   Carousel,
@@ -175,6 +183,34 @@ const Home = () => {
               className="!w-[120px]"
             />
           </div> */}
+        </div>
+
+        {/* STATUS RTO */}
+        <div className="bg-white rounded-lg p-4 mt-4">
+          <span className="text-base font-semibold">Status RTO</span>
+
+          <div
+            onClick={() => navigate("/booking-details")}
+            className="row gap-4 cursor-pointer mt-6"
+          >
+            <img
+              src={ILNoImage}
+              alt="photo"
+              className="w-11 h-11 rounded-md border border-black10"
+            />
+
+            <div className="row gap-1 flex-1">
+              <div className="rounded-full bg-lightOrange w-6 h-6 center">
+                <IoTime size={16} className="text-orange" />
+              </div>
+
+              <span className="text-blackBold font-semibold">
+                Menunggu Verifikasi
+              </span>
+            </div>
+
+            <FaAngleRight className="text-black50" />
+          </div>
         </div>
 
         {/* CHARGING LIST */}

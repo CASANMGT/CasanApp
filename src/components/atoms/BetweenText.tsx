@@ -26,9 +26,11 @@ const BetweenText: React.FC<BetweenTextProps> = ({
 
   return (
     <div className={`between-x text-xs text-black100/80 ${className}`}>
-      <p className={`text-xs text-black70 ${classNameLabelLeft}`}>{labelLeft}</p>
+      <p className={`text-xs text-black70 ${classNameLabelLeft}`}>
+        {labelLeft}
+      </p>
       {isShowContent ? (
-        <>{content}</>
+        content
       ) : (
         <div className="row gap-2">
           {isShowAdjustment && (
