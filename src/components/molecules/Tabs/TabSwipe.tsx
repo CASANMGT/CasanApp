@@ -7,10 +7,11 @@ type Tab = {
 };
 
 type TabsProps = {
+  style?: "white";
   tabs: Tab[];
 };
 
-const TabSwipe: React.FC<TabsProps> = ({ tabs }) => {
+const TabSwipe: React.FC<TabsProps> = ({ style, tabs }) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleNext = () => {
@@ -31,15 +32,27 @@ const TabSwipe: React.FC<TabsProps> = ({ tabs }) => {
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-baseLightGray">
       {/* Tab Headers */}
-      <div className="flex bg-primary100 p-4">
+      <div
+        className={`flex p-4 bg-${
+          style === "white" ? "white" : "bg-primary100"
+        }`}
+      >
         {tabs.map((tab, index) => (
           <button
             key={index}
             className={`flex-1 py-2 px-1 text-center text-sm font-medium transition-colors
               ${
                 activeIndex === index
-                  ? "border-b-2 border-white text-white font-semibold"
-                  : "text-white/80 hover:text-white"
+                  ? `border-b-2 border-${
+                      style === "white" ? "primary100" : "white"
+                    } text-${
+                      style === "white" ? "primary100" : "white"
+                    } font-semibold`
+                  : `text-${
+                      style === "white" ? "primary100" : "white"
+                    }/80 hover:text-${
+                      style === "white" ? "primary100" : "white"
+                    }`
               }`}
             onClick={() => setActiveIndex(index)}
           >

@@ -4,6 +4,7 @@ import {
   BalanceHistory,
   BankAccount,
   BookingDetails,
+  BuyCredit,
   Charging,
   ChargingStationDetails,
   ComingSoon,
@@ -75,6 +76,10 @@ const RoutesPage = () => {
       <Route
         path="booking-details"
         element={<ProtectedRoute element={<BookingDetails />} />}
+      />
+      <Route
+        path="buy-credit"
+        element={<ProtectedRoute element={<BuyCredit />} />}
       />
 
       <Route path="vehicle" element={<Vehicle />} />

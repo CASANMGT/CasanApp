@@ -114,7 +114,7 @@ const BookingDetails = () => {
                   <Button
                     label="Beli Kredit harian"
                     iconRight={FaChevronRight}
-                    onClick={() => {}}
+                    onClick={() => navigate("/buy-credit")}
                     className="flex-1"
                   />
 

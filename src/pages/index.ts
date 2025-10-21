@@ -1,4 +1,5 @@
 import BalanceDetails from "./BalanceDetails";
+import BuyCredit from "./BuyCredit";
 import BalanceHistory from "./BalanceHistory";
 import BookingDetails from "./BookingDetails";
 import BankAccount from "./BankAccount";
@@ -75,6 +76,7 @@ export {
   Withdraw,
   WithdrawalDetails,
   WithdrawalHistory,
-  BookingDetails
+  BookingDetails,
+  BuyCredit
 };
 

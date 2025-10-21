@@ -13,6 +13,7 @@ import LoadingModal from "./LoadingModal";
 import LoadingPage from "./LoadingPage";
 import { MetaPixel } from "./MetaPixel";
 import ProgressBar from "./ProgressBar";
+import ProgressBar2 from "./ProgressBar2";
 import Separator from "./Separator";
 import Signal from "./Signal";
 import Spinner from "./Spinner";
@@ -36,11 +37,11 @@ export {
   LoadingPage,
   MetaPixel,
   ProgressBar,
+  ProgressBar2,
   Separator,
   Signal,
   Spinner,
   StatusIndicator,
   SubTitle,
-  WheelPicker
+  WheelPicker,
 };
-
