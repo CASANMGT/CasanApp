@@ -21,8 +21,12 @@ import {
   PrivacyPolice,
   ProfileNew,
   ProgressDetails,
+  RentToBuy,
+  RentToBuyDetails,
   Scan,
   SelectBank,
+  SelectDealer,
+  SelectRentBuy,
   SessionDetails,
   SessionSettings,
   SettingPin,
@@ -80,6 +84,22 @@ const RoutesPage = () => {
       <Route
         path="buy-credit"
         element={<ProtectedRoute element={<BuyCredit />} />}
+      />
+      <Route
+        path="select-dealer"
+        element={<ProtectedRoute element={<SelectDealer />} />}
+      />
+      <Route
+        path="select-rent-buy"
+        element={<ProtectedRoute element={<SelectRentBuy />} />}
+      />
+      <Route
+        path="rent-to-buy"
+        element={<ProtectedRoute element={<RentToBuy />} />}
+      />
+      <Route
+        path="rent-to-buy-details"
+        element={<ProtectedRoute element={<RentToBuyDetails />} />}
       />
 
       <Route path="vehicle" element={<Vehicle />} />

@@ -4,10 +4,13 @@ import Container from "./Container";
 import CountdownTimer from "./CountdownTimer";
 import Dropdown from "./Dropdown";
 import EmptyList from "./EmptyList";
+import FilterDropdown from "./FilterDropdown";
 import Header from "./Header";
+import Header2 from "./Header2";
 import IconText from "./IconText";
 import Input from "./Input";
 import InputCode from "./InputCode";
+import InputSearch from "./InputSearch";
 import Label from "./Label";
 import LoadingModal from "./LoadingModal";
 import LoadingPage from "./LoadingPage";
@@ -28,10 +31,13 @@ export {
   CountdownTimer,
   Dropdown,
   EmptyList,
+  FilterDropdown,
   Header,
+  Header2,
   IconText,
   Input,
   InputCode,
+  InputSearch,
   Label,
   LoadingModal,
   LoadingPage,
@@ -43,5 +49,6 @@ export {
   Spinner,
   StatusIndicator,
   SubTitle,
-  WheelPicker,
+  WheelPicker
 };
+

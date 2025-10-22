@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { FaAngleRight } from "react-icons/fa6";
+import { FaAngleRight, FaChevronRight } from "react-icons/fa6";
 import { IoTime } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   IcBike,
+  IcCartGreen,
+  IcMotorcycleGreen,
   IcPinWhite,
   ILCarousel1,
   ILCarousel2,
@@ -185,33 +187,70 @@ const Home = () => {
           </div> */}
         </div>
 
-        {/* STATUS RTO */}
-        <div className="bg-white rounded-lg p-4 mt-4">
-          <span className="text-base font-semibold">Status RTO</span>
+        {/* CHARGING SERVICE */}
+        {true && (
+          <div className="bg-white rounded-lg p-4 mt-4">
+            <span className="text-base font-semibold">Layanan Casan</span>
 
-          <div
-            onClick={() => navigate("/booking-details")}
-            className="row gap-4 cursor-pointer mt-6"
-          >
-            <img
-              src={ILNoImage}
-              alt="photo"
-              className="w-11 h-11 rounded-md border border-black10"
-            />
+            <div className="mt-5 between-x gap-2.5">
+              <div
+                onClick={() => navigate("/select-dealer")}
+                className="row gap-2 p-2 rounded-lg border border-black10 flex-1 cursor-pointer"
+              >
+                <div className="w-12 h-12 rounded-full border border-primary100 bg-primary10 center">
+                  <IcMotorcycleGreen />
+                </div>
 
-            <div className="row gap-1 flex-1">
-              <div className="rounded-full bg-lightOrange w-6 h-6 center">
-                <IoTime size={16} className="text-orange" />
+                <span className="flex-1 text-blackBold">Isi Daya Motor</span>
+
+                <FaChevronRight />
               </div>
 
-              <span className="text-blackBold font-semibold">
-                Menunggu Verifikasi
-              </span>
-            </div>
+              <div
+                onClick={() => navigate('/select-rent-buy')}
+                className="row gap-2 p-2 rounded-lg border border-black10 flex-1 cursor-pointer"
+              >
+                <div className="w-12 h-12 rounded-full border border-primary100 bg-primary10 center">
+                  <IcCartGreen />
+                </div>
 
-            <FaAngleRight className="text-black50" />
+                <span className="flex-1 text-blackBold">Sewa Beli</span>
+
+                <FaChevronRight />
+              </div>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* STATUS RTO */}
+        {false && (
+          <div className="bg-white rounded-lg p-4 mt-4">
+            <span className="text-base font-semibold">Status RTO</span>
+
+            <div
+              onClick={() => navigate("/booking-details")}
+              className="row gap-4 cursor-pointer mt-6"
+            >
+              <img
+                src={ILNoImage}
+                alt="photo"
+                className="w-11 h-11 rounded-md border border-black10"
+              />
+
+              <div className="row gap-1 flex-1">
+                <div className="rounded-full bg-lightOrange w-6 h-6 center">
+                  <IoTime size={16} className="text-orange" />
+                </div>
+
+                <span className="text-blackBold font-semibold">
+                  Menunggu Verifikasi
+                </span>
+              </div>
+
+              <FaAngleRight className="text-black50" />
+            </div>
+          </div>
+        )}
 
         {/* CHARGING LIST */}
         <div className="flex flex-col overflow-auto scrollbar-none pt-3">
