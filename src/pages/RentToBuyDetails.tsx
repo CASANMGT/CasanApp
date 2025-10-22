@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { CgNotes } from "react-icons/cg";
+import { FaCheckCircle } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
 import { IoArrowBackOutline } from "react-icons/io5";
+import { MdCheckBox, MdCheckBoxOutlineBlank } from "react-icons/md";
 import { PiStorefrontLight } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
 import { ILNoImage } from "../assets";
 import {
+  AlertModal,
   BetweenText,
   Button,
   IconText,
@@ -13,13 +16,13 @@ import {
   Separator,
 } from "../components";
 import { rupiah } from "../helpers";
-import { MdCheckBox, MdCheckBoxOutlineBlank } from "react-icons/md";
 
 const RentToBuyDetails = () => {
   const navigate = useNavigate();
 
   const [openCompleteBiodata, setOpenCompleteBiodata] =
     useState<boolean>(false);
+  const [openSuccess, setOpenSuccess] = useState<boolean>(false);
   const [isAccept, setIsAccept] = useState<boolean>(false);
 
   return (
@@ -179,6 +182,19 @@ const RentToBuyDetails = () => {
           onConfirm={() => {}}
         />
       )}
+
+      {openSuccess && (
+        <AlertModal
+          typeButtonRight="primary"
+          visible={openSuccess}
+          icon={FaCheckCircle}
+          title="Berhasil Mengajukan"
+          description="Silakan tunggu proses pengajuan maksimal 1 x 24 jam"
+          labelButtonRight="Tutup"
+          onDismiss={() => setOpenSuccess(false)}
+        />
+      )}
+
       {/* END MODALS */}
     </div>
   );

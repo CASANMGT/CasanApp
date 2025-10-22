@@ -29,7 +29,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
       <div>
         {isShowIcon && (
           <div className="mb-5 mt-3 center">
-            <Icon />
+            <Icon size={36} className="text-green"/>
           </div>
         )}
 
