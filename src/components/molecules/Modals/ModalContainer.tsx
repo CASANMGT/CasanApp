@@ -52,7 +52,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
     >
       <div
         className={
-          isBottom ? "relative h-svh w-svw sm:max-w-[480px] w-svw " : ""
+          isBottom ? "relative h-svh w-svw sm:max-w-[480px] w-svw flex items-end w-full" : ""
         }
       >
         <motion.div

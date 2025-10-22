@@ -5,7 +5,13 @@ import { IoArrowBackOutline } from "react-icons/io5";
 import { PiStorefrontLight } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
 import { ILNoImage } from "../assets";
-import { BetweenText, Button, IconText, Separator } from "../components";
+import {
+  BetweenText,
+  Button,
+  IconText,
+  ModalPersonalData,
+  Separator,
+} from "../components";
 import { rupiah } from "../helpers";
 import { MdCheckBox, MdCheckBoxOutlineBlank } from "react-icons/md";
 
@@ -164,6 +170,16 @@ const RentToBuyDetails = () => {
 
         <Button label="Ajukan" disabled={true} onClick={() => {}} />
       </div>
+
+      {/* MODALS */}
+      {openCompleteBiodata && (
+        <ModalPersonalData
+          isOpen={openCompleteBiodata}
+          onClose={() => setOpenCompleteBiodata(false)}
+          onConfirm={() => {}}
+        />
+      )}
+      {/* END MODALS */}
     </div>
   );
 };

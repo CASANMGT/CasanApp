@@ -18,6 +18,7 @@ import { MetaPixel } from "./MetaPixel";
 import ProgressBar from "./ProgressBar";
 import ProgressBar2 from "./ProgressBar2";
 import Separator from "./Separator";
+import UploadImage from "./UploadImage";
 import Signal from "./Signal";
 import Spinner from "./Spinner";
 import StatusIndicator from "./StatusIndicator";
@@ -35,6 +36,7 @@ export {
   Header,
   Header2,
   IconText,
+  UploadImage,
   Input,
   InputCode,
   InputSearch,

@@ -18,6 +18,7 @@ import ModalVoucher from "./ModalVoucher";
 import ModalInstructions from "./ModalInstructions";
 import RequestOTPModal from "./RequestOTPModal";
 import ModalVehicleDetails from "./ModalVehicleDetails";
+import ModalPersonalData from "./ModalPersonalData";
 
 export {
   AlertModal,
@@ -28,6 +29,7 @@ export {
   ModalCarouselDetails,
   ModalChargingStation,
   ModalContainer,
+  ModalPersonalData,
   ModalInputHour,
   ModalInputNominal,
   ModalInputPin,

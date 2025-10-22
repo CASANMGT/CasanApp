@@ -3,6 +3,7 @@ import { REGEX_NUMBERS } from "../../common";
 
 interface InputProps {
   type?: "number" | "text" | "phone";
+  label?: string;
   inputMode?:
     | "text"
     | "search"
@@ -22,6 +23,7 @@ interface InputProps {
 
 const Input: React.FC<InputProps> = ({
   type = "text",
+  label,
   inputMode,
   placeholder,
   autoFocus,
@@ -45,10 +47,13 @@ const Input: React.FC<InputProps> = ({
     onChange(value);
   };
 
+  const isShowLabel = useMemo(() => (label ? true : false), [label]);
   const isError = useMemo(() => (error ? true : false), [error]);
 
   return (
     <div className="flex flex-col w-full">
+      {isShowLabel && <label className="text-xs mb-1">{label}</label>}
+
       <div
         className={`w-full px-6 border border-baseGray rounded-full flex flex-row gap-2 items-center ${
           isError && "border-red"
