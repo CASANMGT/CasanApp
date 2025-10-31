@@ -592,6 +592,7 @@ const SessionSettings = () => {
                   dataSocket.map((item, index: number) => (
                     <SocketItem
                       key={index}
+                      deviceID={selectedDevice?.ID}
                       data={item}
                       position={index + 1}
                       isActive={form?.selectedSocket === item?.ID}

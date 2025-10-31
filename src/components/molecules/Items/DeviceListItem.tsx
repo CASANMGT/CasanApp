@@ -16,24 +16,18 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
   onClick,
 }) => {
   const getTotalSocketAvailable = () => {
-    let value: number = 0;
+    if (!data?.Sockets?.length || data.SignalValue <= 0) return 0;
 
-    if (data?.Sockets && data.Sockets.length) {
-      data?.Sockets.forEach((element) => {
-        if (
-          data.SignalValue > 0 &&
-          element.IsCharging === 0 &&
-          element?.SessionStatus !== 1 &&
-          element?.SessionStatus !== 2 &&
-          element?.SessionStatus !== 3 &&
-          element?.SessionStatus !== 4 &&
-          element?.SessionStatus !== 5
-        )
-          value++;
-      });
-    }
+    return data.Sockets.reduce((count, socket, index) => {
+      const isAvailable =
+        socket.IsCharging === 0 &&
+        ![1, 2, 3, 4, 5].includes(socket.SessionStatus);
 
-    return value;
+      if (!isAvailable) return count;
+
+      // special rule for ID 27 → skip index 0
+      return data.ID === 27 && index === 0 ? count : count + 1;
+    }, 0);
   };
 
   let timeFinished: number = 0;
