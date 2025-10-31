@@ -11,7 +11,6 @@ export * from "./types/feeSettingsType";
 export * from "./types/locationType";
 export * from "./types/priceRuleType";
 export * from "./types/transactionType";
-export * from "./types/userType";
 export * from "./types/voucherType";
 export * from './formData/rtoForm'
 export * from "./types/withdrawType";

@@ -364,10 +364,13 @@ const SessionSettings = () => {
         message.title = "Pilih Socket Terlebih Dahulu";
         message.body =
           "Silakan pilih Socket sesuai yang akan anda gunakan untuk pengisian";
-      } else if (form.selectedTab === "1" && !form?.value) {
+      } else if (form.selectedTab === "power" && !form?.value) {
+        message.title = "Daya Belum Terpilih";
+        message.body = "Masukkan Daya Terlebih Dahulu";
+      } else if (form.selectedTab === "nominal" && !form?.value) {
         message.title = "Nominal Belum Terpilih";
         message.body = "Masukkan Nominal Terlebih Dahulu";
-      } else if (form.selectedTab === "2" && form.value === "00:00") {
+      } else if (form.selectedTab === "duration" && form.value === "00:00") {
         message.title = "Jam Belum Terpilih";
         message.body = "Masukkan Jam Terlebih Dahulu";
       }

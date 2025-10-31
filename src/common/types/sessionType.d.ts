@@ -1,6 +1,5 @@
 import { FeeSettingsProps } from "./feeSettingsType";
 import { Transaction } from "./transactionType";
-import { DataUser } from "./userType";
 import { VoucherUsage } from "./voucherType";
 
 export { };
@@ -67,7 +66,7 @@ declare global {
     TransactionID: number;
     UpdatedAt: string;
     UsedAmount: number;
-    User: DataUser;
+    User: UserProps;
     UserID: number;
     PriceType: number;
     VehicleType: number;

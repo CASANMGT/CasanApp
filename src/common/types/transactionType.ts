@@ -1,4 +1,3 @@
-import { DataUser } from "./userType";
 
 export type AddTransactionBody = {
   amount: number;
@@ -16,7 +15,7 @@ export type DataTransaction = {
 export type Transaction = {
   ID: number;
   UserID: number;
-  User: DataUser;
+  User: UserProps;
   DueAmount: number;
   Amount: number;
   WalletUsedAmount: number;

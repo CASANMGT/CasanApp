@@ -194,7 +194,7 @@ const Home = () => {
 
             <div className="mt-5 between-x gap-2.5">
               <div
-                onClick={() => navigate("/select-dealer")}
+                onClick={() => {}}
                 className="row gap-2 p-2 rounded-lg border border-black10 flex-1 cursor-pointer"
               >
                 <div className="w-12 h-12 rounded-full border border-primary100 bg-primary10 center">
@@ -207,7 +207,7 @@ const Home = () => {
               </div>
 
               <div
-                onClick={() => navigate('/select-rent-buy')}
+                onClick={() => navigate('/select-dealer')}
                 className="row gap-2 p-2 rounded-lg border border-black10 flex-1 cursor-pointer"
               >
                 <div className="w-12 h-12 rounded-full border border-primary100 bg-primary10 center">

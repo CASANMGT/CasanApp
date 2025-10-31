@@ -1,9 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Api } from "../../services/Api";
-import { DataUser } from "../../common";
 
 type ResponseCheckPin = {
-  data: { is_match: boolean; user: DataUser };
+  data: { is_match: boolean; user: UserProps };
   message: string;
   status: string;
 };

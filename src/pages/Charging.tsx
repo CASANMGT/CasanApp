@@ -173,7 +173,8 @@ const Charging = () => {
     if (status === 6) navigate("/home", { replace: true });
     else if (dataSession?.ID) {
       if (status === 5) {
-        dispatch(fetchStopSession(dataSession?.ID || 0));
+        setOpenStop(true);
+        // dispatch(fetchStopSession(dataSession?.ID || 0));
       } else {
         if (status === 2 && dataSession?.Device?.Protocol === 3)
           setOpenInstruction(true);
@@ -412,57 +413,67 @@ const Charging = () => {
         />
       )}
 
-      <AlertModal
-        visible={openCancel}
-        icon={IcInfoCircleRed}
-        title="Apakah kamu ingin membatalkan sesi"
-        description="Sesi Pengisian daya akan dibatalkan"
-        onDismiss={() => setOpenCancel(false)}
-        labelButtonLeft="Ya"
-        labelButtonRight="Tidak"
-        onClick={() => dispatch(fetchCancelSession(Number(id)))}
-      />
+      {openCancel && (
+        <AlertModal
+          visible={openCancel}
+          icon={IcInfoCircleRed}
+          title="Apakah kamu ingin membatalkan sesi"
+          description="Sesi Pengisian daya akan dibatalkan"
+          onDismiss={() => setOpenCancel(false)}
+          labelButtonLeft="Ya"
+          labelButtonRight="Tidak"
+          onClick={() => dispatch(fetchCancelSession(Number(id)))}
+        />
+      )}
 
-      <AlertModal
-        visible={openStop}
-        icon={IcInfoCircleRed}
-        title="Apakah kamu ingin menyelesaikan sesi"
-        description="Sesi Pengisian daya akan dihentikan"
-        onDismiss={() => setOpenStop(false)}
-        labelButtonLeft="Ya"
-        labelButtonRight="Tidak"
-        onClick={() => {
-          setOpenStop(false);
-          dispatch(fetchStopSession(dataSession?.ID || 0));
-        }}
-      />
+      {openStop && (
+        <AlertModal
+          visible={openStop}
+          icon={IcInfoCircleRed}
+          title="Apakah kamu ingin menyelesaikan sesi"
+          description="Sesi Pengisian daya akan dihentikan"
+          onDismiss={() => setOpenStop(false)}
+          labelButtonLeft="Ya"
+          labelButtonRight="Tidak"
+          onClick={() => {
+            setOpenStop(false);
+            dispatch(fetchStopSession(dataSession?.ID || 0));
+          }}
+        />
+      )}
 
-      <AlertModal
-        visible={openFinished}
-        icon={IcSuccessGreen}
-        title="Sesi Selesai"
-        description="Sesi Pengisian daya anda telah selesai berdasarkan durasi yang anda pesan"
-        labelButtonLeft="Balik ke Beranda"
-        labelButtonRight="Lihat detail sesi"
-        onDismiss={onNext}
-        onClick={() => navigate("/home", { replace: true })}
-      />
+      {openFinished && (
+        <AlertModal
+          visible={openFinished}
+          icon={IcSuccessGreen}
+          title="Sesi Selesai"
+          description="Sesi Pengisian daya anda telah selesai berdasarkan durasi yang anda pesan"
+          labelButtonLeft="Balik ke Beranda"
+          labelButtonRight="Lihat detail sesi"
+          onDismiss={onNext}
+          onClick={() => navigate("/home", { replace: true })}
+        />
+      )}
 
-      <DiagnosisModal
-        isOpen={openDiagnosis}
-        maxWatt={dataSession?.Device?.MaxWatt || 0}
-        onDismiss={() => setOpenDiagnosis(false)}
-      />
+      {openDiagnosis && (
+        <DiagnosisModal
+          isOpen={openDiagnosis}
+          maxWatt={dataSession?.Device?.MaxWatt || 0}
+          onDismiss={() => setOpenDiagnosis(false)}
+        />
+      )}
 
-      <AlertModal
-        visible={openCantProcess}
-        icon={IcInfoCircleRed}
-        title="Permintaan Anda tidak dapat diproses"
-        description="Silakan coba beberapa saat lagi"
-        labelButtonRight="Tutup"
-        typeButtonRight="primary"
-        onDismiss={() => setOpenCantProcess(false)}
-      />
+      {openCantProcess && (
+        <AlertModal
+          visible={openCantProcess}
+          icon={IcInfoCircleRed}
+          title="Permintaan Anda tidak dapat diproses"
+          description="Silakan coba beberapa saat lagi"
+          labelButtonRight="Tutup"
+          typeButtonRight="primary"
+          onDismiss={() => setOpenCantProcess(false)}
+        />
+      )}
 
       {openInstruction && (
         <ModalInstructions

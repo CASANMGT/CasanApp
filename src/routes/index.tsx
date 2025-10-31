@@ -90,7 +90,7 @@ const RoutesPage = () => {
         element={<ProtectedRoute element={<SelectDealer />} />}
       />
       <Route
-        path="select-rent-buy"
+        path="select-rent-buy/:id"
         element={<ProtectedRoute element={<SelectRentBuy />} />}
       />
       <Route

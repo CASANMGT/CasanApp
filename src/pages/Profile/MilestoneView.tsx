@@ -1,11 +1,11 @@
 import { FaAngleRight } from "react-icons/fa6";
 import { NavigateFunction } from "react-router-dom";
-import { DataUser } from "../../common";
+
 import { ProgressSteps, Separator } from "../../components";
 
 interface Props {
   navigate: NavigateFunction;
-  dataUser: DataUser | null;
+  dataUser: UserProps | null;
   dataMilestone: Milestone[] | null;
 }
 

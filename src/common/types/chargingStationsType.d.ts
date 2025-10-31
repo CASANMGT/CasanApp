@@ -1,4 +1,3 @@
-import { Admin } from "./userType";
 
 export { };
 
@@ -51,7 +50,7 @@ declare global {
     ID: number;
     Name: string;
     AdminID: number;
-    Admin: Admin;
+    Admin: AdminProps;
     PriceTimeSlotID: number;
     PriceBaseRules: PriceBaseRule[];
     TimeSlot: TimeSlot;
@@ -107,7 +106,7 @@ declare global {
     AdminID: number;
     LocationID: number;
     Location: LocationResponse;
-    Admin: Admin;
+    Admin: AdminProps;
     OperationalHours: OperationalHour[];
     Devices: Device[] | null;
     PriceSetting: PriceSetting;

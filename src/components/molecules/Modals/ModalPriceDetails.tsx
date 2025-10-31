@@ -1,6 +1,6 @@
 import React from "react";
 import { IcClose } from "../../../assets";
-import { DataUser, Voucher } from "../../../common";
+import {  Voucher } from "../../../common";
 import { formatDuration, getCurrentSlot, rupiah } from "../../../helpers";
 import { BetweenText } from "../../atoms";
 import ModalContainer from "./ModalContainer";
@@ -9,7 +9,7 @@ interface Props {
   isOpen: boolean;
   dataPriceSetting: PriceSetting | undefined;
   dataDevice: Device | undefined | null;
-  dataUser: DataUser | undefined | null;
+  dataUser: UserProps | undefined | null;
   dataVoucher: Voucher | undefined | null;
   power: number | string;
   price: number | string;
