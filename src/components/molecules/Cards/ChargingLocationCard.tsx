@@ -84,15 +84,16 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
       0
     );
 
-    for (const device of Object.values(data?.Devices ?? {})) {
-      for (const [i, socket] of (device?.Sockets ?? []).entries()) {
-        if (socket.IsCharging === 0) {
-          // special rule: skip index 0 for device ID 27
-          if (device.ID !== 27 || i > 0) totalAvailable++;
-        } else if (socket.IsCharging === 1) {
-          totalFull++;
-        } else if (socket.IsCharging === 3) {
-          totalDisconnect++;
+    for (const key in data?.Devices) {
+      const element = data?.Devices[key];
+
+      if (element?.Sockets && element?.Sockets?.length) {
+        for (const i in element?.Sockets) {
+          const e = element?.Sockets[i];
+
+          if (e.IsCharging === 0) totalAvailable += 1;
+          else if (e.IsCharging === 1) totalFull += 1;
+          else if (e.IsCharging === 3) totalDisconnect += 1;
         }
       }
     }

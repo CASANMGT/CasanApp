@@ -18,17 +18,12 @@ const SocketItem: React.FC<SocketItemProps> = ({
   const getSocketStyle = useCallback(() => {
     let value: string = "";
 
-    if (deviceID === 27 && position === 1) {
-      value = "border-baseGray bg-baseGray !text-black50 cursor-not-allowed";
-    } else {
-      if (isActive) value = "border-primary100 bg-primary10 cursor-pointer";
-      else if (data.IsCharging === 0)
-        value = "border-black/1 bg-white cursor-pointer";
-      else if (data?.IsCharging === 1)
-        value = "border-primary100 bg-primary100 text-white cursor-not-allowed";
-      else
-        value = "border-baseGray bg-baseGray !text-black50 cursor-not-allowed";
-    }
+    if (isActive) value = "border-primary100 bg-primary10 cursor-pointer";
+    else if (data.IsCharging === 0)
+      value = "border-black/1 bg-white cursor-pointer";
+    else if (data?.IsCharging === 1)
+      value = "border-primary100 bg-primary100 text-white cursor-not-allowed";
+    else value = "border-baseGray bg-baseGray !text-black50 cursor-not-allowed";
 
     return value;
   }, [data, isActive]);
