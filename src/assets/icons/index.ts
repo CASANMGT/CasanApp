@@ -5,6 +5,7 @@ import IcBattery2 from "./battery-2.svg?react";
 import IcBattery3 from "./battery-3.svg?react";
 import IcBattery from "./battery.svg?react";
 import IcBike from "./bike.svg?react";
+import IcBike2 from "./bike2.svg?react";
 import IcCar from "./car.svg?react";
 import IcCartGreen from "./cart-green.svg?react";
 import IcCashBlack from "./cash-black.svg?react";
@@ -111,9 +112,10 @@ export {
   IcBattery,
   IcBattery2,
   IcBattery3,
-  IcBike,
   IcCar,
   IcCartGreen,
+  IcBike,
+  IcBike2,
   IcCashBlack,
   IcChargeUnited,
   IcChatBlack,
@@ -205,6 +207,5 @@ export {
   IcVehicleBlack,
   IcWallet,
   IcWalletGreen,
-  IcWalletGreen2
+  IcWalletGreen2,
 };
-

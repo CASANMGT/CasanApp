@@ -111,3 +111,18 @@ enum DeviceProtocol {
   OCPP = 2,
   ESP = 3,
 }
+
+
+enum RTOStatus {
+  RTOStatusVerifying = 1,
+  RTOStatusScheduled = 2,
+  RTOStatusOngoing = 3,
+  RTOStatusOverdue = 4,
+  RTOStatusHoliday = 5,
+  RTOStatusFinished = 6,
+  RTOStatusSuspended = 7,
+  RTOStatusTerminated = 8,
+  RTOStatusRejected = 9,
+  RTOStatusReturned = 10,
+  RTOStatusApproved = 11,
+}

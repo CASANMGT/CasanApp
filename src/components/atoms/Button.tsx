@@ -13,6 +13,7 @@ interface ButtonProps {
   iconRight?: any;
   disabled?: boolean;
   loading?: boolean;
+  sizeIconRight?: number;
   onClick: () => void;
 }
 const Button: React.FC<ButtonProps> = ({
@@ -23,6 +24,7 @@ const Button: React.FC<ButtonProps> = ({
   iconRight,
   disabled,
   loading,
+  sizeIconRight,
   onClick,
 }) => {
   const getTypeButton: () => string = useCallback(() => {
@@ -102,7 +104,7 @@ const Button: React.FC<ButtonProps> = ({
           className={`flex flex-row gap-2 items-center whitespace-nowrap  ${classNameSizeButton.labelStyle}`}
         >
           {label}
-          {IconRight && <IconRight size={16} />}
+          {IconRight && <IconRight size={sizeIconRight || 20} />}
         </div>
       )}
     </button>

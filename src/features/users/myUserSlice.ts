@@ -1,9 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DataUser } from "../../common";
 import { Api } from "../../services/Api";
 
 type MyUserState = {
-  data: DataUser | null;
+  data: UserProps | null;
   loading: boolean;
   error: string | null;
 };
@@ -23,7 +22,7 @@ export const fetchMyUser = createAsyncThunk(
         url: `users/me`,
       });
 
-      return res?.data as DataUser;
+      return res?.data as UserProps;
     } catch (e) {
       return rejectWithValue(e);
     }
@@ -42,7 +41,7 @@ const myUserSlice = createSlice({
       })
       .addCase(
         fetchMyUser.fulfilled,
-        (state, action: PayloadAction<DataUser>) => {
+        (state, action: PayloadAction<UserProps>) => {
           state.loading = false;
           state.data = action.payload;
           state.error = null;

@@ -34,7 +34,7 @@ const TabSwipe: React.FC<TabsProps> = ({ style, tabs }) => {
       {/* Tab Headers */}
       <div
         className={`flex p-4 bg-${
-          style === "white" ? "white" : "bg-primary100"
+          style === "white" ? "white" : "primary100"
         }`}
       >
         {tabs.map((tab, index) => (

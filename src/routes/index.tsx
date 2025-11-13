@@ -23,6 +23,7 @@ import {
   ProgressDetails,
   RentToBuy,
   RentToBuyDetails,
+  RentalHistory,
   Scan,
   SelectBank,
   SelectDealer,
@@ -185,6 +186,13 @@ const RoutesPage = () => {
         />
       </>
       {/* END PROFILE TAB */}
+
+      {/* RENTAL HISTORY */}
+      <Route
+        path="rental-history"
+        element={<ProtectedRoute element={<RentalHistory />} />}
+      />
+      {/* END RENTAL HISTORY */}
 
       {/* BOTTOM NAVIGATION */}
       <Route path="home" element={<Main />}>
