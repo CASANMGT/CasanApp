@@ -225,7 +225,7 @@ const Home = () => {
 
         {/* STATUS RTO */}
         {/* dummy */}
-        {false && (
+        {/* {false && (
           <div className="bg-white rounded-lg p-4 mt-4">
             <span className="text-base font-semibold">Status RTO</span>
 
@@ -252,7 +252,9 @@ const Home = () => {
               <FaAngleRight className="text-black50" />
             </div>
           </div>
-        )}
+        )} */}
+
+        <div>Testes</div>
 
         {/* CHARGING LIST */}
         <div className="flex flex-col overflow-auto scrollbar-none pt-3">
