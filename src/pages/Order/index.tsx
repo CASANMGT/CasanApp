@@ -20,7 +20,7 @@ const Order = () => {
         </h4>
       </div>
 
-      <TabSwipe tabs={tabs} />
+      <TabSwipe style="primary100" tabs={tabs} />
     </div>
   );
 };

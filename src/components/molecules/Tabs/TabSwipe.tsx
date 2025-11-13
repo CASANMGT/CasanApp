@@ -7,7 +7,7 @@ type Tab = {
 };
 
 type TabsProps = {
-  style?: "white";
+  style?: "white" | "primary100";
   tabs: Tab[];
 };
 
@@ -32,11 +32,7 @@ const TabSwipe: React.FC<TabsProps> = ({ style, tabs }) => {
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-baseLightGray">
       {/* Tab Headers */}
-      <div
-        className={`flex p-4 bg-${
-          style === "white" ? "white" : "primary100"
-        }`}
-      >
+      <div className={`flex p-4 bg-${style ? style : "primary100"}`}>
         {tabs.map((tab, index) => (
           <button
             key={index}
