@@ -5,10 +5,10 @@ import { VitePWA } from "vite-plugin-pwa";
 
 // https://vite.dev/config/
 export default defineConfig({
-  server: {
-    port: 5175, // 👈 change to your desired port
-    host: true, // optional: allows LAN access
-  },
+  // server: {
+  //   port: 5175, // 👈 change to your desired port
+  //   host: true, // optional: allows LAN access
+  // },
   plugins: [
     react(),
     svgr(),
