@@ -8,7 +8,7 @@ import {
   IcCartGreen,
   IcMotorcycleGreen,
   IcPinWhite,
-  ILNoImage
+  ILNoImage,
 } from "../assets";
 import { GeocodeResult, LIMIT_LIST } from "../common";
 import {
@@ -111,6 +111,14 @@ const Home = () => {
     <div className="overflow-hidden flex w-full">
       <div className="px-4 py-3 flex flex-col w-full overflow-hidden">
         <div>
+          {/* INFORMATION */}
+          <div className="bg-[#D5F1EB] px-6 py-4 mb-6 -mx-4">
+            <p className="text-black70">
+              Casan.id - solusi pengisian daya EV yang mudah dan andal untuk
+              sepeda dan motor listrik
+            </p>
+          </div>
+
           {/* LOCATION */}
           <div className="row gap-1 mb-2">
             <IcPinWhite />
