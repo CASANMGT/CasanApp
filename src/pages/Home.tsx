@@ -188,7 +188,8 @@ const Home = () => {
         </div>
 
         {/* CHARGING SERVICE */}
-        {true && (
+        {/* dummy */}
+        {false && (
           <div className="bg-white rounded-lg p-4 mt-4">
             <span className="text-base font-semibold">Layanan Casan</span>
 
@@ -223,6 +224,7 @@ const Home = () => {
         )}
 
         {/* STATUS RTO */}
+        {/* dummy */}
         {false && (
           <div className="bg-white rounded-lg p-4 mt-4">
             <span className="text-base font-semibold">Status RTO</span>
