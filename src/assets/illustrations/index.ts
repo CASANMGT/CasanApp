@@ -1,5 +1,3 @@
-import ILCarousel1 from "./carousel-1.png";
-import ILCarousel2 from "./carousel-2.png";
 import ILCharging from "./charging.png";
 import ILComingSoonLabel from "./coming-soon-label.png";
 import ILComingSoon from "./coming-soon.png";
@@ -15,8 +13,6 @@ import ILOrderEmpty from "./order-empty.png";
 import ILPin from "./pin.png";
 
 export {
-  ILCarousel1,
-  ILCarousel2,
   ILCharging,
   ILComingSoon,
   ILComingSoonLabel,
@@ -29,5 +25,6 @@ export {
   ILLogoSlogan,
   ILNoImage,
   ILOrderEmpty,
-  ILPin,
+  ILPin
 };
+

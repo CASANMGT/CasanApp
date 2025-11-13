@@ -6,7 +6,6 @@ export default {
     extend: {
       backgroundImage: {
         background1: "url('/src/assets/illustrations/splash.png')",
-        background2: "url('/src/assets/illustrations/background2.png')",
         bgComingSoon: "url('/src/assets/illustrations/bg-coming-soon.png')",
         chargingLocation:
           "url('/src/assets/illustrations/charging-location.png')",
@@ -28,7 +27,7 @@ export default {
         black20: "#E4E4E7",
         black10: "#EBEBED",
         black5: "#F5F5F6",
-        darkMode:"#252526",
+        darkMode: "#252526",
 
         // PRIMARY
         primaryDark: "#327478",
@@ -48,7 +47,7 @@ export default {
         secondary10: "#FDFBEA",
 
         // OTHER
-        gold:'#D79D20',
+        gold: "#D79D20",
         orange: "#FFBE4D",
         strokeOrange: "#FFE5B8",
         lightOrange: "#FFFAF1",
@@ -66,7 +65,7 @@ export default {
         soundWave: "soundWave 1.5s ease-out infinite",
         charging: "charging 2s linear infinite",
         scan: "scan 5s linear infinite",
-        slideDown: 'slideDown 1s ease-in-out',
+        slideDown: "slideDown 1s ease-in-out",
       },
 
       keyframes: {

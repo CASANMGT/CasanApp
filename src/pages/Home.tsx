@@ -8,9 +8,7 @@ import {
   IcCartGreen,
   IcMotorcycleGreen,
   IcPinWhite,
-  ILCarousel1,
-  ILCarousel2,
-  ILNoImage,
+  ILNoImage
 } from "../assets";
 import { GeocodeResult, LIMIT_LIST } from "../common";
 import {
@@ -143,7 +141,8 @@ const Home = () => {
           </div> */}
 
           {/* CAROUSEL */}
-          <Carousel slides={slidesDummy} />
+          {/* dummy */}
+          {false && <Carousel slides={slidesDummy} />}
 
           {/* ONGOING */}
           {isShowOngoing && (
@@ -208,7 +207,7 @@ const Home = () => {
               </div>
 
               <div
-                onClick={() => navigate('/select-rent-buy')}
+                onClick={() => navigate("/select-rent-buy")}
                 className="row gap-2 p-2 rounded-lg border border-black10 flex-1 cursor-pointer"
               >
                 <div className="w-12 h-12 rounded-full border border-primary100 bg-primary10 center">
@@ -225,7 +224,7 @@ const Home = () => {
 
         {/* STATUS RTO */}
         {/* dummy */}
-        {/* {false && (
+        {false && (
           <div className="bg-white rounded-lg p-4 mt-4">
             <span className="text-base font-semibold">Status RTO</span>
 
@@ -252,9 +251,7 @@ const Home = () => {
               <FaAngleRight className="text-black50" />
             </div>
           </div>
-        )} */}
-
-        <div>Testes Ke-4</div>
+        )}
 
         {/* CHARGING LIST */}
         <div className="flex flex-col overflow-auto scrollbar-none pt-3">
@@ -319,7 +316,7 @@ const optionsTypeVehicle: OptionsProps[] = [
 const slidesDummy = [
   {
     id: 1,
-    image: ILCarousel1,
+    image: "",
     title: "Carousel 1",
     details: {
       validityPeriod: "4 Agustus 2025 00:00 - 31 Agustus 2025 2025 23:59",
@@ -335,7 +332,7 @@ const slidesDummy = [
   },
   {
     id: 1,
-    image: ILCarousel2,
+    image: "",
     title: "Carousel 2",
     details: {
       validityPeriod: "4 Agustus 2025 00:00 - 31 Agustus 2025 2025 23:59",

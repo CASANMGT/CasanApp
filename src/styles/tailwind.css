@@ -13,7 +13,7 @@
 }
 
 .background-2 {
-  @apply bg-background2 bg-cover bg-fixed bg-no-repeat bg-center container-screen;
+  @apply bg-[linear-gradient(135deg,_#BAE6E9_30%,_#FFFFFF_50%,_#FAF2C0_100%)] container-screen;
 }
 
 .background-coming-soon {
