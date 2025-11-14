@@ -427,7 +427,7 @@ const Charging = () => {
         visible={openStop}
         icon={IcInfoCircleRed}
         title="Apakah kamu ingin menyelesaikan sesi"
-        description="Sesi Pengisian daya akan dihentikan"
+        description="Sesi Pengisian daya akan dihentikan maksimal 1 menit dari sekarang"
         onDismiss={() => setOpenStop(false)}
         labelButtonLeft="Ya"
         labelButtonRight="Tidak"
