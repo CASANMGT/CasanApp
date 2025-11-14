@@ -11,9 +11,10 @@ import {
 } from "../../assets";
 import { openWhatsApp } from "../../helpers";
 import { CUSTOMER_SERVICES } from "../../common";
+import { FiInfo } from "react-icons/fi";
 
 interface HeaderProps {
-  type?: "primary" | "secondary" | "scan" | "cancel" | "charging";
+  type?: "primary" | "secondary" | "scan" | "cancel" | "charging" | "info";
   title: string;
   isActive?: boolean;
   className?: string;
@@ -50,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({
       </div>
 
       <div
-        className={`${
+        className={`flex-1 ${
           isPrimary ? "text-baseLightGray2" : "flex-1 text-center"
         }`}
       >
@@ -58,7 +59,11 @@ const Header: React.FC<HeaderProps> = ({
       </div>
 
       {isShowRight ? (
-        type === "scan" ? (
+        type === "info" ? (
+          <div onClick={onPress} className="cursor-pointer">
+            <FiInfo />
+          </div>
+        ) : type === "scan" ? (
           <div
             onClick={onPress}
             className={`w-10 h-10 rounded-full justify-center items-center flex cursor-pointer ${
@@ -105,9 +110,7 @@ const Header: React.FC<HeaderProps> = ({
                     >
                       <IcCustomerServiceBlack />
 
-                      <span className=" whitespace-nowrap">
-                        Hubungi Kami
-                      </span>
+                      <span className=" whitespace-nowrap">Hubungi Kami</span>
                     </div>
                   </div>
                 )}

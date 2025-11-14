@@ -1,9 +1,8 @@
-import { DataUser } from "./userType";
 
 export type Balance = {
   ID: number;
   UserID: number;
-  User: DataUser;
+  User: UserProps;
   Amount: number;
   Status: number;
   SeasonID: number | null;

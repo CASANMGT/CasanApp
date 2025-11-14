@@ -1,8 +1,8 @@
 import { useEffect } from "react";
+import { FaChevronRight } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { ILOrderEmpty } from "../../assets";
-import { Session, SessionListBody } from "../../common";
+import { IcBike2, ILOrderEmpty } from "../../assets";
 import { EmptyList, LoadingPage, OrderCard } from "../../components";
 import { fetchOnGoingSessionList } from "../../features";
 import { AppDispatch, RootState } from "../../store";
@@ -20,7 +20,7 @@ const OngoingOrder = () => {
   }, []);
 
   const getData = () => {
-    const body: SessionListBody = {
+    const body = {
       page: 1,
       limit: 10,
       is_finish: 0,
@@ -53,9 +53,25 @@ const OngoingOrder = () => {
       color="primary100"
     >
       <div className="mb-[100px]">
+        {/* dummy */}
+        {false && (
+          <div
+            onClick={() => navigate("/rental-history")}
+            className="row gap-2 mx-4 mt-6 rounded-lg bg-gradient-to-b from-[#2DBA9D] to-[#327478] px-4 py-3 cursor-pointer"
+          >
+            <IcBike2 />
+
+            <span className="flex-1 text-white text-base font-medium">
+              Riwayat Sewa
+            </span>
+
+            <FaChevronRight className="text-white" />
+          </div>
+        )}
+
         {onGoingSessionList?.data?.data &&
         onGoingSessionList?.data?.data.length ? (
-          onGoingSessionList?.data.data.map((item, index) => (
+          onGoingSessionList?.data.data.map((item: any, index: number) => (
             <OrderCard
               key={index}
               data={item}

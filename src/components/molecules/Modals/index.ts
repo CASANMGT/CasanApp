@@ -17,6 +17,7 @@ import ModalVoltageAmpere from "./ModalVoltageAmpere";
 import ModalVoucher from "./ModalVoucher";
 import ModalInstructions from "./ModalInstructions";
 import RequestOTPModal from "./RequestOTPModal";
+import ModalVehicleDetails from "./ModalVehicleDetails";
 
 export {
   AlertModal,
@@ -37,6 +38,7 @@ export {
   ModalSKVoucher,
   ModalVoltageAmpere,
   ModalVoucher,
+  ModalVehicleDetails,
   RequestOTPModal
 };
 

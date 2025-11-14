@@ -5,7 +5,9 @@ import IcBattery2 from "./battery-2.svg?react";
 import IcBattery3 from "./battery-3.svg?react";
 import IcBattery from "./battery.svg?react";
 import IcBike from "./bike.svg?react";
+import IcBike2 from "./bike2.svg?react";
 import IcCar from "./car.svg?react";
+import IcCartGreen from "./cart-green.svg?react";
 import IcCashBlack from "./cash-black.svg?react";
 import IcChargeUnited from "./charge-united.png";
 import IcChatBlack from "./chat-black.svg?react";
@@ -52,6 +54,7 @@ import IcMenuBlack from "./menu-black.svg?react";
 import IcMenuWhite from "./menu-white.svg?react";
 import IcMoneyReceive from "./money-recive.svg?react";
 import IcMoneySend from "./money-send.svg?react";
+import IcMotorcycleGreen from "./motorcycle-green.svg?react";
 import IcMyLocationBlack from "./my-location-black.svg?react";
 import IcMyLocation from "./my-location.png";
 import IcNoImage from "./no-image.svg?react";
@@ -109,8 +112,10 @@ export {
   IcBattery,
   IcBattery2,
   IcBattery3,
-  IcBike,
   IcCar,
+  IcCartGreen,
+  IcBike,
+  IcBike2,
   IcCashBlack,
   IcChargeUnited,
   IcChatBlack,
@@ -155,6 +160,7 @@ export {
   IcMenuWhite,
   IcMoneyReceive,
   IcMoneySend,
+  IcMotorcycleGreen,
   IcMyLocation,
   IcMyLocationBlack,
   IcNoImage,
@@ -201,6 +207,5 @@ export {
   IcVehicleBlack,
   IcWallet,
   IcWalletGreen,
-  IcWalletGreen2
+  IcWalletGreen2,
 };
-

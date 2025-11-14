@@ -111,3 +111,30 @@ enum DeviceProtocol {
   OCPP = 2,
   ESP = 3,
 }
+
+enum RTOStatus {
+  RTOStatusVerifying = 1,
+  RTOStatusScheduled = 2,
+  RTOStatusOngoing = 3,
+  RTOStatusOverdue = 4,
+  RTOStatusHoliday = 5,
+  RTOStatusFinished = 6,
+  RTOStatusSuspended = 7,
+  RTOStatusTerminated = 8,
+  RTOStatusRejected = 9,
+  RTOStatusReturned = 10,
+  RTOStatusApproved = 11,
+}
+
+enum StopReason {
+  Zero = "Full stop",
+  One = "Time runs out",
+  Two = "The amount runs out",
+  Three = "Stop manually",
+  Four = "The battery runs out",
+  Five = "Port power is too high",
+  Six = "The charger is not detected",
+  Seven = "The temperature is too high to stop",
+  Eight = "Smoke stops",
+  Nine = "Smart charging stops",
+}

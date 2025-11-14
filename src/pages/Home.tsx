@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
+import { FaAngleRight, FaChevronRight } from "react-icons/fa6";
+import { IoTime } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { IcBike, IcPinWhite, ILCarousel1, ILCarousel2 } from "../assets";
+import {
+  IcBike,
+  IcCartGreen,
+  IcMotorcycleGreen,
+  IcPinWhite,
+  ILNoImage,
+} from "../assets";
 import { GeocodeResult, LIMIT_LIST } from "../common";
 import {
   Carousel,
@@ -103,6 +111,14 @@ const Home = () => {
     <div className="overflow-hidden flex w-full">
       <div className="px-4 py-3 flex flex-col w-full overflow-hidden">
         <div>
+          {/* INFORMATION */}
+          <div className="bg-[#D5F1EB] px-6 py-4 mb-6 -mx-4">
+            <p className="text-black70">
+              Casan.id - solusi pengisian daya EV yang mudah dan andal untuk
+              sepeda dan motor listrik
+            </p>
+          </div>
+
           {/* LOCATION */}
           <div className="row gap-1 mb-2">
             <IcPinWhite />
@@ -133,7 +149,8 @@ const Home = () => {
           </div> */}
 
           {/* CAROUSEL */}
-          <Carousel slides={slidesDummy} />
+          {/* dummy */}
+          {false && <Carousel slides={slidesDummy} />}
 
           {/* ONGOING */}
           {isShowOngoing && (
@@ -176,6 +193,73 @@ const Home = () => {
             />
           </div> */}
         </div>
+
+        {/* CHARGING SERVICE */}
+        {/* dummy */}
+        {false && (
+          <div className="bg-white rounded-lg p-4 mt-4">
+            <span className="text-base font-semibold">Layanan Casan</span>
+
+            <div className="mt-5 between-x gap-2.5">
+              <div
+                onClick={() => navigate("/select-dealer")}
+                className="row gap-2 p-2 rounded-lg border border-black10 flex-1 cursor-pointer"
+              >
+                <div className="w-12 h-12 rounded-full border border-primary100 bg-primary10 center">
+                  <IcMotorcycleGreen />
+                </div>
+
+                <span className="flex-1 text-blackBold">Isi Daya Motor</span>
+
+                <FaChevronRight />
+              </div>
+
+              <div
+                onClick={() => navigate("/select-rent-buy")}
+                className="row gap-2 p-2 rounded-lg border border-black10 flex-1 cursor-pointer"
+              >
+                <div className="w-12 h-12 rounded-full border border-primary100 bg-primary10 center">
+                  <IcCartGreen />
+                </div>
+
+                <span className="flex-1 text-blackBold">Sewa Beli</span>
+
+                <FaChevronRight />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* STATUS RTO */}
+        {/* dummy */}
+        {false && (
+          <div className="bg-white rounded-lg p-4 mt-4">
+            <span className="text-base font-semibold">Status RTO</span>
+
+            <div
+              onClick={() => navigate("/booking-details")}
+              className="row gap-4 cursor-pointer mt-6"
+            >
+              <img
+                src={ILNoImage}
+                alt="photo"
+                className="w-11 h-11 rounded-md border border-black10"
+              />
+
+              <div className="row gap-1 flex-1">
+                <div className="rounded-full bg-lightOrange w-6 h-6 center">
+                  <IoTime size={16} className="text-orange" />
+                </div>
+
+                <span className="text-blackBold font-semibold">
+                  Menunggu Verifikasi
+                </span>
+              </div>
+
+              <FaAngleRight className="text-black50" />
+            </div>
+          </div>
+        )}
 
         {/* CHARGING LIST */}
         <div className="flex flex-col overflow-auto scrollbar-none pt-3">
@@ -240,7 +324,7 @@ const optionsTypeVehicle: OptionsProps[] = [
 const slidesDummy = [
   {
     id: 1,
-    image: ILCarousel1,
+    image: "",
     title: "Carousel 1",
     details: {
       validityPeriod: "4 Agustus 2025 00:00 - 31 Agustus 2025 2025 23:59",
@@ -256,7 +340,7 @@ const slidesDummy = [
   },
   {
     id: 1,
-    image: ILCarousel2,
+    image: "",
     title: "Carousel 2",
     details: {
       validityPeriod: "4 Agustus 2025 00:00 - 31 Agustus 2025 2025 23:59",

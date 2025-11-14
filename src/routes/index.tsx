@@ -3,6 +3,8 @@ import {
   BalanceDetails,
   BalanceHistory,
   BankAccount,
+  BookingDetails,
+  BuyCredit,
   Charging,
   ChargingStationDetails,
   ComingSoon,
@@ -19,8 +21,13 @@ import {
   PrivacyPolice,
   ProfileNew,
   ProgressDetails,
+  RentToBuy,
+  RentToBuyDetails,
+  RentalHistory,
   Scan,
   SelectBank,
+  SelectDealer,
+  SelectRentBuy,
   SessionDetails,
   SessionSettings,
   SettingPin,
@@ -43,7 +50,7 @@ import ProtectedRoute from "./ProtectedRoute";
 
 const RoutesPage = () => {
   useAxiosInterceptor();
-  
+
   return (
     <Routes>
       <Route index element={<Splash />} />
@@ -70,6 +77,30 @@ const RoutesPage = () => {
       <Route
         path="session-details/:id"
         element={<ProtectedRoute element={<SessionDetails />} />}
+      />
+      <Route
+        path="booking-details"
+        element={<ProtectedRoute element={<BookingDetails />} />}
+      />
+      <Route
+        path="buy-credit"
+        element={<ProtectedRoute element={<BuyCredit />} />}
+      />
+      <Route
+        path="select-dealer"
+        element={<ProtectedRoute element={<SelectDealer />} />}
+      />
+      <Route
+        path="select-rent-buy"
+        element={<ProtectedRoute element={<SelectRentBuy />} />}
+      />
+      <Route
+        path="rent-to-buy"
+        element={<ProtectedRoute element={<RentToBuy />} />}
+      />
+      <Route
+        path="rent-to-buy-details"
+        element={<ProtectedRoute element={<RentToBuyDetails />} />}
       />
 
       <Route path="vehicle" element={<Vehicle />} />
@@ -155,6 +186,13 @@ const RoutesPage = () => {
         />
       </>
       {/* END PROFILE TAB */}
+
+      {/* RENTAL HISTORY */}
+      <Route
+        path="rental-history"
+        element={<ProtectedRoute element={<RentalHistory />} />}
+      />
+      {/* END RENTAL HISTORY */}
 
       {/* BOTTOM NAVIGATION */}
       <Route path="home" element={<Main />}>

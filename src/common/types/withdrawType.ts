@@ -1,5 +1,4 @@
 import { BankAccountList } from "./bankType";
-import { DataUser } from "./userType";
 
 export type AddWithdrawBody = {
   amount: number;
@@ -11,7 +10,7 @@ export type AddWithdrawBody = {
 export type WithdrawList = {
   ID: number;
   UserID: number;
-  User: DataUser;
+  User: UserProps;
   BankAccountID: number;
   Amount: number;
   Fee: number;
