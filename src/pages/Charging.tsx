@@ -173,7 +173,7 @@ const Charging = () => {
     if (status === 6) navigate("/home", { replace: true });
     else if (dataSession?.ID) {
       if (status === 5) {
-        dispatch(fetchStopSession(dataSession?.ID || 0));
+        setOpenStop(true);
       } else {
         if (status === 2 && dataSession?.Device?.Protocol === 3)
           setOpenInstruction(true);
