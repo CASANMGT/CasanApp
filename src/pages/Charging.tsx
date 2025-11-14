@@ -331,7 +331,7 @@ const Charging = () => {
             <BetweenText
               type="medium-content"
               labelLeft="Sesi ID"
-              labelRight={id || ""}
+              labelRight={`${id || "-"}, ${dataSession?.Socket?.Port || "-"}`}
               className="p-3"
             />
 
