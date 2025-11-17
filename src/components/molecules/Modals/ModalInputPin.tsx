@@ -16,6 +16,8 @@ import { AppDispatch, RootState } from "../../../store";
 import { InputCode, Separator } from "../../atoms";
 import ModalContainer from "./ModalContainer";
 
+const maxCountError: number = 3;
+
 interface Props {
   isOpen: boolean;
   onDismiss: () => void;
@@ -29,6 +31,8 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
   const editPin = useSelector((state: RootState) => state.editPin);
 
   const [codes, setCodes] = useState<string[]>(["", "", "", ""]);
+  const [newCode, setNewCodes] = useState<string[]>(["", "", "", ""]);
+  const [countError, setCountError] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [errorTime, setErrorTime] = useState<string>();
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
@@ -89,6 +93,15 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
     }
   }, [editPin]);
 
+  useEffect(() => {
+    if (countError === maxCountError) {
+      setTimeout(() => {
+        setCountError(0);
+        setStep("new-pin");
+      }, 1000);
+    }
+  }, [countError]);
+
   const formatError = (date?: string) => {
     if (date) {
       const diff = moments(date).diff(moments(), "minutes");
@@ -121,8 +134,15 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
   const onNext = (code: string[]) => {
     if (step === "input-pin") dispatch(fetchCheckPin(code.join("")));
     else if (step === "confirmation-pin") {
-      dispatch(fetchEditPin(code.join("")));
+      const newCodes: string = newCode.join("");
+      const confirmationCode: string = codes.join("");
+      if (newCodes === confirmationCode) dispatch(fetchEditPin(code.join("")));
+      else if (countError < maxCountError) {
+        setCodes(["", "", "", ""]);
+        setCountError((prev) => prev + 1);
+      }
     } else {
+      setNewCodes(codes);
       setCodes(["", "", "", ""]);
       setStep("confirmation-pin");
     }
@@ -168,6 +188,11 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
             style={step === "input-pin" ? undefined : "reset"}
             type="password"
             values={codes}
+            error={
+              countError > 0
+                ? `PIN salah. Coba lagi. (${countError}/${maxCountError})`
+                : ""
+            }
             disabled={isDisabled}
             onChange={onChangeText}
           />

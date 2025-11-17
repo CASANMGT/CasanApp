@@ -56,7 +56,6 @@ const BookingDetails = () => {
     } else navigate(-1);
   }, []);
 
-  console.log("cek d", data);
   const status = 3; //data?.Status || 0; dummy
   const dataVehicle: VehicleProps | undefined = data?.Vehicle;
   const color: ColorVehicleModelProps | null = dataVehicle?.Colors?.[0] ?? null;
