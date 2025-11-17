@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 interface InputCodeProps {
+  style?: "reset";
   type?: "number" | "password";
   values: string[];
   error?: string;
@@ -9,6 +10,7 @@ interface InputCodeProps {
 }
 
 const InputCode: React.FC<InputCodeProps> = ({
+  style,
   type = "number",
   values,
   error,
@@ -24,6 +26,11 @@ const InputCode: React.FC<InputCodeProps> = ({
     // Automatically focus the next input if available
     if (value && index < values.length - 1) {
       const nextInput = document.getElementById(`input-box-${index + 1}`);
+      nextInput?.focus();
+    }
+
+    if (style === "reset" && index === 3) {
+      const nextInput = document.getElementById("input-box-0");
       nextInput?.focus();
     }
   };

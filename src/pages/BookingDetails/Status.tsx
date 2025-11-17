@@ -1,4 +1,3 @@
-interface Props {}
 import { WiTime4 } from "react-icons/wi";
 import { FaCheckCircle } from "react-icons/fa";
 import { FaCalendarCheck } from "react-icons/fa";
@@ -6,10 +5,13 @@ import { PiWarningCircle } from "react-icons/pi";
 import { GiSandsOfTime } from "react-icons/gi";
 import { IoIosCloseCircle } from "react-icons/io";
 
-const Status: React.FC<Props> = () => {
-  const status: number = 11;
+interface Props {
+  status: number;
+}
 
+const Status: React.FC<Props> = ({ status }) => {
   const formatted = getFormatted(status);
+
   return (
     <div
       className="rounded-lg p-3 row gap-2"
@@ -42,6 +44,19 @@ const getFormatted = (status: number) => {
       break;
 
     case 2:
+      label = "Booking Telah Dijadwalkan";
+      bgColorLeft = "#031869";
+      bgColorRight = "#0055CF";
+      icon = FaCalendarCheck;
+      break;
+
+    case 3:
+      label = "Booking Sedang Berlangsung";
+      bgColorLeft = "#19ACB6";
+      bgColorRight = "#2DBA9D";
+      icon = GiSandsOfTime;
+      break;
+
     case 5:
     case 8:
     case 9:
@@ -66,7 +81,6 @@ const getFormatted = (status: number) => {
           : FaCheckCircle;
       break;
 
-    case 3:
     case 6:
     case 7:
       label =
@@ -78,13 +92,6 @@ const getFormatted = (status: number) => {
       bgColorLeft = "#DD2E44";
       bgColorRight = "#BA2D55";
       icon = status === 6 ? WiTime4 : PiWarningCircle;
-      break;
-
-    case 4:
-      label = "Booking Telah Dijadwalkan";
-      bgColorLeft = "#031869";
-      bgColorRight = "#0055CF";
-      icon = FaCalendarCheck;
       break;
 
     default:

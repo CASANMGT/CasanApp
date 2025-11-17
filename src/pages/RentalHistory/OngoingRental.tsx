@@ -69,7 +69,12 @@ const OngoingRental = () => {
       <div className="mb-[100px]">
         {data?.data && data?.data.length ? (
           data?.data.map((item: RTOProps, index: number) => (
-            <CardRental key={index} data={item} position={index} />
+            <CardRental
+              key={index}
+              data={item}
+              position={index}
+              onClick={() => navigate(`/booking-details/${item?.ID}`)}
+            />
           ))
         ) : (
           <div className="mx-10">

@@ -1,4 +1,3 @@
-import { ChargingStation } from "./chargingStationsType";
 import { Simcard } from "./simcardType";
 
 export {};

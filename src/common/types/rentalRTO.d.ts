@@ -41,4 +41,14 @@ declare global {
     Program: ProgramProps;
     ProgramID: number;
   };
+
+  type RTOCreditProps = {
+    ID: number;
+    RTOSchemaID: number;
+    DayCount: number;
+    Price: number;
+    DiscountRate: number;
+    CreatedAt: string;
+    UpdatedAt: string;
+  };
 }

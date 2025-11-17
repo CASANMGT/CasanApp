@@ -237,7 +237,7 @@ const Home = () => {
             <span className="text-base font-semibold">Status RTO</span>
 
             <div
-              onClick={() => navigate("/booking-details")}
+              onClick={() => navigate("/booking-details/1")}
               className="row gap-4 cursor-pointer mt-6"
             >
               <img

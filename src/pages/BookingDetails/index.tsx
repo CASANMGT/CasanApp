@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaChevronRight, FaLock, FaUser } from "react-icons/fa6";
 import { FiEdit3, FiNavigation } from "react-icons/fi";
 import { GiSandsOfTime } from "react-icons/gi";
@@ -8,10 +8,12 @@ import {
   MdOutlineStorefront,
   MdPhoneInTalk,
 } from "react-icons/md";
+import { PiWarningCircleFill } from "react-icons/pi";
 import { TbRoute } from "react-icons/tb";
 import { WiTime4 } from "react-icons/wi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ILNoImage, ILPin } from "../../assets";
+import { CUSTOMER_SERVICES, DaysOfWeek, ERROR_MESSAGE } from "../../common";
 import {
   BetweenText,
   Button,
@@ -21,17 +23,54 @@ import {
   ModalVehicleDetails,
   Separator,
 } from "../../components";
-import { moments, rupiah } from "../../helpers";
+import { moments, openWhatsApp, rupiah } from "../../helpers";
+import { Api } from "../../services";
 import Container from "./Container";
 import Status from "./Status";
-import { PiWarningCircle, PiWarningCircleFill } from "react-icons/pi";
 
 const BookingDetails = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
 
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<RTOProps>();
   const [openVehicleDetails, setOpenVehicleDetails] = useState<boolean>(false);
 
-  const status = 11;
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        setLoading(true);
+        const res = await Api.get({
+          url: `rtos/${id}`,
+        });
+
+        setData(res?.data);
+      } catch (error) {
+        alert(ERROR_MESSAGE);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (id) {
+      getData();
+    } else navigate(-1);
+  }, []);
+
+  console.log("cek d", data);
+  const status = 3; //data?.Status || 0; dummy
+  const dataVehicle: VehicleProps | undefined = data?.Vehicle;
+  const color: ColorVehicleModelProps | null = dataVehicle?.Colors?.[0] ?? null;
+  const dataVehicleModel: VehicleModelProps | undefined =
+    dataVehicle?.VehicleModel;
+  const dataStation: ChargingStation | undefined =
+    data?.Vehicle?.ChargingStation;
+  const operationalHour: OperationalHour | null =
+    dataStation?.OperationalHours.filter((e) => !e?.IsClosed)[0] ?? null;
+  const dataDayCredit: RTOCreditProps | null =
+    data?.DayCredits.filter((e) => e?.DayCount === 1)[0] ?? null;
+
+  const current = data?.CreditPaid || 1;
+  const total = data?.Payment || 1;
 
   return (
     <div className="background-1 overflow-hidden justify-between flex flex-col">
@@ -45,18 +84,13 @@ const BookingDetails = () => {
       <LoadingPage loading={false}>
         <div className="flex flex-col flex-1 overflow-hidden relative">
           <div className="flex-1 overflow-auto scrollbar-none space-y-3 px-4 pb-7 pt-6 ">
-            <Status />
+            <Status status={status} />
 
-            {(status === 5 ||
-              status === 6 ||
-              status === 7 ||
-              status === 11) && (
+            {status === 3 && (
               <Container className="">
                 <div className="between-x mb-2">
                   <span className="text-xs text-blackBold">
-                    {status === 5 || status === 11
-                      ? "Saldo Kredit"
-                      : "Tagihan Tersisa"}
+                    {status === 2 ? "Saldo Kredit" : "Tagihan Tersisa"}
                   </span>
                   <div className="row gap-1.5">
                     <span className="text-xs text-primary100 font-medium">
@@ -67,20 +101,26 @@ const BookingDetails = () => {
                 </div>
 
                 <div className="row gap-1.5 mb-1">
-                  <span className="text-blackBold font-semibold">5</span>
+                  <span className="text-blackBold font-semibold">
+                    {(dataDayCredit?.DayCount || 0) * (data?.Payment || 0)}
+                  </span>
                   <span className="text-xs text-black90">Kredit Hari</span>
                 </div>
 
                 <div className="flex-1 h-3 bg-black10 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-primary100 transition-all duration-300"
-                    style={{ width: `${10}%` }}
+                    style={{
+                      width: `${(current / total) * 100}%`,
+                    }}
                   />
                 </div>
                 <div className="row gap-1.5 mt-1">
                   <span className="text-xs text-black70">Jatuh Tempo</span>
                   <span className="text-xs ">
-                    {moments().format("DD MMMM YYYY")}
+                    {moments(data?.NextPaymentDate || undefined)
+                      .add(1, "days")
+                      .format("DD MMMM YYYY")}
                   </span>
                   {status === 6 && (
                     <span className="text-red text-xs font-medium ml-2">
@@ -137,20 +177,14 @@ const BookingDetails = () => {
 
             <Container className="mt-2">
               <div className="row gap-4 ">
-                <div className="flex-1 ">
-                  <div className="row gap-1 font-semibold">
-                    <span className="text-blackBold ">Uwinfly Seri C70</span>
-                    <span className="text-black70">(***34B)</span>
-                  </div>
+                <div className="flex-1 flex flex-col gap-1">
+                  <span className="text-blackBold font-semibold">
+                    {data?.Vehicle?.VehicleModel?.ModelName || "-"}
+                  </span>
 
-                  <div className="row gap-1 font-medium">
-                    <span className="text-black90 text-xs">
-                      Uwinfly Seri C70
-                    </span>
-                    <span className="text-black70 text-xs">(***34B)</span>
-                  </div>
+                  <span className="text-black70 text-xs">{`${dataVehicleModel?.BatteryCapacity}W ${dataVehicleModel?.Volt}V ${dataVehicleModel?.Ampere}Ah (jarak ${dataVehicleModel?.Range}km)`}</span>
 
-                  {status !== 9 && status !== 10 && (
+                  {status !== 2 && (
                     <span
                       onClick={() => setOpenVehicleDetails(true)}
                       className="text-xs text-primary100 font-medium cursor-pointer"
@@ -162,7 +196,7 @@ const BookingDetails = () => {
 
                 <div className="relative w-[78px] h-[78px]">
                   <img
-                    src={ILNoImage}
+                    src={color?.ImageURL || ILNoImage}
                     alt="photo"
                     className="w-full h-full rounded-lg bg-baseLightGray "
                   />
@@ -220,14 +254,14 @@ const BookingDetails = () => {
               )}
             </Container>
 
-            {(status === 4 || status === 9 || status === 10) && (
+            {status === 2 && (
               <Container className="flex flex-col gap-2">
                 <span className="text-blackBold">Informasi Pengambilan</span>
 
                 <div className="row gap-1.5">
                   <span className="text-xs text-black90">ID</span>
                   <span className="text-xs text-blackBold font-medium">
-                    1234
+                    {dataStation?.ID}
                   </span>
                 </div>
 
@@ -268,15 +302,14 @@ const BookingDetails = () => {
                     </div>
 
                     <span className="text-xs text-black90">
-                      Jl. Letnan Sutopo, Rw. Mekar Jaya, Kec. Serpong, Kota
-                      Tangerang Selatan, Banten
+                      {dataStation?.Location?.Address || "-"}
                     </span>
                   </div>
 
                   <img src={ILPin} alt="Pin" className="w-16 h-16 rounded-sm" />
                 </div>
 
-                {status === 4 && (
+                {status === 2 && (
                   <>
                     {" "}
                     <Separator className="my-1" />
@@ -289,13 +322,13 @@ const BookingDetails = () => {
                     <div className="row gap-1.5">
                       <span className="text-xs text-black90">Buka:</span>
                       <span className="text-xs text-blackBold font-medium">
-                        {"09:00"}
+                        {operationalHour?.From}
                       </span>
                       <span className="pl-1.5 text-xs text-black90">
                         Tutup:
                       </span>
                       <span className="text-xs text-blackBold font-medium">
-                        {"19:00"}
+                        {operationalHour?.To}
                       </span>
                     </div>
                   </>
@@ -311,7 +344,7 @@ const BookingDetails = () => {
                       </span>
 
                       <div
-                        onClick={() => {}}
+                        onClick={() => openWhatsApp(CUSTOMER_SERVICES)}
                         className="row gap-1.5 px-3 py-1.5 bg-primary10 border border-primary100 rounded-full cursor-pointer"
                       >
                         <MdPhoneInTalk size={16} className="text-primary100" />
@@ -337,15 +370,7 @@ const BookingDetails = () => {
               </Container>
             )}
 
-            {(status === 3 ||
-              status === 4 ||
-              status === 5 ||
-              status === 6 ||
-              status === 7 ||
-              status === 8 ||
-              status === 9 ||
-              status === 10 ||
-              status === 11) && (
+            {(status === 2 || status === 3) && (
               <Container>
                 <IconText
                   icon={MdInfo}
@@ -355,19 +380,25 @@ const BookingDetails = () => {
 
                 <BetweenText
                   labelLeft="Cicilan"
-                  labelRight={`Rp${rupiah(0)}/hari`}
+                  labelRight={`Rp${rupiah(dataDayCredit?.Price || 0)}/hari`}
                   classNameLabelRight="font-semibold"
                   className="p-3 rounded-t bg-baseLightGray"
                 />
                 <BetweenText
                   labelLeft="Total Pembayaran"
-                  labelRight={`(Rp${rupiah(0)}) 6 bulan`}
+                  labelRight={`(Rp${rupiah(
+                    (dataDayCredit?.Price || 0) * (data?.Payment || 0)
+                  )}) ${
+                    (dataDayCredit?.DayCount || 0) * (data?.Payment || 0)
+                  } hari`}
                   classNameLabelRight="font-semibold"
                   className="p-3 "
                 />
                 <BetweenText
                   labelLeft="Deposit"
-                  labelRight={`Rp${rupiah(0)}`}
+                  labelRight={`Rp${rupiah(
+                    data?.IsDeposited ? 0 : data?.Deposit
+                  )}`}
                   classNameLabelRight="font-semibold"
                   className={`p-3 bg-baseLightGray ${
                     status === 3 && "rounded-b"
@@ -375,13 +406,21 @@ const BookingDetails = () => {
                 />
                 <BetweenText
                   labelLeft="Perkiraan Selesai"
-                  labelRight={moments().format("DD MMMM YYYY")}
+                  labelRight={moments(data?.TargetFinishDate).format(
+                    "DD MMMM YYYY"
+                  )}
                   classNameLabelRight="font-semibold"
                   className="p-3 "
                 />
                 <BetweenText
                   labelLeft="Libur Pembayaran"
-                  labelRight={"Setiap Hari Minggu"}
+                  labelRight={`Setiap ${
+                    data?.PauseDayType === 1 ? "Hari" : "Minggu"
+                  } ${
+                    data?.PauseDayType === 1
+                      ? DaysOfWeek[Number(data?.PauseDay || 0)]
+                      : data?.PauseDay.split(",").join(", ")
+                  }`}
                   classNameLabelRight="font-semibold"
                   className={`p-3 bg-baseLightGray ${
                     status !== 6 && status !== 7 && "rounded-b"
@@ -390,7 +429,7 @@ const BookingDetails = () => {
                 {status !== 6 && status !== 7 && (
                   <BetweenText
                     labelLeft="Progres"
-                    labelRight={"1/365"}
+                    labelRight={`${current}/${total}`}
                     classNameLabelRight="font-semibold"
                     className="p-3 "
                   />
@@ -398,7 +437,7 @@ const BookingDetails = () => {
               </Container>
             )}
 
-            {(status === 1 || status === 2 || status === 3) && (
+            {(status === 1 || status === 3) && (
               <Container>
                 <div className="between-x">
                   <IconText
@@ -427,11 +466,11 @@ const BookingDetails = () => {
               </Container>
             )}
 
-            {(status === 1 || status === 2) && (
+            {/* {(status === 1 || status === 2) && (
               <Container>
                 <IconText
                   icon={MdInfo}
-                  label="Informasi Skema Sewa Beli"
+                  label="Informasi Skema RTO"
                   className="mb-3"
                 />
 
@@ -449,12 +488,12 @@ const BookingDetails = () => {
                 />
                 <BetweenText
                   labelLeft="Deposit"
-                  labelRight={`Rp${rupiah(0)}`}
+                  labelRight={`Rp${rupiah(data?.Deposit || 0)}`}
                   classNameLabelRight="font-semibold"
                   className="p-3 rounded-b bg-baseLightGray"
                 />
               </Container>
-            )}
+            )} */}
           </div>
 
           {/* FOOTER */}
