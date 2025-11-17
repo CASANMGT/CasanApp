@@ -8,9 +8,10 @@ import { moments } from "../../helpers";
 interface Props {
   data: RTOProps;
   position: number;
+  onClick: () => void;
 }
 
-const CardRental: React.FC<Props> = ({ data, position }) => {
+const CardRental: React.FC<Props> = ({ data, position, onClick }) => {
   const status = data?.Status;
   const vehicle: VehicleProps = data?.Vehicle;
   const color: ColorVehicleModelProps | null = vehicle.Colors?.[0] ?? null;
@@ -34,7 +35,8 @@ const CardRental: React.FC<Props> = ({ data, position }) => {
 
   return (
     <div
-      className="relative rounded-lg bg-white shadow p-3 mx-4 mb-3"
+      onClick={onClick}
+      className="relative rounded-lg bg-white shadow p-3 mx-4 mb-3 cursor-pointer"
       style={{ marginTop: position === 0 ? 24 : 0 }}
     >
       <div className="row gap-3">

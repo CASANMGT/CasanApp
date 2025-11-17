@@ -79,7 +79,7 @@ const RoutesPage = () => {
         element={<ProtectedRoute element={<SessionDetails />} />}
       />
       <Route
-        path="booking-details"
+        path="booking-details/:id"
         element={<ProtectedRoute element={<BookingDetails />} />}
       />
       <Route
