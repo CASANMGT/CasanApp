@@ -51,4 +51,13 @@ declare global {
     CreatedAt: string;
     UpdatedAt: string;
   };
+
+  type AddTransactionRTOBodyProps = {
+    deposit: number;
+    paymentMethod: string;
+    paymentProof: string;
+    reference: string;
+    rtocreditID: number;
+    rtoid: number;
+  };
 }

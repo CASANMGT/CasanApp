@@ -28,4 +28,5 @@ export * from "./users/myUserSlice";
 export * from "./voucher/voucherAvailableSlice";
 export * from "./withdraw/addWithdrawSlice";
 export * from "./withdraw/withdrawListSlice";
+export * from './rto/addTransactionRTOSlice'
 

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaChevronRight, FaLock, FaUser } from "react-icons/fa6";
 import { FiEdit3, FiNavigation } from "react-icons/fi";
-import { GiSandsOfTime } from "react-icons/gi";
 import {
   MdHistory,
   MdInfo,
@@ -56,7 +55,7 @@ const BookingDetails = () => {
     } else navigate(-1);
   }, []);
 
-  const status = 3; //data?.Status || 0; dummy
+  const status = data?.Status || 0;
   const dataVehicle: VehicleProps | undefined = data?.Vehicle;
   const color: ColorVehicleModelProps | null = dataVehicle?.Colors?.[0] ?? null;
   const dataVehicleModel: VehicleModelProps | undefined =
@@ -84,12 +83,11 @@ const BookingDetails = () => {
         <div className="flex flex-col flex-1 overflow-hidden relative">
           <div className="flex-1 overflow-auto scrollbar-none space-y-3 px-4 pb-7 pt-6 ">
             <Status status={status} />
-
-            {status === 3 && (
+            {(status === 3 || status === 4 || status === 7) && (
               <Container className="">
                 <div className="between-x mb-2">
                   <span className="text-xs text-blackBold">
-                    {status === 2 ? "Saldo Kredit" : "Tagihan Tersisa"}
+                    Tagihan Tersisa
                   </span>
                   <div className="row gap-1.5">
                     <span className="text-xs text-primary100 font-medium">
@@ -121,31 +119,12 @@ const BookingDetails = () => {
                       .add(1, "days")
                       .format("DD MMMM YYYY")}
                   </span>
-                  {status === 6 && (
+                  {(status === 4 || status === 7) && (
                     <span className="text-red text-xs font-medium ml-2">
                       Terlambat 3 Hari
                     </span>
                   )}
                 </div>
-
-                {status == 11 && (
-                  <div className="flex-1 row gap-1 mt-4">
-                    <div className="center rounded-full w-5 h-5 bg-lightOrange">
-                      <WiTime4 size={12} className="text-orange" />
-                    </div>
-
-                    <span className="text-black90 font-medium">
-                      Libur Bayar
-                    </span>
-
-                    <span className="text-blackBold font-medium ml-2">
-                      1 Hari Lagi
-                    </span>
-                    <span className="text-black70 font-medium">
-                      (12-15 Apr)
-                    </span>
-                  </div>
-                )}
 
                 <Separator className="my-3" />
 
@@ -153,12 +132,16 @@ const BookingDetails = () => {
                   <Button
                     label="Beli Kredit harian"
                     iconRight={FaChevronRight}
-                    onClick={() => navigate("/buy-credit")}
+                    onClick={() =>
+                      navigate("/buy-credit", {
+                        state: data,
+                      })
+                    }
                     className="flex-1"
                   />
 
                   <div className="flex-1 row gap-1 center">
-                    {(status === 6 || status === 7) && (
+                    {(status === 4 || status === 7) && (
                       <>
                         <div className="center rounded-full w-5 h-5 bg-lightRed">
                           <PiWarningCircleFill size={12} className="text-red" />
@@ -173,7 +156,6 @@ const BookingDetails = () => {
                 </div>
               </Container>
             )}
-
             <Container className="mt-2">
               <div className="row gap-4 ">
                 <div className="flex-1 flex flex-col gap-1">
@@ -183,7 +165,7 @@ const BookingDetails = () => {
 
                   <span className="text-black70 text-xs">{`${dataVehicleModel?.BatteryCapacity}W ${dataVehicleModel?.Volt}V ${dataVehicleModel?.Ampere}Ah (jarak ${dataVehicleModel?.Range}km)`}</span>
 
-                  {status !== 2 && (
+                  {status !== 2 && status !== 8 && status !== 10 && (
                     <span
                       onClick={() => setOpenVehicleDetails(true)}
                       className="text-xs text-primary100 font-medium cursor-pointer"
@@ -208,11 +190,7 @@ const BookingDetails = () => {
                 </div>
               </div>
 
-              {(status === 5 ||
-                status === 6 ||
-                status === 7 ||
-                status === 8 ||
-                status === 11) && (
+              {false && (
                 <>
                   <Separator className="my-3" />
 
@@ -252,8 +230,7 @@ const BookingDetails = () => {
                 </>
               )}
             </Container>
-
-            {status === 2 && (
+            {(status === 2 || status === 8 || status === 10) && (
               <Container className="flex flex-col gap-2">
                 <span className="text-blackBold">Informasi Pengambilan</span>
 
@@ -263,28 +240,6 @@ const BookingDetails = () => {
                     {dataStation?.ID}
                   </span>
                 </div>
-
-                {status === 4 && (
-                  <>
-                    <Separator className="my-1" />
-
-                    <div className="row gap-1">
-                      <GiSandsOfTime size={16} className="text-primary100" />
-                      <span className="text-primary100 text-xs font-medium">
-                        Batas Akhir Pengambilan
-                      </span>
-                    </div>
-
-                    <div className="row gap-1.5">
-                      <span className="text-base font-semibold text-blackBold">
-                        {moments().format("dddd, DD MMM")}
-                      </span>
-                      <span className="text-black70">{`${moments().format(
-                        "HH:mm"
-                      )} WIB`}</span>
-                    </div>
-                  </>
-                )}
 
                 <Separator className="my-1" />
 
@@ -356,8 +311,7 @@ const BookingDetails = () => {
                 )}
               </Container>
             )}
-
-            {status === 3 && (
+            {false && (
               <Container>
                 <span className="text-blackBold font-medium">
                   Alasan Penolakan
@@ -368,8 +322,12 @@ const BookingDetails = () => {
                 </div>
               </Container>
             )}
-
-            {(status === 2 || status === 3) && (
+            {(status === 2 ||
+              status === 3 ||
+              status === 6 ||
+              status === 7 ||
+              status === 8 ||
+              status === 10) && (
               <Container>
                 <IconText
                   icon={MdInfo}
@@ -435,8 +393,7 @@ const BookingDetails = () => {
                 )}
               </Container>
             )}
-
-            {(status === 1 || status === 3) && (
+            {false && (
               <Container>
                 <div className="between-x">
                   <IconText
@@ -464,7 +421,6 @@ const BookingDetails = () => {
                 </div>
               </Container>
             )}
-
             {/* {(status === 1 || status === 2) && (
               <Container>
                 <IconText
@@ -512,6 +468,7 @@ const BookingDetails = () => {
       {openVehicleDetails && (
         <ModalVehicleDetails
           isOpen={openVehicleDetails}
+          data={dataVehicle}
           onClose={() => setOpenVehicleDetails(false)}
         />
       )}
