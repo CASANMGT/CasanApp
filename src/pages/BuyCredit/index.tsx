@@ -29,8 +29,12 @@ const BuyCredit = () => {
 
   useEffect(() => {
     if (addTransactionRTO?.data) {
+      navigate(`/transaction-rto-history/details/${addTransactionRTO?.data?.ID}`, {
+        replace: true,
+        state: { isGoOrder: true },
+      });
+
       dispatch(resetDataAddTransactionRTO());
-      navigate(-1);
     }
   }, [addTransactionRTO?.data]);
 

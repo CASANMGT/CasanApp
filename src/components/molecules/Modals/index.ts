@@ -5,40 +5,42 @@ import InputPhoneNumberModal from "./InputPhoneNumberModal";
 import ModalCarouselDetails from "./ModalCarouselDetails";
 import ModalChargingStation from "./ModalChargingStation";
 import ModalContainer from "./ModalContainer";
+import ModalFullyCharge from "./ModalFullyCharge";
 import ModalInputHour from "./ModalInputHour";
 import ModalInputNominal from "./ModalInputNominal";
 import ModalInputPin from "./ModalInputPin";
 import ModalInputPower from "./ModalInputPower";
+import ModalInstructions from "./ModalInstructions";
 import ModalPaymentMethod from "./ModalPaymentMethod";
 import ModalPriceDetails from "./ModalPriceDetails";
 import ModalSelectBank from "./ModalSelectBank";
 import ModalSKVoucher from "./ModalSKVoucher";
+import ModalVehicleDetails from "./ModalVehicleDetails";
 import ModalVoltageAmpere from "./ModalVoltageAmpere";
 import ModalVoucher from "./ModalVoucher";
-import ModalInstructions from "./ModalInstructions";
 import RequestOTPModal from "./RequestOTPModal";
-import ModalVehicleDetails from "./ModalVehicleDetails";
 
 export {
   AlertModal,
   DiagnosisModal,
   InputOTPModal,
-  ModalInstructions,
   InputPhoneNumberModal,
   ModalCarouselDetails,
   ModalChargingStation,
   ModalContainer,
+  ModalFullyCharge,
   ModalInputHour,
   ModalInputNominal,
   ModalInputPin,
   ModalInputPower,
+  ModalInstructions,
   ModalPaymentMethod,
   ModalPriceDetails,
   ModalSelectBank,
   ModalSKVoucher,
+  ModalVehicleDetails,
   ModalVoltageAmpere,
   ModalVoucher,
-  ModalVehicleDetails,
   RequestOTPModal
 };
 

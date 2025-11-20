@@ -37,6 +37,7 @@ import {
   TopUp,
   TransactionDetails,
   TransactionHistory,
+  TransactionRTODetails,
   Vehicle,
   VerificationNumber,
   Voucher,
@@ -159,6 +160,10 @@ const RoutesPage = () => {
         <Route
           path="transaction-history/details/:id"
           element={<ProtectedRoute element={<TransactionDetails />} />}
+        />
+        <Route
+          path="transaction-rto-history/details/:id"
+          element={<ProtectedRoute element={<TransactionRTODetails />} />}
         />
         <Route
           path="withdrawal-history"

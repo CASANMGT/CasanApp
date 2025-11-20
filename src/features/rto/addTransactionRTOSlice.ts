@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Api } from "../../services/Api";
 
 type AddTransactionRTOState = {
-  data: ResponseSuccess | null;
+  data: RTOTransactionProps | null;
   loading: boolean;
   error: string | null;
 };
@@ -23,7 +23,7 @@ export const fetchAddTransactionRTO = createAsyncThunk(
         body,
       });
 
-      return res as ResponseSuccess;
+      return res?.data as RTOTransactionProps;
     } catch (e) {
       return rejectWithValue(e);
     }
@@ -47,7 +47,7 @@ const addTransactionRTOSlice = createSlice({
       })
       .addCase(
         fetchAddTransactionRTO.fulfilled,
-        (state, action: PayloadAction<ResponseSuccess>) => {
+        (state, action: PayloadAction<RTOTransactionProps>) => {
           state.loading = false;
           state.data = action.payload;
           state.error = null;

@@ -9,7 +9,8 @@ import {
 import { ModalPaymentMethod } from "../../components";
 import { fetchAddTransactionRTO } from "../../features";
 import { rupiah } from "../../helpers";
-import { AppDispatch } from "../../store";
+import { AppDispatch, RootState } from "../../store";
+import { useSelector } from "react-redux";
 
 interface Props {
   data: RTOProps | undefined;
@@ -18,7 +19,10 @@ interface Props {
 const Package: React.FC<Props> = ({ data }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const [loading, setLoading] = useState(false);
+  const addTransactionRTO = useSelector(
+    (state: RootState) => state?.addTransactionRTO
+  );
+
   const [openPaymentMethod, setOpenPaymentMethod] = useState<boolean>(false);
   const [selectedPackage, setSelectedPackage] = useState<
     RTOCreditProps | undefined
@@ -29,20 +33,14 @@ const Package: React.FC<Props> = ({ data }) => {
 
   const onSelectPayment = async (select: FeeSettingsProps | undefined) => {
     try {
-      setLoading(true);
-
       if (!data || !selectedPackage) {
         throw new Error("Missing required data");
       }
 
       const body = AddTransactionRTOBody(data, selectedPackage, select);
       dispatch(fetchAddTransactionRTO(body));
-
-      setOpenPaymentMethod(false);
     } catch (error) {
       alert(ERROR_MESSAGE);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -75,7 +73,7 @@ const Package: React.FC<Props> = ({ data }) => {
           select={paymentMethod}
           selectBalance={0}
           total={selectedPackage?.Price || 0}
-          loading={loading}
+          loading={addTransactionRTO?.loading}
           totalCredit={selectedPackage?.DayCount || 0}
           deposit={data?.IsDeposited ? 0 : data?.Deposit || 0}
           onDismiss={() => setOpenPaymentMethod(false)}

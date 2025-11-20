@@ -28,7 +28,6 @@ import {
 } from "../components";
 import {
   fetchCancelSession,
-  fetchTransactionById,
   hideLoading,
   resetDataAddSession,
   resetDataCancelSession,
@@ -40,20 +39,18 @@ import {
   moments,
   rupiah,
 } from "../helpers";
+import { Api } from "../services";
 import { AppDispatch, RootState } from "../store";
 
-const TransactionDetails = () => {
+const TransactionRTODetails = () => {
   const qrRef = useRef<HTMLCanvasElement | null>(null);
   const navigate: NavigateFunction = useNavigate();
   const location = useLocation();
   const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
-  const transactionById = useSelector(
-    (state: RootState) => state.transactionById
-  );
-  const cancelSession = useSelector((state: RootState) => state.cancelSession);
-
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<RTOTransactionProps>();
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isShow, setIsShow] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>();
@@ -64,50 +61,49 @@ const TransactionDetails = () => {
     getData();
   }, []);
 
-  // Manage response cancel session
-  useEffect(() => {
-    if (cancelSession?.loading) dispatch(showLoading());
-    else
-      setTimeout(() => {
-        dispatch(hideLoading());
-      }, 1000);
-
-    if (cancelSession?.data) {
-      dispatch(resetDataCancelSession());
-      getData();
-    }
-  }, [cancelSession]);
-
-  useEffect(() => {
-    if (transactionById?.data?.Status === 2) {
-      const diff = moments(
-        transactionById?.data?.Type === 1
-          ? transactionById?.data?.ExpiredAt
-          : transactionById?.data?.Session?.ExpiredAt
-      ).diff(moments(), "seconds");
-      const newDuration = diff > 0 ? diff : 0;
-
-      setDuration(newDuration);
-      setIsRunning(true);
-    } else if (isRunning && transactionById?.data?.Status === 1) {
-      setIsRunning(false);
-      navigate(`/payment-success/${transactionById?.data?.Session?.ID}`);
-    }
-
-    if (transactionById?.data?.Status === 1) setIsShow(true);
-    else setIsShow(false);
-  }, [transactionById]);
-
   useEffect(() => {
     if (isRunning) timeoutProgress();
   }, [isRunning]);
 
-  const getData = () => {
-    if (id) dispatch(fetchTransactionById(Number(id)));
-    else {
-      alert("Can't find transaction ID");
-      onDismiss();
+  const getData = async () => {
+    try {
+      setLoading(true);
+      if (id) {
+        const res = await Api.get({
+          url: `rto-transactions/${id}`,
+        });
+
+        setData(res?.data);
+        handleResponse(res?.data);
+      } else {
+        throw new Error("Can't find transaction ID");
+      }
+    } catch (error) {
+      alert(error);
+      onDismiss;
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleResponse = (transaction: RTOTransactionProps) => {
+    try {
+      if (transaction?.Status === 2) {
+        const diff = moments(transaction?.ExpiredAt).diff(moments(), "seconds");
+        const newDuration = diff > 0 ? diff : 0;
+
+        setDuration(newDuration);
+        setIsRunning(true);
+      } else if (isRunning && transaction?.Status === 1) {
+        setIsRunning(false);
+        navigate(`/payment-success/${transaction?.ID}`, {
+          state: { type: "rto" },
+        });
+      }
+
+      if (transaction?.Status === 1) setIsShow(true);
+      else setIsShow(false);
+    } catch (error) {}
   };
 
   const timeoutProgress = () => {
@@ -166,9 +162,7 @@ const TransactionDetails = () => {
     }
   };
 
-  const status: number = transactionById?.data?.Status || 0;
-
-  const transactionType: number = transactionById?.data?.Type || 0;
+  const status: number = data?.Status || 0;
 
   const onDismiss = () => {
     if (location?.state?.isGoOrder) navigate("/home/order", { replace: true });
@@ -176,54 +170,23 @@ const TransactionDetails = () => {
     else navigate(-1);
   };
 
-  const onViewSession = () => {
-    let nextPage = "charging";
-
-    if (dataSession?.Status === 6) nextPage = "session-details";
-
-    if (dataSession?.ID) navigate(`/${nextPage}/${dataSession?.ID}`);
-    else alert(ERROR_MESSAGE);
-  };
-
   const IconPayment = getIconPaymentMethod(
-    (transactionById?.data?.PaymentMethod || "")
-      .split("_")[0]
-      .toLocaleLowerCase()
+    (data?.PaymentMethod || "").split("_")[0].toLocaleLowerCase()
   );
   const labelPayment = getLabelPaymentMethod(
-    (transactionById?.data?.PaymentMethod || "")
-      .replace("_TU", "")
-      .toLocaleLowerCase()
+    (data?.PaymentMethod || "").replace("_TU", "").toLocaleLowerCase()
   );
 
-  const dataSession: Session | undefined = transactionById?.data?.Session;
-  let dataVoucher: VoucherUsage | undefined = undefined;
-  let isShowVoucher: boolean = false;
-
-  const isShowRefund: boolean =
-    Number(transactionById?.data?.WalletUsedAmount || 0) > 0 &&
-    (status === 3 || status === 4)
-      ? true
-      : false;
   const isShowQris: boolean =
-    transactionById?.data?.GeneratedQRCodeURL &&
-    transactionById?.data?.PaymentMethod === "QRIS_TU"
+    data?.GeneratedQRCodeURL && data?.PaymentMethod === "QRIS_TU"
       ? true
       : false;
-
-  if (dataSession?.VoucherUsages && dataSession?.VoucherUsages.length) {
-    isShowVoucher = true;
-    dataVoucher = dataSession?.VoucherUsages[0];
-  }
-
-  console.log('cek d', transactionById?.data);
-  
 
   return (
     <div className="background-1 py-[14px] px-4">
       <Header type="secondary" title="Detail Transaksi" onDismiss={onDismiss} />
 
-      <LoadingPage loading={transactionById?.loading}>
+      <LoadingPage loading={loading}>
         <div className="flex flex-col gap-2 items-center justify-center my-7 ">
           {status === 1 ? (
             <IcSuccessGreen />
@@ -267,7 +230,7 @@ const TransactionDetails = () => {
                   </span>
 
                   <span className="text-base font-semibold text-primary100">
-                    {`Rp${rupiah(transactionById?.data?.DueAmount)}`}
+                    {`Rp${rupiah(data?.DueAmount)}`}
                   </span>
                 </div>
 
@@ -297,12 +260,12 @@ const TransactionDetails = () => {
                   <IcQrisLabel />
                   {/* <QRCodeCanvas
                     ref={qrRef}
-                    value={transactionById?.data?.GeneratedQRCodeURL || ""}
+                    value={data?.GeneratedQRCodeURL || ""}
                     size={220}
                   /> */}
 
                   <img
-                    src={transactionById?.data?.GeneratedQRCodeURL || ""}
+                    src={data?.GeneratedQRCodeURL || ""}
                     alt="QR"
                     className="w-[220px] h-auto"
                   />
@@ -330,46 +293,30 @@ const TransactionDetails = () => {
           <p className="font-medium mb-2">Informasi Transaksi</p>
           <div className="text-black100/70 row gap-2">
             <p className="text-xs">
-              {moments(transactionById?.data?.CreatedAt).format("DD MMMM YYYY")}
+              {moments(data?.CreatedAt).format("DD MMMM YYYY")}
             </p>
             <p className="text-xs">
-              {moments(transactionById?.data?.CreatedAt).format("HH:mm WIB")}
+              {moments(data?.CreatedAt).format("HH:mm WIB")}
             </p>
-            <p className="text-xs">{`ID${transactionById?.data?.ID}`}</p>
+            <p className="text-xs">{`ID${data?.ID}`}</p>
           </div>
 
           {isShow && (
             <>
-              {transactionType !== 1 && (
-                <BetweenText
-                  labelLeft="Referensi Sesi ID"
-                  labelRight={dataSession?.ID || "-"}
-                  className="pt-4"
-                />
-              )}
-
               <Separator className="my-4" />
               <span className="text-xs text-black70">Detail Transaksi</span>
 
               <BetweenText
                 labelLeft="Tipe Transaksi"
-                labelRight={transactionType === 1 ? "Top Up" : "Pengisian Daya"}
+                labelRight="Topup Day Credit"
                 classNameLabelRight="font-medium text-black100"
                 className="py-2 border-b border-b-black10"
               />
 
-              {/* {transactionType !== 1 && (
-                <BetweenText
-                  labelLeft="Referensi Sesi ID"
-                  labelRight={dataSession?.ID || "-"}
-                  className="py-2 border-b border-b-black10"
-                />
-              )} */}
-
               <BetweenText
                 labelLeft="Metode Pembayaran"
                 labelRight={getLabelPaymentMethod(
-                  (transactionById?.data?.PaymentMethod || "")
+                  (data?.PaymentMethod || "")
                     .replace("_TU", "")
                     .toLocaleLowerCase()
                 )}
@@ -377,64 +324,39 @@ const TransactionDetails = () => {
               />
 
               <BetweenText
-                labelLeft={`Nominal ${
-                  transactionType === 1 ? "Topup" : "Pengecasan"
-                }`}
-                labelRight={`Rp${rupiah(
-                  (transactionById?.data?.NetCharge || 0) -
-                    (transactionById?.data?.PaymentMethodFee || 0)
-                )}`}
+                labelLeft="Nominal Topup"
+                labelRight={`Rp${rupiah(data?.Amount || 0)}`}
                 className="py-2 border-b border-b-black10"
               />
 
               <BetweenText
                 labelLeft="Admin Fee"
-                labelRight={`Rp${rupiah(
-                  transactionById?.data?.PaymentMethodFee
-                )}`}
+                labelRight={`Rp${rupiah(data?.PaymentMethodFee)}`}
                 className="py-2 border-b border-b-black10"
               />
 
-              {/* <BetweenText
-            labelLeft="Service Fee"
-            labelRight={dataSession?.ChargingFee || "-"}
-            className="py-2 border-b border-b-black10"
-          /> */}
-
-              {transactionType !== 1 && (
-                <BetweenText
+              <BetweenText
                   labelLeft="Pembayaran Casan Wallet"
-                  labelRight={`Rp${rupiah(
-                    transactionById?.data?.WalletUsedAmount
-                  )}`}
+                  labelRight={`Rp${rupiah(data?.WalletUsedAmount)}`}
                   className="py-2"
                 />
-              )}
 
               <BetweenText
                 labelLeft="Total Transaksi"
-                labelRight={`Rp${rupiah(transactionById?.data?.DueAmount)}`}
+                labelRight={`Rp${rupiah(data?.DueAmount)}`}
                 className="border-y border-black100 py-2"
                 classNameLabelLeft="text-black100"
                 classNameLabelRight="text-black100 font-medium"
               />
 
-              {isShowRefund && (
-                <BetweenText
-                  labelLeft="Pengembalian Dana"
-                  labelRight={`Rp${rupiah(dataSession?.RefundAmount)}`}
-                  className="my-2"
-                />
-              )}
-
-              <div className="flex justify-end mt-5">
+              {/* <div className="flex justify-end mt-5">
                 <span
                   onClick={() => setOpenPriceDetails(true)}
                   className="font-medium text-primary100 cursor-pointer"
                 >
                   {"Lihat Rincian ->"}
                 </span>
-              </div>
+              </div> */}
             </>
           )}
 
@@ -460,74 +382,30 @@ const TransactionDetails = () => {
                   </div>
                   <div>
                     <Separator className="my-6" />
-
-                    {transactionType !== 1 ? (
-                      <div
-                        onClick={onViewSession}
-                        className="row gap-2 center cursor-pointer"
-                      >
-                        <span className="text-primary100">Lihat Sesi</span>
-                        <IcRightCircleGreen />
-                      </div>
-                    ) : (
-                      <div>
-                        <Button
-                          label="Kembali ke Beranda"
-                          onClick={() =>
-                            navigate("/home/index", { replace: true })
-                          }
-                        />
-                      </div>
-                    )}
+                    <div>
+                      <Button
+                        label="Kembali ke Beranda"
+                        onClick={() =>
+                          navigate("/home/index", { replace: true })
+                        }
+                      />
+                    </div>
                   </div>
                 </>
               ) : isShowQris ? (
-                <>
-                  <div className="between-x gap-6">
-                    {transactionType !== 1 && (
-                      <Button
-                        type="secondary"
-                        label="Cancel"
-                        onClick={() => {
-                          if (dataSession?.ID)
-                            dispatch(fetchCancelSession(dataSession?.ID));
-                        }}
-                      />
-                    )}
-                    <Button
-                      label="Unduh QRIS"
-                      onClick={() => handleSave(true)}
-                    />
-                  </div>
-                </>
+                <Button label="Unduh QRIS" onClick={() => handleSave(true)} />
               ) : (
-                <div className="between-y gap-4">
-                  <button
-                    onClick={() =>
-                      window.open(
-                        transactionById?.data?.DeepLinkRedirectURL,
-                        "_blank"
-                      )
-                    }
-                    className="btn-secondary w-full h-[38px] flex gap-1 border rounded-full text-sm justify-center items-center flex drop-shadow"
-                  >
-                    <span>Lanjutkan Pembayaran</span>
-                    <span className="font-semibold">{`Rp${rupiah(
-                      transactionById?.data?.DueAmount
-                    )}`}</span>
-                  </button>
-
-                  {transactionType !== 1 && (
-                    <Button
-                      type="danger"
-                      label="Cancel"
-                      onClick={() => {
-                        if (dataSession?.ID)
-                          dispatch(fetchCancelSession(dataSession?.ID));
-                      }}
-                    />
-                  )}
-                </div>
+                <button
+                  onClick={() =>
+                    window.open(data?.DeepLinkRedirectURL, "_blank")
+                  }
+                  className="btn-secondary w-full h-[38px] flex gap-1 border rounded-full text-sm justify-center items-center flex drop-shadow"
+                >
+                  <span>Lanjutkan Pembayaran</span>
+                  <span className="font-semibold">{`Rp${rupiah(
+                    data?.DueAmount
+                  )}`}</span>
+                </button>
               )}
             </>
           )}
@@ -537,22 +415,22 @@ const TransactionDetails = () => {
       </LoadingPage>
 
       {/* MODAL */}
-      {openPriceDetails && (
+      {/* {openPriceDetails && (
         <ModalPriceDetails
           isOpen={openPriceDetails}
           dataPriceSetting={dataSession?.PriceSetting}
           dataDevice={dataSession?.Device}
           dataVoucher={undefined}
-          dataUser={transactionById?.data?.User}
-          price={transactionById?.data?.TotalFare || 0}
+          dataUser={data?.User}
+          price={data?.TotalFare || 0}
           power={dataSession?.PaidKWH || 0}
           duration={dataSession?.Duration || 0}
           onClose={() => setOpenPriceDetails(false)}
         />
-      )}
+      )} */}
       {/* END MODAL */}
     </div>
   );
 };
 
-export default TransactionDetails;
+export default TransactionRTODetails;

@@ -19,6 +19,7 @@ import PaymentSuccess from "./PaymentSuccess";
 import PrivacyPolice from "./PrivacyPolice";
 import ProfileNew from "./ProfileNew";
 import ProgressDetails from "./ProgressDetails";
+import TransactionRTODetails from "./TransactionRTODetails";
 import RentToBuy from "./RentToBuy";
 import RentalHistory from "./RentalHistory";
 import Scan from "./Scan";
@@ -87,6 +88,7 @@ export {
   VoucherDetails,
   Withdraw,
   WithdrawalDetails,
-  WithdrawalHistory
+  WithdrawalHistory,
+  TransactionRTODetails
 };
 

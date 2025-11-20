@@ -60,4 +60,31 @@ declare global {
     rtocreditID: number;
     rtoid: number;
   };
+
+  type RTOTransactionProps = {
+    ID: number;
+    UserID: number;
+    User: UserProps;
+    RTOCreditID: number;
+    RTOCredit: RTOCreditProps;
+    RTOID: number;
+    RTO: RTOProps;
+    CreditAmout: number;
+    Amount: number;
+    DueAmount: number;
+    WalletUsedAmount: number;
+    Deposit: number;
+    PaymentMethodFee: number;
+    PaymentMethod: string;
+    PaymentProof: string;
+    Status: number;
+    Type: number;
+    DeepLinkRedirectURL: string;
+    GeneratedQRCodeURL: string;
+    CreatedAt: string;
+    UpdatedAt: string;
+    ExpiredAt: string | null;
+    DeletedAt: string | null;
+    CreditHistory: CreditHistoryProps;
+  };
 }
