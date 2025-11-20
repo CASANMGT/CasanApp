@@ -216,9 +216,6 @@ const TransactionDetails = () => {
     dataVoucher = dataSession?.VoucherUsages[0];
   }
 
-  console.log('cek d', transactionById?.data);
-  
-
   return (
     <div className="background-1 py-[14px] px-4">
       <Header type="secondary" title="Detail Transaksi" onDismiss={onDismiss} />

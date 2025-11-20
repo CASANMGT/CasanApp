@@ -9,6 +9,7 @@ import ILInstruction4 from "./instruction4.png";
 import ILLogoSlogan from "./logo-slogan.png";
 import ILLogo from "./logo.png";
 import ILNoImage from "./no-image.png";
+import ILNotFound from "./not-found.svg?react";
 import ILOrderEmpty from "./order-empty.png";
 import ILPin from "./pin.png";
 
@@ -24,6 +25,7 @@ export {
   ILLogo,
   ILLogoSlogan,
   ILNoImage,
+  ILNotFound,
   ILOrderEmpty,
   ILPin
 };

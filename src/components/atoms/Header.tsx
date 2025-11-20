@@ -14,7 +14,14 @@ import { CUSTOMER_SERVICES } from "../../common";
 import { FiInfo } from "react-icons/fi";
 
 interface HeaderProps {
-  type?: "primary" | "secondary" | "scan" | "cancel" | "charging" | "info";
+  type?:
+    | "primary"
+    | "secondary"
+    | "scan"
+    | "cancel"
+    | "charging"
+    | "info"
+    | "booking";
   title: string;
   isActive?: boolean;
   className?: string;
@@ -96,13 +103,15 @@ const Header: React.FC<HeaderProps> = ({
                         : "opacity-0 translate-y-2 invisible"
                     }`}
                   >
-                    <div onClick={onPress} className="row gap-2">
-                      <IcClose className="text-red" />
+                    {type !== "booking" && (
+                      <div onClick={onPress} className="row gap-2">
+                        <IcClose className="text-red" />
 
-                      <span className="text-red whitespace-nowrap">
-                        Batalkan Sesi
-                      </span>
-                    </div>
+                        <span className="text-red whitespace-nowrap">
+                          Batalkan Sesi
+                        </span>
+                      </div>
+                    )}
 
                     <div
                       className="row gap-2"

@@ -87,4 +87,21 @@ declare global {
     DeletedAt: string | null;
     CreditHistory: CreditHistoryProps;
   };
+
+  type CreditHistoryProps = {
+    ID: number;
+    TransactionID: number;
+    Transaction: any;
+    RTOID: number;
+    RTO: RTOProps;
+    Date: string;
+    Type: number;
+    Change: number;
+    BalanceAfter: number;
+    Reference: string;
+    Method: string;
+    CreatedAt: string;
+    UpdatedAt: string;
+    DeletedAt: string | null;
+  };
 }

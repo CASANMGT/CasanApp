@@ -11,9 +11,6 @@ const Tabs: React.FC<TabProps> = ({ active, type, tabs, onSelect }) => {
   const [activeTab, setActiveTab] = useState(tabs[0].id);
 
   useEffect(() => {
-    console.log('cek ta', tabs);
-    console.log('cek active', active);
-    
     if (active !== null && active !== undefined) setActiveTab(active);
   }, [active]);
 

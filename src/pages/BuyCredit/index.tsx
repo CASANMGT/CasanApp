@@ -115,6 +115,6 @@ export const PROGRAM_TABS = ({ data }: { data?: RTOProps | undefined }) => [
   },
   {
     label: "Riwayat",
-    content: <History />,
+    content: <History data={data}/>,
   },
 ];

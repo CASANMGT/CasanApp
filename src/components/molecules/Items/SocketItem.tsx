@@ -42,8 +42,7 @@ const SocketItem: React.FC<SocketItemProps> = ({ data, isActive, onClick }) => {
   }, [data]);
 
   const onSelect = () => {
-    onClick(); // dummy
-    // if (data?.IsCharging === 0) onClick();
+    if (data?.IsCharging === 0) onClick();
   };
 
   return (

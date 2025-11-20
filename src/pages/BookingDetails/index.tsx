@@ -12,7 +12,7 @@ import { TbRoute } from "react-icons/tb";
 import { WiTime4 } from "react-icons/wi";
 import { useNavigate, useParams } from "react-router-dom";
 import { ILNoImage, ILPin } from "../../assets";
-import { CUSTOMER_SERVICES, DaysOfWeek, ERROR_MESSAGE } from "../../common";
+import { DaysOfWeek, ERROR_MESSAGE } from "../../common";
 import {
   BetweenText,
   Button,
@@ -22,7 +22,7 @@ import {
   ModalVehicleDetails,
   Separator,
 } from "../../components";
-import { moments, openWhatsApp, rupiah } from "../../helpers";
+import { moments, openGoogleMaps, openWhatsApp, rupiah } from "../../helpers";
 import { Api } from "../../services";
 import Container from "./Container";
 import Status from "./Status";
@@ -44,7 +44,11 @@ const BookingDetails = () => {
         });
 
         setData(res?.data);
-      } catch (error) {
+      } catch (error: any) {
+        const err = error?.response?.data?.message || "";
+
+        if (err === "record not found") navigate("/home/index");
+
         alert(ERROR_MESSAGE);
       } finally {
         setLoading(false);
@@ -73,7 +77,7 @@ const BookingDetails = () => {
   return (
     <div className="background-1 overflow-hidden justify-between flex flex-col">
       <Header
-        type="secondary"
+        type="booking"
         title="Detail Booking"
         onDismiss={() => navigate(-1)}
         onPress={() => {}}
@@ -83,7 +87,7 @@ const BookingDetails = () => {
         <div className="flex flex-col flex-1 overflow-hidden relative">
           <div className="flex-1 overflow-auto scrollbar-none space-y-3 px-4 pb-7 pt-6 ">
             <Status status={status} />
-            {(status === 3 || status === 4 || status === 7) && (
+            {(status === 2 || status === 3 || status === 4 || status === 7) && (
               <Container className="">
                 <div className="between-x mb-2">
                   <span className="text-xs text-blackBold">
@@ -99,7 +103,7 @@ const BookingDetails = () => {
 
                 <div className="row gap-1.5 mb-1">
                   <span className="text-blackBold font-semibold">
-                    {(dataDayCredit?.DayCount || 0) * (data?.Payment || 0)}
+                    {data?.CreditLeft || 0}
                   </span>
                   <span className="text-xs text-black90">Kredit Hari</span>
                 </div>
@@ -112,19 +116,21 @@ const BookingDetails = () => {
                     }}
                   />
                 </div>
-                <div className="row gap-1.5 mt-1">
-                  <span className="text-xs text-black70">Jatuh Tempo</span>
-                  <span className="text-xs ">
-                    {moments(data?.NextPaymentDate || undefined)
-                      .add(1, "days")
-                      .format("DD MMMM YYYY")}
-                  </span>
-                  {(status === 4 || status === 7) && (
-                    <span className="text-red text-xs font-medium ml-2">
-                      Terlambat 3 Hari
+                {status !== 2 && (
+                  <div className="row gap-1.5 mt-1">
+                    <span className="text-xs text-black70">Jatuh Tempo</span>
+                    <span className="text-xs ">
+                      {moments(data?.NextPaymentDate || undefined)
+                        .add(1, "days")
+                        .format("DD MMMM YYYY")}
                     </span>
-                  )}
-                </div>
+                    {(status === 4 || status === 7) && (
+                      <span className="text-red text-xs font-medium ml-2">
+                        Terlambat 3 Hari
+                      </span>
+                    )}
+                  </div>
+                )}
 
                 <Separator className="my-3" />
 
@@ -159,9 +165,19 @@ const BookingDetails = () => {
             <Container className="mt-2">
               <div className="row gap-4 ">
                 <div className="flex-1 flex flex-col gap-1">
-                  <span className="text-blackBold font-semibold">
+                  <p className="text-blackBold font-semibold">
                     {data?.Vehicle?.VehicleModel?.ModelName || "-"}
-                  </span>
+
+                    {(status === 3 ||
+                      status === 4 ||
+                      status === 5 ||
+                      status === 6 ||
+                      status === 7) && (
+                      <span className="text-black70 font-semibold">{` (${
+                        data?.LicensePlate || "-"
+                      })`}</span>
+                    )}
+                  </p>
 
                   <span className="text-black70 text-xs">{`${dataVehicleModel?.BatteryCapacity}W ${dataVehicleModel?.Volt}V ${dataVehicleModel?.Ampere}Ah (jarak ${dataVehicleModel?.Range}km)`}</span>
 
@@ -232,35 +248,57 @@ const BookingDetails = () => {
             </Container>
             {(status === 2 || status === 8 || status === 10) && (
               <Container className="flex flex-col gap-2">
-                <span className="text-blackBold">Informasi Pengambilan</span>
+                <span className="text-blackBold">
+                  Informasi{" "}
+                  {status === 8 || status === 10
+                    ? "Pengembalian"
+                    : "Pengambilan"}
+                </span>
 
                 <div className="row gap-1.5">
                   <span className="text-xs text-black90">ID</span>
                   <span className="text-xs text-blackBold font-medium">
-                    {dataStation?.ID}
+                    {id}
                   </span>
                 </div>
 
                 <Separator className="my-1" />
 
                 <div className="flex gap-4">
-                  <div className="space-y-2">
+                  <div className="space-y-2 flex flex-col">
                     <div className="row gap-1">
                       <MdOutlineStorefront
                         size={16}
                         className="text-primary100"
                       />
                       <span className="text-primary100 text-xs font-medium">
-                        Alamat Pengambilan
+                        Alamat{" "}
+                        {status === 8 || status === 10
+                          ? "Pengembalian"
+                          : "Pengambilan"}
                       </span>
                     </div>
+
+                    <span className="text-xs text-blackBold font-medium">
+                      {dataStation?.Name || "-"}
+                    </span>
 
                     <span className="text-xs text-black90">
                       {dataStation?.Location?.Address || "-"}
                     </span>
                   </div>
 
-                  <img src={ILPin} alt="Pin" className="w-16 h-16 rounded-sm" />
+                  <img
+                    src={ILPin}
+                    alt="Pin"
+                    onClick={() =>
+                      openGoogleMaps(
+                        dataStation?.Location?.Latitude || 0,
+                        dataStation?.Location?.Longitude || 0
+                      )
+                    }
+                    className="w-16 h-16 rounded-sm cursor-pointer"
+                  />
                 </div>
 
                 {status === 2 && (
@@ -298,12 +336,12 @@ const BookingDetails = () => {
                       </span>
 
                       <div
-                        onClick={() => openWhatsApp(CUSTOMER_SERVICES)}
+                        onClick={() => openWhatsApp(dataStation?.Phone || "")}
                         className="row gap-1.5 px-3 py-1.5 bg-primary10 border border-primary100 rounded-full cursor-pointer"
                       >
                         <MdPhoneInTalk size={16} className="text-primary100" />
                         <span className="text-xs text-primary100 font-medium">
-                          Sales (Rere)
+                          Dealer
                         </span>
                       </div>
                     </div>
@@ -353,9 +391,7 @@ const BookingDetails = () => {
                 />
                 <BetweenText
                   labelLeft="Deposit"
-                  labelRight={`Rp${rupiah(
-                    data?.IsDeposited ? 0 : data?.Deposit
-                  )}`}
+                  labelRight={`Rp${rupiah(data?.Deposit || 0)}`}
                   classNameLabelRight="font-semibold"
                   className={`p-3 bg-baseLightGray ${
                     status === 3 && "rounded-b"
@@ -372,7 +408,7 @@ const BookingDetails = () => {
                 <BetweenText
                   labelLeft="Libur Pembayaran"
                   labelRight={`Setiap ${
-                    data?.PauseDayType === 1 ? "Hari" : "Minggu"
+                    data?.PauseDayType === 1 ? "Hari" : "Tanggal"
                   } ${
                     data?.PauseDayType === 1
                       ? DaysOfWeek[Number(data?.PauseDay || 0)]
@@ -452,7 +488,7 @@ const BookingDetails = () => {
           </div>
 
           {/* FOOTER */}
-          {status === 3 && (
+          {false && (
             <div className="container-button-footer">
               <Button
                 buttonType="lg"

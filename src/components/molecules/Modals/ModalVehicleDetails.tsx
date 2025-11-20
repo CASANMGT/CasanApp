@@ -45,15 +45,15 @@ const ModalVehicleDetails: React.FC<ModalProps> = ({
         </div>
 
         <BetweenText
-          labelLeft="Spesifikasi Baterai"
-          labelRight={"-"}
+          labelLeft="No Mesin"
+          labelRight={dataVehicle?.EngineNumber || "-"}
           classNameLabelRight="font-semibold"
           className="p-3 rounded-t bg-baseLightGray"
         />
 
         <BetweenText
           labelLeft="No Rangka"
-          labelRight={data?.FrameNumber || "-"}
+          labelRight={dataVehicle?.FrameNumber || "-"}
           classNameLabelRight="font-semibold"
           className="p-3"
         />

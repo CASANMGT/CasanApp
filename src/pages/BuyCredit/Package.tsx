@@ -45,7 +45,7 @@ const Package: React.FC<Props> = ({ data }) => {
   };
 
   return (
-    <div className="bg-white flex-1 h-full px-4 py-6">
+    <div className="bg-[#F5F8F9]/24 flex-1 h-full px-4 py-6">
       <p className="text-base font-semibold mb-4">Pilih Paket Pembayaran</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
