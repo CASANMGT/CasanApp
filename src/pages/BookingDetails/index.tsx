@@ -11,9 +11,10 @@ import { PiWarningCircleFill } from "react-icons/pi";
 import { TbRoute } from "react-icons/tb";
 import { WiTime4 } from "react-icons/wi";
 import { useNavigate, useParams } from "react-router-dom";
-import { ILNoImage, ILPin } from "../../assets";
+import { IcInfoCircleRed, ILNoImage, ILPin } from "../../assets";
 import { DaysOfWeek, ERROR_MESSAGE } from "../../common";
 import {
+  AlertModal,
   BetweenText,
   Button,
   Header,
@@ -34,6 +35,7 @@ const BookingDetails = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<RTOProps>();
   const [openVehicleDetails, setOpenVehicleDetails] = useState<boolean>(false);
+  const [openPayBills, setOpenPayBills] = useState<boolean>(false);
 
   useEffect(() => {
     const getData = async () => {
@@ -58,6 +60,11 @@ const BookingDetails = () => {
       getData();
     } else navigate(-1);
   }, []);
+
+  const onPayBills = async () => {
+    try {
+    } catch (error) {}
+  };
 
   const status = data?.Status || 0;
   const dataVehicle: VehicleProps | undefined = data?.Vehicle;
@@ -124,6 +131,13 @@ const BookingDetails = () => {
                         .add(1, "days")
                         .format("DD MMMM YYYY")}
                     </span>
+                    {(status === 3 ||
+                      status === 4 ||
+                      status === 7 ||
+                      status === 5) && (
+                      <span className="text-xs">{data?.CutOffTime}</span>
+                    )}
+
                     {(status === 4 || status === 7) && (
                       <span className="text-red text-xs font-medium ml-2">
                         Terlambat 3 Hari
@@ -154,7 +168,8 @@ const BookingDetails = () => {
                         </div>
 
                         <span className="text-blackBold font-semibold">{`Rp${rupiah(
-                          0
+                          (data?.OverdueCount || 0) *
+                            (dataDayCredit?.Price || 1)
                         )}`}</span>
                       </>
                     )}
@@ -488,12 +503,14 @@ const BookingDetails = () => {
           </div>
 
           {/* FOOTER */}
-          {false && (
+          {(status === 4 || status === 7) && (
             <div className="container-button-footer">
               <Button
-                buttonType="lg"
-                label="Ajukan Kembali"
-                onClick={() => {}}
+                label="Konfirmasi Bayar Tagihan"
+                disabled={
+                  (data?.CreditLeft || 0) - (data?.OverdueCount || 0) < 0
+                }
+                onClick={() => setOpenPayBills(true)}
               />
             </div>
           )}
@@ -506,6 +523,23 @@ const BookingDetails = () => {
           isOpen={openVehicleDetails}
           data={dataVehicle}
           onClose={() => setOpenVehicleDetails(false)}
+        />
+      )}
+
+      {openPayBills && (
+        <AlertModal
+          visible={openPayBills}
+          icon={IcInfoCircleRed}
+          title="Konfirmasi Bayar Tagihan"
+          description={`Bayar tagihan ${
+            data?.OverdueCount
+          } hari dengan Kredit Harian. Sisa kredit setelahnya: ${
+            (data?.CreditLeft || 0) - (data?.OverdueCount || 0)
+          } hari.`}
+          labelButtonLeft="Bayar Tagihan"
+          labelButtonRight="Batal"
+          onDismiss={() => setOpenPayBills(false)}
+          onClick={onPayBills}
         />
       )}
       {/* END MODALS */}

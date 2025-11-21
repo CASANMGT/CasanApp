@@ -29,10 +29,13 @@ const BuyCredit = () => {
 
   useEffect(() => {
     if (addTransactionRTO?.data) {
-      navigate(`/transaction-rto-history/details/${addTransactionRTO?.data?.ID}`, {
-        replace: true,
-        state: { isGoOrder: true },
-      });
+      navigate(
+        `/transaction-rto-history/details/${addTransactionRTO?.data?.ID}`,
+        {
+          replace: true,
+          state: { isGoOrder: true },
+        }
+      );
 
       dispatch(resetDataAddTransactionRTO());
     }
@@ -81,9 +84,7 @@ const BuyCredit = () => {
         <div className="space-y-1">
           <span className="text-white text-xs font-semibold">Saldo Kredit</span>
           <div className="row gap-1.5 text-white">
-            <span className="2xl font-bold">
-              {(dataDayCredit?.DayCount || 0) * (data?.Payment || 0)}
-            </span>
+            <span className="2xl font-bold">{data?.CreditLeft || 0}</span>
             <span className="font-medium">Kredit Hari</span>
           </div>
 
@@ -94,8 +95,9 @@ const BuyCredit = () => {
             <span className="text-xs font-medium">
               {moments(data?.NextPaymentDate || undefined)
                 .add(1, "days")
-                .format("DD MMMM YYYY")}
+                .format("dddd, DD MMMM YYYY")}
             </span>
+            <span className="text-xs font-medium">{data?.CutOffTime}</span>
           </div>
         </div>
       </div>
@@ -115,6 +117,6 @@ export const PROGRAM_TABS = ({ data }: { data?: RTOProps | undefined }) => [
   },
   {
     label: "Riwayat",
-    content: <History data={data}/>,
+    content: <History data={data} />,
   },
 ];

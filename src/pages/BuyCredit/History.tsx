@@ -69,6 +69,8 @@ const History: React.FC<Props> = ({ data }) => {
 
   const isShow = dataCredit?.data?.length ? true : false;
 
+  console.log("cek 1", dataCredit?.data);
+
   return (
     <LoadingPage loading={loading}>
       <div className=" px-4 py-6">
@@ -82,16 +84,27 @@ const History: React.FC<Props> = ({ data }) => {
                 {/* Left section */}
                 <div>
                   <p className="text-[10px] text-black100 mb-1">
-                    ID Transaksi {item?.TransactionID}
+                    {item?.Type === 1
+                      ? `ID Transaksi ${item?.TransactionID}`
+                      : `Cicilan ${item?.Reference}`}
                   </p>
                   <p className="font-semibold text-base">
-                    Top-up
-                    <span className="text-green font-semibold">
-                      {` +${item?.Change || 0} Days`}
+                    {item?.Type === 1 ? "Top-up" : "Cicilan"}
+                    <span
+                      className={`font-semibold text-${
+                        item?.Type === 1 ? "green" : "red"
+                      }`}
+                    >
+                      {` ${item?.Type === 1 ? "+" : "-"}${
+                        item?.Change || 0
+                      } Hari`}
                     </span>
                   </p>
                   <p className="text-xs text-black90 mt-1">
-                    {moments(item?.CreatedAt).format("D MMM YYYY HH:mm")}
+                    {moments(item?.CreatedAt).format("D MMM YYYY")}{" "}
+                    <span className="text-xs text-black70">
+                      {moments(item?.CreatedAt).format("HH:mm")}
+                    </span>
                   </p>
                 </div>
 
