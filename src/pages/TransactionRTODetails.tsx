@@ -1,6 +1,6 @@
 import html2canvas from "html2canvas";
 import { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   NavigateFunction,
   useLocation,
@@ -10,29 +10,21 @@ import {
 import {
   IcLineDown,
   IcQrisLabel,
-  IcRightCircleGreen,
   IcSaveGreen,
   IcShareGreen2,
   IcSuccessGreen,
   IcTimerCircle,
 } from "../assets";
-import { ERROR_MESSAGE, VoucherUsage } from "../common";
+import { ERROR_MESSAGE } from "../common";
 import {
   BetweenText,
   Button,
   CountdownTimer,
   Header,
   LoadingPage,
-  ModalPriceDetails,
   Separator,
 } from "../components";
-import {
-  fetchCancelSession,
-  hideLoading,
-  resetDataAddSession,
-  resetDataCancelSession,
-  showLoading,
-} from "../features";
+import { resetDataAddSession } from "../features";
 import {
   getIconPaymentMethod,
   getLabelPaymentMethod,
@@ -40,7 +32,7 @@ import {
   rupiah,
 } from "../helpers";
 import { Api } from "../services";
-import { AppDispatch, RootState } from "../store";
+import { AppDispatch } from "../store";
 
 const TransactionRTODetails = () => {
   const qrRef = useRef<HTMLCanvasElement | null>(null);
@@ -49,7 +41,9 @@ const TransactionRTODetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
+
   const [loading, setLoading] = useState(false);
+  const [loadingCancel, setLoadingCancel] = useState(false);
   const [data, setData] = useState<RTOTransactionProps>();
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isShow, setIsShow] = useState<boolean>(false);
@@ -168,6 +162,16 @@ const TransactionRTODetails = () => {
     if (location?.state?.isGoOrder) navigate("/home/order", { replace: true });
     else if (location?.state?.isGoHome) navigate("/home", { replace: true });
     else navigate(-1);
+  };
+
+  const onCancel = async () => {
+    try {
+      setLoadingCancel(true);
+    } catch (error) {
+      alert(ERROR_MESSAGE);
+    } finally {
+      setLoadingCancel(false);
+    }
   };
 
   const IconPayment = getIconPaymentMethod(
@@ -336,10 +340,10 @@ const TransactionRTODetails = () => {
               />
 
               <BetweenText
-                  labelLeft="Pembayaran Casan Wallet"
-                  labelRight={`Rp${rupiah(data?.WalletUsedAmount)}`}
-                  className="py-2"
-                />
+                labelLeft="Pembayaran Casan Wallet"
+                labelRight={`Rp${rupiah(data?.WalletUsedAmount)}`}
+                className="py-2"
+              />
 
               <BetweenText
                 labelLeft="Total Transaksi"
@@ -395,17 +399,27 @@ const TransactionRTODetails = () => {
               ) : isShowQris ? (
                 <Button label="Unduh QRIS" onClick={() => handleSave(true)} />
               ) : (
-                <button
-                  onClick={() =>
-                    window.open(data?.DeepLinkRedirectURL, "_blank")
-                  }
-                  className="btn-secondary w-full h-[38px] flex gap-1 border rounded-full text-sm justify-center items-center flex drop-shadow"
-                >
-                  <span>Lanjutkan Pembayaran</span>
-                  <span className="font-semibold">{`Rp${rupiah(
-                    data?.DueAmount
-                  )}`}</span>
-                </button>
+                <div className="space-y-4">
+                  <button
+                    onClick={() => {
+                      if (!loadingCancel)
+                        window.open(data?.DeepLinkRedirectURL, "_blank");
+                    }}
+                    className="btn-secondary w-full h-[38px] flex gap-1 border rounded-full text-sm justify-center items-center flex drop-shadow"
+                  >
+                    <span>Lanjutkan Pembayaran</span>
+                    <span className="font-semibold">{`Rp${rupiah(
+                      data?.DueAmount
+                    )}`}</span>
+                  </button>
+
+                  <Button
+                    type="light-red"
+                    label="Cancel"
+                    loading={loadingCancel}
+                    onClick={onCancel}
+                  />
+                </div>
               )}
             </>
           )}

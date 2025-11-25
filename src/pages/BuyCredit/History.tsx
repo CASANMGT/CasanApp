@@ -69,8 +69,6 @@ const History: React.FC<Props> = ({ data }) => {
 
   const isShow = dataCredit?.data?.length ? true : false;
 
-  console.log("cek 1", dataCredit?.data);
-
   return (
     <LoadingPage loading={loading}>
       <div className=" px-4 py-6">

@@ -1,31 +1,26 @@
 import { useEffect, useMemo, useState } from "react";
-import { FaAngleRight, FaChevronRight } from "react-icons/fa6";
-import { IoTime } from "react-icons/io5";
+import { FaChevronRight } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {
-  IcBike,
-  IcCartGreen,
-  IcMotorcycleGreen,
-  IcPinWhite,
-  ILNoImage,
-} from "../assets";
-import { GeocodeResult, LIMIT_LIST } from "../common";
+import { IcCartGreen, IcMotorcycleGreen, IcPinWhite } from "../../assets";
+import { GeocodeResult, LIMIT_LIST } from "../../common";
 import {
   Carousel,
   ChargingLocationCard,
   LoadingPage,
   ModalCarouselDetails,
   OngoingItem,
-} from "../components";
-import { useAuth } from "../context/AuthContext";
+} from "../../components";
+import { useAuth } from "../../context/AuthContext";
 import {
   fetchChargingStation,
   fetchOnGoingSessionList,
   setFromGlobal,
-} from "../features";
-import { getCurrentLocation, getGeoCode } from "../services/ApiAddress";
-import { AppDispatch, RootState } from "../store";
+} from "../../features";
+import { Api } from "../../services";
+import { getCurrentLocation, getGeoCode } from "../../services/ApiAddress";
+import { AppDispatch, RootState } from "../../store";
+import StatusRTO from "./StatusRTO";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -40,7 +35,9 @@ const Home = () => {
     (state: RootState) => state.onGoingSessionList
   );
 
+  const [loadingRTO, setLoadingRTO] = useState(false);
   const [page, setPage] = useState(1);
+  const [dataRTO, setDataRTO] = useState<RTOProps>();
   const [typeVehicle, setTypeVehicle] = useState<string | number>("bike");
   const [place, setPlace] = useState<string>("terdekat");
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
@@ -49,7 +46,10 @@ const Home = () => {
   useEffect(() => {
     setPage(1);
     getLocation();
-    if (isAuthenticated) getOngoing();
+    if (isAuthenticated) {
+      getOngoing();
+      getDataRTO();
+    }
   }, []);
 
   useEffect(() => {
@@ -91,6 +91,21 @@ const Home = () => {
       is_finish: 0,
     };
     dispatch(fetchOnGoingSessionList(body));
+  };
+
+  const getDataRTO = async () => {
+    try {
+      setLoadingRTO(true);
+      const res = await Api.get({
+        url: "rtos",
+        params: { statuses: "1,2,3,4,5,8,9,11", page: 1, limit: 1 },
+      });
+
+      setDataRTO(res?.data?.[0] ?? undefined);
+    } catch (error) {
+    } finally {
+      setLoadingRTO(false);
+    }
   };
 
   const onLoadMore = () => {
@@ -150,7 +165,7 @@ const Home = () => {
 
           {/* CAROUSEL */}
           {/* dummy */}
-          {false && <Carousel slides={slidesDummy} />}
+          {false && <Carousel slides={[]} />}
 
           {/* ONGOING */}
           {isShowOngoing && (
@@ -231,34 +246,11 @@ const Home = () => {
         )}
 
         {/* STATUS RTO */}
-        {/* dummy */}
-        {false && (
-          <div className="bg-white rounded-lg p-4 mt-4">
-            <span className="text-base font-semibold">Status RTO</span>
-
-            <div
-              onClick={() => navigate("/booking-details/1")}
-              className="row gap-4 cursor-pointer mt-6"
-            >
-              <img
-                src={ILNoImage}
-                alt="photo"
-                className="w-11 h-11 rounded-md border border-black10"
-              />
-
-              <div className="row gap-1 flex-1">
-                <div className="rounded-full bg-lightOrange w-6 h-6 center">
-                  <IoTime size={16} className="text-orange" />
-                </div>
-
-                <span className="text-blackBold font-semibold">
-                  Menunggu Verifikasi
-                </span>
-              </div>
-
-              <FaAngleRight className="text-black50" />
-            </div>
-          </div>
+        {dataRTO?.ID && (
+          <StatusRTO
+            data={dataRTO}
+            onClick={() => navigate(`/booking-details/${dataRTO?.ID}`)}
+          />
         )}
 
         {/* CHARGING LIST */}
@@ -309,49 +301,3 @@ const Home = () => {
 };
 
 export default Home;
-
-const optionsPlace: OptionsProps[] = [
-  { name: "Terdekat", value: "terdekat" },
-  { name: "Termurah", value: "termurah" },
-  { name: "Tersedia", value: "tersedia" },
-];
-
-const optionsTypeVehicle: OptionsProps[] = [
-  { name: "Motor", value: "bike", icon: IcBike },
-  // { name: "Mobile", value: "car", icon: IcCar },
-];
-
-const slidesDummy = [
-  {
-    id: 1,
-    image: "",
-    title: "Carousel 1",
-    details: {
-      validityPeriod: "4 Agustus 2025 00:00 - 31 Agustus 2025 2025 23:59",
-      termsCondition: [
-        "Voucher berlaku untuk pengguna baru tanpa ada minimal charging.",
-        "Diskon hanya berlaku satu kali per transaksi pengecasan.",
-        "Tidak dapat digabungkan dengan promo atau voucher lain.",
-        "Voucher tidak dapat diuangkan atau dikembalikan dalam bentuk uang.",
-        "Berlaku di seluruh stasiun pengecasan resmi yang bekerja sama dengan aplikasi.",
-        "Pihak penyedia layanan berhak membatalkan voucher apabila ditemukan kecurangan atau pelanggaran terhadap syarat & ketentuan penggunaan.",
-      ],
-    },
-  },
-  {
-    id: 1,
-    image: "",
-    title: "Carousel 2",
-    details: {
-      validityPeriod: "4 Agustus 2025 00:00 - 31 Agustus 2025 2025 23:59",
-      termsCondition: [
-        "Voucher berlaku untuk pembayaran dengan minimal charging Rp5.000.",
-        "Tunjukkan voucher ke kasir untuk penukaran maksimal 1x24 jam.",
-        "Tidak dapat digabungkan dengan promo atau voucher lain.",
-        "Voucher tidak dapat diuangkan atau dikembalikan dalam bentuk uang.",
-        "Berlaku khusus di stasiun pengecasan Warkop Cerdig.",
-        "Pihak penyedia layanan berhak membatalkan voucher apabila ditemukan kecurangan atau pelanggaran terhadap syarat & ketentuan penggunaan.",
-      ],
-    },
-  },
-];

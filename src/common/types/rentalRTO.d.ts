@@ -40,6 +40,7 @@ declare global {
     isFromApprove?: boolean;
     Program: ProgramProps;
     ProgramID: number;
+    RTOTransactions: RTOTransactionProps[]|null;
   };
 
   type RTOCreditProps = {
@@ -53,11 +54,11 @@ declare global {
   };
 
   type AddTransactionRTOBodyProps = {
-    deposit: number;
+    deposit?: number;
     paymentMethod: string;
     paymentProof: string;
     reference: string;
-    rtocreditID: number;
+    rtocreditID?: number;
     rtoid: number;
   };
 
