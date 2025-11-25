@@ -41,7 +41,6 @@ const TransactionRTODetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
-
   const [loading, setLoading] = useState(false);
   const [loadingCancel, setLoadingCancel] = useState(false);
   const [data, setData] = useState<RTOTransactionProps>();
@@ -167,6 +166,11 @@ const TransactionRTODetails = () => {
   const onCancel = async () => {
     try {
       setLoadingCancel(true);
+      await Api.patch({
+        url: `rto-transactions/cancel/${data?.ID}`,
+      });
+
+      getData();
     } catch (error) {
       alert(ERROR_MESSAGE);
     } finally {
