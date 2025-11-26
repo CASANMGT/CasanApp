@@ -32,6 +32,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import { fetchMyUser } from "../../features";
 import { useSelector } from "react-redux";
+import { IoTime } from "react-icons/io5";
 
 const BookingDetails = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -152,11 +153,15 @@ const BookingDetails = () => {
         <div className="flex flex-col flex-1 overflow-hidden relative">
           <div className="flex-1 overflow-auto scrollbar-none space-y-3 px-4 pb-7 pt-6 ">
             <Status status={status} />
-            {(status === 2 || status === 3 || status === 4 || status === 7) && (
+            {(status === 2 ||
+              status === 3 ||
+              status === 4 ||
+              status === 5 ||
+              status === 7) && (
               <Container className="">
                 <div className="between-x mb-2">
                   <span className="text-xs text-blackBold">
-                    Tagihan Tersisa
+                    {status === 5 ? "Saldo Kredit" : "Tagihan Tersisa"}
                   </span>
                   <div className="row gap-1.5">
                     <span className="text-xs text-primary100 font-medium">
@@ -189,10 +194,7 @@ const BookingDetails = () => {
                         .add(1, "days")
                         .format("DD MMMM YYYY")}
                     </span>
-                    {(status === 3 ||
-                      status === 4 ||
-                      status === 7 ||
-                      status === 5) && (
+                    {(status === 3 || status === 4 || status === 7) && (
                       <span className="text-xs">{data?.CutOffTime}</span>
                     )}
 
@@ -201,6 +203,25 @@ const BookingDetails = () => {
                         Terlambat {data?.OverdueCount || 0} Hari
                       </span>
                     )}
+                  </div>
+                )}
+
+                {status === 5 && (
+                  <div className="mt-4 row gap-2">
+                    <div className="rounded-full w-6 h-6 center bg-lightOrange">
+                      <IoTime size={16} className="text-orange" />
+                    </div>
+
+                    <span className="text-black90 font-medium">
+                      Libur Bayar
+                    </span>
+                    <div className="bg-black10 w-[1px] h-[16px]" />
+                    <span className="text-blackBold font-medium">
+                      {data?.OverdueCount} Hari Lagi
+                    </span>
+                    <span className="text-black70 font-medium">
+                      (12-15 Apr)
+                    </span>
                   </div>
                 )}
 
@@ -217,6 +238,10 @@ const BookingDetails = () => {
                     }
                     iconRight={FaChevronRight}
                     loading={loadingPay}
+                    disabled={
+                      (status === 4 || status === 7) &&
+                      (data?.OverdueCount || 0) <= 0
+                    }
                     onClick={onBuy}
                     className="flex-1"
                   />
@@ -274,7 +299,7 @@ const BookingDetails = () => {
                     className="w-full h-full rounded-lg bg-baseLightGray "
                   />
 
-                  {(status === 7 || status === 11) && (
+                  {(status === 5 || status === 7 || status === 11) && (
                     <div className="center absolute top-0 left-0 right-0 bottom-0 bg-black100/50 rounded-lg">
                       <FaLock size={32} className="text-white z-10" />
                     </div>
@@ -439,6 +464,7 @@ const BookingDetails = () => {
             {(status === 2 ||
               status === 3 ||
               status === 6 ||
+              status === 5 ||
               status === 7 ||
               status === 8 ||
               status === 10) && (

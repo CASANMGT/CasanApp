@@ -30,7 +30,9 @@ const StatusRTO: React.FC<Props> = ({ data, onClick }) => {
 
             <p className="text-black90 font-medium">
               Libut Bayar:{" "}
-              <span className="text-blackBold font-medium">999 Hari</span>
+              <span className="text-blackBold font-medium">
+                {data?.OverdueCount || 0} Hari
+              </span>
             </p>
           </div>
         )}

@@ -36,8 +36,8 @@ const getFormatted = (status: number) => {
 
   switch (status) {
     case 1:
-    case 11:
-      label = status === 11 ? "Booking Libur" : "Menunggu Verifikasi";
+    case 5:
+      label = status === 5 ? "Booking Libur" : "Menunggu Verifikasi";
       bgColorLeft = "#F8C41F";
       bgColorRight = "#C39340";
       icon = WiTime4;

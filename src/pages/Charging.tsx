@@ -463,7 +463,6 @@ const Charging = () => {
         typeButtonRight="primary"
         onDismiss={() => setOpenCantProcess(false)}
       />
-
       {openInstruction && (
         <ModalInstructions
           isOpen={openInstruction}
