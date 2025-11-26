@@ -24,12 +24,14 @@ interface ModalPaymentMethodProps {
   total?: number;
   deposit?: number;
   totalCredit?: number;
+  label?: string;
   onDismiss: () => void;
   onSelect: (select: FeeSettingsProps | undefined, value?: number) => void;
 }
 
 const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
   type,
+  label,
   visible,
   select,
   loading,
@@ -202,9 +204,10 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
         <div className="container-button-footer">
           <div className="between-x">
             <div className="flex flex-col">
-              <span>{`${totalCredit} Kredit${
-                deposit ? ` + Deposit` : ":"
-              }`}</span>
+              <span>
+                {label ||
+                  `${totalCredit} Kredit${deposit ? ` + Deposit` : ":"}`}
+              </span>
               <p className="text-base text-black100/70">
                 Total:{" "}
                 <a className="text-blackBold font-bold">{`Rp${rupiah(

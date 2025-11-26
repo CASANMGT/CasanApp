@@ -11,15 +11,15 @@ import { PiWarningCircleFill } from "react-icons/pi";
 import { TbRoute } from "react-icons/tb";
 import { WiTime4 } from "react-icons/wi";
 import { useNavigate, useParams } from "react-router-dom";
-import { IcInfoCircleRed, ILNoImage, ILPin } from "../../assets";
-import { DaysOfWeek, ERROR_MESSAGE } from "../../common";
+import { ILNoImage, ILPin } from "../../assets";
+import { DaysOfWeek, ERROR_MESSAGE, FeeSettingsProps } from "../../common";
 import {
-  AlertModal,
   BetweenText,
   Button,
   Header,
   IconText,
   LoadingPage,
+  ModalPaymentMethod,
   ModalVehicleDetails,
   Separator,
 } from "../../components";
@@ -27,20 +27,32 @@ import { moments, openGoogleMaps, openWhatsApp, rupiah } from "../../helpers";
 import { Api } from "../../services";
 import Container from "./Container";
 import Status from "./Status";
+import { useAuth } from "../../context/AuthContext";
+import { useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../../store";
+import { fetchMyUser } from "../../features";
+import { useSelector } from "react-redux";
 
 const BookingDetails = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { id } = useParams();
+  const { isAuthenticated } = useAuth();
+
+  const myUser = useSelector((state: RootState) => state.myUser);
 
   const [loading, setLoading] = useState(false);
   const [loadingPay, setLoadingPay] = useState(false);
   const [data, setData] = useState<RTOProps>();
   const [openVehicleDetails, setOpenVehicleDetails] = useState<boolean>(false);
-  const [openPayBills, setOpenPayBills] = useState<boolean>(false);
+  const [openPaymentMethod, setOpenPaymentMethod] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<FeeSettingsProps>();
 
   useEffect(() => {
-    if (id) getData();
-    else navigate(-1);
+    if (id) {
+      if (isAuthenticated) dispatch(fetchMyUser());
+      getData();
+    } else navigate(-1);
   }, []);
 
   const getData = async () => {
@@ -63,27 +75,43 @@ const BookingDetails = () => {
     }
   };
 
-  const onPayBills = async () => {
+  const onPayBills = async (select: FeeSettingsProps | undefined) => {
     try {
       setLoadingPay(true);
-      const body: AddTransactionRTOBodyProps = {
-        paymentMethod: "BALANCE_FU",
-        paymentProof: "",
-        reference: "",
-        rtoid: Number(data?.ID ?? 0),
-      };
+      if (select?.key) {
+        const body: AddTransactionRTOBodyProps = {
+          paymentMethod: select?.key,
+          paymentProof: "",
+          reference: "",
+          rtoid: Number(data?.ID ?? 0),
+        };
 
-      await Api.post({
-        url: "rto-transactions/overdue",
-        body,
-      });
+        await Api.post({
+          url: "rto-transactions/overdue",
+          body,
+        });
 
-      getData();
-      setOpenPayBills(false);
+        getData();
+      } else {
+        throw new Error("Payment method not found.");
+      }
     } catch (error) {
       alert(ERROR_MESSAGE);
     } finally {
       setLoadingPay(false);
+    }
+  };
+
+  const onBuy = () => {
+    if (status === 4 || status === 7) {
+      setOpenPaymentMethod(true);
+    } else {
+      const next =
+        status === 2
+          ? `/transaction-rto-history/details/${dataTransaction?.ID}`
+          : "/buy-credit";
+
+      navigate(next, { state: data });
     }
   };
 
@@ -170,7 +198,7 @@ const BookingDetails = () => {
 
                     {(status === 4 || status === 7) && (
                       <span className="text-red text-xs font-medium ml-2">
-                        Terlambat 3 Hari
+                        Terlambat {data?.OverdueCount || 0} Hari
                       </span>
                     )}
                   </div>
@@ -181,21 +209,15 @@ const BookingDetails = () => {
                 <div className="between-x">
                   <Button
                     label={
-                      dataTransaction?.Status === 2
+                      status === 4 || status === 7
+                        ? "Bayar Tagihan"
+                        : status === 2
                         ? "Lanjutkan Pembayaran"
                         : "Beli Kredit harian"
                     }
                     iconRight={FaChevronRight}
-                    onClick={() =>
-                      navigate(
-                        dataTransaction?.Status === 2
-                          ? `/transaction-rto-history/details/${dataTransaction?.ID}`
-                          : "/buy-credit",
-                        {
-                          state: data,
-                        }
-                      )
-                    }
+                    loading={loadingPay}
+                    onClick={onBuy}
                     className="flex-1"
                   />
 
@@ -540,19 +562,6 @@ const BookingDetails = () => {
               </Container>
             )} */}
           </div>
-
-          {/* FOOTER */}
-          {(status === 4 || status === 7) && (
-            <div className="container-button-footer">
-              <Button
-                label="Konfirmasi Bayar Tagihan"
-                disabled={
-                  (data?.CreditLeft || 0) - (data?.OverdueCount || 0) < 0
-                }
-                onClick={() => setOpenPayBills(true)}
-              />
-            </div>
-          )}
         </div>
       </LoadingPage>
 
@@ -565,21 +574,16 @@ const BookingDetails = () => {
         />
       )}
 
-      {openPayBills && (
-        <AlertModal
-          visible={openPayBills}
-          icon={IcInfoCircleRed}
-          title="Konfirmasi Bayar Tagihan"
-          description={`Bayar tagihan ${
-            data?.OverdueCount
-          } hari dengan Kredit Harian. Sisa kredit setelahnya: ${
-            (data?.CreditLeft || 0) - (data?.OverdueCount || 0)
-          } hari.`}
-          loading={loadingPay}
-          labelButtonLeft="Bayar Tagihan"
-          labelButtonRight="Batal"
-          onDismiss={() => setOpenPayBills(false)}
-          onClick={onPayBills}
+      {openPaymentMethod && (
+        <ModalPaymentMethod
+          visible={openPaymentMethod}
+          select={paymentMethod}
+          selectBalance={myUser?.data?.Balance || 0}
+          total={(dataDayCredit?.Price || 0) * (data?.OverdueCount || 0)}
+          loading={false}
+          label={`Keterlambatan ${data?.OverdueCount || 0} Hari`}
+          onDismiss={() => setOpenPaymentMethod(false)}
+          onSelect={(select, value) => onPayBills(select)}
         />
       )}
       {/* END MODALS */}
@@ -588,156 +592,3 @@ const BookingDetails = () => {
 };
 
 export default BookingDetails;
-
-const newDat = [
-  {
-    ID: 66,
-    UserID: 2,
-    User: {
-      ID: 0,
-      Name: "",
-      Phone: null,
-      IsVerified: false,
-      Email: null,
-      Balance: 0,
-      Status: 0,
-      WithdrawPIN: null,
-      BankAccounts: null,
-      WithdrawPINFailedAttempts: 0,
-      WithdrawPINCooldownUntil: null,
-      VoucherUsages: null,
-      TotalCO2Saved: 0,
-      MilestoneID: null,
-      Milestone: null,
-      NIK: "",
-      SIMCNo: "",
-      KTPImage: "",
-      SIMCImage: "",
-      KKImage: "",
-      CreatedAt: "0001-01-01T00:00:00Z",
-      UpdatedAt: "0001-01-01T00:00:00Z",
-      DeletedAt: null,
-    },
-    RTOCreditID: 83,
-    RTOCredit: {
-      ID: 0,
-      RTOSchemaID: 0,
-      DayCount: 0,
-      Price: 0,
-      DiscountRate: 0,
-      CreatedAt: "0001-01-01T00:00:00Z",
-      UpdatedAt: "0001-01-01T00:00:00Z",
-    },
-    RTOID: 43,
-    RTO: null,
-    CreditAmout: 1,
-    DueAmount: 51000,
-    WalletUsedAmount: 0,
-    Amount: 50000,
-    Deposit: 0,
-    PaymentMethodFee: 1000,
-    PaymentMethod: "GOPAY_TU",
-    PaymentProof: "",
-    Status: 2,
-    Type: 1,
-    DeepLinkRedirectURL:
-      "https://simulator.sandbox.midtrans.com/v2/deeplink/detail?tref=A120251125041659rEu3sQmZIZID&callbackUrl=https%3A%2F%2Fstaging.casan.id%2Ftransaction-rto-history%2Fdetails%2F66%3Forder_id%3DCS-RTO-66",
-    GeneratedQRCodeURL:
-      "https://api.sandbox.midtrans.com/v2/gopay/e641d04e-76f9-4de0-88de-2358e296a096/qr-code",
-    CreatedAt: "2025-11-25T04:16:59.204394Z",
-    UpdatedAt: "2025-11-25T04:16:59.655285Z",
-    ExpiredAt: "2025-11-25T04:31:59.212345Z",
-    DeletedAt: null,
-    CreditHistory: {
-      ID: 0,
-      TransactionID: null,
-      Transaction: null,
-      RTOID: 0,
-      RTO: null,
-      Date: "0001-01-01T00:00:00Z",
-      Type: 0,
-      Change: 0,
-      BalanceAfter: 0,
-      Reference: "",
-      Method: "",
-      CreatedAt: "0001-01-01T00:00:00Z",
-      UpdatedAt: "0001-01-01T00:00:00Z",
-      DeletedAt: null,
-    },
-  },
-  {
-    ID: 66,
-    UserID: 2,
-    User: {
-      ID: 0,
-      Name: "",
-      Phone: null,
-      IsVerified: false,
-      Email: null,
-      Balance: 0,
-      Status: 0,
-      WithdrawPIN: null,
-      BankAccounts: null,
-      WithdrawPINFailedAttempts: 0,
-      WithdrawPINCooldownUntil: null,
-      VoucherUsages: null,
-      TotalCO2Saved: 0,
-      MilestoneID: null,
-      Milestone: null,
-      NIK: "",
-      SIMCNo: "",
-      KTPImage: "",
-      SIMCImage: "",
-      KKImage: "",
-      CreatedAt: "0001-01-01T00:00:00Z",
-      UpdatedAt: "0001-01-01T00:00:00Z",
-      DeletedAt: null,
-    },
-    RTOCreditID: 83,
-    RTOCredit: {
-      ID: 0,
-      RTOSchemaID: 0,
-      DayCount: 0,
-      Price: 0,
-      DiscountRate: 0,
-      CreatedAt: "0001-01-01T00:00:00Z",
-      UpdatedAt: "0001-01-01T00:00:00Z",
-    },
-    RTOID: 43,
-    RTO: null,
-    CreditAmout: 1,
-    DueAmount: 51000,
-    WalletUsedAmount: 0,
-    Amount: 50000,
-    Deposit: 0,
-    PaymentMethodFee: 1000,
-    PaymentMethod: "GOPAY_TU",
-    PaymentProof: "",
-    Status: 2,
-    Type: 1,
-    DeepLinkRedirectURL:
-      "https://simulator.sandbox.midtrans.com/v2/deeplink/detail?tref=A120251125041659rEu3sQmZIZID&callbackUrl=https%3A%2F%2Fstaging.casan.id%2Ftransaction-rto-history%2Fdetails%2F66%3Forder_id%3DCS-RTO-66",
-    GeneratedQRCodeURL:
-      "https://api.sandbox.midtrans.com/v2/gopay/e641d04e-76f9-4de0-88de-2358e296a096/qr-code",
-    CreatedAt: "2025-11-26T04:16:59.204394Z",
-    UpdatedAt: "2025-11-25T04:16:59.655285Z",
-    ExpiredAt: "2025-11-25T04:31:59.212345Z",
-    DeletedAt: null,
-    CreditHistory: {
-      ID: 0,
-      TransactionID: null,
-      Transaction: null,
-      RTOID: 0,
-      RTO: null,
-      Date: "0001-01-01T00:00:00Z",
-      Type: 0,
-      Change: 0,
-      BalanceAfter: 0,
-      Reference: "",
-      Method: "",
-      CreatedAt: "0001-01-01T00:00:00Z",
-      UpdatedAt: "0001-01-01T00:00:00Z",
-      DeletedAt: null,
-    },
-  },
-];
