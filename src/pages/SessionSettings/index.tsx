@@ -154,7 +154,11 @@ const SessionSettings = () => {
 
   useEffect(() => {
     const sockets = selectedDevice?.Sockets;
-    if (selectedDevice?.ID && sockets?.length === 1) {
+    if (
+      selectedDevice?.ID &&
+      sockets?.length === 1 &&
+      sockets?.[0]?.IsCharging === 0
+    ) {
       setForm("selectedSocket", sockets[0]?.ID);
     }
   }, [selectedDevice]);
@@ -754,9 +758,10 @@ const SessionSettings = () => {
 
       {/* MODAL */}
       <>
-        {visiblePaymentMethod && (
+        {/* Dummy */}
+        {!visiblePaymentMethod && (
           <ModalPaymentMethod
-            visible={visiblePaymentMethod}
+            visible={!visiblePaymentMethod}
             select={form.paymentMethod}
             selectBalance={form?.balance}
             total={totalPrice}
