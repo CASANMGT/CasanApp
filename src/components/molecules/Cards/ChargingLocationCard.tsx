@@ -256,6 +256,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
           onClick={() => {
             if (onLoadMore) onLoadMore();
           }}
+          className="py-4 mb-10"
         />
       )}
     </>
