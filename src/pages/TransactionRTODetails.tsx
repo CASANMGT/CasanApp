@@ -345,7 +345,7 @@ const TransactionRTODetails = () => {
 
               <BetweenText
                 labelLeft="Pembayaran Casan Wallet"
-                labelRight={`Rp${rupiah(data?.WalletUsedAmount)}`}
+                labelRight={`-Rp${rupiah(data?.WalletUsedAmount)}`}
                 className="py-2"
               />
 

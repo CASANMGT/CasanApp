@@ -409,7 +409,7 @@ const TransactionDetails = () => {
               {transactionType !== 1 && (
                 <BetweenText
                   labelLeft="Pembayaran Casan Wallet"
-                  labelRight={`Rp${rupiah(
+                  labelRight={`-Rp${rupiah(
                     transactionById?.data?.WalletUsedAmount
                   )}`}
                   className="py-2"
