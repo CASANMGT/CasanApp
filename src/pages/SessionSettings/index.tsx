@@ -758,10 +758,9 @@ const SessionSettings = () => {
 
       {/* MODAL */}
       <>
-        {/* Dummy */}
-        {!visiblePaymentMethod && (
+        {visiblePaymentMethod && (
           <ModalPaymentMethod
-            visible={!visiblePaymentMethod}
+            visible={visiblePaymentMethod}
             select={form.paymentMethod}
             selectBalance={form?.balance}
             total={totalPrice}
