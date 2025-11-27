@@ -157,7 +157,11 @@ const SessionSettings = () => {
 
   useEffect(() => {
     const sockets = selectedDevice?.Sockets;
-    if (selectedDevice?.ID && sockets?.length === 1) {
+    if (
+      selectedDevice?.ID &&
+      sockets?.length === 1 &&
+      sockets?.[0]?.IsCharging === 0
+    ) {
       setForm("selectedSocket", sockets[0]?.ID);
     }
   }, [selectedDevice]);
@@ -170,6 +174,7 @@ const SessionSettings = () => {
     }
 
     if (addSession?.data) {
+      setVisiblePaymentMethod(false);
       if (addSession?.data?.Transaction?.Status === 1) {
         navigate(`/charging/${addSession?.data?.ID}`, {
           replace: true,
@@ -231,6 +236,22 @@ const SessionSettings = () => {
 
     if (Number(v || 0) > 0) onCalculate(v);
   }, [form.value, form?.ampere, form?.voltage]);
+
+  useEffect(() => {
+    if (form.selectedSocket) {
+      if ((myUser?.data?.Balance || 0) > 1000) {
+        setOpenFullyCharger(true);
+
+        const cloneData = clone(form);
+        cloneData.selectedTab = "nominal";
+        cloneData.value = `Rp${rupiah(
+          (myUser?.data?.Balance || 0) > 50000 ? 50000 : myUser?.data?.Balance
+        )}`;
+
+        setForm("all", cloneData);
+      }
+    }
+  }, [form?.selectedSocket]);
 
   const onDismiss = () => {
     navigate(-1);
@@ -515,18 +536,6 @@ const SessionSettings = () => {
 
   const onFullyCharge = (socketId: number) => {
     setForm("selectedSocket", socketId);
-
-    if ((myUser?.data?.Balance || 0) > 1000) {
-      setOpenFullyCharger(true);
-
-      const cloneData = clone(form);
-      cloneData.selectedTab = "nominal";
-      cloneData.value = `Rp${rupiah(
-        (myUser?.data?.Balance || 0) > 50000 ? 50000 : myUser?.data?.Balance
-      )}`;
-
-      setForm("all", cloneData);
-    }
   };
 
   const onHideModal = (type: string) => {

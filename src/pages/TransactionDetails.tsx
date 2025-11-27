@@ -64,6 +64,14 @@ const TransactionDetails = () => {
     getData();
   }, []);
 
+  useEffect(() => {
+    window.addEventListener("popstate", onDismiss);
+
+    return () => {
+      window.removeEventListener("popstate", onDismiss);
+    };
+  }, [navigate]);
+
   // Manage response cancel session
   useEffect(() => {
     if (cancelSession?.loading) dispatch(showLoading());

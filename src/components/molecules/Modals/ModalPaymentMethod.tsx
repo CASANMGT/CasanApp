@@ -204,10 +204,12 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
         <div className="container-button-footer">
           <div className="between-x">
             <div className="flex flex-col">
-              <span>
-                {label ||
-                  `${totalCredit} Kredit${deposit ? ` + Deposit` : ":"}`}
-              </span>
+              {totalCredit && (
+                <span>
+                  {label ||
+                    `${totalCredit} Kredit${deposit ? ` + Deposit` : ":"}`}
+                </span>
+              )}
               <p className="text-base text-black100/70">
                 Total:{" "}
                 <a className="text-blackBold font-bold">{`Rp${rupiah(
