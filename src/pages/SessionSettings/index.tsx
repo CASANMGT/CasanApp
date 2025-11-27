@@ -29,6 +29,7 @@ import {
   InputOTPModal,
   InputPhoneNumberModal,
   LoadingPage,
+  ModalFullyCharge,
   ModalInputHour,
   ModalInputNominal,
   ModalInputPin,
@@ -109,8 +110,10 @@ const SessionSettings = () => {
   const [openVoucher, setOpenVoucher] = useState<boolean>(false);
   const [openPriceDetails, setOpenPriceDetails] = useState<boolean>(false);
   const [openVA, setOpenVA] = useState<boolean>(false);
+  const [openFullyCharger, setOpenFullyCharger] = useState(false);
   const [priceType, setPriceType] = useState<number>();
   const [tabs, setTabs] = useState<TabItemProps[]>();
+  const [typePriceDetails, setTypePriceDetails] = useState<"fully-charge">();
 
   useEffect(() => {
     if (isAuthenticated) dispatch(fetchMyUser());
@@ -171,6 +174,7 @@ const SessionSettings = () => {
     }
 
     if (addSession?.data) {
+      setVisiblePaymentMethod(false);
       if (addSession?.data?.Transaction?.Status === 1) {
         navigate(`/charging/${addSession?.data?.ID}`, {
           replace: true,
@@ -232,6 +236,22 @@ const SessionSettings = () => {
 
     if (Number(v || 0) > 0) onCalculate(v);
   }, [form.value, form?.ampere, form?.voltage]);
+
+  // useEffect(() => {
+  //   if (form.selectedSocket) {
+  //     if ((myUser?.data?.Balance || 0) > 1000) {
+  //       setOpenFullyCharger(true);
+
+  //       const cloneData = clone(form);
+  //       cloneData.selectedTab = "nominal";
+  //       cloneData.value = `Rp${rupiah(
+  //         (myUser?.data?.Balance || 0) > 50000 ? 50000 : myUser?.data?.Balance
+  //       )}`;
+
+  //       setForm("all", cloneData);
+  //     }
+  //   }
+  // }, [form?.selectedSocket]);
 
   const onDismiss = () => {
     navigate(-1);
@@ -517,6 +537,10 @@ const SessionSettings = () => {
     } catch (error) {}
   }
 
+  const onFullyCharge = (socketId: number) => {
+    setForm("selectedSocket", socketId);
+  };
+
   const onHideModal = (type: string) => {
     dispatch(
       setFromGlobal({
@@ -600,9 +624,7 @@ const SessionSettings = () => {
                       data={item}
                       position={index + 1}
                       isActive={form?.selectedSocket === item?.ID}
-                      onClick={() => {
-                        setForm("selectedSocket", item?.ID);
-                      }}
+                      onClick={() => onFullyCharge(item?.ID)}
                     />
                   ))}
               </div>
@@ -612,6 +634,7 @@ const SessionSettings = () => {
             <div className="bg-white py-4 px-3 rounded-lg mb-3">
               {tabs && (
                 <Tabs
+                  active={form?.selectedTab}
                   tabs={tabs}
                   onSelect={(select) => {
                     const cloneData = clone(form);
@@ -912,8 +935,22 @@ const SessionSettings = () => {
           />
         )}
 
+        {openFullyCharger && (
+          <ModalFullyCharge
+            isOpen={openFullyCharger}
+            power={valueCalculate}
+            onClose={() => setOpenFullyCharger(false)}
+            onViewDetails={() => {
+              setTypePriceDetails("fully-charge");
+              setOpenPriceDetails(true);
+            }}
+            onClick={() => {}}
+          />
+        )}
+
         {openPriceDetails && (
           <ModalPriceDetails
+            type={typePriceDetails}
             isOpen={openPriceDetails}
             dataUser={myUser?.data}
             dataPriceSetting={data?.PriceSetting}

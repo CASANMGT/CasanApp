@@ -32,6 +32,7 @@ import myUserReducer from "../features/users/myUserSlice.ts";
 import voucherAvailableReducer from "../features/voucher/voucherAvailableSlice.ts";
 import addWithdrawReducer from "../features/withdraw/addWithdrawSlice.ts";
 import withdrawListReducer from "../features/withdraw/withdrawListSlice.ts";
+import addTransactionRTOReducer from '../features/rto/addTransactionRTOSlice.ts'
 
 export const store = configureStore({
   reducer: {
@@ -93,6 +94,9 @@ export const store = configureStore({
 
     // MILESTONE
     milestoneList: milestoneListReducer,
+
+    // RTO
+    addTransactionRTO:addTransactionRTOReducer
   },
 });
 

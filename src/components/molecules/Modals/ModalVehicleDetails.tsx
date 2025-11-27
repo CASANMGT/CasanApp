@@ -1,17 +1,16 @@
 import React from "react";
 import { IcClose, ILNoImage } from "../../../assets";
-import { BankAccountList } from "../../../common";
-import ModalContainer from "./ModalContainer";
 import { BetweenText } from "../../atoms";
+import ModalContainer from "./ModalContainer";
 
-interface Props {
-  isOpen: boolean;
-  onAddBank: () => void;
-  onDismiss: () => void;
-  onSelect: (data: BankAccountList | undefined) => void;
-}
+const ModalVehicleDetails: React.FC<ModalProps> = ({
+  isOpen,
+  data,
+  onClose,
+}) => {
+  const dataVehicle: VehicleProps | undefined = data;
+  const color: ColorVehicleModelProps | null = dataVehicle?.Colors?.[0] ?? null;
 
-const ModalVehicleDetails: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   return (
     <ModalContainer
       isOpen={isOpen}
@@ -30,48 +29,52 @@ const ModalVehicleDetails: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
         <div className="w-full bg-black10 rounded-lg aspect-video flex items-center justify-center overflow-hidden mt-6 mb-4">
           <img
-            src={ILNoImage}
+            src={color?.ImageURL || ILNoImage}
             alt="photo"
             className="w-full h-full object-contain"
           />
         </div>
 
         <div className="mb-4 row gap-1.5">
-          <span className="text-blackBold font-semibold">Uwinfly Seri C70</span>
-          <span className="text-black70 font-semibold">(B1234B)</span>
+          <span className="text-blackBold font-semibold">
+            {dataVehicle?.VehicleModel?.ModelName}
+          </span>
+          <span className="text-black70 font-semibold">
+            ({data?.LicensePlate || "-"})
+          </span>
         </div>
 
         <BetweenText
-          labelLeft="Spesifikasi Baterai"
-          labelRight={'1234567890'}
+          labelLeft="No Mesin"
+          labelRight={dataVehicle?.EngineNumber || "-"}
           classNameLabelRight="font-semibold"
           className="p-3 rounded-t bg-baseLightGray"
         />
 
-         <BetweenText
+        <BetweenText
           labelLeft="No Rangka"
-          labelRight={'1234567890'}
+          labelRight={dataVehicle?.FrameNumber || "-"}
           classNameLabelRight="font-semibold"
           className="p-3"
         />
 
-         <BetweenText
+        <BetweenText
           labelLeft="Warna"
-          labelRight={'Putih'}
+          labelRight={color?.ColorName || "-"}
           classNameLabelRight="font-semibold"
           className="p-3 bg-baseLightGray"
         />
 
-         <BetweenText
+        <BetweenText
           labelLeft="No Baterai"
-          labelRight={'1234567890'}
+          labelRight={dataVehicle?.BatteryNumber || "-"}
           classNameLabelRight="font-semibold"
           className="p-3"
         />
 
-         <BetweenText
+        <BetweenText
           labelLeft="No STNK"
-          labelRight={'1234567890'}
+          labelRight={data?.STNK || "-"}
           classNameLabelRight="font-semibold"
           className="p-3 rounded-b bg-baseLightGray"
         />

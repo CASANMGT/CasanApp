@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaChevronRight, FaLock, FaUser } from "react-icons/fa6";
 import { FiEdit3, FiNavigation } from "react-icons/fi";
-import { GiSandsOfTime } from "react-icons/gi";
 import {
   MdHistory,
   MdInfo,
@@ -13,50 +12,111 @@ import { TbRoute } from "react-icons/tb";
 import { WiTime4 } from "react-icons/wi";
 import { useNavigate, useParams } from "react-router-dom";
 import { ILNoImage, ILPin } from "../../assets";
-import { CUSTOMER_SERVICES, DaysOfWeek, ERROR_MESSAGE } from "../../common";
+import { DaysOfWeek, ERROR_MESSAGE, FeeSettingsProps } from "../../common";
 import {
   BetweenText,
   Button,
   Header,
   IconText,
   LoadingPage,
+  ModalPaymentMethod,
   ModalVehicleDetails,
   Separator,
 } from "../../components";
-import { moments, openWhatsApp, rupiah } from "../../helpers";
+import { moments, openGoogleMaps, openWhatsApp, rupiah } from "../../helpers";
 import { Api } from "../../services";
 import Container from "./Container";
 import Status from "./Status";
+import { useAuth } from "../../context/AuthContext";
+import { useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../../store";
+import { fetchMyUser } from "../../features";
+import { useSelector } from "react-redux";
+import { IoTime } from "react-icons/io5";
 
 const BookingDetails = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { id } = useParams();
+  const { isAuthenticated } = useAuth();
+
+  const myUser = useSelector((state: RootState) => state.myUser);
 
   const [loading, setLoading] = useState(false);
+  const [loadingPay, setLoadingPay] = useState(false);
   const [data, setData] = useState<RTOProps>();
   const [openVehicleDetails, setOpenVehicleDetails] = useState<boolean>(false);
+  const [openPaymentMethod, setOpenPaymentMethod] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<FeeSettingsProps>();
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        setLoading(true);
-        const res = await Api.get({
-          url: `rtos/${id}`,
-        });
-
-        setData(res?.data);
-      } catch (error) {
-        alert(ERROR_MESSAGE);
-      } finally {
-        setLoading(false);
-      }
-    };
     if (id) {
+      if (isAuthenticated) dispatch(fetchMyUser());
       getData();
     } else navigate(-1);
   }, []);
 
-  const status = 3; //data?.Status || 0; dummy
+  const getData = async () => {
+    try {
+      setLoading(true);
+      const res = await Api.get({
+        url: `rtos/${id}`,
+      });
+
+      setData(res?.data);
+    } catch (error: any) {
+      const err = error?.response?.data?.message || "";
+
+      if (err === "record not found") {
+        alert("Unable to access this RTO.");
+        navigate("/home/index");
+      } else alert(ERROR_MESSAGE);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onPayBills = async (select: FeeSettingsProps | undefined) => {
+    try {
+      setLoadingPay(true);
+      if (select?.key) {
+        const body: AddTransactionRTOBodyProps = {
+          paymentMethod: select?.key,
+          paymentProof: "",
+          reference: "",
+          rtoid: Number(data?.ID ?? 0),
+        };
+
+        await Api.post({
+          url: "rto-transactions/overdue",
+          body,
+        });
+
+        getData();
+      } else {
+        throw new Error("Payment method not found.");
+      }
+    } catch (error) {
+      alert(ERROR_MESSAGE);
+    } finally {
+      setLoadingPay(false);
+    }
+  };
+
+  const onBuy = () => {
+    if (status === 4 || status === 7) {
+      setOpenPaymentMethod(true);
+    } else {
+      const next =
+        status === 2
+          ? `/transaction-rto-history/details/${dataTransaction?.ID}`
+          : "/buy-credit";
+
+      navigate(next, { state: data });
+    }
+  };
+
+  const status = data?.Status || 0;
   const dataVehicle: VehicleProps | undefined = data?.Vehicle;
   const color: ColorVehicleModelProps | null = dataVehicle?.Colors?.[0] ?? null;
   const dataVehicleModel: VehicleModelProps | undefined =
@@ -71,25 +131,37 @@ const BookingDetails = () => {
   const current = data?.CreditPaid || 1;
   const total = data?.Payment || 1;
 
+  const dataTransaction: RTOTransactionProps | undefined = data?.RTOTransactions
+    ?.length
+    ? data?.RTOTransactions?.reduce((latest, item) => {
+        return new Date(item.CreatedAt) > new Date(latest.CreatedAt)
+          ? item
+          : latest;
+      })
+    : undefined;
+
   return (
     <div className="background-1 overflow-hidden justify-between flex flex-col">
       <Header
-        type="secondary"
+        type="booking"
         title="Detail Booking"
         onDismiss={() => navigate(-1)}
         onPress={() => {}}
       />
 
-      <LoadingPage loading={false}>
+      <LoadingPage loading={loading}>
         <div className="flex flex-col flex-1 overflow-hidden relative">
           <div className="flex-1 overflow-auto scrollbar-none space-y-3 px-4 pb-7 pt-6 ">
             <Status status={status} />
-
-            {status === 3 && (
+            {(status === 2 ||
+              status === 3 ||
+              status === 4 ||
+              status === 5 ||
+              status === 7) && (
               <Container className="">
                 <div className="between-x mb-2">
                   <span className="text-xs text-blackBold">
-                    {status === 2 ? "Saldo Kredit" : "Tagihan Tersisa"}
+                    {status === 5 ? "Saldo Kredit" : "Tagihan Tersisa"}
                   </span>
                   <div className="row gap-1.5">
                     <span className="text-xs text-primary100 font-medium">
@@ -101,7 +173,7 @@ const BookingDetails = () => {
 
                 <div className="row gap-1.5 mb-1">
                   <span className="text-blackBold font-semibold">
-                    {(dataDayCredit?.DayCount || 0) * (data?.Payment || 0)}
+                    {data?.CreditLeft || 0}
                   </span>
                   <span className="text-xs text-black90">Kredit Hari</span>
                 </div>
@@ -114,32 +186,38 @@ const BookingDetails = () => {
                     }}
                   />
                 </div>
-                <div className="row gap-1.5 mt-1">
-                  <span className="text-xs text-black70">Jatuh Tempo</span>
-                  <span className="text-xs ">
-                    {moments(data?.NextPaymentDate || undefined)
-                      .add(1, "days")
-                      .format("DD MMMM YYYY")}
-                  </span>
-                  {status === 6 && (
-                    <span className="text-red text-xs font-medium ml-2">
-                      Terlambat 3 Hari
+                {status !== 2 && (
+                  <div className="row gap-1.5 mt-1">
+                    <span className="text-xs text-black70">Jatuh Tempo</span>
+                    <span className="text-xs ">
+                      {moments(data?.NextPaymentDate || undefined)
+                        .add(1, "days")
+                        .format("DD MMMM YYYY")}
                     </span>
-                  )}
-                </div>
+                    {(status === 3 || status === 4 || status === 7) && (
+                      <span className="text-xs">{data?.CutOffTime}</span>
+                    )}
 
-                {status == 11 && (
-                  <div className="flex-1 row gap-1 mt-4">
-                    <div className="center rounded-full w-5 h-5 bg-lightOrange">
-                      <WiTime4 size={12} className="text-orange" />
+                    {(status === 4 || status === 7) && (
+                      <span className="text-red text-xs font-medium ml-2">
+                        Terlambat {data?.OverdueCount || 0} Hari
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {status === 5 && (
+                  <div className="mt-4 row gap-2">
+                    <div className="rounded-full w-6 h-6 center bg-lightOrange">
+                      <IoTime size={16} className="text-orange" />
                     </div>
 
                     <span className="text-black90 font-medium">
                       Libur Bayar
                     </span>
-
-                    <span className="text-blackBold font-medium ml-2">
-                      1 Hari Lagi
+                    <div className="bg-black10 w-[1px] h-[16px]" />
+                    <span className="text-blackBold font-medium">
+                      {data?.OverdueCount} Hari Lagi
                     </span>
                     <span className="text-black70 font-medium">
                       (12-15 Apr)
@@ -151,21 +229,33 @@ const BookingDetails = () => {
 
                 <div className="between-x">
                   <Button
-                    label="Beli Kredit harian"
+                    label={
+                      status === 4 || status === 7
+                        ? "Bayar Tagihan"
+                        : status === 2
+                        ? "Lanjutkan Pembayaran"
+                        : "Beli Kredit harian"
+                    }
                     iconRight={FaChevronRight}
-                    onClick={() => navigate("/buy-credit")}
+                    loading={loadingPay}
+                    disabled={
+                      (status === 4 || status === 7) &&
+                      (data?.OverdueCount || 0) <= 0
+                    }
+                    onClick={onBuy}
                     className="flex-1"
                   />
 
                   <div className="flex-1 row gap-1 center">
-                    {(status === 6 || status === 7) && (
+                    {(status === 4 || status === 7) && (
                       <>
                         <div className="center rounded-full w-5 h-5 bg-lightRed">
                           <PiWarningCircleFill size={12} className="text-red" />
                         </div>
 
                         <span className="text-blackBold font-semibold">{`Rp${rupiah(
-                          0
+                          (data?.OverdueCount || 0) *
+                            (dataDayCredit?.Price || 1)
                         )}`}</span>
                       </>
                     )}
@@ -173,17 +263,26 @@ const BookingDetails = () => {
                 </div>
               </Container>
             )}
-
             <Container className="mt-2">
               <div className="row gap-4 ">
                 <div className="flex-1 flex flex-col gap-1">
-                  <span className="text-blackBold font-semibold">
+                  <p className="text-blackBold font-semibold">
                     {data?.Vehicle?.VehicleModel?.ModelName || "-"}
-                  </span>
+
+                    {(status === 3 ||
+                      status === 4 ||
+                      status === 5 ||
+                      status === 6 ||
+                      status === 7) && (
+                      <span className="text-black70 font-semibold">{` (${
+                        data?.LicensePlate || "-"
+                      })`}</span>
+                    )}
+                  </p>
 
                   <span className="text-black70 text-xs">{`${dataVehicleModel?.BatteryCapacity}W ${dataVehicleModel?.Volt}V ${dataVehicleModel?.Ampere}Ah (jarak ${dataVehicleModel?.Range}km)`}</span>
 
-                  {status !== 2 && (
+                  {status !== 2 && status !== 8 && status !== 10 && (
                     <span
                       onClick={() => setOpenVehicleDetails(true)}
                       className="text-xs text-primary100 font-medium cursor-pointer"
@@ -200,7 +299,7 @@ const BookingDetails = () => {
                     className="w-full h-full rounded-lg bg-baseLightGray "
                   />
 
-                  {(status === 7 || status === 11) && (
+                  {(status === 5 || status === 7 || status === 11) && (
                     <div className="center absolute top-0 left-0 right-0 bottom-0 bg-black100/50 rounded-lg">
                       <FaLock size={32} className="text-white z-10" />
                     </div>
@@ -208,11 +307,7 @@ const BookingDetails = () => {
                 </div>
               </div>
 
-              {(status === 5 ||
-                status === 6 ||
-                status === 7 ||
-                status === 8 ||
-                status === 11) && (
+              {false && (
                 <>
                   <Separator className="my-3" />
 
@@ -252,60 +347,59 @@ const BookingDetails = () => {
                 </>
               )}
             </Container>
-
-            {status === 2 && (
+            {(status === 2 || status === 8 || status === 10) && (
               <Container className="flex flex-col gap-2">
-                <span className="text-blackBold">Informasi Pengambilan</span>
+                <span className="text-blackBold">
+                  Informasi{" "}
+                  {status === 8 || status === 10
+                    ? "Pengembalian"
+                    : "Pengambilan"}
+                </span>
 
                 <div className="row gap-1.5">
                   <span className="text-xs text-black90">ID</span>
                   <span className="text-xs text-blackBold font-medium">
-                    {dataStation?.ID}
+                    {id}
                   </span>
                 </div>
-
-                {status === 4 && (
-                  <>
-                    <Separator className="my-1" />
-
-                    <div className="row gap-1">
-                      <GiSandsOfTime size={16} className="text-primary100" />
-                      <span className="text-primary100 text-xs font-medium">
-                        Batas Akhir Pengambilan
-                      </span>
-                    </div>
-
-                    <div className="row gap-1.5">
-                      <span className="text-base font-semibold text-blackBold">
-                        {moments().format("dddd, DD MMM")}
-                      </span>
-                      <span className="text-black70">{`${moments().format(
-                        "HH:mm"
-                      )} WIB`}</span>
-                    </div>
-                  </>
-                )}
 
                 <Separator className="my-1" />
 
                 <div className="flex gap-4">
-                  <div className="space-y-2">
+                  <div className="space-y-2 flex flex-col">
                     <div className="row gap-1">
                       <MdOutlineStorefront
                         size={16}
                         className="text-primary100"
                       />
                       <span className="text-primary100 text-xs font-medium">
-                        Alamat Pengambilan
+                        Alamat{" "}
+                        {status === 8 || status === 10
+                          ? "Pengembalian"
+                          : "Pengambilan"}
                       </span>
                     </div>
+
+                    <span className="text-xs text-blackBold font-medium">
+                      {dataStation?.Name || "-"}
+                    </span>
 
                     <span className="text-xs text-black90">
                       {dataStation?.Location?.Address || "-"}
                     </span>
                   </div>
 
-                  <img src={ILPin} alt="Pin" className="w-16 h-16 rounded-sm" />
+                  <img
+                    src={ILPin}
+                    alt="Pin"
+                    onClick={() =>
+                      openGoogleMaps(
+                        dataStation?.Location?.Latitude || 0,
+                        dataStation?.Location?.Longitude || 0
+                      )
+                    }
+                    className="w-16 h-16 rounded-sm cursor-pointer"
+                  />
                 </div>
 
                 {status === 2 && (
@@ -343,12 +437,12 @@ const BookingDetails = () => {
                       </span>
 
                       <div
-                        onClick={() => openWhatsApp(CUSTOMER_SERVICES)}
+                        onClick={() => openWhatsApp(dataStation?.Phone || "")}
                         className="row gap-1.5 px-3 py-1.5 bg-primary10 border border-primary100 rounded-full cursor-pointer"
                       >
                         <MdPhoneInTalk size={16} className="text-primary100" />
                         <span className="text-xs text-primary100 font-medium">
-                          Sales (Rere)
+                          Dealer
                         </span>
                       </div>
                     </div>
@@ -356,8 +450,7 @@ const BookingDetails = () => {
                 )}
               </Container>
             )}
-
-            {status === 3 && (
+            {false && (
               <Container>
                 <span className="text-blackBold font-medium">
                   Alasan Penolakan
@@ -368,8 +461,13 @@ const BookingDetails = () => {
                 </div>
               </Container>
             )}
-
-            {(status === 2 || status === 3) && (
+            {(status === 2 ||
+              status === 3 ||
+              status === 6 ||
+              status === 5 ||
+              status === 7 ||
+              status === 8 ||
+              status === 10) && (
               <Container>
                 <IconText
                   icon={MdInfo}
@@ -395,9 +493,7 @@ const BookingDetails = () => {
                 />
                 <BetweenText
                   labelLeft="Deposit"
-                  labelRight={`Rp${rupiah(
-                    data?.IsDeposited ? 0 : data?.Deposit
-                  )}`}
+                  labelRight={`Rp${rupiah(data?.Deposit || 0)}`}
                   classNameLabelRight="font-semibold"
                   className={`p-3 bg-baseLightGray ${
                     status === 3 && "rounded-b"
@@ -414,7 +510,7 @@ const BookingDetails = () => {
                 <BetweenText
                   labelLeft="Libur Pembayaran"
                   labelRight={`Setiap ${
-                    data?.PauseDayType === 1 ? "Hari" : "Minggu"
+                    data?.PauseDayType === 1 ? "Hari" : "Tanggal"
                   } ${
                     data?.PauseDayType === 1
                       ? DaysOfWeek[Number(data?.PauseDay || 0)]
@@ -435,8 +531,7 @@ const BookingDetails = () => {
                 )}
               </Container>
             )}
-
-            {(status === 1 || status === 3) && (
+            {false && (
               <Container>
                 <div className="between-x">
                   <IconText
@@ -464,7 +559,6 @@ const BookingDetails = () => {
                 </div>
               </Container>
             )}
-
             {/* {(status === 1 || status === 2) && (
               <Container>
                 <IconText
@@ -494,17 +588,6 @@ const BookingDetails = () => {
               </Container>
             )} */}
           </div>
-
-          {/* FOOTER */}
-          {status === 3 && (
-            <div className="container-button-footer">
-              <Button
-                buttonType="lg"
-                label="Ajukan Kembali"
-                onClick={() => {}}
-              />
-            </div>
-          )}
         </div>
       </LoadingPage>
 
@@ -512,7 +595,21 @@ const BookingDetails = () => {
       {openVehicleDetails && (
         <ModalVehicleDetails
           isOpen={openVehicleDetails}
+          data={dataVehicle}
           onClose={() => setOpenVehicleDetails(false)}
+        />
+      )}
+
+      {openPaymentMethod && (
+        <ModalPaymentMethod
+          visible={openPaymentMethod}
+          select={paymentMethod}
+          selectBalance={myUser?.data?.Balance || 0}
+          total={(dataDayCredit?.Price || 0) * (data?.OverdueCount || 0)}
+          loading={false}
+          label={`Keterlambatan ${data?.OverdueCount || 0} Hari`}
+          onDismiss={() => setOpenPaymentMethod(false)}
+          onSelect={(select, value) => onPayBills(select)}
         />
       )}
       {/* END MODALS */}

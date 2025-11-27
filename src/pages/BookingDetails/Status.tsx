@@ -36,8 +36,8 @@ const getFormatted = (status: number) => {
 
   switch (status) {
     case 1:
-    case 11:
-      label = status === 11 ? "Booking Libur" : "Menunggu Verifikasi";
+    case 5:
+      label = status === 5 ? "Booking Libur" : "Menunggu Verifikasi";
       bgColorLeft = "#F8C41F";
       bgColorRight = "#C39340";
       icon = WiTime4;
@@ -57,44 +57,46 @@ const getFormatted = (status: number) => {
       icon = GiSandsOfTime;
       break;
 
-    case 5:
-    case 8:
-    case 9:
-    case 10:
-      label =
-        status === 5
-          ? "Booking Sedang Berlangsung"
-          : status === 8
-          ? "Selesai"
-          : status === 9
-          ? "Disetujui"
-          : status === 10
-          ? "Dikembalikan"
-          : "Tidak Selesai";
-      bgColorLeft = "#19ACB6";
-      bgColorRight = "#2DBA9D";
-      icon =
-        status === 5
-          ? GiSandsOfTime
-          : status === 9
-          ? IoIosCloseCircle
-          : FaCheckCircle;
+    case 4:
+      label = "Tenggat Waktu";
+      bgColorLeft = "#DD2E44";
+      bgColorRight = "#BA2D55";
+      icon = WiTime4;
       break;
 
     case 6:
+      label = "Selesai";
+      bgColorLeft = "#19ACB6";
+      bgColorRight = "#2DBA9D";
+      icon = FaCheckCircle;
+      break;
+
     case 7:
-      label =
-        status === 6
-          ? "Tenggat Waktu"
-          : status === 7
-          ? "Dihentikan Sementara"
-          : "Ditolak";
+      label = "Dihentikan Sementara";
       bgColorLeft = "#DD2E44";
       bgColorRight = "#BA2D55";
-      icon = status === 6 ? WiTime4 : PiWarningCircle;
+      icon = PiWarningCircle;
+      break;
+
+    case 8:
+      label = "Tidak Selesai";
+      bgColorLeft = "#19ACB6";
+      bgColorRight = "#2DBA9D";
+      icon = IoIosCloseCircle;
+      break;
+
+    case 10:
+      label = "Dikembalikan";
+      bgColorLeft = "#19ACB6";
+      bgColorRight = "#2DBA9D";
+      icon = FaCheckCircle;
       break;
 
     default:
+      label = "No Title";
+      bgColorLeft = "#F8C41F";
+      bgColorRight = "#C39340";
+      icon = IoIosCloseCircle;
       break;
   }
 

@@ -40,6 +40,7 @@ declare global {
     isFromApprove?: boolean;
     Program: ProgramProps;
     ProgramID: number;
+    RTOTransactions: RTOTransactionProps[]|null;
   };
 
   type RTOCreditProps = {
@@ -50,5 +51,58 @@ declare global {
     DiscountRate: number;
     CreatedAt: string;
     UpdatedAt: string;
+  };
+
+  type AddTransactionRTOBodyProps = {
+    deposit?: number;
+    paymentMethod: string;
+    paymentProof: string;
+    reference: string;
+    rtocreditID?: number;
+    rtoid: number;
+  };
+
+  type RTOTransactionProps = {
+    ID: number;
+    UserID: number;
+    User: UserProps;
+    RTOCreditID: number;
+    RTOCredit: RTOCreditProps;
+    RTOID: number;
+    RTO: RTOProps;
+    CreditAmout: number;
+    Amount: number;
+    DueAmount: number;
+    WalletUsedAmount: number;
+    Deposit: number;
+    PaymentMethodFee: number;
+    PaymentMethod: string;
+    PaymentProof: string;
+    Status: number;
+    Type: number;
+    DeepLinkRedirectURL: string;
+    GeneratedQRCodeURL: string;
+    CreatedAt: string;
+    UpdatedAt: string;
+    ExpiredAt: string | null;
+    DeletedAt: string | null;
+    CreditHistory: CreditHistoryProps;
+  };
+
+  type CreditHistoryProps = {
+    ID: number;
+    TransactionID: number;
+    Transaction: any;
+    RTOID: number;
+    RTO: RTOProps;
+    Date: string;
+    Type: number;
+    Change: number;
+    BalanceAfter: number;
+    Reference: string;
+    Method: string;
+    CreatedAt: string;
+    UpdatedAt: string;
+    DeletedAt: string | null;
   };
 }

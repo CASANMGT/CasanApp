@@ -32,7 +32,7 @@ const TabSwipe: React.FC<TabsProps> = ({ style, tabs }) => {
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-baseLightGray">
       {/* Tab Headers */}
-      <div className={`flex p-4 bg-${style || "primary100"}`}>
+      <div className={`flex px-4 pt-4 bg-${style || "primary100"}`}>
         {tabs.map((tab, index) => (
           <button
             key={index}
@@ -46,9 +46,9 @@ const TabSwipe: React.FC<TabsProps> = ({ style, tabs }) => {
                     } font-semibold`
                   : `text-${
                       style === "white" ? "primary100" : "white"
-                    }/80 hover:text-${
+                    } hover:text-${
                       style === "white" ? "primary100" : "white"
-                    }`
+                    } opacity-80 hover:opacity-100`
               }`}
             onClick={() => setActiveIndex(index)}
           >

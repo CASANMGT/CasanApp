@@ -16,23 +16,29 @@ import { PaymentMethodItem } from "../Items";
 import ModalContainer from "./ModalContainer";
 
 interface ModalPaymentMethodProps {
-  type?: "top-up";
+  type?: "top-up" | "credit";
   visible: boolean;
-  loading: boolean
+  loading: boolean;
   select: FeeSettingsProps | undefined;
   selectBalance?: number;
   total?: number;
+  deposit?: number;
+  totalCredit?: number;
+  label?: string;
   onDismiss: () => void;
   onSelect: (select: FeeSettingsProps | undefined, value?: number) => void;
 }
 
 const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
   type,
+  label,
   visible,
   select,
   loading,
   selectBalance,
   total,
+  deposit,
+  totalCredit,
   onDismiss,
   onSelect,
 }) => {
@@ -197,12 +203,20 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
         {/* FOOTER */}
         <div className="container-button-footer">
           <div className="between-x">
-            <p className="text-base text-black100/70">
-              Total:{" "}
-              <a className="text-blackBold font-bold">{`Rp${rupiah(
-                calculate?.total
-              )}`}</a>
-            </p>
+            <div className="flex flex-col">
+              {totalCredit && (
+                <span>
+                  {label ||
+                    `${totalCredit} Kredit${deposit ? ` + Deposit` : ":"}`}
+                </span>
+              )}
+              <p className="text-base text-black100/70">
+                Total:{" "}
+                <a className="text-blackBold font-bold">{`Rp${rupiah(
+                  calculate?.total + (deposit || 0)
+                )}`}</a>
+              </p>
+            </div>
 
             <Button
               label="Pilih"
