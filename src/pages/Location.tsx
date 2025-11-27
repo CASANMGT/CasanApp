@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { IcMenuWhite, IcMyLocationBlack } from "../assets";
-import { LIMIT_LIST } from "../common";
 import { LoadingPage, Map, ModalChargingStation } from "../components";
 import { fetchChargingStationLocations, setFromGlobal } from "../features";
 import { getCurrentLocation } from "../services/ApiAddress";
@@ -22,14 +21,14 @@ const Location = () => {
   const [centerLocation, setCenterLocation] = useState<LatLng>();
 
   useEffect(() => {
-    getData();
+    if (!chargingStationLocations?.data) getData();
     getLocation();
   }, []);
 
   const getData = () => {
     const body: ChargingStationBody = {
       page: 1,
-      limit: LIMIT_LIST,
+      limit: 100,
       is_admin: false,
     };
 
@@ -55,7 +54,6 @@ const Location = () => {
   const onShowAll = () => {
     navigate("/location-list");
   };
-  
 
   return (
     <div className="container-screen relative">

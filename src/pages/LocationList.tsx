@@ -46,7 +46,7 @@ const LocationList = () => {
     if (currentLocation?.length) {
       const body: ChargingStationBody = {
         page: nextPage || page,
-        limit: LIMIT_LIST,
+        limit: 100,
         is_admin: false,
       };
 
