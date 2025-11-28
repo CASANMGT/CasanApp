@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { CiMail } from "react-icons/ci";
+import { FaWhatsapp } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchLogin,
@@ -12,8 +14,6 @@ import { Api } from "../../../services";
 import { AppDispatch, RootState } from "../../../store";
 import { Button, InputCode, Separator } from "../../atoms";
 import ModalContainer from "./ModalContainer";
-import { FaWhatsapp } from "react-icons/fa6";
-import { CiMail } from "react-icons/ci";
 
 interface InputOTPProps {
   open: boolean;

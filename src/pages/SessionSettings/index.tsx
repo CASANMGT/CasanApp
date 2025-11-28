@@ -36,6 +36,7 @@ import {
   ModalInputPower,
   ModalPaymentMethod,
   ModalPriceDetails,
+  ModalResetPin,
   ModalSKVoucher,
   ModalVoltageAmpere,
   ModalVoucher,
@@ -111,6 +112,7 @@ const SessionSettings = () => {
   const [openPriceDetails, setOpenPriceDetails] = useState<boolean>(false);
   const [openVA, setOpenVA] = useState<boolean>(false);
   const [openFullyCharger, setOpenFullyCharger] = useState(false);
+  const [openResetPin, setOpenResetPin] = useState(false);
   const [priceType, setPriceType] = useState<number>();
   const [tabs, setTabs] = useState<TabItemProps[]>();
   const [typePriceDetails, setTypePriceDetails] = useState<"fully-charge">();
@@ -905,6 +907,18 @@ const SessionSettings = () => {
           <ModalInputPin
             isOpen={openInputPin}
             onDismiss={() => setOpenInputPin(false)}
+            onReset={() => {
+              setOpenInputPin(false);
+              setOpenResetPin(true);
+            }}
+          />
+        )}
+
+        {openResetPin && (
+          <ModalResetPin
+            isOpen={openResetPin}
+            data={myUser?.data}
+            onDismiss={() => setOpenResetPin(false)}
           />
         )}
 
