@@ -121,7 +121,7 @@ const SessionSettings = () => {
     if (isAuthenticated) dispatch(fetchMyUser());
     if (id) {
       dispatch(fetchDeviceById(id));
-      setForm('selectedSocket', socketId)
+      if (Number(socketId || 0) > 0) setForm("selectedSocket", socketId);
     }
   }, []);
 
