@@ -70,7 +70,7 @@ const RoutesPage = () => {
       <Route path="text-condition" element={<TermCondition />} />
       <Route path="privacy-police" element={<PrivacyPolice />} />
       <Route path="scan" element={<Scan />} />
-      <Route path="session-settings/:id?" element={<SessionSettings />} />
+      <Route path="session-settings/:id?/:socketId?" element={<SessionSettings />} />
       <Route
         path="payment-success/:id"
         element={<ProtectedRoute element={<PaymentSuccess />} />}

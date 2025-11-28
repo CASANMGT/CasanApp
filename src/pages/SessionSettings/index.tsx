@@ -79,7 +79,7 @@ const SessionSettings = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated, logout, login } = useAuth();
   const { showAlert } = useAlert();
-  const { id } = useParams<{ id?: string }>();
+  const { id, socketId } = useParams();
 
   const global = useSelector((state: RootState) => state.global);
   const dataLogin = useSelector((state: RootState) => state.login);
@@ -119,7 +119,10 @@ const SessionSettings = () => {
 
   useEffect(() => {
     if (isAuthenticated) dispatch(fetchMyUser());
-    if (id) dispatch(fetchDeviceById(id));
+    if (id) {
+      dispatch(fetchDeviceById(id));
+      setForm('selectedSocket', socketId)
+    }
   }, []);
 
   useEffect(() => {

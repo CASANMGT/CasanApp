@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IcClose, IcRadioActive, IcRadioInactive } from "../../../assets";
-import { CUSTOMER_SERVICES, MAX_INPUT_PIN } from "../../../common";
+import { MAX_INPUT_PIN } from "../../../common";
 import {
   fetchCheckPin,
   fetchEditPin,
@@ -11,7 +11,7 @@ import {
   resetDataEditPin,
   showLoading,
 } from "../../../features";
-import { moments, openWhatsApp } from "../../../helpers";
+import { moments } from "../../../helpers";
 import { AppDispatch, RootState } from "../../../store";
 import { InputCode, Separator } from "../../atoms";
 import ModalContainer from "./ModalContainer";
@@ -21,9 +21,10 @@ const maxCountError: number = 3;
 interface Props {
   isOpen: boolean;
   onDismiss: () => void;
+  onReset: () => void;
 }
 
-const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
+const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss, onReset }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const checkPin = useSelector((state: RootState) => state.checkPin);
@@ -212,15 +213,17 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
             </div>
           )}
 
-          <p className="text-xs text-black70 mt-4 text-center">
-            Butuh bantuan?{" "}
-            <b
-              onClick={() => openWhatsApp(CUSTOMER_SERVICES)}
-              className="text-xs text-primary100 cursor-pointer"
-            >
-              Hubungi Kami
-            </b>
-          </p>
+          {step === "input-pin" && (
+            <p className="text-xs text-black70 mt-4 text-center">
+              Lupa kode PIN anda?{" "}
+              <b
+                onClick={onReset}
+                className="text-xs text-primary100 cursor-pointer"
+              >
+                Reset PIN
+              </b>
+            </p>
+          )}
         </div>
       </div>
     </ModalContainer>
