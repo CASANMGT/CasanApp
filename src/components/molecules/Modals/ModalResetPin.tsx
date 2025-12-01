@@ -101,7 +101,7 @@ const ModalResetPin: React.FC<Props> = ({ isOpen, data, onDismiss }) => {
       if (condition === "input-otp") {
         dispatch(showLoading());
         await Api.put({
-          url: `users/reset-pin/${code.join("")}`,
+          url: `users/pin/reset/${code.join("")}`,
         });
 
         setCodes(["", "", "", ""]);
