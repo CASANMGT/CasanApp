@@ -6,19 +6,23 @@ import ModalContainer from "./ModalContainer";
 
 interface Props {
   isOpen: boolean;
-  power: number;
+  loading: boolean;
+  data: CalculateGrossProps | undefined;
+  dataPriceSetting: PriceSetting;
   onClose: () => void;
-  onViewDetails: () => void;
   onClick: () => void;
 }
 
 const ModalFullyCharge: React.FC<Props> = ({
   isOpen,
-  power,
+  data,
+  loading,
+  dataPriceSetting,
   onClose,
   onClick,
-  onViewDetails,
 }) => {
+  const baseFare: number = dataPriceSetting?.BikeBaseFare;
+
   return (
     <ModalContainer
       isOpen={isOpen}
@@ -40,11 +44,13 @@ const ModalFullyCharge: React.FC<Props> = ({
           {/* DESCRIPTION */}
           <div className="px-4 py-3 mb-2 rounded-md bg-[#D5F1EB]/40 border border-primary100/40">
             <p>
-              Anda bisa isi{" "}
-              <span className="text-primary100 font-medium">{power}kWh</span>{" "}
+              Perkiraan pengisian{" "}
+              <span className="text-primary100 font-medium">
+                {data?.KwhUsed}kWh
+              </span>{" "}
               dengan saldo{" "}
               <span className="text-primary100 font-medium">
-                Rp{rupiah(0)}.
+                Rp{rupiah(data?.ChargingUsage)}.
               </span>{" "}
               Sisa kWh akan dikembalikan ke saldo.
             </p>
@@ -52,36 +58,19 @@ const ModalFullyCharge: React.FC<Props> = ({
 
           {/* DETAIL */}
           <BetweenText
-            labelLeft="Total Harga Energi Dasar"
-            labelRight={`Rp${rupiah(0)}`}
+            labelLeft="Tarif Energi Dasar"
+            labelRight={`Rp${rupiah(baseFare)}/kWh`}
             classNameLabelRight="font-medium text-black100"
             className="py-2 border-b border-b-black10"
           />
 
-          <BetweenText
-            labelLeft="Biaya Lainnya"
-            labelRight={`Rp${rupiah(0)}`}
-            classNameLabelRight="font-medium text-black100"
-            className="py-2 border-b border-b-black10"
-          />
-
-          <BetweenText
-            labelLeft="Total Pembayaran"
-            labelRight={`Rp${rupiah(0)}`}
-            className="border-y border-black100 py-2"
-            classNameLabelLeft="text-blackBold"
-            classNameLabelRight="text-blackBold font-medium"
-          />
-
-          <span
-            onClick={onViewDetails}
-            className="py-4 text-primary100 text-xs cursor-pointer"
-          >
-            {"Lihat Detail ->"}
-          </span>
-
-          <div className="shadow-lg">
-            <Button buttonType="lg" label="Isi Penuh Daya" onClick={onClick} />
+          <div className="shadow-lg mt-6">
+            <Button
+              buttonType="lg"
+              loading={loading}
+              label="Isi Penuh Daya"
+              onClick={onClick}
+            />
           </div>
         </div>
       </div>

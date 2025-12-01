@@ -159,7 +159,6 @@ const SessionSettings = () => {
     ) {
       setData(deviceById?.data?.data?.ChargingStation);
       setSelectedDevice(deviceById?.data?.data);
-      getCalculateGross(); // dummy
     }
   }, [deviceById]);
 
@@ -177,6 +176,7 @@ const SessionSettings = () => {
   useEffect(() => {
     if (addSession?.loading) dispatch(showLoading());
     else {
+      if (openFullyCharger) setOpenFullyCharger(false);
       setLoading(false);
       dispatch(hideLoading());
     }
@@ -246,6 +246,24 @@ const SessionSettings = () => {
   }, [form.value, form?.ampere, form?.voltage]);
 
   useEffect(() => {
+    const getCalculateGross = async () => {
+      try {
+        const res = await Api.post({
+          url: "sessions/calculate-gross",
+          body: {
+            price_setting_id: data?.PriceSetting?.ID,
+            amount:
+              (myUser?.data?.Balance || 0) > 50000
+                ? 50000
+                : myUser?.data?.Balance || 0,
+          },
+        });
+        setDataCalculateGross(res?.data);
+      } catch (error) {
+        alert(ERROR_MESSAGE);
+      }
+    };
+
     if (form.selectedSocket) {
       if ((myUser?.data?.Balance || 0) > 1000) {
         setOpenFullyCharger(true);
@@ -264,24 +282,6 @@ const SessionSettings = () => {
 
   const onDismiss = () => {
     navigate(-1);
-  };
-
-  const getCalculateGross = async () => {
-    try {
-      const res = await Api.post({
-        url: "sessions/calculate-gross",
-        body: {
-          price_setting_id: data?.PriceSetting?.ID,
-          amount:
-            (myUser?.data?.Balance || 0) > 50000
-              ? 50000
-              : myUser?.data?.Balance,
-        },
-      });
-      setDataCalculateGross(res?.data);
-    } catch (error) {
-      alert(ERROR_MESSAGE);
-    }
   };
 
   const getChargingNominal = useCallback(() => {
@@ -510,16 +510,20 @@ const SessionSettings = () => {
     }
   };
 
-  const onPay = (select: FormSession) => {
+  const onPay = (select: FormSession, type?: "qucik") => {
     try {
       setLoading(true);
       const amount =
-        form.selectedTab === "nominal"
+        type === "qucik"
+          ? dataCalculateGross?.ChargingUsage || 0
+          : form.selectedTab === "nominal"
           ? Number(form.value.replace("Rp", "").replace(/\./g, ""))
           : valueCalculate || 0;
 
       const paid_kwh: number =
-        form.selectedTab === "power"
+        type === "qucik"
+          ? dataCalculateGross?.KwhUsed || 0
+          : form.selectedTab === "power"
           ? Number(form.value.replace(" kWh", ""))
           : valueCalculate || 0;
 
@@ -528,14 +532,20 @@ const SessionSettings = () => {
         paid_kwh,
         device_id: selectedDevice?.ID,
         payment_method:
-          totalPrice > 0 && select.paymentMethod?.key
+          type === "qucik"
+            ? "BALANCE_FU"
+            : totalPrice > 0 && select.paymentMethod?.key
             ? select.paymentMethod?.key
             : "BALANCE_FU",
-        session_method: select?.selectedTab === "1" ? 1 : 2,
+        session_method: select?.selectedTab === "duration" ? 2 : 1,
         socket_id: select?.selectedSocket || 0,
         station_id: data?.ID,
         voucher_id: [Number(form?.voucher?.value)],
-        wallet_used_amount: Math.floor(select?.balance || 0),
+        wallet_used_amount: Math.floor(
+          type === "qucik"
+            ? dataCalculateGross?.Total || 0
+            : select?.balance || 0
+        ),
       };
 
       dispatch(fetchAddSession(body));
@@ -973,13 +983,11 @@ const SessionSettings = () => {
         {openFullyCharger && (
           <ModalFullyCharge
             isOpen={openFullyCharger}
-            power={valueCalculate}
+            loading={loading || addSession?.loading}
+            dataPriceSetting={data?.PriceSetting}
+            data={dataCalculateGross}
             onClose={() => setOpenFullyCharger(false)}
-            onViewDetails={() => {
-              setTypePriceDetails("fully-charge");
-              setOpenPriceDetails(true);
-            }}
-            onClick={() => {}}
+            onClick={() => onPay(form, "qucik")}
           />
         )}
 
