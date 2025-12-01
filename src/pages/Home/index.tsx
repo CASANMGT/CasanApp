@@ -136,7 +136,7 @@ const Home = () => {
           </div> */}
 
           {/* LOCATION */}
-          <div className="inline-flex items-center gap-2 mb-2 bg-primary30 py-2 px-4 rounded-full shadow">
+          <div className="inline-flex items-center gap-2 mb-2 bg-primary30 py-2 px-4 rounded-full shadow-lg">
             <IoIosPin size={18} className="text-primary100" />
             <span className="text-black100 font-semibold">
               {detailLocation?.city}
