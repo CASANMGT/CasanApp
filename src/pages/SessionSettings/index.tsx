@@ -240,7 +240,7 @@ const SessionSettings = () => {
 
     if (editPin?.data) {
       dispatch(resetDataEditPin());
-      onPay(form);
+      onPay(form, condition);
     }
   }, [editPin]);
 
