@@ -36,6 +36,7 @@ import {
   ModalInputPower,
   ModalPaymentMethod,
   ModalPriceDetails,
+  ModalResetPin,
   ModalSKVoucher,
   ModalVoltageAmpere,
   ModalVoucher,
@@ -78,7 +79,7 @@ const SessionSettings = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated, logout, login } = useAuth();
   const { showAlert } = useAlert();
-  const { id } = useParams<{ id?: string }>();
+  const { id, socketId } = useParams();
 
   const global = useSelector((state: RootState) => state.global);
   const dataLogin = useSelector((state: RootState) => state.login);
@@ -94,6 +95,8 @@ const SessionSettings = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const [data, setData] = useState<ChargingStation>(location?.state?.data);
+  const [dataCalculateGross, setDataCalculateGross] =
+    useState<CalculateGrossProps>();
   const [selectedDevice, setSelectedDevice] = useState<Device>(
     location?.state?.selectedDevice
   );
@@ -111,13 +114,18 @@ const SessionSettings = () => {
   const [openPriceDetails, setOpenPriceDetails] = useState<boolean>(false);
   const [openVA, setOpenVA] = useState<boolean>(false);
   const [openFullyCharger, setOpenFullyCharger] = useState(false);
+  const [openResetPin, setOpenResetPin] = useState(false);
   const [priceType, setPriceType] = useState<number>();
   const [tabs, setTabs] = useState<TabItemProps[]>();
   const [typePriceDetails, setTypePriceDetails] = useState<"fully-charge">();
+  const [typeInputPin, setTypeInputPin] = useState<"new-pin" | "">("");
+  const [condition, setCondition] = useState<"quick">();
 
   useEffect(() => {
     if (isAuthenticated) dispatch(fetchMyUser());
-    if (id) dispatch(fetchDeviceById(id));
+    if (id) {
+      dispatch(fetchDeviceById(id));
+    }
   }, []);
 
   useEffect(() => {
@@ -156,19 +164,29 @@ const SessionSettings = () => {
   }, [deviceById]);
 
   useEffect(() => {
-    const sockets = selectedDevice?.Sockets;
-    if (
-      selectedDevice?.ID &&
-      sockets?.length === 1 &&
-      sockets?.[0]?.IsCharging === 0
-    ) {
-      setForm("selectedSocket", sockets[0]?.ID);
+    if (selectedDevice?.ID) {
+      const sockets = selectedDevice?.Sockets;
+      if (Number(socketId || 0) > 0) {
+        const selected = sockets.find((e) => e?.ID === Number(socketId || 0));
+
+        if (selected?.IsCharging === 0) {
+          setForm("selectedSocket", Number(socketId || 0));
+        } else {
+          showAlert({
+            title: "Socket Tidak Dapat Digunakan",
+            body: "Silakan pilih Socket lain untuk melanjutkan",
+          });
+        }
+      } else if (sockets?.length === 1 && sockets?.[0]?.IsCharging === 0) {
+        setForm("selectedSocket", sockets[0]?.ID);
+      }
     }
   }, [selectedDevice]);
 
   useEffect(() => {
     if (addSession?.loading) dispatch(showLoading());
     else {
+      if (openFullyCharger) setOpenFullyCharger(false);
       setLoading(false);
       dispatch(hideLoading());
     }
@@ -211,7 +229,7 @@ const SessionSettings = () => {
   // manage response check pin
   useEffect(() => {
     if (checkPin?.data?.data?.is_match) {
-      onPay(form);
+      onPay(form, condition);
     }
   }, [checkPin]);
 
@@ -237,21 +255,32 @@ const SessionSettings = () => {
     if (Number(v || 0) > 0) onCalculate(v);
   }, [form.value, form?.ampere, form?.voltage]);
 
-  // useEffect(() => {
-  //   if (form.selectedSocket) {
-  //     if ((myUser?.data?.Balance || 0) > 1000) {
-  //       setOpenFullyCharger(true);
+  useEffect(() => {
+    const getCalculateGross = async () => {
+      try {
+        const res = await Api.post({
+          url: "sessions/calculate-gross",
+          body: {
+            price_setting_id: data?.PriceSetting?.ID,
+            amount:
+              (myUser?.data?.Balance || 0) > 50000
+                ? 50000
+                : myUser?.data?.Balance || 0,
+          },
+        });
+        setDataCalculateGross(res?.data);
+      } catch (error) {
+        alert(ERROR_MESSAGE);
+      }
+    };
 
-  //       const cloneData = clone(form);
-  //       cloneData.selectedTab = "nominal";
-  //       cloneData.value = `Rp${rupiah(
-  //         (myUser?.data?.Balance || 0) > 50000 ? 50000 : myUser?.data?.Balance
-  //       )}`;
-
-  //       setForm("all", cloneData);
-  //     }
-  //   }
-  // }, [form?.selectedSocket]);
+    if (form.selectedSocket) {
+      if ((myUser?.data?.Balance || 0) > 1000 && data?.PriceSetting?.ID) {
+        setOpenFullyCharger(true);
+        getCalculateGross();
+      }
+    }
+  }, [form?.selectedSocket]);
 
   const onDismiss = () => {
     navigate(-1);
@@ -486,16 +515,20 @@ const SessionSettings = () => {
     }
   };
 
-  const onPay = (select: FormSession) => {
+  const onPay = (select: FormSession, type?: "quick") => {
     try {
       setLoading(true);
       const amount =
-        form.selectedTab === "nominal"
+        type === "quick"
+          ? dataCalculateGross?.ChargingUsage || 0
+          : form.selectedTab === "nominal"
           ? Number(form.value.replace("Rp", "").replace(/\./g, ""))
           : valueCalculate || 0;
 
       const paid_kwh: number =
-        form.selectedTab === "power"
+        type === "quick"
+          ? dataCalculateGross?.KwhUsed || 0
+          : form.selectedTab === "power"
           ? Number(form.value.replace(" kWh", ""))
           : valueCalculate || 0;
 
@@ -504,14 +537,20 @@ const SessionSettings = () => {
         paid_kwh,
         device_id: selectedDevice?.ID,
         payment_method:
-          totalPrice > 0 && select.paymentMethod?.key
+          type === "quick"
+            ? "BALANCE_FU"
+            : totalPrice > 0 && select.paymentMethod?.key
             ? select.paymentMethod?.key
             : "BALANCE_FU",
-        session_method: select?.selectedTab === "1" ? 1 : 2,
+        session_method: select?.selectedTab === "duration" ? 2 : 1,
         socket_id: select?.selectedSocket || 0,
         station_id: data?.ID,
         voucher_id: [Number(form?.voucher?.value)],
-        wallet_used_amount: Math.floor(select?.balance || 0),
+        wallet_used_amount: Math.floor(
+          type === "quick"
+            ? dataCalculateGross?.Total || 0
+            : select?.balance || 0
+        ),
       };
 
       dispatch(fetchAddSession(body));
@@ -907,8 +946,27 @@ const SessionSettings = () => {
 
         {openInputPin && (
           <ModalInputPin
+            type={typeInputPin}
             isOpen={openInputPin}
             onDismiss={() => setOpenInputPin(false)}
+            onReset={() => {
+              if (typeInputPin) setTypeInputPin("");
+              setOpenInputPin(false);
+              setOpenResetPin(true);
+            }}
+          />
+        )}
+
+        {openResetPin && (
+          <ModalResetPin
+            isOpen={openResetPin}
+            data={myUser?.data}
+            onDismiss={() => setOpenResetPin(false)}
+            onConfirm={() => {
+              setTypeInputPin("new-pin");
+              setOpenResetPin(false);
+              setOpenInputPin(true);
+            }}
           />
         )}
 
@@ -938,13 +996,15 @@ const SessionSettings = () => {
         {openFullyCharger && (
           <ModalFullyCharge
             isOpen={openFullyCharger}
-            power={valueCalculate}
+            loading={loading || addSession?.loading}
+            dataPriceSetting={data?.PriceSetting}
+            data={dataCalculateGross}
             onClose={() => setOpenFullyCharger(false)}
-            onViewDetails={() => {
-              setTypePriceDetails("fully-charge");
-              setOpenPriceDetails(true);
+            onClick={() => {
+              setOpenFullyCharger(false);
+              setCondition("quick");
+              setOpenInputPin(true);
             }}
-            onClick={() => {}}
           />
         )}
 

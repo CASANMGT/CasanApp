@@ -10,7 +10,7 @@ import {
   ComingSoon,
   ConfirmationPin,
   EditProfile,
-  Home,
+  HomePages,
   Location,
   LocationList,
   Login,
@@ -70,7 +70,7 @@ const RoutesPage = () => {
       <Route path="text-condition" element={<TermCondition />} />
       <Route path="privacy-police" element={<PrivacyPolice />} />
       <Route path="scan" element={<Scan />} />
-      <Route path="session-settings/:id?" element={<SessionSettings />} />
+      <Route path="session-settings/:id?/:socketId?" element={<SessionSettings />} />
       <Route
         path="payment-success/:id"
         element={<ProtectedRoute element={<PaymentSuccess />} />}
@@ -201,7 +201,7 @@ const RoutesPage = () => {
 
       {/* BOTTOM NAVIGATION */}
       <Route path="home" element={<Main />}>
-        <Route path="index" element={<Home />} />
+        <Route path="index" element={<HomePages />} />
         <Route path="location" element={<Location />} />
         <Route path="order" element={<ProtectedRoute element={<Order />} />} />
         <Route

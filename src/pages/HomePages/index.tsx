@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { FaChevronRight } from "react-icons/fa6";
+import { IoIosPin } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { IcCartGreen, IcMotorcycleGreen, IcPinWhite } from "../../assets";
+import { IcCartGreen, IcMotorcycleGreen } from "../../assets";
 import { GeocodeResult, LIMIT_LIST } from "../../common";
 import {
   Carousel,
@@ -20,9 +21,8 @@ import {
 import { Api } from "../../services";
 import { getCurrentLocation, getGeoCode } from "../../services/ApiAddress";
 import { AppDispatch, RootState } from "../../store";
-import StatusRTO from "./StatusRTO";
 
-const Home = () => {
+const HomePages = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated } = useAuth();
@@ -127,17 +127,18 @@ const Home = () => {
       <div className="px-4 py-3 flex flex-col w-full overflow-hidden">
         <div>
           {/* INFORMATION */}
-          <div className="bg-[#D5F1EB] px-6 py-4 mb-6 -mx-4">
+          {/* <div className="bg-[#D5F1EB] px-6 py-4 mb-6 -mx-4">
             <p className="text-black70">
               Casan.id - solusi pengisian daya EV yang mudah dan andal untuk
               sepeda dan motor listrik
             </p>
-          </div>
+          </div> */}
+
 
           {/* LOCATION */}
-          <div className="row gap-1 mb-2">
-            <IcPinWhite />
-            <span className="opacity-90 text-white font-semibold">
+          <div className="inline-flex items-center gap-2 mb-2 bg-primary30 py-2 px-4 rounded-full shadow-lg">
+            <IoIosPin size={18} className="text-primary100" />
+            <span className="text-black100 font-semibold">
               {detailLocation?.city}
             </span>
           </div>
@@ -246,12 +247,12 @@ const Home = () => {
         )}
 
         {/* STATUS RTO */}
-        {dataRTO?.ID && (
+        {/* {dataRTO?.ID && (
           <StatusRTO
             data={dataRTO}
             onClick={() => navigate(`/booking-details/${dataRTO?.ID}`)}
           />
-        )}
+        )} */}
 
         {/* CHARGING LIST */}
         <div className="flex flex-col overflow-auto scrollbar-none pt-3">
@@ -300,4 +301,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomePages;
