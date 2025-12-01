@@ -19,12 +19,18 @@ import ModalContainer from "./ModalContainer";
 const maxCountError: number = 3;
 
 interface Props {
+  type?: "new-pin" | "";
   isOpen: boolean;
   onDismiss: () => void;
   onReset: () => void;
 }
 
-const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss, onReset }) => {
+const ModalInputPin: React.FC<Props> = ({
+  type,
+  isOpen,
+  onDismiss,
+  onReset,
+}) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const checkPin = useSelector((state: RootState) => state.checkPin);
@@ -44,7 +50,13 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss, onReset }) => {
   useEffect(() => {
     if (isOpen) {
       formatError(myUser?.data?.WithdrawPINCooldownUntil);
-      setStep(myUser?.data?.WithdrawPIN ? "input-pin" : "new-pin");
+      setStep(
+        type === "new-pin"
+          ? "new-pin"
+          : myUser?.data?.WithdrawPIN
+          ? "input-pin"
+          : "new-pin"
+      );
     }
   }, [isOpen]);
 

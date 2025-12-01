@@ -135,6 +135,8 @@ const HomePages = () => {
             </p>
           </div> */}
 
+          Coming Soon
+
           {/* LOCATION */}
           <div className="inline-flex items-center gap-2 mb-2 bg-primary30 py-2 px-4 rounded-full shadow-lg">
             <IoIosPin size={18} className="text-primary100" />

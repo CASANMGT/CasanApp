@@ -14,21 +14,21 @@ interface Props {
   isOpen: boolean;
   data: UserProps | null;
   onDismiss: () => void;
+  onConfirm: () => void;
 }
 
-const ModalResetPin: React.FC<Props> = ({ isOpen, data, onDismiss }) => {
+const ModalResetPin: React.FC<Props> = ({
+  isOpen,
+  data,
+  onDismiss,
+  onConfirm,
+}) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const [condition, setCondition] = useState<
-    "send-otp" | "input-otp" | "new-pin" | "confirmation-pin"
-  >("send-otp");
+  const [condition, setCondition] = useState<"send-otp" | "input-otp">(
+    "send-otp"
+  );
   const [codes, setCodes] = useState<string[]>(["", "", "", ""]);
-  const [confirmationCode, setConfirmationCode] = useState<string[]>([
-    "",
-    "",
-    "",
-    "",
-  ]);
   const [labelTime, setLabelTime] = useState<string>("Kirim Ulang dalam 01:00");
   const [labelError, setLabelError] = useState<string>();
   const [counter, setCounter] = useState<number>(0);
@@ -87,8 +87,7 @@ const ModalResetPin: React.FC<Props> = ({ isOpen, data, onDismiss }) => {
   const onChangeText = (value: string[]) => {
     if (labelError) setLabelError("");
 
-    if (condition === "confirmation-pin") setConfirmationCode(value);
-    else setCodes(value);
+    setCodes(value);
     setLabelError("");
 
     const isValid: boolean = value.every((item) => item !== "");
@@ -104,27 +103,8 @@ const ModalResetPin: React.FC<Props> = ({ isOpen, data, onDismiss }) => {
           url: `users/pin/reset/${code.join("")}`,
         });
 
-        setCodes(["", "", "", ""]);
-        setCondition("new-pin");
         dispatch(hideLoading());
-      } else if (condition === "new-pin") {
-        setCondition("confirmation-pin");
-      } else if (condition === "confirmation-pin") {
-        const codeJoin: string = codes.join("");
-        const confirmationCodeJoin: string = confirmationCode.join("");
-
-        if (codeJoin === confirmationCodeJoin) {
-          dispatch(showLoading());
-          await Api.put({
-            url: `users/pin`,
-            body: { pin: confirmationCode.join("") },
-          });
-
-          onDismiss();
-          dispatch(hideLoading());
-        } else {
-          setLabelError("Konfirmasi PIN salah, silahkan coba lagi!");
-        }
+        onConfirm();
       } else {
         throw new Error(ERROR_MESSAGE);
       }
@@ -150,13 +130,7 @@ const ModalResetPin: React.FC<Props> = ({ isOpen, data, onDismiss }) => {
       <div className="w-full bg-white p-4 rounded-t-xl">
         {/* HEADER */}
         <div className="between-x mb-4">
-          <label className="text-base font-semibold">
-            {condition === "new-pin"
-              ? "Buat Pin Baru"
-              : condition === "confirmation-pin"
-              ? "Konfirmasi Pin Baru"
-              : "Reset PIN"}
-          </label>
+          <label className="text-base font-semibold">Reset PIN</label>
 
           <div onClick={onDismiss} className="cursor-pointer">
             <IcClose className="text-black100" />
@@ -170,10 +144,6 @@ const ModalResetPin: React.FC<Props> = ({ isOpen, data, onDismiss }) => {
               ? "Silakan konfirmasi OTP untuk alasan keamanan"
               : condition === "input-otp"
               ? "Silakan masukkan kode yang dikirimkan ke WA"
-              : condition === "new-pin"
-              ? "Demi keamanan transaksi, silakan buat kode PIN baru anda"
-              : condition === "confirmation-pin"
-              ? "Silahkan konfirmasi ulang kode PIN untuk melanjutkan pembayaran"
               : ""}
           </span>
 
@@ -202,16 +172,10 @@ const ModalResetPin: React.FC<Props> = ({ isOpen, data, onDismiss }) => {
             </div>
           )}
 
-          {(condition === "input-otp" ||
-            condition === "new-pin" ||
-            condition === "confirmation-pin") && (
+          {condition === "input-otp" && (
             <div className="mt-3">
               <InputCode
-                style={condition === "confirmation-pin" ? undefined : "reset"}
-                type={condition === "new-pin" ? "password" : undefined}
-                values={
-                  condition === "confirmation-pin" ? confirmationCode : codes
-                }
+                values={codes}
                 error={labelError}
                 onChange={onChangeText}
               />

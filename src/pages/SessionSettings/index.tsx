@@ -81,6 +81,9 @@ const SessionSettings = () => {
   const { showAlert } = useAlert();
   const { id, socketId } = useParams();
 
+  console.log("cek id", id);
+  console.log("cek socketId", socketId);
+
   const global = useSelector((state: RootState) => state.global);
   const dataLogin = useSelector((state: RootState) => state.login);
   const addSession = useSelector((state: RootState) => state.addSession);
@@ -118,12 +121,16 @@ const SessionSettings = () => {
   const [priceType, setPriceType] = useState<number>();
   const [tabs, setTabs] = useState<TabItemProps[]>();
   const [typePriceDetails, setTypePriceDetails] = useState<"fully-charge">();
+  const [typeInputPin, setTypeInputPin] = useState<"new-pin" | "">("");
+  const [condition, setCondition] = useState<"quick">();
 
   useEffect(() => {
     if (isAuthenticated) dispatch(fetchMyUser());
     if (id) {
       dispatch(fetchDeviceById(id));
-      if (Number(socketId || 0) > 0) setForm("selectedSocket", socketId);
+      if (Number(socketId || 0) > 0) {
+        setForm("selectedSocket", Number(socketId || 0));
+      }
     }
   }, []);
 
@@ -219,7 +226,7 @@ const SessionSettings = () => {
   // manage response check pin
   useEffect(() => {
     if (checkPin?.data?.data?.is_match) {
-      onPay(form);
+      onPay(form, condition);
     }
   }, [checkPin]);
 
@@ -265,17 +272,9 @@ const SessionSettings = () => {
     };
 
     if (form.selectedSocket) {
-      if ((myUser?.data?.Balance || 0) > 1000) {
+      if ((myUser?.data?.Balance || 0) > 1000 && data?.PriceSetting?.ID) {
         setOpenFullyCharger(true);
         getCalculateGross();
-
-        // const cloneData = clone(form);
-        // cloneData.selectedTab = "nominal";
-        // cloneData.value = `Rp${rupiah(
-        //   (myUser?.data?.Balance || 0) > 50000 ? 50000 : myUser?.data?.Balance
-        // )}`;
-
-        // setForm("all", cloneData);
       }
     }
   }, [form?.selectedSocket]);
@@ -415,10 +414,13 @@ const SessionSettings = () => {
         message.title = "Pilih Socket Terlebih Dahulu";
         message.body =
           "Silakan pilih Socket sesuai yang akan anda gunakan untuk pengisian";
-      } else if (form.selectedTab === "1" && !form?.value) {
+      } else if (form.selectedTab === "power" && !form?.value) {
+        message.title = "Daya Belum Terpilih";
+        message.body = "Masukkan Daya Terlebih Dahulu";
+      } else if (form.selectedTab === "nominal" && !form?.value) {
         message.title = "Nominal Belum Terpilih";
         message.body = "Masukkan Nominal Terlebih Dahulu";
-      } else if (form.selectedTab === "2" && form.value === "00:00") {
+      } else if (form.selectedTab === "duration" && form.value === "00:00") {
         message.title = "Jam Belum Terpilih";
         message.body = "Masukkan Jam Terlebih Dahulu";
       }
@@ -510,18 +512,18 @@ const SessionSettings = () => {
     }
   };
 
-  const onPay = (select: FormSession, type?: "qucik") => {
+  const onPay = (select: FormSession, type?: "quick") => {
     try {
       setLoading(true);
       const amount =
-        type === "qucik"
+        type === "quick"
           ? dataCalculateGross?.ChargingUsage || 0
           : form.selectedTab === "nominal"
           ? Number(form.value.replace("Rp", "").replace(/\./g, ""))
           : valueCalculate || 0;
 
       const paid_kwh: number =
-        type === "qucik"
+        type === "quick"
           ? dataCalculateGross?.KwhUsed || 0
           : form.selectedTab === "power"
           ? Number(form.value.replace(" kWh", ""))
@@ -532,7 +534,7 @@ const SessionSettings = () => {
         paid_kwh,
         device_id: selectedDevice?.ID,
         payment_method:
-          type === "qucik"
+          type === "quick"
             ? "BALANCE_FU"
             : totalPrice > 0 && select.paymentMethod?.key
             ? select.paymentMethod?.key
@@ -542,7 +544,7 @@ const SessionSettings = () => {
         station_id: data?.ID,
         voucher_id: [Number(form?.voucher?.value)],
         wallet_used_amount: Math.floor(
-          type === "qucik"
+          type === "quick"
             ? dataCalculateGross?.Total || 0
             : select?.balance || 0
         ),
@@ -940,9 +942,11 @@ const SessionSettings = () => {
 
         {openInputPin && (
           <ModalInputPin
+            type={typeInputPin}
             isOpen={openInputPin}
             onDismiss={() => setOpenInputPin(false)}
             onReset={() => {
+              if (typeInputPin) setTypeInputPin("");
               setOpenInputPin(false);
               setOpenResetPin(true);
             }}
@@ -954,6 +958,10 @@ const SessionSettings = () => {
             isOpen={openResetPin}
             data={myUser?.data}
             onDismiss={() => setOpenResetPin(false)}
+            onConfirm={() => {
+              setTypeInputPin("new-pin");
+              setOpenInputPin(true);
+            }}
           />
         )}
 
@@ -987,7 +995,10 @@ const SessionSettings = () => {
             dataPriceSetting={data?.PriceSetting}
             data={dataCalculateGross}
             onClose={() => setOpenFullyCharger(false)}
-            onClick={() => onPay(form, "qucik")}
+            onClick={() => {
+              setCondition("quick");
+              setOpenInputOTP(true);
+            }}
           />
         )}
 

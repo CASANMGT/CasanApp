@@ -50,7 +50,7 @@ const ModalFullyCharge: React.FC<Props> = ({
               </span>{" "}
               dengan saldo{" "}
               <span className="text-primary100 font-medium">
-                Rp{rupiah(data?.ChargingUsage)}.
+                Rp{rupiah(data?.Total)}.
               </span>{" "}
               Sisa kWh akan dikembalikan ke saldo.
             </p>
