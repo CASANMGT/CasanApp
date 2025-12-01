@@ -23,7 +23,7 @@ import { AppDispatch, RootState } from "../../store";
 import StatusRTO from "./StatusRTO";
 import { IoIosPin } from "react-icons/io";
 
-const Home = () => {
+const HomePages = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated } = useAuth();
@@ -301,4 +301,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomePages;
