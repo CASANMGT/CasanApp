@@ -95,6 +95,8 @@ const SessionSettings = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const [data, setData] = useState<ChargingStation>(location?.state?.data);
+  const [dataCalculateGross, setDataCalculateGross] =
+    useState<CalculateGrossProps>();
   const [selectedDevice, setSelectedDevice] = useState<Device>(
     location?.state?.selectedDevice
   );
@@ -157,6 +159,7 @@ const SessionSettings = () => {
     ) {
       setData(deviceById?.data?.data?.ChargingStation);
       setSelectedDevice(deviceById?.data?.data);
+      getCalculateGross(); // dummy
     }
   }, [deviceById]);
 
@@ -242,24 +245,43 @@ const SessionSettings = () => {
     if (Number(v || 0) > 0) onCalculate(v);
   }, [form.value, form?.ampere, form?.voltage]);
 
-  // useEffect(() => {
-  //   if (form.selectedSocket) {
-  //     if ((myUser?.data?.Balance || 0) > 1000) {
-  //       setOpenFullyCharger(true);
+  useEffect(() => {
+    if (form.selectedSocket) {
+      if ((myUser?.data?.Balance || 0) > 1000) {
+        setOpenFullyCharger(true);
+        getCalculateGross();
 
-  //       const cloneData = clone(form);
-  //       cloneData.selectedTab = "nominal";
-  //       cloneData.value = `Rp${rupiah(
-  //         (myUser?.data?.Balance || 0) > 50000 ? 50000 : myUser?.data?.Balance
-  //       )}`;
+        const cloneData = clone(form);
+        cloneData.selectedTab = "nominal";
+        cloneData.value = `Rp${rupiah(
+          (myUser?.data?.Balance || 0) > 50000 ? 50000 : myUser?.data?.Balance
+        )}`;
 
-  //       setForm("all", cloneData);
-  //     }
-  //   }
-  // }, [form?.selectedSocket]);
+        setForm("all", cloneData);
+      }
+    }
+  }, [form?.selectedSocket]);
 
   const onDismiss = () => {
     navigate(-1);
+  };
+
+  const getCalculateGross = async () => {
+    try {
+      const res = await Api.post({
+        url: "sessions/calculate-gross",
+        body: {
+          price_setting_id: data?.PriceSetting?.ID,
+          amount:
+            (myUser?.data?.Balance || 0) > 50000
+              ? 50000
+              : myUser?.data?.Balance,
+        },
+      });
+      setDataCalculateGross(res?.data);
+    } catch (error) {
+      alert(ERROR_MESSAGE);
+    }
   };
 
   const getChargingNominal = useCallback(() => {
