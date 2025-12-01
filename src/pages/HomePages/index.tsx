@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { FaChevronRight } from "react-icons/fa6";
+import { IoIosPin } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { IcCartGreen, IcMotorcycleGreen, IcPinWhite } from "../../assets";
+import { IcCartGreen, IcMotorcycleGreen } from "../../assets";
 import { GeocodeResult, LIMIT_LIST } from "../../common";
 import {
   Carousel,
@@ -20,8 +21,6 @@ import {
 import { Api } from "../../services";
 import { getCurrentLocation, getGeoCode } from "../../services/ApiAddress";
 import { AppDispatch, RootState } from "../../store";
-import StatusRTO from "./StatusRTO";
-import { IoIosPin } from "react-icons/io";
 
 const HomePages = () => {
   const navigate = useNavigate();
@@ -135,7 +134,6 @@ const HomePages = () => {
             </p>
           </div> */}
 
-          Coming Soon
 
           {/* LOCATION */}
           <div className="inline-flex items-center gap-2 mb-2 bg-primary30 py-2 px-4 rounded-full shadow-lg">
