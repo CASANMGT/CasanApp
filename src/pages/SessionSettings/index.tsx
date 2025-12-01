@@ -269,13 +269,13 @@ const SessionSettings = () => {
         setOpenFullyCharger(true);
         getCalculateGross();
 
-        const cloneData = clone(form);
-        cloneData.selectedTab = "nominal";
-        cloneData.value = `Rp${rupiah(
-          (myUser?.data?.Balance || 0) > 50000 ? 50000 : myUser?.data?.Balance
-        )}`;
+        // const cloneData = clone(form);
+        // cloneData.selectedTab = "nominal";
+        // cloneData.value = `Rp${rupiah(
+        //   (myUser?.data?.Balance || 0) > 50000 ? 50000 : myUser?.data?.Balance
+        // )}`;
 
-        setForm("all", cloneData);
+        // setForm("all", cloneData);
       }
     }
   }, [form?.selectedSocket]);
