@@ -81,9 +81,6 @@ const SessionSettings = () => {
   const { showAlert } = useAlert();
   const { id, socketId } = useParams();
 
-  console.log("cek id", id);
-  console.log("cek socketId", socketId);
-
   const global = useSelector((state: RootState) => state.global);
   const dataLogin = useSelector((state: RootState) => state.login);
   const addSession = useSelector((state: RootState) => state.addSession);
@@ -960,6 +957,7 @@ const SessionSettings = () => {
             onDismiss={() => setOpenResetPin(false)}
             onConfirm={() => {
               setTypeInputPin("new-pin");
+              setOpenResetPin(false);
               setOpenInputPin(true);
             }}
           />
@@ -996,8 +994,9 @@ const SessionSettings = () => {
             data={dataCalculateGross}
             onClose={() => setOpenFullyCharger(false)}
             onClick={() => {
+              setOpenFullyCharger(false);
               setCondition("quick");
-              setOpenInputOTP(true);
+              setOpenInputPin(true);
             }}
           />
         )}

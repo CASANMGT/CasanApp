@@ -54,17 +54,14 @@ const ModalFullyCharge: React.FC<Props> = ({
               </span>{" "}
               Sisa kWh akan dikembalikan ke saldo.
             </p>
+
+            <p className="text-black70 text-xs mt-4">
+              *Berdasarkan tarif energi dasar Rp{rupiah(baseFare)}/kWh dan biaya
+              lainnya. Detail dapat dilihat setelah pengisian.
+            </p>
           </div>
 
-          {/* DETAIL */}
-          <BetweenText
-            labelLeft="Tarif Energi Dasar"
-            labelRight={`Rp${rupiah(baseFare)}/kWh`}
-            classNameLabelRight="font-medium text-black100"
-            className="py-2 border-b border-b-black10"
-          />
-
-          <div className="shadow-lg mt-6">
+          <div className="shadow-lg mt-4">
             <Button
               buttonType="lg"
               loading={loading}
