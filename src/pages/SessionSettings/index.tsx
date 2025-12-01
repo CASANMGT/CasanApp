@@ -125,9 +125,6 @@ const SessionSettings = () => {
     if (isAuthenticated) dispatch(fetchMyUser());
     if (id) {
       dispatch(fetchDeviceById(id));
-      if (Number(socketId || 0) > 0) {
-        setForm("selectedSocket", Number(socketId || 0));
-      }
     }
   }, []);
 
@@ -167,13 +164,22 @@ const SessionSettings = () => {
   }, [deviceById]);
 
   useEffect(() => {
-    const sockets = selectedDevice?.Sockets;
-    if (
-      selectedDevice?.ID &&
-      sockets?.length === 1 &&
-      sockets?.[0]?.IsCharging === 0
-    ) {
-      setForm("selectedSocket", sockets[0]?.ID);
+    if (selectedDevice?.ID) {
+      const sockets = selectedDevice?.Sockets;
+      if (Number(socketId || 0) > 0) {
+        const selected = sockets.find((e) => e?.ID === Number(socketId || 0));
+
+        if (selected?.IsCharging === 0) {
+          setForm("selectedSocket", Number(socketId || 0));
+        } else {
+          showAlert({
+            title: "Socket Tidak Dapat Digunakan",
+            body: "Silakan pilih Socket lain untuk melanjutkan",
+          });
+        }
+      } else if (sockets?.length === 1 && sockets?.[0]?.IsCharging === 0) {
+        setForm("selectedSocket", sockets[0]?.ID);
+      }
     }
   }, [selectedDevice]);
 

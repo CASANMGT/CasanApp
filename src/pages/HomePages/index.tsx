@@ -249,12 +249,12 @@ const HomePages = () => {
         )}
 
         {/* STATUS RTO */}
-        {dataRTO?.ID && (
+        {/* {dataRTO?.ID && (
           <StatusRTO
             data={dataRTO}
             onClick={() => navigate(`/booking-details/${dataRTO?.ID}`)}
           />
-        )}
+        )} */}
 
         {/* CHARGING LIST */}
         <div className="flex flex-col overflow-auto scrollbar-none pt-3">
