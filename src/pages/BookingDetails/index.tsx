@@ -108,7 +108,7 @@ const BookingDetails = () => {
       setOpenPaymentMethod(true);
     } else {
       const next =
-        status === 2
+        status === 3
           ? `/transaction-rto-history/details/${dataTransaction?.ID}`
           : "/buy-credit";
 
@@ -139,6 +139,7 @@ const BookingDetails = () => {
           : latest;
       })
     : undefined;
+  const transactionStatus = dataTransaction?.Status;
 
   return (
     <div className="background-1 overflow-hidden justify-between flex flex-col">
@@ -232,7 +233,7 @@ const BookingDetails = () => {
                     label={
                       status === 4 || status === 7
                         ? "Bayar Tagihan"
-                        : status === 2
+                        : status === 3
                         ? "Lanjutkan Pembayaran"
                         : "Beli Kredit harian"
                     }
