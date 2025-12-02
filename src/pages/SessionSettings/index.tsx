@@ -20,6 +20,7 @@ import {
   ERROR_MESSAGE,
   FormDefaultSession,
   INVALID_TOKEN,
+  MAX_QUICK_CHARGE,
   REGEX_TIME,
   Voucher,
 } from "../../common";
@@ -263,8 +264,8 @@ const SessionSettings = () => {
           body: {
             price_setting_id: data?.PriceSetting?.ID,
             amount:
-              (myUser?.data?.Balance || 0) > 50000
-                ? 50000
+              (myUser?.data?.Balance || 0) > MAX_QUICK_CHARGE
+                ? MAX_QUICK_CHARGE
                 : myUser?.data?.Balance || 0,
           },
         });
