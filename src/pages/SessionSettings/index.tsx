@@ -534,6 +534,7 @@ const SessionSettings = () => {
           : valueCalculate || 0;
 
       const body: AddSessionBody = {
+        ab_test: type === "quick" ? "quick_charge" : "normal_charge",
         amount,
         paid_kwh,
         device_id: selectedDevice?.ID,

@@ -19,6 +19,7 @@ declare global {
 
   type AddSessionBody = {
     id?: number;
+    ab_test?: string;
     amount: number;
     paid_kwh: number;
     device_id: number;
