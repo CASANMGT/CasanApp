@@ -90,7 +90,7 @@ const BuyCredit = () => {
 
           <ProgressBar2 percent={(current / total) * 100} />
 
-          <div className="row gap-1.5 text-white">
+          {/* <div className="row gap-1.5 text-white">
             <span className="text-xs">Kredit Habis:</span>
             <span className="text-xs font-medium">
               {moments(data?.NextPaymentDate || undefined)
@@ -98,7 +98,7 @@ const BuyCredit = () => {
                 .format("dddd, DD MMMM YYYY")}
             </span>
             <span className="text-xs font-medium">{data?.CutOffTime}</span>
-          </div>
+          </div> */}
         </div>
       </div>
 

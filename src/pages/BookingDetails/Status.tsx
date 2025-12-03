@@ -10,6 +10,7 @@ interface Props {
 }
 
 const Status: React.FC<Props> = ({ status }) => {
+  
   const formatted = getFormatted(status);
 
   return (

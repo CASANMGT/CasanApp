@@ -82,20 +82,28 @@ const History: React.FC<Props> = ({ data }) => {
                 {/* Left section */}
                 <div>
                   <p className="text-[10px] text-black100 mb-1">
-                    {item?.Type === 1
-                      ? `ID Transaksi ${item?.TransactionID}`
-                      : `Cicilan ${item?.Reference}`}
+                    {item?.Type === 2
+                      ? `Cicilan ${item?.Reference}`
+                      : `ID Transaksi ${item?.TransactionID || "-"}`}
                   </p>
                   <p className="font-semibold text-base">
-                    {item?.Type === 1 ? "Top-up" : "Cicilan"}
+                    {item?.Type === 1
+                      ? "Top-up"
+                      : item?.Type === 2
+                      ? "Cicilan"
+                      : "Bayar Tagihan"}
                     <span
                       className={`font-semibold text-${
-                        item?.Type === 1 ? "green" : "red"
+                        item?.Type === 1
+                          ? "green"
+                          : item?.Type === 2
+                          ? "red"
+                          : "black100"
                       }`}
                     >
-                      {` ${item?.Type === 1 ? "+" : "-"}${
-                        item?.Change || 0
-                      } Hari`}
+                      {` ${
+                        item?.Type === 1 ? "+" : item?.Type === 2 ? "-" : ""
+                      }${item?.Change || 0} Hari`}
                     </span>
                   </p>
                   <p className="text-xs text-black90 mt-1">
