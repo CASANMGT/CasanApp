@@ -173,7 +173,7 @@ const CardRental: React.FC<Props> = ({ data, position, onClick }) => {
               <span
                 className={`text-xs text-${status === 4 ? "red" : "black100"}`}
               >
-                {`${status === 5 ? `Libur Sampai `:''}${moments(
+                {`${status === 5 ? `Libur Sampai ` : ""}${moments(
                   status === 5 ? dataHoliday?.EndDate : data?.TargetFinishDate
                 ).format("DD MMMM YYYY")}`}
               </span>

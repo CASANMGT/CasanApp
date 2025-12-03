@@ -281,7 +281,7 @@ const SessionSettings = () => {
         getCalculateGross();
       }
     }
-  }, [form?.selectedSocket]);
+  }, [form?.selectedSocket, myUser?.data?.Balance]);
 
   const onDismiss = () => {
     navigate(-1);

@@ -109,7 +109,7 @@ const BookingDetails = () => {
       setOpenPaymentMethod(true);
     } else {
       const next =
-        status === 3
+        status === 3 && isTransactionPending
           ? `/transaction-rto-history/details/${dataTransaction?.ID}`
           : "/buy-credit";
 
@@ -132,15 +132,17 @@ const BookingDetails = () => {
   const current = data?.CreditPaid || 1;
   const total = data?.Payment || 1;
 
-  const dataTransaction: RTOTransactionProps | undefined = data?.RTOTransactions
-    ?.length
-    ? data?.RTOTransactions?.reduce((latest, item) => {
-        return new Date(item.CreatedAt) > new Date(latest.CreatedAt)
-          ? item
-          : latest;
-      })
-    : undefined;
-  const transactionStatus = dataTransaction?.Status;
+  let dataTransaction: RTOTransactionProps | undefined = undefined;
+  let isTransactionPending: boolean = false;
+
+  if (data?.RTOTransactions?.length) {
+    dataTransaction = data?.RTOTransactions?.reduce((latest, item) => {
+      return new Date(item.CreatedAt) > new Date(latest.CreatedAt)
+        ? item
+        : latest;
+    });
+    isTransactionPending = data?.RTOTransactions.some((e) => e.Status === 2);
+  }
 
   return (
     <div className="background-1 overflow-hidden justify-between flex flex-col">
@@ -234,7 +236,7 @@ const BookingDetails = () => {
                     label={
                       status === 4 || status === 7
                         ? "Bayar Tagihan"
-                        : status === 3
+                        : status === 3 && isTransactionPending
                         ? "Lanjutkan Pembayaran"
                         : "Beli Kredit harian"
                     }
