@@ -192,14 +192,17 @@ const BookingDetails = () => {
                 </div>
                 {status !== 2 && (
                   <div className="row gap-1.5 mt-1">
-                    <span className="text-xs text-black70">Jatuh Tempo</span>
-                    <span className="text-xs ">
+                    <span className="text-xs text-black70">Jatuh Tempo:</span>
+                    {/* <span className="text-xs ">
                       {moments(data?.NextPaymentDate || undefined)
                         .add(1, "days")
                         .format("DD MMMM YYYY")}
-                    </span>
-                    {(status === 3 || status === 4 || status === 7) && (
-                      <span className="text-xs">{data?.CutOffTime}</span>
+                    </span> */}
+                    {(status === 3 ||
+                      status === 4 ||
+                      status === 5 ||
+                      status === 7) && (
+                      <span className="text-xs">Jam {data?.CutOffTime} selain libur pembayaran</span>
                     )}
 
                     {(status === 4 || status === 7) && (
@@ -219,13 +222,13 @@ const BookingDetails = () => {
                     <span className="text-black90 font-medium">
                       Libur Bayar
                     </span>
-                    <div className="bg-black10 w-[1px] h-[16px]" />
+                    {/* <div className="bg-black10 w-[1px] h-[16px]" />
                     <span className="text-blackBold font-medium">
                       {data?.OverdueCount} Hari Lagi
                     </span>
                     <span className="text-black70 font-medium">
                       (12-15 Apr)
-                    </span>
+                    </span> */}
                   </div>
                 )}
 
