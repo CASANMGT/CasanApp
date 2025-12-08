@@ -266,18 +266,26 @@ const SessionDetails = () => {
             <BetweenText
               type="medium-content"
               labelLeft="Waktu Mulai"
-              labelRight={moments(dataSession?.StartChargingTime).format(
-                "DD MMM HH:mm"
-              )}
+              labelRight={
+                dataSession?.StartChargingTime
+                  ? moments(dataSession?.StartChargingTime).format(
+                      "DD MMM HH:mm"
+                    )
+                  : "-"
+              }
               className="p-3"
             />
 
             <BetweenText
               type="medium-content"
               labelLeft="Waktu Selesai"
-              labelRight={moments(dataSession?.StopChargingTime).format(
-                "DD MMM HH:mm"
-              )}
+              labelRight={
+                dataSession?.StopChargingTime
+                  ? moments(dataSession?.StopChargingTime).format(
+                      "DD MMM HH:mm"
+                    )
+                  : "-"
+              }
               className="bg-baseLightGray p-3"
             />
 
