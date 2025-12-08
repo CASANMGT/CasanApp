@@ -1,7 +1,7 @@
 import html2canvas from "html2canvas";
 import { useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa6";
-import { IoLeaf } from "react-icons/io5";
+import { IoLeaf, IoWallet } from "react-icons/io5";
 import { RiTreeFill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -105,8 +105,13 @@ const SessionDetails = () => {
 
   const dataSession: Session | null = detailSession?.data;
   let dataVoucher: VoucherUsage | undefined = undefined;
-  let isShowVoucher: boolean = false;
   const status: number | undefined = dataSession?.Status;
+  let isShowVoucher: boolean = false;
+  const isShowRefund =
+    (status === 6 || status === 7 || status === 8) &&
+    (dataSession?.RefundAmount || 0) > 0
+      ? true
+      : false;
   const isFull =
     (dataSession?.Transaction?.Amount || 0) -
       (dataSession?.RefundAmount || 0) ===
@@ -184,6 +189,22 @@ const SessionDetails = () => {
             </div>
           )}
 
+          {isShowRefund && (
+            <div className="bg-primary10 p-3 rounded-lg mb-4 row gap-3">
+              <div className="w-9 h-9 rounded-full bg-primary100/10 center">
+                <IoWallet size={20} className="text-primary100" />
+              </div>
+
+              <p className="flex-1">
+                Sisa kWh
+                <span className="text-primary100 font-semibold">{` Rp${rupiah(
+                  dataSession?.RefundAmount
+                )} `}</span>
+                telah dikembalikan ke dompet Casan anda
+              </p>
+            </div>
+          )}
+
           {/* TOOL INFORMATION */}
           <div className="bg-white p-3 rounded-lg mb-4 drop-shadow">
             <div className="row gap-3 mb-3">
@@ -233,9 +254,7 @@ const SessionDetails = () => {
               className="bg-baseLightGray p-3 rounded-t"
             />
 
-            {status !== 7 && status !== 8 && (
-              <>
-                {/* {!isFull && (
+            {/* {!isFull && (
                   <BetweenText
                     type="medium-content"
                     labelLeft="Keterangan Sesi"
@@ -244,67 +263,75 @@ const SessionDetails = () => {
                   />
                 )} */}
 
-                <BetweenText
-                  type="medium-content"
-                  labelLeft="Waktu Mulai"
-                  labelRight={moments(dataSession?.StartChargingTime).format(
-                    "DD MMM HH:mm"
-                  )}
-                  className="p-3"
-                />
+            <BetweenText
+              type="medium-content"
+              labelLeft="Waktu Mulai"
+              labelRight={moments(dataSession?.StartChargingTime).format(
+                "DD MMM HH:mm"
+              )}
+              className="p-3"
+            />
 
-                <BetweenText
-                  type="medium-content"
-                  labelLeft="Waktu Selesai"
-                  labelRight={moments(dataSession?.StopChargingTime).format(
-                    "DD MMM HH:mm"
-                  )}
-                  className="bg-baseLightGray p-3"
-                />
+            <BetweenText
+              type="medium-content"
+              labelLeft="Waktu Selesai"
+              labelRight={moments(dataSession?.StopChargingTime).format(
+                "DD MMM HH:mm"
+              )}
+              className="bg-baseLightGray p-3"
+            />
 
-                {!isFull && (
-                  <BetweenText
-                    type="medium-content"
-                    labelLeft="Durasi Pemakaian"
-                    labelRight={formatDuration(dataSession?.Duration)}
-                    className="p-3"
-                  />
-                )}
+            {!isFull && (
+              <BetweenText
+                type="medium-content"
+                labelLeft="Durasi Pemakaian"
+                labelRight={
+                  dataSession?.Duration
+                    ? formatDuration(dataSession?.Duration)
+                    : "-"
+                }
+                className="p-3"
+              />
+            )}
 
-                <BetweenText
-                  type="medium-content"
-                  labelLeft="Maksimum Watt"
-                  labelRight={`${dataSession?.MaxWatt}W`}
-                  className="bg-baseLightGray p-3"
-                />
+            {status !== 7 && status !== 8 && (
+              <BetweenText
+                type="medium-content"
+                labelLeft="Maksimum Watt"
+                labelRight={`${dataSession?.MaxWatt}W`}
+                className="bg-baseLightGray p-3"
+              />
+            )}
 
-                <BetweenText
-                  type="medium-content"
-                  labelLeft="Tarif Pengecasan"
-                  labelRight={`Rp${rupiah(
-                    dataSession?.Transaction?.BaseFare
-                  )}/kWh`}
-                  className="p-3"
-                />
+            <BetweenText
+              type="medium-content"
+              labelLeft="Tarif Pengecasan"
+              labelRight={`Rp${rupiah(dataSession?.Transaction?.BaseFare)}/kWh`}
+              className="p-3"
+            />
 
-                <BetweenText
-                  type="medium-content"
-                  labelLeft="Nominal Pesanan"
-                  labelRight={`Rp${rupiah(
-                    dataSession?.Transaction?.NetCharge
-                  )}`}
-                  className="bg-baseLightGray p-3"
-                />
+            <BetweenText
+              type="medium-content"
+              labelLeft="Nominal Pesanan"
+              labelRight={`${dataSession?.PaidKWH}kWh (Rp${rupiah(
+                dataSession?.Transaction?.NetCharge
+              )})`}
+              className="bg-baseLightGray p-3"
+            />
 
-                {!isFull && (
-                  <BetweenText
-                    type="medium-content"
-                    labelLeft="Nominal Pemakaian"
-                    labelRight={`Rp${rupiah(dataSession?.UsedAmount)}`}
-                    className="bg-baseLightGray p-3"
-                  />
-                )}
-              </>
+            {!isFull && (
+              <BetweenText
+                type="medium-content"
+                labelLeft="Nominal Pemakaian"
+                labelRight={
+                  (dataSession?.UsedAmount || 0) > 0
+                    ? `${dataSession?.TotalKwhUsed}kWh (Rp${rupiah(
+                        dataSession?.UsedAmount
+                      )})`
+                    : "-"
+                }
+                className="bg-baseLightGray p-3"
+              />
             )}
           </div>
 
@@ -451,7 +478,7 @@ const SessionDetails = () => {
           isOpen={openPriceDetails}
           dataPriceSetting={dataSession?.PriceSetting}
           dataDevice={dataSession?.Device}
-          dataVoucher={undefined} 
+          dataVoucher={undefined}
           dataUser={dataSession?.User}
           price={dataSession?.Transaction?.TotalFare || 0}
           power={dataSession?.PaidKWH || 0}
