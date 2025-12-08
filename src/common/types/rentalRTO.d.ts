@@ -40,7 +40,8 @@ declare global {
     isFromApprove?: boolean;
     Program: ProgramProps;
     ProgramID: number;
-    RTOTransactions: RTOTransactionProps[]|null;
+    RTOTransactions: RTOTransactionProps[] | null;
+    RTOHolidays: RTOHolidaysProps[];
   };
 
   type RTOCreditProps = {
@@ -104,5 +105,18 @@ declare global {
     CreatedAt: string;
     UpdatedAt: string;
     DeletedAt: string | null;
+  };
+
+  type RTOHolidaysProps = {
+    ID: number;
+    RTOID: number;
+    RTO: any;
+    StartDate: string;
+    EndDate: string;
+    TotalDay: number;
+    IsUsed: boolean;
+    CreatedAt: string;
+    UpdatedAt: string;
+    DeletedAt: any;
   };
 }

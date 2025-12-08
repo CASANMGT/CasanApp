@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaChevronRight, FaLock, FaUser } from "react-icons/fa6";
 import { FiEdit3, FiNavigation } from "react-icons/fi";
+import { IoTime } from "react-icons/io5";
 import {
   MdHistory,
   MdInfo,
@@ -10,6 +11,7 @@ import {
 import { PiWarningCircleFill } from "react-icons/pi";
 import { TbRoute } from "react-icons/tb";
 import { WiTime4 } from "react-icons/wi";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { ILNoImage, ILPin } from "../../assets";
 import { DaysOfWeek, ERROR_MESSAGE, FeeSettingsProps } from "../../common";
@@ -23,16 +25,13 @@ import {
   ModalVehicleDetails,
   Separator,
 } from "../../components";
+import { useAuth } from "../../context/AuthContext";
+import { fetchMyUser } from "../../features";
 import { moments, openGoogleMaps, openWhatsApp, rupiah } from "../../helpers";
 import { Api } from "../../services";
+import { AppDispatch, RootState } from "../../store";
 import Container from "./Container";
 import Status from "./Status";
-import { useAuth } from "../../context/AuthContext";
-import { useDispatch } from "react-redux";
-import { AppDispatch, RootState } from "../../store";
-import { fetchMyUser } from "../../features";
-import { useSelector } from "react-redux";
-import { IoTime } from "react-icons/io5";
 
 const BookingDetails = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -87,12 +86,14 @@ const BookingDetails = () => {
           rtoid: Number(data?.ID ?? 0),
         };
 
-        await Api.post({
+        const res = await Api.post({
           url: "rto-transactions/overdue",
           body,
         });
 
+        setOpenPaymentMethod(false);
         getData();
+        navigate(`/transaction-rto-history/details/${res?.data?.ID || 0}`);
       } else {
         throw new Error("Payment method not found.");
       }
@@ -108,7 +109,7 @@ const BookingDetails = () => {
       setOpenPaymentMethod(true);
     } else {
       const next =
-        status === 2
+        status === 3 && isTransactionPending
           ? `/transaction-rto-history/details/${dataTransaction?.ID}`
           : "/buy-credit";
 
@@ -131,14 +132,17 @@ const BookingDetails = () => {
   const current = data?.CreditPaid || 1;
   const total = data?.Payment || 1;
 
-  const dataTransaction: RTOTransactionProps | undefined = data?.RTOTransactions
-    ?.length
-    ? data?.RTOTransactions?.reduce((latest, item) => {
-        return new Date(item.CreatedAt) > new Date(latest.CreatedAt)
-          ? item
-          : latest;
-      })
-    : undefined;
+  let dataTransaction: RTOTransactionProps | undefined = undefined;
+  let isTransactionPending: boolean = false;
+
+  if (data?.RTOTransactions?.length) {
+    dataTransaction = data?.RTOTransactions?.reduce((latest, item) => {
+      return new Date(item.CreatedAt) > new Date(latest.CreatedAt)
+        ? item
+        : latest;
+    });
+    isTransactionPending = data?.RTOTransactions.some((e) => e.Status === 2);
+  }
 
   return (
     <div className="background-1 overflow-hidden justify-between flex flex-col">
@@ -188,14 +192,17 @@ const BookingDetails = () => {
                 </div>
                 {status !== 2 && (
                   <div className="row gap-1.5 mt-1">
-                    <span className="text-xs text-black70">Jatuh Tempo</span>
-                    <span className="text-xs ">
+                    <span className="text-xs text-black70">Jatuh Tempo:</span>
+                    {/* <span className="text-xs ">
                       {moments(data?.NextPaymentDate || undefined)
                         .add(1, "days")
                         .format("DD MMMM YYYY")}
-                    </span>
-                    {(status === 3 || status === 4 || status === 7) && (
-                      <span className="text-xs">{data?.CutOffTime}</span>
+                    </span> */}
+                    {(status === 3 ||
+                      status === 4 ||
+                      status === 5 ||
+                      status === 7) && (
+                      <span className="text-xs">Jam {data?.CutOffTime} selain libur pembayaran</span>
                     )}
 
                     {(status === 4 || status === 7) && (
@@ -215,13 +222,13 @@ const BookingDetails = () => {
                     <span className="text-black90 font-medium">
                       Libur Bayar
                     </span>
-                    <div className="bg-black10 w-[1px] h-[16px]" />
+                    {/* <div className="bg-black10 w-[1px] h-[16px]" />
                     <span className="text-blackBold font-medium">
                       {data?.OverdueCount} Hari Lagi
                     </span>
                     <span className="text-black70 font-medium">
                       (12-15 Apr)
-                    </span>
+                    </span> */}
                   </div>
                 )}
 
@@ -232,7 +239,7 @@ const BookingDetails = () => {
                     label={
                       status === 4 || status === 7
                         ? "Bayar Tagihan"
-                        : status === 2
+                        : status === 3 && isTransactionPending
                         ? "Lanjutkan Pembayaran"
                         : "Beli Kredit harian"
                     }
@@ -463,8 +470,9 @@ const BookingDetails = () => {
             )}
             {(status === 2 ||
               status === 3 ||
-              status === 6 ||
+              status === 4 ||
               status === 5 ||
+              status === 6 ||
               status === 7 ||
               status === 8 ||
               status === 10) && (

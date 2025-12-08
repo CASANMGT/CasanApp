@@ -53,7 +53,7 @@ const OngoingOrder = () => {
       color="primary100"
     >
       <div className="mb-[100px]">
-        {/* <div
+        <div
           onClick={() => navigate("/rental-history")}
           className="row gap-2 mx-4 mt-6 rounded-lg bg-gradient-to-b from-[#2DBA9D] to-[#327478] px-4 py-3 cursor-pointer"
         >
@@ -64,7 +64,7 @@ const OngoingOrder = () => {
           </span>
 
           <FaChevronRight className="text-white" />
-        </div> */}
+        </div>
 
         {onGoingSessionList?.data?.data &&
         onGoingSessionList?.data?.data.length ? (

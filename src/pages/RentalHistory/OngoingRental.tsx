@@ -50,7 +50,12 @@ const OngoingRental = () => {
     try {
       const res = await Api.get({
         url: "rtos",
-        params: { statuses: "3,4,7,8", page: p || page, limit: l || limit, q },
+        params: {
+          statuses: "3,4,5,7,8",
+          page: p || page,
+          limit: l || limit,
+          q,
+        },
       });
 
       setData(res);

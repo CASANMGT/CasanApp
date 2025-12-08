@@ -316,7 +316,9 @@ const TransactionRTODetails = () => {
 
               <BetweenText
                 labelLeft="Tipe Transaksi"
-                labelRight="Topup Day Credit"
+                labelRight={
+                  data?.Type === 3 ? "Bayar Tagihan" : "Topup Day Credit"
+                }
                 classNameLabelRight="font-medium text-black100"
                 className="py-2 border-b border-b-black10"
               />

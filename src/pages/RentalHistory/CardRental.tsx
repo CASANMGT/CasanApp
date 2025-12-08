@@ -33,6 +33,20 @@ const CardRental: React.FC<Props> = ({ data, position, onClick }) => {
       ? true
       : false;
 
+  let dataHoliday: RTOHolidaysProps | undefined = undefined;
+
+  if (data?.RTOHolidays && data?.RTOHolidays.length) {
+    const today = new Date();
+
+    dataHoliday =
+      data?.RTOHolidays.filter((item) => {
+        const start = new Date(item.StartDate);
+        const end = new Date(item.EndDate);
+
+        return today >= start && today <= end;
+      })[0] ?? undefined;
+  }
+
   return (
     <div
       onClick={onClick}
@@ -93,20 +107,35 @@ const CardRental: React.FC<Props> = ({ data, position, onClick }) => {
             className={`center flex-col px-2.5 py-1 rounded-sm bg-${
               status == 3 ? "primary10" : "lightRed"
             }`}
+            style={{
+              backgroundColor:
+                status === 3 ? "#E8F7F8" : status === 5 ? "#FDFBEA" : "#FCEEF0",
+            }}
           >
             <span
               className={`text-[10px] font-medium text-${
-                status === 3 ? "black100" : "red"
+                status === 3 || status === 5 ? "black100" : "red"
               }`}
             >
-              {status === 3 ? "Tesisa" : "Tenggat"}
+              {status === 3 || status === 5 ? "Tesisa" : "Tenggat"}
             </span>
             <span
-              className={`font-semibold text-${
-                status === 3 ? "primary100" : "red"
-              }`}
+              className={`font-semibold `}
+              style={{
+                color:
+                  status === 3
+                    ? "#2dba9d"
+                    : status === 5
+                    ? "#EDD22D"
+                    : "#DD2E44",
+              }}
             >
-              {daysLeft > 0 ? daysLeft : 0}H
+              {status === 5
+                ? dataHoliday?.TotalDay || 0
+                : daysLeft > 0
+                ? daysLeft
+                : 0}
+              H
             </span>
           </div>
         )}
@@ -133,7 +162,7 @@ const CardRental: React.FC<Props> = ({ data, position, onClick }) => {
 
           {status != 1 && status != 8 && status != 9 && status !== 11 && (
             <div className="row gap-1 font-medium">
-              {status !== 2 && status !== 10 && (
+              {status !== 2 && status !== 5 && status !== 10 && (
                 <>
                   <span className="text-xs">
                     {moments(data?.StartDate).format("DD MMMM YYYY")}
@@ -144,13 +173,19 @@ const CardRental: React.FC<Props> = ({ data, position, onClick }) => {
               <span
                 className={`text-xs text-${status === 4 ? "red" : "black100"}`}
               >
-                {moments(data?.TargetFinishDate).format("DD MMMM YYYY")}
+                {`${status === 5 ? `Libur Sampai ` : ""}${moments(
+                  status === 5 ? dataHoliday?.EndDate : data?.TargetFinishDate
+                ).format("DD MMMM YYYY")}`}
               </span>
               <span
                 className={`text-xs font-normal text-${
                   status === 4 ? "red" : "black70"
                 }`}
-              >{`${data?.CutOffTime} WIB`}</span>
+              >{`${
+                status === 5
+                  ? moments(dataHoliday?.EndDate).format("HH:mm")
+                  : data?.CutOffTime
+              } WIB`}</span>
             </div>
           )}
         </div>
@@ -188,6 +223,10 @@ const getFormatted = (status: number) => {
 
     case 4:
       label = "Tenggat Waktu";
+      break;
+
+    case 5:
+      label = "Sedang Libur";
       break;
 
     case 6:
