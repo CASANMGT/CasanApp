@@ -6,12 +6,12 @@ export * from "./bank/deleteBankAccountSlice";
 export * from "./bank/validateBankSlice";
 export * from "./chargingStations/chargingStationByIdSlice";
 export * from "./chargingStations/chargingStationLocationsSlice";
-export * from "./chargingStations/chargingStationSlice";
 export * from "./device/deviceByIdSlice";
 export * from "./feeSettings/feeSettingsSlice";
 export * from "./globalSlice";
 export * from "./location/locationByIdSlice";
 export * from "./milestone/milestoneListSlice";
+export * from "./rto/addTransactionRTOSlice";
 export * from "./sessions/addSessionSlice";
 export * from "./sessions/cancelSessionSlice";
 export * from "./sessions/completeSessionListSlice";
@@ -28,5 +28,4 @@ export * from "./users/myUserSlice";
 export * from "./voucher/voucherAvailableSlice";
 export * from "./withdraw/addWithdrawSlice";
 export * from "./withdraw/withdrawListSlice";
-export * from './rto/addTransactionRTOSlice'
 

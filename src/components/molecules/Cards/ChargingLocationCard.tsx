@@ -4,10 +4,14 @@ import {
   IcFlash,
   IcFuel,
   IcLineDown,
+  IcMakaLabel,
+  IcTangkasLabel,
+  IcUnitedLabel,
   ILNoImage,
 } from "../../../assets";
 import {
   getDistanceFromLatLonInKm,
+  getFormattedBrand,
   getLabelWatt,
   moments,
   rupiah,
@@ -34,6 +38,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   onClick,
   onLoadMore,
 }) => {
+  console.log("cek data", data);
+
   const currentTime = timeToSeconds(moments().format("HH:mm"));
 
   const distance = getDistanceFromLatLonInKm(
@@ -43,6 +49,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   const dataMaxWatt = data?.Devices?.map((device) => device?.MaxWatt);
 
   const priceType: number = data?.PriceSetting?.BikePriceType;
+  const brand = data?.Brand;
   let isFull: boolean = false;
   let isDisconnect: boolean = false;
   let price: number = 0;
@@ -131,7 +138,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
 
   const labelWatt = getLabelWatt(minWatt, maxWatt);
   const isUltraFast = !!data?.Devices?.some((e) => e?.Protocol === 3);
-
+  const formattedBrand = getFormattedBrand(brand || 0);
+  const IconBrand = formattedBrand.icon;
 
   return (
     <>
@@ -235,9 +243,12 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
             )}/${priceType === 2 ? "kWh" : "jam"}`}</p>
           </div>
 
-          <div className="bg-primary100 rounded-md row">
-            <div className="py-0.5 px-1 row gap-1">
-              <IcFlash className="text-white" />
+          <div
+            className="rounded-md row"
+            style={{ backgroundColor: formattedBrand.bgColor }}
+          >
+            <div className="center px-2">
+              <IconBrand className="text-white" />
             </div>
 
             <div className="text-primary100 bg-primary10 px-1 rounded-md rounded-l-[40px] gap-1 flex items-center py-0.5">

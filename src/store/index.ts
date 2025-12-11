@@ -8,12 +8,12 @@ import deleteBankAccountReducer from "../features/bank/deleteBankAccountSlice.ts
 import validateBankReducer from "../features/bank/validateBankSlice.ts";
 import chargingStationByIdReducer from "../features/chargingStations/chargingStationByIdSlice.ts";
 import chargingStationLocationsReducer from "../features/chargingStations/chargingStationLocationsSlice.ts";
-import chargingStationReducer from "../features/chargingStations/chargingStationSlice";
 import deviceByIdReducer from "../features/device/deviceByIdSlice.ts";
 import feeSettingsReducer from "../features/feeSettings/feeSettingsSlice";
 import globalReducer from "../features/globalSlice";
 import locationByIdReducer from "../features/location/locationByIdSlice.tsx";
 import milestoneListReducer from "../features/milestone/milestoneListSlice.ts";
+import addTransactionRTOReducer from '../features/rto/addTransactionRTOSlice.ts';
 import addSessionReducer from "../features/sessions/addSessionSlice.ts";
 import cancelSessionReducer from "../features/sessions/cancelSessionSlice.ts";
 import completeSessionListReducer from "../features/sessions/completeSessionListSlice.ts";
@@ -32,7 +32,6 @@ import myUserReducer from "../features/users/myUserSlice.ts";
 import voucherAvailableReducer from "../features/voucher/voucherAvailableSlice.ts";
 import addWithdrawReducer from "../features/withdraw/addWithdrawSlice.ts";
 import withdrawListReducer from "../features/withdraw/withdrawListSlice.ts";
-import addTransactionRTOReducer from '../features/rto/addTransactionRTOSlice.ts'
 
 export const store = configureStore({
   reducer: {
@@ -49,7 +48,6 @@ export const store = configureStore({
     checkPin: checkPinReducer,
 
     // CHARGING STATION
-    chargingStation: chargingStationReducer,
     chargingStationLocations: chargingStationLocationsReducer,
     chargingStationById: chargingStationByIdReducer,
 
@@ -96,7 +94,7 @@ export const store = configureStore({
     milestoneList: milestoneListReducer,
 
     // RTO
-    addTransactionRTO:addTransactionRTOReducer
+    addTransactionRTO: addTransactionRTOReducer,
   },
 });
 

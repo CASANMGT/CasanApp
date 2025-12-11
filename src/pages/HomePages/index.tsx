@@ -3,46 +3,58 @@ import { FaChevronRight } from "react-icons/fa6";
 import { IoIosPin } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { IcCartGreen, IcMotorcycleGreen } from "../../assets";
-import { GeocodeResult, LIMIT_LIST } from "../../common";
+import {
+  IcCartGreen,
+  IcCasanCircle,
+  IcLogo,
+  IcMakaCircle,
+  IcMotorcycleGreen,
+  IcTangkasCircle,
+  IcUnitedCircle,
+} from "../../assets";
+import { ChargeBrandOption, GeocodeResult, LIMIT_LIST } from "../../common";
 import {
   Carousel,
   ChargingLocationCard,
+  DropdownCheckbox,
   LoadingPage,
   ModalCarouselDetails,
   OngoingItem,
 } from "../../components";
 import { useAuth } from "../../context/AuthContext";
-import {
-  fetchChargingStation,
-  fetchOnGoingSessionList,
-  setFromGlobal,
-} from "../../features";
+import { fetchOnGoingSessionList, setFromGlobal } from "../../features";
 import { Api } from "../../services";
 import { getCurrentLocation, getGeoCode } from "../../services/ApiAddress";
 import { AppDispatch, RootState } from "../../store";
 import StatusRTO from "./StatusRTO";
+
+type ResponseProps = {
+  status: string;
+  message: string;
+  data: ChargingStation[];
+  meta: MetaResponseProps;
+};
 
 const HomePages = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated } = useAuth();
 
-  const chargingStation = useSelector(
-    (state: RootState) => state.chargingStation
-  );
   const global = useSelector((state: RootState) => state.global);
   const onGoingSessionList = useSelector(
     (state: RootState) => state.onGoingSessionList
   );
 
+  const [loading, setLoading] = useState(false);
   const [loadingRTO, setLoadingRTO] = useState(false);
   const [page, setPage] = useState(1);
+  const [data, setData] = useState<ResponseProps>();
   const [dataRTO, setDataRTO] = useState<RTOProps>();
   const [typeVehicle, setTypeVehicle] = useState<string | number>("bike");
   const [place, setPlace] = useState<string>("terdekat");
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
   const [detailLocation, setDetailLocation] = useState<GeocodeResult>();
+  const [filter, setFilter] = useState<OptionsProps[]>([]);
 
   useEffect(() => {
     setPage(1);
@@ -55,7 +67,7 @@ const HomePages = () => {
 
   useEffect(() => {
     getData();
-  }, [currentLocation]);
+  }, [currentLocation, filter]);
 
   const getLocation = async () => {
     try {
@@ -70,19 +82,35 @@ const HomePages = () => {
     } catch (error) {}
   };
 
-  const getData = (nextPage?: number) => {
-    const body: ChargingStationBody = {
-      page: nextPage || page,
-      limit: LIMIT_LIST,
-      is_admin: false,
-    };
+  const getData = async (nextPage?: number) => {
+    try {
+      setLoading(true);
+      const body: ChargingStationBody = {
+        page: nextPage || page,
+        limit: LIMIT_LIST,
+        is_admin: false,
+      };
 
-    if (currentLocation?.length) {
-      body.latitude = currentLocation[0];
-      body.longitude = currentLocation[1];
+      if (currentLocation?.length) {
+        body.latitude = currentLocation[0];
+        body.longitude = currentLocation[1];
+      }
+
+      if (filter?.length) {
+        const value = filter.map((e) => Number(e?.value));
+        body.brands = JSON.stringify(value);
+      }
+
+      const res = await Api.get({
+        url: "stations/locations",
+        params: body,
+      });
+
+      setData(res);
+    } catch (error) {
+    } finally {
+      setLoading(false);
     }
-
-    dispatch(fetchChargingStation(body));
   };
 
   const getOngoing = () => {
@@ -128,20 +156,27 @@ const HomePages = () => {
       <div className="px-4 py-3 flex flex-col w-full overflow-hidden">
         <div>
           {/* INFORMATION */}
-          {/* <div className="bg-[#D5F1EB] px-6 py-4 mb-6 -mx-4">
+          <div className="bg-[#D5F1EB] row gap-4 p-4 -mx-4 mb-6">
+            <IcLogo />
             <p className="text-black70">
-              Casan.id - solusi pengisian daya EV yang mudah dan andal untuk
-              sepeda dan motor listrik
+              Casan.id - Solusi pengisian daya untuk sepeda dan motor listrik
             </p>
-          </div> */}
-
+          </div>
 
           {/* LOCATION */}
-          <div className="inline-flex items-center gap-2 mb-2 bg-primary30 py-2 px-4 rounded-full shadow-lg">
-            <IoIosPin size={18} className="text-primary100" />
-            <span className="text-black100 font-semibold">
-              {detailLocation?.city}
-            </span>
+          <div className="between-x">
+            <div className="inline-flex items-center gap-2 mb-2 bg-primary30 py-2 px-4 rounded-full shadow-lg">
+              <IoIosPin size={18} className="text-primary100" />
+              <span className="text-black100 font-semibold">
+                {detailLocation?.city}
+              </span>
+            </div>
+
+            <DropdownCheckbox
+              selected={filter}
+              options={ChargeBrandOption}
+              onApply={(s) => setFilter(s)}
+            />
           </div>
 
           {/* SEARCH */}
@@ -257,20 +292,18 @@ const HomePages = () => {
 
         {/* CHARGING LIST */}
         <div className="flex flex-col overflow-auto scrollbar-none pt-3">
-          <LoadingPage
-            loading={!chargingStation?.data?.data && chargingStation?.loading}
-          >
-            {chargingStation?.data?.data &&
-              chargingStation?.data?.data.map((item, index: number) => (
+          <LoadingPage loading={!data?.data && loading}>
+            {data?.data &&
+              data?.data.map((item, index: number) => (
                 <ChargingLocationCard
                   key={index}
                   data={item}
-                  loading={chargingStation?.loading}
+                  loading={loading}
                   currentLocation={currentLocation}
                   isLast={
-                    chargingStation?.data?.data &&
-                    index === chargingStation?.data?.data.length - 1 &&
-                    page * LIMIT_LIST == chargingStation?.data?.data.length
+                    data?.data &&
+                    index === data?.data.length - 1 &&
+                    page * LIMIT_LIST == data?.data.length
                   }
                   onClick={() =>
                     navigate(`/charging-station-details/${item?.ID}`, {
@@ -303,3 +336,5 @@ const HomePages = () => {
 };
 
 export default HomePages;
+
+

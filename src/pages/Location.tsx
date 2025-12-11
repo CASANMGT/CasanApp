@@ -2,47 +2,82 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { IcMenuWhite, IcMyLocationBlack } from "../assets";
-import { LoadingPage, Map, ModalChargingStation } from "../components";
-import { fetchChargingStationLocations, setFromGlobal } from "../features";
+import { ChargeBrandOption } from "../common";
+import {
+  DropdownCheckbox,
+  LoadingPage,
+  Map,
+  ModalChargingStation,
+} from "../components";
+import { setFromGlobal } from "../features";
+import { Api } from "../services";
 import { getCurrentLocation } from "../services/ApiAddress";
 import { AppDispatch, RootState } from "../store";
+
+type ResponseProps = {
+  status: string;
+  message: string;
+  data: ChargingStation[];
+  meta: MetaResponseProps;
+};
 
 const Location = () => {
   const navigate: NavigateFunction = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
-  const chargingStationLocations = useSelector(
-    (state: RootState) => state?.chargingStationLocations
-  );
   const global = useSelector((state: RootState) => state?.global);
 
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadingLocation, setLoadingLocation] = useState(true);
+  const [data, setData] = useState<ResponseProps>();
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
   const [centerLocation, setCenterLocation] = useState<LatLng>();
+  const [filter, setFilter] = useState<OptionsProps[]>([]);
 
   useEffect(() => {
-    if (!chargingStationLocations?.data) getData();
     getLocation();
   }, []);
 
-  const getData = () => {
-    const body: ChargingStationBody = {
-      page: 1,
-      limit: 100,
-      is_admin: false,
-    };
+  useEffect(() => {
+    getData();
+  }, [filter]);
 
-    dispatch(fetchChargingStationLocations(body));
+  const getData = async () => {
+    try {
+      setLoading(true);
+
+      const body: ChargingStationBody = {
+        page: 1,
+        limit: 100,
+        is_admin: false,
+      };
+
+      if (filter?.length) {
+        const value = filter.map((e) => Number(e?.value));
+        body.brands = JSON.stringify(value);
+      }
+
+      const res = await Api.get({
+        url: "stations",
+        params: body,
+      });
+
+      setData(res);
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getLocation = async () => {
     try {
+      setLoadingLocation(true);
       const check = await getCurrentLocation();
 
       setCenterLocation(check);
-      setLoading(false);
     } catch (error) {
-      setLoading(false);
+    } finally {
+      setLoadingLocation(false);
     }
   };
 
@@ -57,14 +92,11 @@ const Location = () => {
 
   return (
     <div className="container-screen relative">
-      <LoadingPage
-        loading={chargingStationLocations?.loading || loading}
-        color="primary100"
-      >
+      <LoadingPage loading={loading || loadingLocation} color="primary100">
         <div className=" w-full h-full relative">
           {/* MAP */}
           <Map
-            data={chargingStationLocations?.data?.data}
+            data={data?.data}
             myLocation={currentLocation}
             center={centerLocation}
           />
@@ -84,6 +116,16 @@ const Location = () => {
             className="absolute left-4 bottom-[94px] bg-white p-2 rounded-lg drop-shadow cursor-pointer"
           >
             <IcMyLocationBlack />
+          </div>
+
+          {/* FILTER */}
+          <div className="absolute right-4 top-4">
+            <DropdownCheckbox
+              selected={filter}
+              isIconOnly
+              options={ChargeBrandOption}
+              onApply={(s) => setFilter(s)}
+            />
           </div>
 
           {/* ALL LIST */}

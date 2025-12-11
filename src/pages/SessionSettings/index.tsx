@@ -63,6 +63,7 @@ import {
   convertToHours,
   formatPhoneNumber,
   getCurrentSlot,
+  getFormattedBrand,
   openGoogleMaps,
   rupiah,
   timeToSeconds,
@@ -568,6 +569,9 @@ const SessionSettings = () => {
   );
   const chargingNominal: number = getChargingNominal();
   const totalPrice: number = getTotalPrice();
+  const brand: number = selectedDevice?.Brand || 0;
+  const formattedBrand = getFormattedBrand(brand);
+  const IconBrand = formattedBrand.icon;
 
   let dataSocket: Socket[] | null = null;
 
@@ -651,9 +655,20 @@ const SessionSettings = () => {
           <div className="p-4 mt-2">
             {/* SELECT SOCKET */}
             <div className="bg-white py-4 px-3 rounded-lg mb-3">
-              <div className="row gap-2 mb-2">
-                <IcSocketCircleGreen />
-                <p className="text-blackBold font-medium">Pilih Socket</p>
+              <div className="between-x">
+                <div className="row gap-2 mb-2">
+                  <IcSocketCircleGreen />
+                  <p className="text-blackBold font-medium">Pilih Socket</p>
+                </div>
+
+                {brand > 1 && (
+                  <div
+                    className="px-2 h-6 center rounded"
+                    style={{ backgroundColor: formattedBrand?.bgColor }}
+                  >
+                    <IconBrand />
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-4 gap-3">

@@ -7,6 +7,7 @@ declare global {
     longitude?: number;
     latitude?: number;
     is_admin: boolean;
+    brands?: string;
   };
 
   type PriceTimeRule = {
@@ -97,6 +98,7 @@ declare global {
   type ChargingStation = {
     ID: number;
     Name: string;
+    Brand: number | null;
     Image: string;
     Phone: string;
     IsParkingFee: boolean;
