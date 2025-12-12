@@ -35,7 +35,7 @@ type ResponseProps = {
   meta: MetaResponseProps;
 };
 
-const HomePages = () => {
+const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated } = useAuth();
@@ -335,6 +335,6 @@ const HomePages = () => {
   );
 };
 
-export default HomePages;
+export default Home;
 
 
