@@ -1,13 +1,9 @@
 import {
   IcBattery2,
   IcBike,
-  IcFlash,
   IcFuel,
   IcLineDown,
-  IcMakaLabel,
-  IcTangkasLabel,
-  IcUnitedLabel,
-  ILNoImage,
+  ILNoImage
 } from "../../../assets";
 import {
   getDistanceFromLatLonInKm,
@@ -38,8 +34,6 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   onClick,
   onLoadMore,
 }) => {
-  console.log("cek data", data);
-
   const currentTime = timeToSeconds(moments().format("HH:mm"));
 
   const distance = getDistanceFromLatLonInKm(
