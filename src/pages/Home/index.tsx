@@ -201,7 +201,6 @@ const Home = () => {
           </div> */}
 
           {/* CAROUSEL */}
-          {/* dummy */}
           {false && <Carousel slides={[]} />}
 
           {/* ONGOING */}
