@@ -5,12 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   IcCartGreen,
-  IcCasanCircle,
-  IcLogo,
-  IcMakaCircle,
-  IcMotorcycleGreen,
-  IcTangkasCircle,
-  IcUnitedCircle,
+  IcLogoSymbol,
+  IcMotorcycleGreen
 } from "../../assets";
 import { ChargeBrandOption, GeocodeResult, LIMIT_LIST } from "../../common";
 import {
@@ -157,7 +153,7 @@ const Home = () => {
         <div>
           {/* INFORMATION */}
           <div className="bg-[#D5F1EB] row gap-4 p-4 -mx-4 mb-6">
-            <IcLogo />
+            <IcLogoSymbol />
             <p className="text-black70">
               Casan.id - Solusi pengisian daya untuk sepeda dan motor listrik
             </p>
@@ -335,5 +331,3 @@ const Home = () => {
 };
 
 export default Home;
-
-
