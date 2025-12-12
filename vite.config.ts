@@ -17,7 +17,7 @@ export default defineConfig({
       workbox: {
         // Disable unnecessary hooks if they cause errors
         cleanupOutdatedCaches: false,
-        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 5 MB limit
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4 MB limit
       },
       manifest: {
         name: "Casan Charging station ",

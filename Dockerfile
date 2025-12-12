@@ -8,9 +8,9 @@ COPY yarn.lock ./
 
 RUN yarn install
 
-COPY .env .env
-
 COPY . .
+
+COPY .env .env
 
 RUN yarn build
 
