@@ -16,7 +16,7 @@ import { PaymentMethodItem } from "../Items";
 import ModalContainer from "./ModalContainer";
 
 interface ModalPaymentMethodProps {
-  type?: "top-up" | "credit";
+  type?: "top-up" | "credit" | "rto";
   visible: boolean;
   loading: boolean;
   select: FeeSettingsProps | undefined;
@@ -155,7 +155,7 @@ const ModalPaymentMethod: React.FC<ModalPaymentMethodProps> = ({
             color="primary100"
           >
             <div className="overflow-auto scrollbar-none">
-              {type !== "top-up" && (
+              {type !== "top-up" && type !== "rto" && (
                 <>
                   <p className="text-black70 mb-2.5">Saldo Anda</p>
                   <PaymentMethodItem

@@ -33,6 +33,9 @@ import { AppDispatch, RootState } from "../../store";
 import Container from "./Container";
 import Status from "./Status";
 
+const pendingStatuses = [2, 3, 4, 5, 7];
+const billStatuses = [4, 7];
+
 const BookingDetails = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -105,16 +108,18 @@ const BookingDetails = () => {
   };
 
   const onBuy = () => {
-    if (status === 4 || status === 7) {
-      setOpenPaymentMethod(true);
-    } else {
-      const next =
-        status === 3 && isTransactionPending
-          ? `/transaction-rto-history/details/${dataTransaction?.ID}`
-          : "/buy-credit";
-
-      navigate(next, { state: data });
+    if (pendingStatuses.includes(status) && isTransactionPending) {
+      return navigate(
+        `/transaction-rto-history/details/${dataTransaction?.ID}`,
+        { state: data }
+      );
     }
+
+    if (billStatuses.includes(status)) {
+      return setOpenPaymentMethod(true);
+    }
+
+    navigate("/buy-credit", { state: data });
   };
 
   const status = data?.Status || 0;
@@ -202,7 +207,9 @@ const BookingDetails = () => {
                       status === 4 ||
                       status === 5 ||
                       status === 7) && (
-                      <span className="text-xs">Jam {data?.CutOffTime} selain libur pembayaran</span>
+                      <span className="text-xs">
+                        Jam {data?.CutOffTime} selain libur pembayaran
+                      </span>
                     )}
 
                     {(status === 4 || status === 7) && (
@@ -237,10 +244,10 @@ const BookingDetails = () => {
                 <div className="between-x">
                   <Button
                     label={
-                      status === 4 || status === 7
-                        ? "Bayar Tagihan"
-                        : status === 3 && isTransactionPending
+                      pendingStatuses.includes(status) && isTransactionPending
                         ? "Lanjutkan Pembayaran"
+                        : billStatuses.includes(status)
+                        ? "Bayar Tagihan"
                         : "Beli Kredit harian"
                     }
                     iconRight={FaChevronRight}
@@ -610,6 +617,7 @@ const BookingDetails = () => {
 
       {openPaymentMethod && (
         <ModalPaymentMethod
+          type="rto"
           visible={openPaymentMethod}
           select={paymentMethod}
           selectBalance={myUser?.data?.Balance || 0}
