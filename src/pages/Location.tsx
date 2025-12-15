@@ -101,6 +101,14 @@ const Location = () => {
 
   const onShare = () => {
     const isStaging: boolean = API_URL.includes("staging");
+    let brands: string = "";
+    let total = filtered?.length ?? 0;
+    const dataFilter = ChargeBrandOption.filter((e) =>
+      JSON.parse(filterParams).includes(Number(e?.value))
+    );
+
+    if (dataFilter?.length) brands = dataFilter?.map((e) => e?.name).join(", ");
+
     let urlDevice = `https://${
       isStaging ? "staging.casan.id" : "casan.id"
     }/home/location`;
@@ -110,9 +118,18 @@ const Location = () => {
       urlDevice += `?filter=${filterParams}`;
     }
 
-    const url = "https://wa.me/?text=" + encodeURIComponent(urlDevice);
+    const url =
+      "https://wa.me/?text=" +
+      encodeURIComponent(
+        `Klik link untuk melihat stasiun charging ${
+          brands ? `${brands} ` : ""
+        }(${total} stasiun) ${urlDevice}`
+      );
+
     window.open(url, "_blank");
   };
+
+  const filtered = data?.data?.filter((e) => e?.Devices?.length);
 
   return (
     <div className="container-screen relative">
@@ -120,7 +137,7 @@ const Location = () => {
         <div className=" w-full h-full relative">
           {/* MAP */}
           <Map
-            data={data?.data}
+            data={filtered}
             myLocation={currentLocation}
             center={centerLocation}
           />

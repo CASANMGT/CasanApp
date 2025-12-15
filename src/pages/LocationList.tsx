@@ -94,7 +94,7 @@ const LocationList = () => {
     alert("coming soon");
   };
 
-  const isShowData = data?.data ? true : false;
+  const filtered = data?.data?.filter((e) => e?.Devices?.length);
 
   return (
     <div className="background-1 overflow-hidden flex flex-col">
@@ -137,8 +137,8 @@ const LocationList = () => {
 
         {/* LIST */}
         <div className="overflow-auto px-4 pt-3 scrollbar-none">
-          {isShowData &&
-            data?.data.map((item, index: number) => (
+          {filtered?.length &&
+            filtered.map((item, index: number) => (
               <ChargingLocationCard
                 key={index}
                 type="location-list"
@@ -146,9 +146,9 @@ const LocationList = () => {
                 currentLocation={currentLocation}
                 loading={loading}
                 isLast={
-                  data?.data &&
-                  index === data?.data.length - 1 &&
-                  page * LIMIT_LIST == data?.data.length
+                  filtered &&
+                  index === filtered.length - 1 &&
+                  page * LIMIT_LIST == filtered.length
                 }
                 onClick={() =>
                   navigate(`/charging-station-details/${item?.ID}`, {
