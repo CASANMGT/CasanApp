@@ -3,11 +3,7 @@ import { FaChevronRight } from "react-icons/fa6";
 import { IoIosPin } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {
-  IcCartGreen,
-  IcLogoSymbol,
-  IcMotorcycleGreen
-} from "../../assets";
+import { IcCartGreen, IcLogoSymbol, IcMotorcycleGreen } from "../../assets";
 import { ChargeBrandOption, GeocodeResult, LIMIT_LIST } from "../../common";
 import {
   Carousel,
@@ -50,7 +46,7 @@ const Home = () => {
   const [place, setPlace] = useState<string>("terdekat");
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
   const [detailLocation, setDetailLocation] = useState<GeocodeResult>();
-  const [filter, setFilter] = useState<OptionsProps[]>([]);
+  const [filter, setFilter] = useState<number[]>([]);
 
   useEffect(() => {
     setPage(1);
@@ -63,7 +59,7 @@ const Home = () => {
 
   useEffect(() => {
     getData();
-  }, [currentLocation, filter]);
+  }, [currentLocation, filter, page]);
 
   const getLocation = async () => {
     try {
@@ -78,11 +74,11 @@ const Home = () => {
     } catch (error) {}
   };
 
-  const getData = async (nextPage?: number) => {
+  const getData = async () => {
     try {
       setLoading(true);
       const body: ChargingStationBody = {
-        page: nextPage || page,
+        page: page,
         limit: LIMIT_LIST,
         is_admin: false,
       };
@@ -92,17 +88,18 @@ const Home = () => {
         body.longitude = currentLocation[1];
       }
 
-      if (filter?.length) {
-        const value = filter.map((e) => Number(e?.value));
-        body.brands = JSON.stringify(value);
-      }
+      if (filter?.length) body.brands = JSON.stringify(filter);
 
       const res = await Api.get({
         url: "stations/locations",
         params: body,
       });
 
-      setData(res);
+      setData((prev) =>
+        page > 1 && prev?.data?.length
+          ? { ...prev, data: [...prev.data, ...res.data] }
+          : res
+      );
     } catch (error) {
     } finally {
       setLoading(false);
@@ -131,12 +128,6 @@ const Home = () => {
     } finally {
       setLoadingRTO(false);
     }
-  };
-
-  const onLoadMore = () => {
-    const nextPage: number = page + 1;
-    setPage(nextPage);
-    getData(nextPage);
   };
 
   const isShowOngoing: boolean = useMemo(
@@ -171,7 +162,10 @@ const Home = () => {
             <DropdownCheckbox
               selected={filter}
               options={ChargeBrandOption}
-              onApply={(s) => setFilter(s)}
+              onApply={(s) => {
+                setPage(1);
+                setFilter(s);
+              }}
             />
           </div>
 
@@ -242,7 +236,6 @@ const Home = () => {
         </div>
 
         {/* CHARGING SERVICE */}
-        {/* dummy */}
         {false && (
           <div className="bg-white rounded-lg p-4 mt-4">
             <span className="text-base font-semibold">Layanan Casan</span>
@@ -305,7 +298,7 @@ const Home = () => {
                       state: { currentLocation },
                     })
                   }
-                  onLoadMore={onLoadMore}
+                  onLoadMore={() => setPage((prev) => prev + 1)}
                 />
               ))}
           </LoadingPage>

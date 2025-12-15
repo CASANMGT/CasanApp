@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
+import { LuShare } from "react-icons/lu";
 import { useDispatch, useSelector } from "react-redux";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import {
+  NavigateFunction,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { IcMenuWhite, IcMyLocationBlack } from "../assets";
 import { ChargeBrandOption } from "../common";
 import {
@@ -14,6 +19,8 @@ import { Api } from "../services";
 import { getCurrentLocation } from "../services/ApiAddress";
 import { AppDispatch, RootState } from "../store";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 type ResponseProps = {
   status: string;
   message: string;
@@ -24,6 +31,9 @@ type ResponseProps = {
 const Location = () => {
   const navigate: NavigateFunction = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const filterParams = searchParams.get("filter") || "[]";
 
   const global = useSelector((state: RootState) => state?.global);
 
@@ -32,7 +42,6 @@ const Location = () => {
   const [data, setData] = useState<ResponseProps>();
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
   const [centerLocation, setCenterLocation] = useState<LatLng>();
-  const [filter, setFilter] = useState<OptionsProps[]>([]);
 
   useEffect(() => {
     getLocation();
@@ -40,7 +49,7 @@ const Location = () => {
 
   useEffect(() => {
     getData();
-  }, [filter]);
+  }, [filterParams]);
 
   const getData = async () => {
     try {
@@ -52,9 +61,9 @@ const Location = () => {
         is_admin: false,
       };
 
-      if (filter?.length) {
-        const value = filter.map((e) => Number(e?.value));
-        body.brands = JSON.stringify(value);
+      const convertFilter: number[] = JSON.parse(filterParams);
+      if (convertFilter?.length) {
+        body.brands = filterParams;
       }
 
       const res = await Api.get({
@@ -87,7 +96,22 @@ const Location = () => {
   };
 
   const onShowAll = () => {
-    navigate("/location-list");
+    navigate(`/location-list?filter=${filterParams}`);
+  };
+
+  const onShare = () => {
+    const isStaging: boolean = API_URL.includes("staging");
+    let urlDevice = `https://${
+      isStaging ? "staging.casan.id" : "casan.id"
+    }/home/location`;
+
+    const convertFilter: number[] = JSON.parse(filterParams);
+    if (convertFilter?.length) {
+      urlDevice += `?filter=${filterParams}`;
+    }
+
+    const url = "https://wa.me/?text=" + encodeURIComponent(urlDevice);
+    window.open(url, "_blank");
   };
 
   return (
@@ -121,12 +145,21 @@ const Location = () => {
           {/* FILTER */}
           <div className="absolute right-4 top-4">
             <DropdownCheckbox
-              selected={filter}
+              selected={JSON.parse(filterParams)}
               isIconOnly
               options={ChargeBrandOption}
-              onApply={(s) => setFilter(s)}
+              onApply={(s) => setSearchParams({ filter: JSON.stringify(s) })}
             />
           </div>
+
+          {/* SHARE */}
+          <button
+            onClick={onShare}
+            className="absolute right-4 top-14 px-4 py-2 bg-white rounded-full row gap-2 font-medium text-blackBold"
+          >
+            <LuShare size={16} />
+            Bagikan Peta
+          </button>
 
           {/* ALL LIST */}
           <div
@@ -140,13 +173,18 @@ const Location = () => {
       </LoadingPage>
 
       {/* MODAL */}
-      <ModalChargingStation
-        isOpen={global?.openChargingStation}
-        data={global?.data}
-        onDismiss={() =>
-          dispatch(setFromGlobal({ type: "openChargingStation", value: false }))
-        }
-      />
+      {global?.openChargingStation && (
+        <ModalChargingStation
+          isOpen={global?.openChargingStation}
+          data={global?.data}
+          filter={JSON.parse(filterParams)}
+          onDismiss={() =>
+            dispatch(
+              setFromGlobal({ type: "openChargingStation", value: false })
+            )
+          }
+        />
+      )}
       {/* END MODAL */}
     </div>
   );

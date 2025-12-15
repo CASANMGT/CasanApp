@@ -1,12 +1,18 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import {
+  NavigateFunction,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { IcBackBlack, IcPinGreen } from "../assets";
 import { ChargeBrandOption, GeocodeResult, LIMIT_LIST } from "../common";
-import { ChargingLocationCard, DropdownCheckbox, Label, LoadingPage } from "../components";
+import {
+  ChargingLocationCard,
+  DropdownCheckbox,
+  LoadingPage,
+} from "../components";
 import { Api } from "../services";
 import { getCurrentLocation, getGeoCode } from "../services/ApiAddress";
-import { AppDispatch } from "../store";
 
 type ResponseProps = {
   status: string;
@@ -16,8 +22,10 @@ type ResponseProps = {
 };
 
 const LocationList = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const navigate: NavigateFunction = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const filterParams = searchParams.get("filter") || "[]";
 
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<ResponseProps>();
@@ -25,7 +33,6 @@ const LocationList = () => {
   const [type, setType] = useState<"Semua" | "Tersedia">("Semua");
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
   const [detailLocation, setDetailLocation] = useState<GeocodeResult>();
-  const [filter, setFilter] = useState<OptionsProps[]>([]);
 
   useEffect(() => {
     getData();
@@ -33,7 +40,7 @@ const LocationList = () => {
 
   useEffect(() => {
     getDataList();
-  }, [filter]);
+  }, [filterParams]);
 
   const getData = async () => {
     const check = await getCurrentLocation();
@@ -56,9 +63,9 @@ const LocationList = () => {
         is_admin: false,
       };
 
-      if (filter?.length) {
-        const value = filter.map((e) => Number(e?.value));
-        body.brands = JSON.stringify(value);
+      const convertFilter: number[] = JSON.parse(filterParams);
+      if (convertFilter?.length) {
+        body.brands = filterParams;
       }
 
       const res = await Api.get({
@@ -122,9 +129,9 @@ const LocationList = () => {
           </div>
 
           <DropdownCheckbox
-            selected={filter}
+            selected={JSON.parse(filterParams)}
             options={ChargeBrandOption}
-            onApply={(s) => setFilter(s)}
+            onApply={(s) => setSearchParams({ filter: JSON.stringify(s) })}
           />
         </div>
 

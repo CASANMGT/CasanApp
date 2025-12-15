@@ -1,4 +1,3 @@
-import { clone } from "lodash";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FaCircleCheck } from "react-icons/fa6";
 import { TbFilter } from "react-icons/tb";
@@ -7,11 +6,11 @@ import Checkbox from "./Checkbox";
 
 interface Props {
   label?: string;
-  selected: OptionsProps[];
+  selected: number[];
   className?: string;
   options: OptionsProps[];
   isIconOnly?: boolean;
-  onApply: (s: OptionsProps[]) => void;
+  onApply: (s: number[]) => void;
 }
 
 const DropdownCheckbox: React.FC<Props> = ({
@@ -23,7 +22,7 @@ const DropdownCheckbox: React.FC<Props> = ({
 }) => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [select, setSelect] = useState<OptionsProps[]>([]);
+  const [select, setSelect] = useState<number[]>([]);
 
   useEffect(() => {
     setSelect(selected);
@@ -43,14 +42,16 @@ const DropdownCheckbox: React.FC<Props> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const toggleSelection = (station: OptionsProps) => {
-    const cloneData = clone(select);
-
-    const newData = cloneData.some((e) => e?.value === station?.value)
-      ? cloneData.filter((item) => item?.value !== station?.value)
-      : [...cloneData, station];
-
-    setSelect(newData);
+  const toggleSelection = (value: number) => {
+    setSelect((prev) => {
+      if (prev.includes(value)) {
+        // remove value
+        return prev.filter((v) => v !== value);
+      } else {
+        // add value
+        return [...prev, value];
+      }
+    });
   };
 
   const isSelected = useMemo(
@@ -98,10 +99,10 @@ const DropdownCheckbox: React.FC<Props> = ({
 
                 <Checkbox
                   label={item?.name.toString()}
-                  isActive={select.some((e) => e?.value === item?.value)}
+                  isActive={select.some((e) => e === item?.value)}
                   size={20}
                   isSwitch
-                  onChange={() => toggleSelection(item)}
+                  onChange={() => toggleSelection(Number(item?.value))}
                   className="flex-1"
                 />
               </div>
