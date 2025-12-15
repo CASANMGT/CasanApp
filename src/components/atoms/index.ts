@@ -3,6 +3,7 @@ import Button from "./Button";
 import Container from "./Container";
 import CountdownTimer from "./CountdownTimer";
 import Dropdown from "./Dropdown";
+import DropdownCheckbox from "./DropdownCheckbox";
 import EmptyList from "./EmptyList";
 import FilterDropdown from "./FilterDropdown";
 import Header from "./Header";
@@ -30,6 +31,7 @@ export {
   Container,
   CountdownTimer,
   Dropdown,
+  DropdownCheckbox,
   EmptyList,
   FilterDropdown,
   Header,
@@ -49,6 +51,5 @@ export {
   Spinner,
   StatusIndicator,
   SubTitle,
-  WheelPicker
+  WheelPicker,
 };
-

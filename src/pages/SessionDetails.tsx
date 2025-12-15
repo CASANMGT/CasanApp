@@ -83,6 +83,7 @@ const SessionDetails = () => {
       alert("Sharing is not supported on this browser.");
     }
   };
+  
 
   const handleSave = async () => {
     const receiptElement = document.getElementById("receipt"); // Ensure the receipt has an ID

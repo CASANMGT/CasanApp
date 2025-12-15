@@ -8,7 +8,7 @@ import ChargingStationDetails from "./ChargingStationDetails";
 import ComingSoon from "./ComingSoon";
 import ConfirmationPin from "./ConfirmationPin";
 import EditProfile from "./EditProfile";
-import HomePages from "./HomePages";
+import Home from "./Home";
 import Location from "./Location";
 import LocationList from "./LocationList";
 import Login from "./Login";
@@ -56,7 +56,7 @@ export {
   ComingSoon,
   ConfirmationPin,
   EditProfile,
-  HomePages,
+  Home,
   Location,
   LocationList,
   Login,

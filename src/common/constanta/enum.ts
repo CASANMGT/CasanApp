@@ -138,3 +138,11 @@ enum StopReason {
   Eight = "Smoke stops",
   Nine = "Smart charging stops",
 }
+
+
+export enum ChargerBrand {
+  "Casan" = 1,
+  "United" = 2,
+  "Maka" = 3,
+  "Tangkas" = 4,
+}

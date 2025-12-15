@@ -8,12 +8,14 @@ import ModalContainer from "./ModalContainer";
 interface ModalChargingStationProps {
   isOpen: boolean;
   data: ChargingStation[] | undefined;
+  filter: number[];
   onDismiss: () => void;
 }
 
 const ModalChargingStation: React.FC<ModalChargingStationProps> = ({
   isOpen,
   data,
+  filter,
   onDismiss,
 }) => {
   const navigate = useNavigate();
@@ -55,6 +57,11 @@ const ModalChargingStation: React.FC<ModalChargingStationProps> = ({
     }
   };
 
+  let dataFiltered = data;
+  if (filter?.length) {
+    dataFiltered = data?.filter((e) => filter.includes(e?.Brand || 0));
+  }
+
   return (
     <ModalContainer
       isOpen={isOpen}
@@ -73,8 +80,8 @@ const ModalChargingStation: React.FC<ModalChargingStationProps> = ({
 
         <div className="flex-1 overflow-hidden relative">
           <LoadingPage loading={false}>
-            {data &&
-              data.map((item, index: number) => (
+            {dataFiltered &&
+              dataFiltered.map((item, index: number) => (
                 <ChargingLocationCard
                   key={index}
                   data={item}
