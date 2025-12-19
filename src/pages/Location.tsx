@@ -38,7 +38,7 @@ const Location = () => {
   const global = useSelector((state: RootState) => state?.global);
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [loadingLocation, setLoadingLocation] = useState(true);
+  const [loadingLocation, setLoadingLocation] = useState(false);
   const [data, setData] = useState<ResponseProps>();
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
   const [centerLocation, setCenterLocation] = useState<LatLng>([
