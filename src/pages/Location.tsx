@@ -41,11 +41,13 @@ const Location = () => {
   const [loadingLocation, setLoadingLocation] = useState(true);
   const [data, setData] = useState<ResponseProps>();
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
-  const [centerLocation, setCenterLocation] = useState<LatLng>();
+  const [centerLocation, setCenterLocation] = useState<LatLng>([
+    -6.208763, 106.845599,
+  ]);
 
-  useEffect(() => {
-    getLocation();
-  }, []);
+  // useEffect(() => {
+  //   getLocation();
+  // }, []);
 
   useEffect(() => {
     getData();
