@@ -10,12 +10,13 @@ import {
   Header,
   LoadingPage,
   ModalSKVoucher,
-  Separator
+  Separator,
 } from "../components";
 import { hideLoading, showLoading } from "../features";
 import { moments } from "../helpers";
 import { Api } from "../services";
 import { AppDispatch } from "../store";
+import NotFound from "./NotFound";
 
 const VoucherDetails = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const VoucherDetails = () => {
 
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<VoucherUsage>();
+  const [isNotFound, setIsNotFound] = useState<boolean>(false);
   const [openClaim, setOpenClaim] = useState(false);
   const [openSKVoucher, setOpenSKVoucher] = useState(false);
 
@@ -41,9 +43,10 @@ const VoucherDetails = () => {
 
       setLoading(false);
       setData(res?.data);
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.message) setIsNotFound(true);
+    } finally {
       setLoading(false);
-      alert(ERROR_MESSAGE);
     }
   };
 
@@ -67,7 +70,8 @@ const VoucherDetails = () => {
   const onDismiss = () => navigate(-1);
 
   const status = data?.Status;
-  const format = getFormatDate(data);
+
+  if (!id || isNotFound) return <NotFound onDismiss={onDismiss} />;
 
   return (
     <div className="background-2 flex flex-col">

@@ -3,7 +3,7 @@ import { Separator, Tabs } from "../../components";
 import { moments, rupiah, timeToSeconds } from "../../helpers";
 
 interface PriceInformationProps {
-  data: ChargingStation | null;
+  data: ChargingStation | undefined;
   isHideParking?: boolean;
 }
 

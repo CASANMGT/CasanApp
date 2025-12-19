@@ -1,8 +1,21 @@
-import { ILNotFound } from "../assets";
+import { IcBackBlack, ILNotFound } from "../assets";
 
-const NotFound = () => {
+interface Props {
+  onDismiss?: () => void;
+}
+
+const NotFound: React.FC<Props> = ({ onDismiss }) => {
   return (
-    <div className="flex flex-col items-center justify-center container-screen">
+    <div className="relative flex flex-col items-center justify-center container-screen">
+      {onDismiss && (
+        <div
+          onClick={onDismiss}
+          className="absolute top-4 left-4 bg-black10 w-10 h-10 rounded-full center cursor-pointer"
+        >
+          <IcBackBlack />
+        </div>
+      )}
+
       <div className="mb-6">
         <ILNotFound />
       </div>

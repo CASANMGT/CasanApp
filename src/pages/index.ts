@@ -4,7 +4,7 @@ import BankAccount from "./BankAccount";
 import BookingDetails from "./BookingDetails";
 import BuyCredit from "./BuyCredit";
 import Charging from "./Charging";
-import ChargingStationDetails from "./ChargingStationDetails";
+import StationDetails from "./StationDetails";
 import ComingSoon from "./ComingSoon";
 import ConfirmationPin from "./ConfirmationPin";
 import EditProfile from "./EditProfile";
@@ -52,7 +52,7 @@ export {
   BuyCredit,
   Charging,
   RentToBuyDetails,
-  ChargingStationDetails,
+  StationDetails,
   ComingSoon,
   ConfirmationPin,
   EditProfile,

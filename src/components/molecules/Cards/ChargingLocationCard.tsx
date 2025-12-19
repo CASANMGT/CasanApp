@@ -1,7 +1,9 @@
+import { CiWifiOff } from "react-icons/ci";
+import { FaMotorcycle } from "react-icons/fa6";
+import { FiSlash } from "react-icons/fi";
 import {
   IcBattery2,
   IcBike,
-  IcFuel,
   IcLineDown,
   ILNoImage
 } from "../../../assets";
@@ -181,37 +183,43 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
           >
             <div className="row gap-2.5">
               <div
-                className={`h-[30px] w-[30px] rounded p-2 ${
-                  isFull
+                className={`h-[30px] w-[30px] rounded center ${
+                  isFull || data?.IsClosed
                     ? "bg-lightRed"
                     : isDisconnect
                     ? "bg-black10"
                     : "bg-primary10"
                 }`}
               >
-                <IcFuel
-                  className={
-                    isFull
-                      ? "text-red"
-                      : isDisconnect
-                      ? "text-black50"
-                      : "text-primary100"
-                  }
-                />
+                {data?.IsClosed ? (
+                  <FiSlash size={16} className="text-red" />
+                ) : isDisconnect ? (
+                  <CiWifiOff size={18} />
+                ) : (
+                  <FaMotorcycle
+                    size={18}
+                    className={`text-${isFull ? "red" : "green"}`}
+                  />
+                )}
               </div>
 
-              {isFull ? (
-                <div>
-                  <p className="font-semibold text-xs text-red">Sedang Penuh</p>
-                  <p className="text-[10px] text-red">{`Tunggu ${timeFinished} mnt`}</p>
-                </div>
-              ) : isDisconnect ? (
+              {isFull || isDisconnect || data?.IsClosed ? (
                 <div className="text-black70">
-                  <p className="text-xs font-semibold text-black70">
-                    Sedang tidak tersedia
+                  <p
+                    className={`text-xs font-semibold text-${
+                      data?.IsClosed ? "red" : "black100"
+                    }`}
+                  >
+                    {data?.IsClosed
+                      ? "Tutup Sementara"
+                      : isFull
+                      ? "Sedang Penuh"
+                      : "Sedang tidak tersedia"}
                   </p>
 
-                  <p className="text-[10px]">Mohon cek berkala</p>
+                  {isDisconnect && (
+                    <p className="text-[10px]">Mohon cek berkala</p>
+                  )}
                 </div>
               ) : (
                 <div className="flex flex-row gap-1 relative">

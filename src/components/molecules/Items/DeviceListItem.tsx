@@ -37,9 +37,9 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
   };
 
   let timeFinished: number = 0;
-  const total = getTotalSocketAvailable();
+  let total = getTotalSocketAvailable();
   const isUltraFast: boolean = data?.Protocol === 3;
-  const isFull: boolean =
+  let isFull: boolean =
     data?.Sockets && data?.Sockets.length
       ? !data?.Sockets.some((e) => e.IsCharging !== 1)
       : false;
@@ -61,12 +61,12 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
   return (
     <div
       onClick={() => {
-        if (!isFull && total > 0) onClick();
+        if (total > 0) onClick();
       }}
       className={` bg-white py-2 px-3.5 rounded-lg shadow-lg border border-${
-        isFull || !total ? "black10" : "primary30"
+        !total ? "black10" : "primary30"
       } ${!isLast ? "mb-2.5" : ""} ${
-        isFull || !total ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+        !total ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
       }`}
     >
       <div className="row gap-2">
@@ -117,14 +117,11 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
             className={`font-medium  ${isFull ? "text-red" : "text-black100"}`}
           >
             {isFull ? (
-              <p>
-                Penuh
-                <a className="text-xs ml-1">{`(Tunggu ${timeFinished} mnt)`}</a>
-              </p>
+              <p>Penuh</p>
             ) : (
-              <p className="font-medium">
-                {total > 0 ? total : "Tidak"}{" "}
-                <a className="text-xs text-black70 font-normal">Tersedia</a>
+              <p className="text-xs text-black70">
+                {total > 0 ? total : `Tidak `}
+                Tersedia
               </p>
             )}
           </div>

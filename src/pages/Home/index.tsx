@@ -294,7 +294,7 @@ const Home = () => {
                     page * LIMIT_LIST == data?.data.length
                   }
                   onClick={() =>
-                    navigate(`/charging-station-details/${item?.ID}`, {
+                    navigate(`/station-details/${item?.ID}`, {
                       state: { currentLocation },
                     })
                   }
