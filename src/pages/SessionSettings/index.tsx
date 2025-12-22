@@ -612,7 +612,8 @@ const SessionSettings = () => {
   const isAvailableSocket = (dataSocket || []).some((e) => e?.IsCharging === 0);
   const isAllowed = !data?.IsClosed && isAvailableSocket;
 
-  if (!id || data?.ID || isNotFound) return <NotFound onDismiss={onDismiss} />;
+  if ((!id && !data?.ID) || isNotFound)
+    return <NotFound onDismiss={onDismiss} />;
 
   return (
     <Container title="Pengaturan Sesi" onDismiss={onDismiss}>
