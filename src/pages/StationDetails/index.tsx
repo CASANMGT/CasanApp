@@ -18,7 +18,7 @@ import {
 } from "../../assets";
 import { DeviceListItem, LoadingPage, Separator } from "../../components";
 import { showToast } from "../../features/toastSlice";
-import { getDistanceFromLatLonInKm } from "../../helpers";
+import { getDistanceFromLatLonInKm, openGoogleMaps } from "../../helpers";
 import { Api } from "../../services";
 import { AppDispatch } from "../../store";
 import NotFound from "../NotFound";
@@ -150,8 +150,7 @@ const StationDetails = () => {
               <div className="h-[30px] w-auto aspect-square bg-white/30 rounded-full border border-white center">
                 <FaGasPump size={14} />
               </div>
-
-              <span className="text-lg pl-1">{available}</span>
+              <span className="text-lg pl-1">{available}</span>{" "}
               <span className="text-xs self-end mb-1 font-medium">
                 tersedia
               </span>
@@ -160,7 +159,15 @@ const StationDetails = () => {
             <div className="row gap-2">
               <span className="text-xs font-medium">{`${distance}km dari anda`}</span>
 
-              <div className="h-[22px] w-auto aspect-square rounded-full bg-primary10 center">
+              <div
+                onClick={() =>
+                  openGoogleMaps(
+                    data?.Location?.Latitude || 0,
+                    data?.Location?.Longitude || 0
+                  )
+                }
+                className="h-[22px] w-auto aspect-square rounded-full bg-primary10 center cursor-pointer"
+              >
                 <TbLocation size={14} className="text-primary100" />
               </div>
             </div>
@@ -205,6 +212,7 @@ const StationDetails = () => {
                 <DeviceListItem
                   key={index}
                   data={item}
+                  disabled={data?.IsClosed}
                   position={index + 1}
                   isLast={
                     index === ((data?.Devices && data?.Devices.length) || 0) - 1

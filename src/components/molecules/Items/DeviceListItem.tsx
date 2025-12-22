@@ -6,6 +6,7 @@ interface DeviceListItemProps {
   isLast: boolean;
   data: Device;
   position: number;
+  disabled?: boolean;
   onClick: () => void;
 }
 
@@ -13,6 +14,7 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
   isLast,
   data,
   position,
+  disabled,
   onClick,
 }) => {
   const getTotalSocketAvailable = () => {
@@ -61,12 +63,12 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
   return (
     <div
       onClick={() => {
-        if (total > 0) onClick();
+        if (total > 0 && !disabled) onClick();
       }}
       className={` bg-white py-2 px-3.5 rounded-lg shadow-lg border border-${
-        !total ? "black10" : "primary30"
+        !total || disabled ? "black10" : "primary30"
       } ${!isLast ? "mb-2.5" : ""} ${
-        !total ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+        !total || disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
       }`}
     >
       <div className="row gap-2">
@@ -120,8 +122,7 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
               <p>Penuh</p>
             ) : (
               <p className="text-xs text-black70">
-                {total > 0 ? total : `Tidak `}
-                Tersedia
+                {total > 0 ? total : "Tidak"} Tersedia
               </p>
             )}
           </div>

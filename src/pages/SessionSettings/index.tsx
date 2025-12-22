@@ -86,7 +86,6 @@ const SessionSettings = () => {
   const addSession = useSelector((state: RootState) => state.addSession);
 
   const myUser = useSelector((state: RootState) => state.myUser);
-  const deviceById = useSelector((state: RootState) => state.deviceById);
   const checkPin = useSelector((state: RootState) => state.checkPin);
   const editPin = useSelector((state: RootState) => state.editPin);
 
@@ -150,17 +149,6 @@ const SessionSettings = () => {
       setUp();
     }
   }, [data]);
-
-  useEffect(() => {
-    if (
-      id &&
-      deviceById?.data?.data &&
-      deviceById?.data?.data?.ChargingStation
-    ) {
-      setData(deviceById?.data?.data?.ChargingStation);
-      setSelectedDevice(deviceById?.data?.data);
-    }
-  }, [deviceById]);
 
   useEffect(() => {
     if (selectedDevice?.ID) {
@@ -293,7 +281,8 @@ const SessionSettings = () => {
           url: `devices/${id}`,
         });
 
-        setData(res?.data);
+        setData(res?.data?.ChargingStation);
+        setSelectedDevice(res?.data);
       }
     } catch (error: any) {
       if (error?.message) setIsNotFound(true);
@@ -617,7 +606,7 @@ const SessionSettings = () => {
 
   return (
     <Container title="Pengaturan Sesi" onDismiss={onDismiss}>
-      <LoadingPage loading={deviceById?.loading}>
+      <LoadingPage loading={loading}>
         <div className="flex-1 flex-col overflow-auto scrollbar-none">
           {/* LOCATION */}
           <div className="p-4 bg-white ">
@@ -711,6 +700,7 @@ const SessionSettings = () => {
                     <SocketItem
                       key={index}
                       data={item}
+                      disabled={data?.IsClosed}
                       position={index + 1}
                       isActive={form?.selectedSocket === item?.ID}
                       onClick={() => onFullyCharge(item?.ID)}

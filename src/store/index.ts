@@ -8,7 +8,6 @@ import deleteBankAccountReducer from "../features/bank/deleteBankAccountSlice.ts
 import validateBankReducer from "../features/bank/validateBankSlice.ts";
 import chargingStationByIdReducer from "../features/chargingStations/chargingStationByIdSlice.ts";
 import chargingStationLocationsReducer from "../features/chargingStations/chargingStationLocationsSlice.ts";
-import deviceByIdReducer from "../features/device/deviceByIdSlice.ts";
 import feeSettingsReducer from "../features/feeSettings/feeSettingsSlice";
 import globalReducer from "../features/globalSlice";
 import locationByIdReducer from "../features/location/locationByIdSlice.tsx";
@@ -66,9 +65,6 @@ export const store = configureStore({
 
     // BALANCE
     balanceList: balanceListReducer,
-
-    // DEVICE
-    deviceById: deviceByIdReducer,
 
     // LOCATION
     locationById: locationByIdReducer,

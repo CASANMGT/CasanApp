@@ -6,7 +6,6 @@ export * from "./bank/deleteBankAccountSlice";
 export * from "./bank/validateBankSlice";
 export * from "./chargingStations/chargingStationByIdSlice";
 export * from "./chargingStations/chargingStationLocationsSlice";
-export * from "./device/deviceByIdSlice";
 export * from "./feeSettings/feeSettingsSlice";
 export * from "./globalSlice";
 export * from "./location/locationByIdSlice";
