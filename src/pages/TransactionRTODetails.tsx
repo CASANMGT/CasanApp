@@ -33,6 +33,7 @@ import {
 } from "../helpers";
 import { Api } from "../services";
 import { AppDispatch } from "../store";
+import NotFound from "./NotFound";
 
 const TransactionRTODetails = () => {
   const qrRef = useRef<HTMLCanvasElement | null>(null);
@@ -44,6 +45,7 @@ const TransactionRTODetails = () => {
   const [loading, setLoading] = useState(false);
   const [loadingCancel, setLoadingCancel] = useState(false);
   const [data, setData] = useState<RTOTransactionProps>();
+  const [isNotFound, setIsNotFound] = useState<boolean>(false);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isShow, setIsShow] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>();
@@ -71,9 +73,8 @@ const TransactionRTODetails = () => {
       } else {
         throw new Error("Can't find transaction ID");
       }
-    } catch (error) {
-      alert(error);
-      onDismiss;
+    } catch (error: any) {
+      if (error?.message) setIsNotFound(true);
     } finally {
       setLoading(false);
     }
@@ -189,6 +190,8 @@ const TransactionRTODetails = () => {
     data?.GeneratedQRCodeURL && data?.PaymentMethod === "QRIS_TU"
       ? true
       : false;
+
+  if (!id || isNotFound) return <NotFound onDismiss={onDismiss} />;
 
   return (
     <div className="background-1 py-[14px] px-4">

@@ -4,7 +4,7 @@ import CountdownTimer from "./CountdownTimer";
 
 interface StatusIndicatorProps {
   className?: string;
-  data: Session | null;
+  data: Session | undefined;
   type: number;
   duration: number;
   onFinish: () => void;

@@ -34,7 +34,6 @@ import {
 } from "../components";
 import {
   fetchCancelSession,
-  fetchDetailSession,
   fetchStartSession,
   fetchStopSession,
   hideLoading,
@@ -45,7 +44,9 @@ import {
   showLoading,
 } from "../features";
 import { formatDuration, moments, openWhatsApp, rupiah } from "../helpers";
+import { Api } from "../services";
 import { AppDispatch, RootState } from "../store";
+import NotFound from "./NotFound";
 
 const Charging = () => {
   const navigate = useNavigate();
@@ -53,11 +54,13 @@ const Charging = () => {
   const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
 
-  const detailSession = useSelector((state: RootState) => state.detailSession);
   const startSession = useSelector((state: RootState) => state.startSession);
   const stopSession = useSelector((state: RootState) => state.stopSession);
   const cancelSession = useSelector((state: RootState) => state.cancelSession);
 
+  const [loading, setLoading] = useState<boolean>(true);
+  const [data, setData] = useState<Session>();
+  const [isNotFound, setIsNotFound] = useState<boolean>(false);
   const [visibleAlert, setVisibleAlert] = useState<boolean>(false);
   const [openCancel, setOpenCancel] = useState<boolean>(false);
   const [openDiagnosis, setOpenDiagnosis] = useState<boolean>(false);
@@ -73,15 +76,15 @@ const Charging = () => {
 
   useEffect(() => {
     if (
-      !detailSession?.loading &&
-      ((detailSession?.data?.MaxWatt || 0) <= 1 ||
-        detailSession?.data?.Status === 3 ||
-        detailSession?.data?.Status === 4 ||
-        detailSession?.data?.Status === 5)
+      !loading &&
+      ((data?.MaxWatt || 0) <= 1 ||
+        data?.Status === 3 ||
+        data?.Status === 4 ||
+        data?.Status === 5)
     ) {
       timeoutProgress();
     }
-  }, [detailSession?.data]);
+  }, [data]);
 
   useEffect(() => {
     if (startSession?.data) {
@@ -111,10 +114,16 @@ const Charging = () => {
     }
   }, [cancelSession]);
 
-  const getData = () => {
-    if (id) {
-      dispatch(fetchDetailSession(Number(id))).then((res) => {
-        const resSession: Session = res?.payload as Session;
+  const getData = async () => {
+    try {
+      if (id) {
+        const res = await Api.get({
+          url: `sessions/${id}`,
+        });
+
+        setData(res?.data);
+
+        const resSession: Session = res?.data;
         const currentStatus = resSession?.Status;
 
         if (currentStatus === 6) {
@@ -126,8 +135,7 @@ const Charging = () => {
         ) {
           navigate(
             `/transaction-history/details/${
-              detailSession?.data?.Transaction?.ID ||
-              resSession?.Transaction?.ID
+              data?.Transaction?.ID || resSession?.Transaction?.ID
             }`,
             {
               replace: true,
@@ -148,10 +156,11 @@ const Charging = () => {
 
           // dispatch(fetchCalculateDuration(body));
         }
-      });
-    } else {
-      alert("Can't find session ID");
-      onDismiss();
+      }
+    } catch (error: any) {
+      if (error?.message) setIsNotFound(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -171,13 +180,13 @@ const Charging = () => {
 
   const onStartStop = () => {
     if (status === 6) navigate("/home", { replace: true });
-    else if (dataSession?.ID) {
+    else if (data?.ID) {
       if (status === 5) {
         setOpenStop(true);
       } else {
-        if (status === 2 && dataSession?.Device?.Protocol === 3)
+        if (status === 2 && data?.Device?.Protocol === 3)
           setOpenInstruction(true);
-        dispatch(fetchStartSession(dataSession?.ID));
+        dispatch(fetchStartSession(data?.ID));
       }
     }
   };
@@ -189,42 +198,40 @@ const Charging = () => {
     });
   };
 
-  const dataSession: Session | null = detailSession?.data;
   let dataVoucher: VoucherUsage | undefined = undefined;
-  const status: number | undefined = dataSession?.Status;
-  const duration: number = moments(dataSession?.StartChargingTime)
-    .add(dataSession?.ExpectedDuration || 0, "seconds")
+  const status: number | undefined = data?.Status;
+  const duration: number = moments(data?.StartChargingTime)
+    .add(data?.ExpectedDuration || 0, "seconds")
     .diff(moments(), "seconds");
 
   const isCharging: boolean = status === 5 || status === 6 ? true : false;
 
-  if (dataSession?.VoucherUsages && dataSession?.VoucherUsages.length)
-    dataVoucher = dataSession?.VoucherUsages[0];
+  if (data?.VoucherUsages && data?.VoucherUsages.length)
+    dataVoucher = data?.VoucherUsages[0];
+
+  if (!id || isNotFound) return <NotFound onDismiss={onDismiss} />;
 
   return (
     <div className="background-1 pt-3 overflow-hidden flex flex-col justify-between">
       <Header
-        type={dataSession?.Status !== 5 ? "cancel" : "charging"}
+        type={data?.Status !== 5 ? "cancel" : "charging"}
         title="Halaman Pengisian"
         onDismiss={onDismiss}
         className="mx-4 mb-4"
         onPress={() => {
-          if (dataSession?.Status !== 5) setOpenCancel(true);
+          if (data?.Status !== 5) setOpenCancel(true);
           else openWhatsApp(CUSTOMER_SERVICES);
         }}
       />
 
-      <LoadingPage
-        loading={!dataSession && detailSession?.loading}
-        color="primary100"
-      >
+      <LoadingPage loading={!data && loading} color="primary100">
         <div className="flex-1 overflow-auto scrollbar-none">
           {/* INFORMATION */}
           <div className="mx-4 bg-baseLightGray/60 rounded-lg flex justify-around py-3 px-8">
             <InformationItem
               icon={IcWalletGreen}
               label="Terpakai"
-              content={`Rp${rupiah(dataSession?.UsedAmount)}`}
+              content={`Rp${rupiah(data?.UsedAmount)}`}
             />
 
             <InformationItem
@@ -233,11 +240,11 @@ const Charging = () => {
               content={
                 status === 2
                   ? "-"
-                  : (dataSession?.MaxWatt || 0) > 1
+                  : (data?.MaxWatt || 0) > 1
                   ? formatDuration(
-                      dataSession?.PriceType === 2
-                        ? dataSession?.Duration
-                        : dataSession?.ExpectedDuration
+                      data?.PriceType === 2
+                        ? data?.Duration
+                        : data?.ExpectedDuration
                     ) ?? "-"
                   : "Persiapan..."
               }
@@ -248,9 +255,7 @@ const Charging = () => {
               label="Daya"
               content={
                 status === 5
-                  ? `${
-                      (dataSession?.MaxWatt || 0) > 1 ? dataSession?.MaxWatt : 0
-                    } Watt`
+                  ? `${(data?.MaxWatt || 0) > 1 ? data?.MaxWatt : 0} Watt`
                   : "-"
               }
             />
@@ -262,16 +267,16 @@ const Charging = () => {
               <IcMarkerSmall />
 
               <span className="font-medium text-xs">
-                {dataSession?.ChargingStation?.Name || "-"}
+                {data?.ChargingStation?.Name || "-"}
               </span>
 
-              <Signal signalValue={dataSession?.Device?.SignalValue} />
+              <Signal signalValue={data?.Device?.SignalValue} />
             </div>
           </div>
 
           {/* STATUS */}
           <StatusIndicator
-            data={dataSession}
+            data={data}
             type={status || 2}
             duration={duration > 0 ? duration : 0}
             onFinish={getData}
@@ -295,7 +300,7 @@ const Charging = () => {
             </div>
           </div>
 
-          {(dataSession?.MaxWatt || 0) > 1 &&
+          {(data?.MaxWatt || 0) > 1 &&
             dataVoucher?.Status === 2 &&
             dataVoucher?.VoucherDetails?.VoucherType === 2 && (
               <div className="bg-white shadow px-2.5 py-3 rounded-md mb-5 mx-4">
@@ -331,28 +336,28 @@ const Charging = () => {
             <BetweenText
               type="medium-content"
               labelLeft="Sesi ID"
-              labelRight={`${id || "-"}, ${dataSession?.Socket?.Port || "-"}`}
+              labelRight={`${id || "-"}, ${data?.Socket?.Port || "-"}`}
               className="p-3"
             />
 
             <BetweenText
               type="medium-content"
               labelLeft="Alat"
-              labelRight={dataSession?.Device?.PileNumber || ""}
+              labelRight={data?.Device?.PileNumber || ""}
               className="bg-baseLightGray rounded-t p-3"
             />
 
             <BetweenText
               type="medium-content"
               labelLeft="Total Transaksi"
-              labelRight={`Rp${rupiah(dataSession?.Transaction?.NetCharge)}`}
+              labelRight={`Rp${rupiah(data?.Transaction?.NetCharge)}`}
               className="p-3"
             />
 
             <BetweenText
               type="medium-content"
               labelLeft="Tarif Pengecasan"
-              labelRight={`Rp${rupiah(dataSession?.Transaction?.BaseFare)}/kWh`}
+              labelRight={`Rp${rupiah(data?.Transaction?.BaseFare)}/kWh`}
               className="bg-baseLightGray p-3"
             />
 
@@ -361,7 +366,7 @@ const Charging = () => {
                 type="medium-content"
                 labelLeft="Daya Maksimum"
                 labelRight={`${
-                  (dataSession?.MaxWatt || 0) > 1 ? dataSession?.MaxWatt : 0
+                  (data?.MaxWatt || 0) > 1 ? data?.MaxWatt : 0
                 }Watt`}
                 className="bg-baseLightGray p-3"
               />
@@ -371,7 +376,7 @@ const Charging = () => {
 
         {/* FOOTER */}
         <div className="container-button-footer">
-          {status === 2 && dataSession?.Device?.Protocol === -999 ? ( // hide
+          {status === 2 && data?.Device?.Protocol === -999 ? ( // hide
             <button
               type="button"
               className="h-[48px] w-full border rounded-full text-sm font-medium justify-center items-center flex drop-shadow btn-primary100 px-5"
@@ -433,7 +438,7 @@ const Charging = () => {
         labelButtonRight="Tidak"
         onClick={() => {
           setOpenStop(false);
-          dispatch(fetchStopSession(dataSession?.ID || 0));
+          dispatch(fetchStopSession(data?.ID || 0));
         }}
       />
 
@@ -450,7 +455,7 @@ const Charging = () => {
 
       <DiagnosisModal
         isOpen={openDiagnosis}
-        maxWatt={dataSession?.Device?.MaxWatt || 0}
+        maxWatt={data?.Device?.MaxWatt || 0}
         onDismiss={() => setOpenDiagnosis(false)}
       />
 

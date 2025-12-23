@@ -6,7 +6,7 @@ import {
   BookingDetails,
   BuyCredit,
   Charging,
-  ChargingStationDetails,
+  StationDetails,
   ComingSoon,
   ConfirmationPin,
   EditProfile,
@@ -62,8 +62,8 @@ const RoutesPage = () => {
         element={<ProtectedRoute element={<Charging />} />}
       />
       <Route
-        path="charging-station-details/:id"
-        element={<ChargingStationDetails />}
+        path="station-details/:id"
+        element={<StationDetails />}
       />
       <Route path="location-list" element={<LocationList />} />
       <Route path="login" element={<Login />} />

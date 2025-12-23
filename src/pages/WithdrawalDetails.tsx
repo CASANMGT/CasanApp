@@ -8,6 +8,7 @@ import {
   moments,
   rupiah,
 } from "../helpers";
+import NotFound from "./NotFound";
 
 const WithdrawalDetails = () => {
   const navigate = useNavigate();
@@ -15,14 +16,20 @@ const WithdrawalDetails = () => {
 
   const [data] = useState<WithdrawList>(location?.state?.data);
 
+  const onDismiss = () => {
+    navigate(-1);
+  };
+
   const status: number = 3;
   const IconPayment: any = getIconPaymentMethod(data?.BankAccount?.Code);
   const labelPayment: string = getLabelPaymentMethod(data?.BankAccount?.Code);
   const formatted = getFormattedByStatus(data?.Status);
 
+  if (!data?.ID) return <NotFound onDismiss={onDismiss} />;
+
   return (
     <div className="container-screen bg-white flex flex-col">
-      <Header title="Detail Penarikan" onDismiss={() => navigate(-1)} />
+      <Header title="Detail Penarikan" onDismiss={onDismiss} />
 
       <LoadingPage loading={false}>
         <div className="px-4 py-6 bg-white flex-1">

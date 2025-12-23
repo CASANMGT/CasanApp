@@ -57,6 +57,7 @@ const EditProfile = () => {
     if (editUser?.data) {
       dispatch(resetDataEditUser());
       dispatch(fetchMyUser());
+      navigate(-1);
     } else if (editUser?.error?.response?.data?.error) {
       if (editUser?.error?.response?.data?.code === "4105")
         setFormError("phone", "No HP telah digunakan");
@@ -118,6 +119,7 @@ const EditProfile = () => {
           type={"phone"}
           value={form.phone}
           error={formError?.phone}
+          disabled={true}
           placeholder="Nomor Handphone"
           onChange={(value) => handleChange("phone", value)}
         />

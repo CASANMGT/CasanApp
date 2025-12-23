@@ -151,7 +151,7 @@ const LocationList = () => {
                   page * LIMIT_LIST == filtered.length
                 }
                 onClick={() =>
-                  navigate(`/charging-station-details/${item?.ID}`, {
+                  navigate(`/station-details/${item?.ID}`, {
                     state: { currentLocation },
                   })
                 }

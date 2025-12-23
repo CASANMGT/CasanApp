@@ -1,7 +1,6 @@
 import { clone } from "lodash";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FaChevronRight } from "react-icons/fa6";
-import { HiOutlineTicket } from "react-icons/hi2";
+import { RiErrorWarningFill, RiInformationFill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import {
   NavigateFunction,
@@ -12,7 +11,6 @@ import {
 import {
   IcBattery2,
   IcEditGreen,
-  IcInfoCircle,
   IcRightGreen,
   IcSocketCircleGreen,
 } from "../../assets";
@@ -51,7 +49,6 @@ import { useAlert } from "../../context/AlertContext";
 import { useAuth } from "../../context/AuthContext";
 import {
   fetchAddSession,
-  fetchDeviceById,
   fetchMyUser,
   hideLoading,
   resetDataEditPin,
@@ -71,6 +68,7 @@ import {
 } from "../../helpers";
 import { Api } from "../../services";
 import { AppDispatch, RootState } from "../../store";
+import NotFound from "../NotFound";
 import InputHour from "./InputHour";
 import InputNominal from "./InputNominal";
 import InputPower from "./InputPower";
@@ -88,7 +86,6 @@ const SessionSettings = () => {
   const addSession = useSelector((state: RootState) => state.addSession);
 
   const myUser = useSelector((state: RootState) => state.myUser);
-  const deviceById = useSelector((state: RootState) => state.deviceById);
   const checkPin = useSelector((state: RootState) => state.checkPin);
   const editPin = useSelector((state: RootState) => state.editPin);
 
@@ -99,6 +96,7 @@ const SessionSettings = () => {
   const [data, setData] = useState<ChargingStation>(location?.state?.data);
   const [dataCalculateGross, setDataCalculateGross] =
     useState<CalculateGrossProps>();
+  const [isNotFound, setIsNotFound] = useState<boolean>(false);
   const [selectedDevice, setSelectedDevice] = useState<Device>(
     location?.state?.selectedDevice
   );
@@ -125,9 +123,7 @@ const SessionSettings = () => {
 
   useEffect(() => {
     if (isAuthenticated) dispatch(fetchMyUser());
-    if (id) {
-      dispatch(fetchDeviceById(id));
-    }
+    getData();
   }, []);
 
   useEffect(() => {
@@ -153,17 +149,6 @@ const SessionSettings = () => {
       setUp();
     }
   }, [data]);
-
-  useEffect(() => {
-    if (
-      id &&
-      deviceById?.data?.data &&
-      deviceById?.data?.data?.ChargingStation
-    ) {
-      setData(deviceById?.data?.data?.ChargingStation);
-      setSelectedDevice(deviceById?.data?.data);
-    }
-  }, [deviceById]);
 
   useEffect(() => {
     if (selectedDevice?.ID) {
@@ -286,6 +271,24 @@ const SessionSettings = () => {
 
   const onDismiss = () => {
     navigate(-1);
+  };
+
+  const getData = async () => {
+    try {
+      if (id) {
+        setLoading(true);
+        const res = await Api.get({
+          url: `devices/${id}`,
+        });
+
+        setData(res?.data?.ChargingStation);
+        setSelectedDevice(res?.data);
+      }
+    } catch (error: any) {
+      if (error?.message) setIsNotFound(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getChargingNominal = useCallback(() => {
@@ -595,9 +598,15 @@ const SessionSettings = () => {
     );
   };
 
+  const isAvailableSocket = (dataSocket || []).some((e) => e?.IsCharging === 0);
+  const isAllowed = !data?.IsClosed && isAvailableSocket;
+
+  if ((!id && !data?.ID) || isNotFound)
+    return <NotFound onDismiss={onDismiss} />;
+
   return (
     <Container title="Pengaturan Sesi" onDismiss={onDismiss}>
-      <LoadingPage loading={deviceById?.loading}>
+      <LoadingPage loading={loading}>
         <div className="flex-1 flex-col overflow-auto scrollbar-none">
           {/* LOCATION */}
           <div className="p-4 bg-white ">
@@ -632,15 +641,29 @@ const SessionSettings = () => {
             </div>
           </div>
 
-          <div className="bg-primary10 between-x px-4">
+          <div
+            className={`between-x px-4 py-1.5 bg-${
+              data?.IsClosed ? "red" : "primary10"
+            }`}
+          >
             <div className="row gap-1.5">
-              <IcInfoCircle className="w-5 text-primary100" />
+              {data?.IsClosed ? (
+                <RiErrorWarningFill size={16} className="text-white" />
+              ) : (
+                <RiInformationFill size={16} className="text-primary100" />
+              )}
 
-              <p className="text-primary100 font-medium">
-                Charger tidak boleh melebihi{" "}
-                <span className="font-semibold">
-                  {getLabelWatt(selectedDevice?.MaxWatt)}
-                </span>
+              <p
+                className={`font-medium text-${
+                  data?.IsClosed ? "white" : "primary100"
+                }`}
+              >
+                {data?.IsClosed ? "Lokasi Tutup Sementara" : "Max Watt"}{" "}
+                {!data?.IsClosed && (
+                  <span className="font-semibold">
+                    {getLabelWatt(selectedDevice?.MaxWatt)}
+                  </span>
+                )}
               </p>
             </div>
 
@@ -678,6 +701,7 @@ const SessionSettings = () => {
                       key={index}
                       deviceID={selectedDevice?.ID}
                       data={item}
+                      disabled={data?.IsClosed}
                       position={index + 1}
                       isActive={form?.selectedSocket === item?.ID}
                       onClick={() => onFullyCharge(item?.ID)}
@@ -687,113 +711,119 @@ const SessionSettings = () => {
             </div>
 
             {/* INPUT NOMINAL */}
-            <div className="bg-white py-4 px-3 rounded-lg mb-3">
-              {tabs && (
-                <Tabs
-                  active={form?.selectedTab}
-                  tabs={tabs}
-                  onSelect={(select) => {
-                    const cloneData = clone(form);
-                    cloneData.selectedTab = select;
-                    cloneData.value = "";
+            <div className="relative">
+              <div className="bg-white py-4 px-3 rounded-lg mb-3">
+                {tabs && (
+                  <Tabs
+                    active={form?.selectedTab}
+                    tabs={tabs}
+                    onSelect={(select) => {
+                      const cloneData = clone(form);
+                      cloneData.selectedTab = select;
+                      cloneData.value = "";
 
-                    setValueCalculate(0);
-                    setForm("all", cloneData);
-                  }}
-                />
-              )}
+                      setValueCalculate(0);
+                      setForm("all", cloneData);
+                    }}
+                  />
+                )}
 
-              {form?.selectedTab === "nominal" && (
-                <InputNominal
-                  value={form.value}
-                  form={form}
-                  calculate={valueCalculate}
-                  priceType={priceType}
-                  onChange={(value) => {
-                    const cloneData = clone(form);
-                    cloneData.value = value;
-                    cloneData.voucher = undefined;
+                {form?.selectedTab === "nominal" && (
+                  <InputNominal
+                    value={form.value}
+                    form={form}
+                    calculate={valueCalculate}
+                    priceType={priceType}
+                    onChange={(value) => {
+                      const cloneData = clone(form);
+                      cloneData.value = value;
+                      cloneData.voucher = undefined;
 
-                    setForm("all", cloneData);
-                  }}
-                />
-              )}
+                      setForm("all", cloneData);
+                    }}
+                  />
+                )}
 
-              {form?.selectedTab === "duration" && (
-                <InputHour
-                  value={form.value || "00:00"}
-                  form={form}
-                  calculate={valueCalculate}
-                  onChange={(value) => {
-                    const cloneData = clone(form);
-                    cloneData.value = value;
-                    cloneData.voucher = undefined;
+                {form?.selectedTab === "duration" && (
+                  <InputHour
+                    value={form.value || "00:00"}
+                    form={form}
+                    calculate={valueCalculate}
+                    onChange={(value) => {
+                      const cloneData = clone(form);
+                      cloneData.value = value;
+                      cloneData.voucher = undefined;
 
-                    setForm("all", cloneData);
-                  }}
-                />
-              )}
+                      setForm("all", cloneData);
+                    }}
+                  />
+                )}
 
-              {form?.selectedTab === "power" && (
-                <InputPower
-                  value={form.value}
-                  form={form}
-                  calculate={valueCalculate}
-                  onChange={(value) => {
-                    const cloneData = clone(form);
-                    cloneData.value = value;
-                    cloneData.voucher = undefined;
+                {form?.selectedTab === "power" && (
+                  <InputPower
+                    value={form.value}
+                    form={form}
+                    calculate={valueCalculate}
+                    onChange={(value) => {
+                      const cloneData = clone(form);
+                      cloneData.value = value;
+                      cloneData.voucher = undefined;
 
-                    setForm("all", cloneData);
-                  }}
-                />
-              )}
+                      setForm("all", cloneData);
+                    }}
+                  />
+                )}
 
-              <Separator className="my-4" />
+                <Separator className="my-4" />
 
-              {priceType === 1 && (
-                <div className="between-x p-3 rounded-lg bg-primary10 ">
-                  <span className="text-xs text-black70">Spesifikasi:</span>
-                  <div className="row font-medium">
-                    <span className="text-xs">{form.voltage?.name}</span>
-                    <span className="text-xs ml-1.5 mr-3">
-                      {form.ampere?.name}
-                    </span>
-                    <span className="text-xs mr-2.5">{`${(
-                      Number(form?.voltage?.value || 0) *
-                      Number(form?.ampere?.value || 0)
-                    ).toFixed(0)}W`}</span>
-                    <div
-                      onClick={() => setOpenVA(true)}
-                      className="cursor-pointer"
-                    >
-                      <IcEditGreen />
+                {priceType === 1 && (
+                  <div className="between-x p-3 rounded-lg bg-primary10 ">
+                    <span className="text-xs text-black70">Spesifikasi:</span>
+                    <div className="row font-medium">
+                      <span className="text-xs">{form.voltage?.name}</span>
+                      <span className="text-xs ml-1.5 mr-3">
+                        {form.ampere?.name}
+                      </span>
+                      <span className="text-xs mr-2.5">{`${(
+                        Number(form?.voltage?.value || 0) *
+                        Number(form?.ampere?.value || 0)
+                      ).toFixed(0)}W`}</span>
+                      <div
+                        onClick={() => setOpenVA(true)}
+                        className="cursor-pointer"
+                      >
+                        <IcEditGreen />
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              <div className="flex justify-end mt-5">
-                <span
-                  onClick={() => {
-                    if (isShowTotal) setOpenPriceDetails(true);
-                  }}
-                  className={`font-medium ${
-                    isShowTotal
-                      ? "text-primary100 cursor-pointer"
-                      : "text-black50 cursor-not-allowed"
-                  }`}
-                >
-                  {"Lihat Rincian ->"}
-                </span>
+                <div className="flex justify-end mt-5">
+                  <span
+                    onClick={() => {
+                      if (isShowTotal) setOpenPriceDetails(true);
+                    }}
+                    className={`font-medium ${
+                      isShowTotal
+                        ? "text-primary100 cursor-pointer"
+                        : "text-black50 cursor-not-allowed"
+                    }`}
+                  >
+                    {"Lihat Rincian ->"}
+                  </span>
+                </div>
               </div>
+
+              {!isAllowed && (
+                <div className="absolute right-0 left-0 bottom-0 top-0 bg-white/50 cursor-not-allowed"></div>
+              )}
             </div>
           </div>
         </div>
 
         {/* PAYMENT METHOD */}
         <div className="drop-shadow p-4 bg-white">
-          <div className="between-x">
+          {/* <div className="between-x">
             <div className="row gap-2">
               <HiOutlineTicket className="text-primary100" size={16} />
               <span className="font-medium text-blackBold">Voucher</span>
@@ -815,7 +845,7 @@ const SessionSettings = () => {
             </button>
           </div>
 
-          <Separator className="my-3" />
+          <Separator className="my-3" /> */}
 
           <div className="between-x">
             <p className="text-base text-black100/70">
@@ -828,6 +858,7 @@ const SessionSettings = () => {
             <Button
               className="!w-[130px]"
               loading={false}
+              disabled={!isAllowed}
               label="Bayar"
               onClick={onValidation}
             />
