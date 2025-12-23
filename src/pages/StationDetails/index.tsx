@@ -212,7 +212,7 @@ const StationDetails = () => {
                 <DeviceListItem
                   key={index}
                   data={item}
-                  disabled={data?.IsClosed}
+                  closed={data?.IsClosed}
                   position={index + 1}
                   isLast={
                     index === ((data?.Devices && data?.Devices.length) || 0) - 1
