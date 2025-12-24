@@ -117,10 +117,10 @@ const RoutesPage = () => {
             />
           }
         />
-        <Route
+        {/* <Route
           path="withdraw"
           element={<ProtectedRoute element={<Withdraw />} />}
-        />
+        /> */}
         <Route path="top-up" element={<ProtectedRoute element={<TopUp />} />} />
         <Route
           path="progress-details"

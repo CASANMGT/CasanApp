@@ -16,7 +16,12 @@ import {
 } from "../../assets";
 import NullPhotoImg from "../../assets/illustrations/null-photo.png";
 import { CUSTOMER_SERVICES, VERSION } from "../../common";
-import { Button, LoadingPage, MenuItem, Separator } from "../../components";
+import {
+  Button,
+  LoadingPage,
+  MenuItem,
+  Separator
+} from "../../components";
 import { useAuth } from "../../context/AuthContext";
 import { fetchMilestoneList, fetchMyUser } from "../../features";
 import { formatPhoneNumber, openWhatsApp, rupiah } from "../../helpers";
@@ -227,6 +232,7 @@ const Profile = () => {
 
         <div className="mb-[100px]" />
       </LoadingPage>
+      ∏{" "}
     </div>
   );
 };
