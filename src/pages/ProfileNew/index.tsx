@@ -13,14 +13,15 @@ import {
   IcLogout,
   IcPasswordBlack,
   IcTicket,
+  ILNotFound,
 } from "../../assets";
 import NullPhotoImg from "../../assets/illustrations/null-photo.png";
 import { CUSTOMER_SERVICES, VERSION } from "../../common";
 import {
+  AlertModal,
   Button,
   LoadingPage,
   MenuItem,
-  ModalNotAvailable,
   Separator,
 } from "../../components";
 import { useAuth } from "../../context/AuthContext";
@@ -237,9 +238,14 @@ const ProfileNew = () => {
       </LoadingPage>
 
       {/* MODAL */}
-      <ModalNotAvailable
-        isOpen={openNotAvailable}
-        onClose={() => setOpenNotAvailable(false)}
+      <AlertModal
+        visible={openNotAvailable}
+        icon={ILNotFound}
+        title="Fitur Tidak Tersedia"
+        description="Maaf, saat ini fitur sedang dalam proses perbaikan maksimal sampai 5 Januari 2026. Silakan cek berkala."
+        typeButtonRight="primary"
+        labelButtonRight="Tutup"
+        onDismiss={() => setOpenNotAvailable(false)}
       />
       {/* END MODAL */}
     </div>

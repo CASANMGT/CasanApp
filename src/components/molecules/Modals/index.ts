@@ -11,7 +11,6 @@ import ModalInputNominal from "./ModalInputNominal";
 import ModalInputPin from "./ModalInputPin";
 import ModalInputPower from "./ModalInputPower";
 import ModalInstructions from "./ModalInstructions";
-import ModalNotAvailable from "./ModalNotAvailable";
 import ModalPaymentMethod from "./ModalPaymentMethod";
 import ModalPriceDetails from "./ModalPriceDetails";
 import ModalResetPin from "./ModalResetPin";
@@ -36,7 +35,6 @@ export {
   ModalInputPin,
   ModalInputPower,
   ModalInstructions,
-  ModalNotAvailable,
   ModalPaymentMethod,
   ModalPriceDetails,
   ModalResetPin,

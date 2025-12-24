@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { FaLeaf } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
@@ -20,8 +20,7 @@ import {
   Button,
   LoadingPage,
   MenuItem,
-  ModalNotAvailable,
-  Separator,
+  Separator
 } from "../../components";
 import { useAuth } from "../../context/AuthContext";
 import { fetchMilestoneList, fetchMyUser } from "../../features";
@@ -35,8 +34,6 @@ const Profile = () => {
 
   const myUser = useSelector((state: RootState) => state.myUser);
   const milestoneList = useSelector((state: RootState) => state.milestoneList);
-
-  const [openNotAvailable, setOpenNotAvailable] = useState(false);
 
   const navigate: NavigateFunction = useNavigate();
 
@@ -132,8 +129,7 @@ const Profile = () => {
                 type="secondary"
                 buttonType="sm"
                 label="Withdraw"
-                onClick={() => setOpenNotAvailable(true)}
-                // onClick={() => navigate("/withdraw")}
+                onClick={() => navigate("/withdraw")}
               />
               <Button
                 buttonType="sm"
@@ -236,13 +232,7 @@ const Profile = () => {
 
         <div className="mb-[100px]" />
       </LoadingPage>
-
-      {/* MODAL */}
-      <ModalNotAvailable
-        isOpen={openNotAvailable}
-        onClose={() => setOpenNotAvailable(false)}
-      />
-      {/* END MODAL */}
+      ∏{" "}
     </div>
   );
 };
