@@ -11,15 +11,16 @@ import ModalInputNominal from "./ModalInputNominal";
 import ModalInputPin from "./ModalInputPin";
 import ModalInputPower from "./ModalInputPower";
 import ModalInstructions from "./ModalInstructions";
+import ModalNotAvailable from "./ModalNotAvailable";
 import ModalPaymentMethod from "./ModalPaymentMethod";
 import ModalPriceDetails from "./ModalPriceDetails";
+import ModalResetPin from "./ModalResetPin";
 import ModalSelectBank from "./ModalSelectBank";
 import ModalSKVoucher from "./ModalSKVoucher";
 import ModalVehicleDetails from "./ModalVehicleDetails";
 import ModalVoltageAmpere from "./ModalVoltageAmpere";
 import ModalVoucher from "./ModalVoucher";
 import RequestOTPModal from "./RequestOTPModal";
-import ModalResetPin from "./ModalResetPin";
 
 export {
   AlertModal,
@@ -35,13 +36,15 @@ export {
   ModalInputPin,
   ModalInputPower,
   ModalInstructions,
+  ModalNotAvailable,
   ModalPaymentMethod,
   ModalPriceDetails,
+  ModalResetPin,
   ModalSelectBank,
   ModalSKVoucher,
   ModalVehicleDetails,
   ModalVoltageAmpere,
   ModalVoucher,
-  RequestOTPModal,
-  ModalResetPin,
+  RequestOTPModal
 };
+

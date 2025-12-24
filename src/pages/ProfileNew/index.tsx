@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FaLeaf } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +16,13 @@ import {
 } from "../../assets";
 import NullPhotoImg from "../../assets/illustrations/null-photo.png";
 import { CUSTOMER_SERVICES, VERSION } from "../../common";
-import { Button, LoadingPage, MenuItem, Separator } from "../../components";
+import {
+  Button,
+  LoadingPage,
+  MenuItem,
+  ModalNotAvailable,
+  Separator,
+} from "../../components";
 import { useAuth } from "../../context/AuthContext";
 import { fetchMilestoneList, fetchMyUser } from "../../features";
 import { formatPhoneNumber, openWhatsApp, rupiah } from "../../helpers";
@@ -30,6 +36,8 @@ const ProfileNew = () => {
 
   const myUser = useSelector((state: RootState) => state.myUser);
   const milestoneList = useSelector((state: RootState) => state.milestoneList);
+
+  const [openNotAvailable, setOpenNotAvailable] = useState(false);
 
   useEffect(() => {
     getData();
@@ -123,7 +131,8 @@ const ProfileNew = () => {
                 type="secondary"
                 buttonType="sm"
                 label="Withdraw"
-                onClick={() => navigate("/withdraw")}
+                onClick={() => setOpenNotAvailable(true)}
+                // onClick={() => navigate("/withdraw")}
               />
               <Button
                 buttonType="sm"
@@ -226,6 +235,13 @@ const ProfileNew = () => {
 
         <div className="mb-[100px]" />
       </LoadingPage>
+
+      {/* MODAL */}
+      <ModalNotAvailable
+        isOpen={openNotAvailable}
+        onClose={() => setOpenNotAvailable(false)}
+      />
+      {/* END MODAL */}
     </div>
   );
 };
