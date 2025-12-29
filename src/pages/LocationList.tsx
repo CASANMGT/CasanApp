@@ -35,14 +35,14 @@ const LocationList = () => {
   const [detailLocation, setDetailLocation] = useState<GeocodeResult>();
 
   useEffect(() => {
-    getData();
+    if (!detailLocation?.city) getLocation();
   }, []);
 
   useEffect(() => {
     getDataList();
   }, [filterParams]);
 
-  const getData = async () => {
+  const getLocation = async () => {
     const check = await getCurrentLocation();
 
     const res: GeocodeResult = await getGeoCode({
