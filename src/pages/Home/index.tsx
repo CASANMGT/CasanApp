@@ -50,7 +50,7 @@ const Home = () => {
 
   useEffect(() => {
     setPage(1);
-    getLocation();
+    if (!detailLocation?.city) getLocation();
     if (isAuthenticated) {
       getOngoing();
       getDataRTO();
