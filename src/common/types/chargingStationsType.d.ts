@@ -41,6 +41,7 @@ declare global {
     StopChargingTime: string | null;
     IsCharging: number;
     SessionStatus: number;
+    IsActive: boolean
     DeletedAt: string | null;
     CreatedAt: string;
     UpdatedAt: string;
