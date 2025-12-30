@@ -31,7 +31,8 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
           element?.SessionStatus !== 2 &&
           element?.SessionStatus !== 3 &&
           element?.SessionStatus !== 4 &&
-          element?.SessionStatus !== 5
+          element?.SessionStatus !== 5 &&
+          element?.IsActive
         )
           value++;
       });

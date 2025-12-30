@@ -1,12 +1,7 @@
 import { CiWifiOff } from "react-icons/ci";
 import { FaMotorcycle } from "react-icons/fa6";
 import { FiSlash } from "react-icons/fi";
-import {
-  IcBattery2,
-  IcBike,
-  IcLineDown,
-  ILNoImage
-} from "../../../assets";
+import { IcBattery2, IcBike, IcLineDown, ILNoImage } from "../../../assets";
 import {
   getDistanceFromLatLonInKm,
   getFormattedBrand,
@@ -94,9 +89,9 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
         for (const i in element?.Sockets) {
           const e = element?.Sockets[i];
 
-          if (e.IsCharging === 0) totalAvailable += 1;
+          if (e.IsCharging === 0 && e?.IsActive) totalAvailable += 1;
           else if (e.IsCharging === 1) totalFull += 1;
-          else if (e.IsCharging === 3) totalDisconnect += 1;
+          else if (e.IsCharging === 3 || !e?.IsActive) totalDisconnect += 1;
         }
       }
     }
