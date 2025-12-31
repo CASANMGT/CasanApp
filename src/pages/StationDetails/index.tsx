@@ -82,7 +82,8 @@ const StationDetails = () => {
               e?.SessionStatus !== 3 &&
               e?.SessionStatus !== 4 &&
               e?.SessionStatus !== 5 &&
-              e?.IsCharging === 0
+              e?.IsCharging === 0 &&
+              e?.IsActive
             ) {
               total++;
             }

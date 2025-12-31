@@ -78,7 +78,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   if (data?.Devices && data?.Devices.length) {
     totalSocket = data?.Devices.reduce(
       (accumulator, currentValue) =>
-        accumulator + (currentValue.Sockets.length || 0),
+        accumulator +
+        (currentValue?.Sockets?.filter((e) => e?.IsActive)?.length ?? 0),
       0
     );
 
