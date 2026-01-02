@@ -16,7 +16,7 @@ const SocketItem: React.FC<SocketItemProps> = ({
   onClick,
 }) => {
   const getSocketStyle = useCallback(() => {
-    if (disabled)
+    if (disabled || !data?.IsActive)
       return "border-baseGray bg-baseGray !text-black50 cursor-not-allowed";
 
     if (isActive) return "border-primary100 bg-primary10 cursor-pointer";
@@ -50,7 +50,7 @@ const SocketItem: React.FC<SocketItemProps> = ({
   }, [data]);
 
   const onSelect = () => {
-    if (data?.IsCharging === 0 && !disabled) onClick();
+    if (data?.IsCharging === 0 && !disabled && data?.IsActive) onClick();
   };
 
   return (

@@ -164,8 +164,14 @@ const SessionSettings = () => {
             body: "Silakan pilih Socket lain untuk melanjutkan",
           });
         }
-      } else if (sockets?.length === 1 && sockets?.[0]?.IsCharging === 0) {
-        setForm("selectedSocket", sockets[0]?.ID);
+      } else {
+        const filtered: Socket | null = sockets?.length
+          ? sockets.filter((e) => e?.IsCharging === 0 && e?.IsActive)[0] ?? null
+          : null;
+
+        if (filtered?.ID) {
+          setForm("selectedSocket", filtered?.ID);
+        }
       }
     }
   }, [selectedDevice]);

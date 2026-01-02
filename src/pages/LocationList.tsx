@@ -12,7 +12,7 @@ import {
   LoadingPage,
 } from "../components";
 import { Api } from "../services";
-import { getCurrentLocation, getGeoCode } from "../services/ApiAddress";
+import { getCurrentLocation } from "../services/ApiAddress";
 
 type ResponseProps = {
   status: string;
@@ -35,7 +35,7 @@ const LocationList = () => {
   const [detailLocation, setDetailLocation] = useState<GeocodeResult>();
 
   useEffect(() => {
-    if (!detailLocation?.city) getLocation();
+    getLocation();
   }, []);
 
   useEffect(() => {
@@ -45,11 +45,6 @@ const LocationList = () => {
   const getLocation = async () => {
     const check = await getCurrentLocation();
 
-    const res: GeocodeResult = await getGeoCode({
-      address: `${check[0]},${check[1]}`,
-    });
-
-    setDetailLocation(res);
     setCurrentLocation(check);
   };
 
@@ -125,7 +120,7 @@ const LocationList = () => {
         <div className="between-x mx-4 mt-5">
           <div className="row rounded-full bg-white/30 h-[28px] center px-[14px] text-xs text-primary100">
             <IcPinGreen />
-            <span className="font-semibold ml-1">{detailLocation?.city}</span>
+            <span className="font-semibold ml-1">Indonesia</span>
           </div>
 
           <DropdownCheckbox
