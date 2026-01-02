@@ -4,7 +4,7 @@ import { IoIosPin } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { IcCartGreen, IcLogoSymbol, IcMotorcycleGreen } from "../../assets";
-import { ChargeBrandOption, GeocodeResult, LIMIT_LIST } from "../../common";
+import { ChargeBrandOption, LIMIT_LIST } from "../../common";
 import {
   Carousel,
   ChargingLocationCard,
@@ -16,7 +16,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { fetchOnGoingSessionList, setFromGlobal } from "../../features";
 import { Api } from "../../services";
-import { getCurrentLocation, getGeoCode } from "../../services/ApiAddress";
+import { getCurrentLocation } from "../../services/ApiAddress";
 import { AppDispatch, RootState } from "../../store";
 import StatusRTO from "./StatusRTO";
 
@@ -45,12 +45,11 @@ const Home = () => {
   const [typeVehicle, setTypeVehicle] = useState<string | number>("bike");
   const [place, setPlace] = useState<string>("terdekat");
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
-  const [detailLocation, setDetailLocation] = useState<GeocodeResult>();
   const [filter, setFilter] = useState<number[]>([]);
 
   useEffect(() => {
     setPage(1);
-    if (!detailLocation?.city) getLocation();
+    getLocation();
     if (isAuthenticated) {
       getOngoing();
       getDataRTO();
@@ -65,12 +64,7 @@ const Home = () => {
     try {
       const check = await getCurrentLocation();
 
-      const res: GeocodeResult = await getGeoCode({
-        address: `${check[0]},${check[1]}`,
-      });
-
       setCurrentLocation(check);
-      setDetailLocation(res);
     } catch (error) {}
   };
 
@@ -154,9 +148,7 @@ const Home = () => {
           <div className="between-x">
             <div className="inline-flex items-center gap-2 mb-2 bg-primary30 py-2 px-4 rounded-full shadow-lg">
               <IoIosPin size={18} className="text-primary100" />
-              <span className="text-black100 font-semibold">
-                {detailLocation?.city}
-              </span>
+              <span className="text-black100 font-semibold">Indonesia</span>
             </div>
 
             <DropdownCheckbox
