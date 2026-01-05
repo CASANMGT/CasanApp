@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IcClose } from "../../../assets";
+import { getCurrentLocation } from "../../../services/ApiAddress";
 import { LoadingPage } from "../../atoms";
 import { ChargingLocationCard } from "../Cards";
 import ModalContainer from "./ModalContainer";
@@ -24,37 +25,13 @@ const ModalChargingStation: React.FC<ModalChargingStationProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      getCurrentLocation();
+      getMyLocation();
     }
   }, [isOpen]);
 
-  const getCurrentLocation = () => {
-    if (!window.google || !window.google.maps) {
-      console.error("Google Maps API not loaded");
-      return;
-    }
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setCurrentLocation([latitude, longitude]);
-        },
-        (err) => {
-          if (err.code === err.PERMISSION_DENIED) {
-            console.log("User denied the request for Geolocation.");
-          } else if (err.code === err.POSITION_UNAVAILABLE) {
-            console.log("Location information is unavailable.");
-          } else if (err.code === err.TIMEOUT) {
-            console.log("The request to get user location timed out.");
-          } else {
-            console.log("An unknown error occurred.");
-          }
-        }
-      );
-    } else {
-      console.error("Geolocation not supported");
-    }
+  const getMyLocation = async () => {
+    const check = await getCurrentLocation();
+    setCurrentLocation(check);
   };
 
   let dataFiltered = data;

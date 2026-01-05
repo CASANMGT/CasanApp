@@ -45,10 +45,6 @@ const Location = () => {
     -6.208763, 106.845599,
   ]);
 
-  // useEffect(() => {
-  //   getLocation();
-  // }, []);
-
   useEffect(() => {
     getData();
   }, [filterParams]);
@@ -77,18 +73,6 @@ const Location = () => {
     } catch (error) {
     } finally {
       setLoading(false);
-    }
-  };
-
-  const getLocation = async () => {
-    try {
-      setLoadingLocation(true);
-      const check = await getCurrentLocation();
-
-      setCenterLocation(check);
-    } catch (error) {
-    } finally {
-      setLoadingLocation(false);
     }
   };
 

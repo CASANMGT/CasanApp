@@ -32,10 +32,9 @@ const LocationList = () => {
   const [page, setPage] = useState(1);
   const [type, setType] = useState<"Semua" | "Tersedia">("Semua");
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
-  const [detailLocation, setDetailLocation] = useState<GeocodeResult>();
 
   useEffect(() => {
-    getLocation();
+    if (!currentLocation) getLocation();
   }, []);
 
   useEffect(() => {
