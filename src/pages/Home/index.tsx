@@ -48,6 +48,19 @@ const Home = () => {
   const [filter, setFilter] = useState<number[]>([]);
 
   useEffect(() => {
+
+    const checkLog = () =>{
+      console.warn("cek warn")
+      console.log('cek log');
+      console.error('cek error');
+      console.info('cek info')
+    }
+
+    checkLog()
+  }, [])
+  
+
+  useEffect(() => {
     setPage(1);
     getLocation();
     if (isAuthenticated) {
