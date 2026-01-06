@@ -1,38 +1,62 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IcClose, IcRadioActive, IcRadioInactive } from "../../../assets";
-import { CUSTOMER_SERVICES, MAX_INPUT_PIN } from "../../../common";
+import { MAX_INPUT_PIN } from "../../../common";
 import {
   fetchCheckPin,
   fetchEditPin,
+  fetchMyUser,
   hideLoading,
   resetDataCheckPin,
-  showLoading
+  resetDataEditPin,
+  showLoading,
 } from "../../../features";
-import { moments, openWhatsApp } from "../../../helpers";
+import { moments } from "../../../helpers";
 import { AppDispatch, RootState } from "../../../store";
 import { InputCode, Separator } from "../../atoms";
 import ModalContainer from "./ModalContainer";
 
+const maxCountError: number = 3;
+
 interface Props {
+  type?: "new-pin" | "";
   isOpen: boolean;
   onDismiss: () => void;
+  onReset: () => void;
 }
 
-const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
+const ModalInputPin: React.FC<Props> = ({
+  type,
+  isOpen,
+  onDismiss,
+  onReset,
+}) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const checkPin = useSelector((state: RootState) => state.checkPin);
   const myUser = useSelector((state: RootState) => state.myUser);
+  const editPin = useSelector((state: RootState) => state.editPin);
 
   const [codes, setCodes] = useState<string[]>(["", "", "", ""]);
+  const [newCode, setNewCodes] = useState<string[]>(["", "", "", ""]);
+  const [countError, setCountError] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [errorTime, setErrorTime] = useState<string>();
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
+  const [step, setStep] = useState<
+    "new-pin" | "input-pin" | "confirmation-pin"
+  >();
 
   useEffect(() => {
     if (isOpen) {
       formatError(myUser?.data?.WithdrawPINCooldownUntil);
+      setStep(
+        type === "new-pin"
+          ? "new-pin"
+          : myUser?.data?.WithdrawPIN
+          ? "input-pin"
+          : "new-pin"
+      );
     }
   }, [isOpen]);
 
@@ -71,6 +95,26 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
     }
   }, [checkPin]);
 
+  useEffect(() => {
+    if (editPin.loading) dispatch(showLoading());
+    else dispatch(hideLoading());
+
+    if (editPin?.data) {
+      setCodes(["", "", "", ""]);
+      dispatch(resetDataEditPin());
+      dispatch(fetchMyUser());
+    }
+  }, [editPin]);
+
+  useEffect(() => {
+    if (countError === maxCountError) {
+      setTimeout(() => {
+        setCountError(0);
+        setStep("new-pin");
+      }, 1000);
+    }
+  }, [countError]);
+
   const formatError = (date?: string) => {
     if (date) {
       const diff = moments(date).diff(moments(), "minutes");
@@ -101,8 +145,22 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
   };
 
   const onNext = (code: string[]) => {
-    if (myUser?.data?.WithdrawPIN) dispatch(fetchCheckPin(code.join("")));
-    else dispatch(fetchEditPin(code.join("")));
+    if (step === "input-pin") dispatch(fetchCheckPin(code.join("")));
+    else if (step === "confirmation-pin") {
+      const newCodes: string = newCode.join("");
+      const confirmationCode: string = code.join("");
+
+      if (newCodes === confirmationCode) {
+        dispatch(fetchEditPin(code.join("")));
+      } else if (countError < maxCountError) {
+        setCodes(["", "", "", ""]);
+        setCountError((prev) => prev + 1);
+      }
+    } else {
+      setNewCodes(code);
+      setCodes(["", "", "", ""]);
+      setStep("confirmation-pin");
+    }
   };
 
   const isShowError: boolean = useMemo(
@@ -119,7 +177,13 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
     >
       <div className="w-full bg-white p-4 rounded-t-xl">
         <div className="between-x mb-4">
-          <label className="text-base font-semibold">Masukkan PIN</label>
+          <label className="text-base font-semibold">
+            {step === "input-pin"
+              ? "Masukkan PIN"
+              : step === "confirmation-pin"
+              ? "Konfirmasi Pin Baru"
+              : "Buat Pin Baru"}
+          </label>
 
           <div onClick={onDismiss} className="cursor-pointer">
             <IcClose className="text-black100" />
@@ -127,11 +191,23 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
         </div>
 
         <div className="w-full mt-6 bg-white px-10 py-9 drop-shadow rounded-lg">
-          <p className="text-center mb-4">Silahkan masukkan kode PIN anda</p>
+          <p className="text-center mb-4">
+            {step === "input-pin"
+              ? "Silahkan masukkan kode PIN anda"
+              : step === "confirmation-pin"
+              ? "Silahkan konfirmasi ulang kode PIN untuk melanjutkan pembayaran"
+              : "Demi keamanan transaksi, silakan buat kode PIN baru anda"}
+          </p>
 
           <InputCode
+            style={step === "input-pin" ? undefined : "reset"}
             type="password"
             values={codes}
+            error={
+              countError > 0
+                ? `PIN salah. Coba lagi. (${countError}/${maxCountError})`
+                : ""
+            }
             disabled={isDisabled}
             onChange={onChangeText}
           />
@@ -151,15 +227,17 @@ const ModalInputPin: React.FC<Props> = ({ isOpen, onDismiss }) => {
             </div>
           )}
 
-          <p className="text-xs text-black70 mt-4 text-center">
-            Butuh bantuan?{" "}
-            <b
-              onClick={() => openWhatsApp(CUSTOMER_SERVICES)}
-              className="text-xs text-primary100 cursor-pointer"
-            >
-              Hubungi Kami
-            </b>
-          </p>
+          {step === "input-pin" && (
+            <p className="text-xs text-black70 mt-4 text-center">
+              Lupa kode PIN anda?{" "}
+              <b
+                onClick={onReset}
+                className="text-xs text-primary100 cursor-pointer"
+              >
+                Reset PIN
+              </b>
+            </p>
+          )}
         </div>
       </div>
     </ModalContainer>

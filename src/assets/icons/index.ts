@@ -5,13 +5,18 @@ import IcBattery2 from "./battery-2.svg?react";
 import IcBattery3 from "./battery-3.svg?react";
 import IcBattery from "./battery.svg?react";
 import IcBike from "./bike.svg?react";
+import IcBike2 from "./bike2.svg?react";
 import IcCar from "./car.svg?react";
 import IcCartGreen from "./cart-green.svg?react";
+import IcCasanCircle from "./casan-circle.svg?react";
+import IcCasanMarker from "./casan-marker.png";
 import IcCashBlack from "./cash-black.svg?react";
 import IcChargeUnited from "./charge-united.png";
 import IcChatBlack from "./chat-black.svg?react";
 import IcCheckCircle from "./check-circle.svg?react";
+import IcCheckboxActiveDisabled from "./checkbox-active-disabled.svg?react";
 import IcCheckboxActive from "./checkbox-active.svg?react";
+import IcCheckboxDisable from "./checkbox-disable.svg?react";
 import IcCheckboxInactive from "./checkbox-inactive.svg?react";
 import IcClockGreen from "./clock-green.svg?react";
 import IcClose from "./close.svg?react";
@@ -47,7 +52,11 @@ import IcBackWhite from "./left-white.svg?react";
 import IcLinkAja from "./link-aja.svg?react";
 import IcLocationActive from "./location-active.svg?react";
 import IcLocationInactive from "./location-inactive.svg?react";
+import IcLogoSymbol from "./logo-symbol.svg?react";
 import IcLogout from "./logout.svg?react";
+import IcMakaCircle from "./maka-circle.svg?react";
+import IcMakaLabel from "./maka-label.svg?react";
+import IcMakaMarker from "./maka-marker.png";
 import IcMarkerSmall from "./marker-small.svg?react";
 import IcMenuBlack from "./menu-black.svg?react";
 import IcMenuWhite from "./menu-white.svg?react";
@@ -89,13 +98,18 @@ import IcShopeePay from "./shopeepay.svg?react";
 import IcSocketCircleGreen from "./socket-circle-green.svg?react";
 import IcSolarGreen from "./solar-green.svg?react";
 import IcStandBy from "./stand-by.svg?react";
-import IcStation from "./station.png";
 import IcSuccessGreen from "./success-green.svg?react";
 import IcSuccess from "./success.svg?react";
 import IcTablet from "./tablet.png";
+import IcTangkasCircle from "./tangkas-circle.svg?react";
+import IcTangkasLabel from "./tangkas-label.svg?react";
+import IcTangkasMarker from "./tangkas-marker.png";
 import IcTap from "./tap.png";
 import IcTicket from "./ticket.svg?react";
 import IcTimerCircle from "./timer-circle.svg?react";
+import IcUnitedCircle from "./united-circle.svg?react";
+import IcUnitedLabel from "./united-label.svg?react";
+import IcUnitedMarker from "./united-marker.png";
 import IcUser from "./user.svg?react";
 import IcVehicleBlack from "./vehicle-black.svg?react";
 import IcWalletGreen2 from "./wallet-green-2.svg?react";
@@ -112,12 +126,17 @@ export {
   IcBattery2,
   IcBattery3,
   IcBike,
+  IcBike2,
   IcCar,
   IcCartGreen,
+  IcCasanCircle,
+  IcCasanMarker,
   IcCashBlack,
   IcChargeUnited,
   IcChatBlack,
   IcCheckboxActive,
+  IcCheckboxActiveDisabled,
+  IcCheckboxDisable,
   IcCheckboxInactive,
   IcCheckCircle,
   IcClockGreen,
@@ -152,7 +171,11 @@ export {
   IcLinkAja,
   IcLocationActive,
   IcLocationInactive,
+  IcLogoSymbol,
   IcLogout,
+  IcMakaCircle,
+  IcMakaLabel,
+  IcMakaMarker,
   IcMarkerSmall,
   IcMenuBlack,
   IcMenuWhite,
@@ -194,13 +217,18 @@ export {
   IcSocketCircleGreen,
   IcSolarGreen,
   IcStandBy,
-  IcStation,
   IcSuccess,
   IcSuccessGreen,
   IcTablet,
+  IcTangkasCircle,
+  IcTangkasLabel,
+  IcTangkasMarker,
   IcTap,
   IcTicket,
   IcTimerCircle,
+  IcUnitedCircle,
+  IcUnitedLabel,
+  IcUnitedMarker,
   IcUser,
   IcVehicleBlack,
   IcWallet,

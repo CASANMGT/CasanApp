@@ -19,6 +19,7 @@ declare global {
     image?: any;
     icon?: any;
     title?: string;
+    loading?:boolean
     typeButtonLeft?: ButtonType;
     labelButtonLeft?: string;
     labelButtonRight?: string;

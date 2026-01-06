@@ -1,4 +1,4 @@
-export { };
+export {};
 
 declare global {
   type Device = {
@@ -8,7 +8,7 @@ declare global {
     IMEI: string;
     HardwareID: string;
     SoftwareID: string;
-    Brand: string;
+    Brand: number | null;
     Model: string;
     ChargingStationID: number;
     SignalValue: number;

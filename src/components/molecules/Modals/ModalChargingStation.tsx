@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IcClose } from "../../../assets";
+import { getCurrentLocation } from "../../../services/ApiAddress";
 import { LoadingPage } from "../../atoms";
 import { ChargingLocationCard } from "../Cards";
 import ModalContainer from "./ModalContainer";
@@ -8,12 +9,14 @@ import ModalContainer from "./ModalContainer";
 interface ModalChargingStationProps {
   isOpen: boolean;
   data: ChargingStation[] | undefined;
+  filter: number[];
   onDismiss: () => void;
 }
 
 const ModalChargingStation: React.FC<ModalChargingStationProps> = ({
   isOpen,
   data,
+  filter,
   onDismiss,
 }) => {
   const navigate = useNavigate();
@@ -22,38 +25,19 @@ const ModalChargingStation: React.FC<ModalChargingStationProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      getCurrentLocation();
+      getMyLocation();
     }
   }, [isOpen]);
 
-  const getCurrentLocation = () => {
-    if (!window.google || !window.google.maps) {
-      console.error("Google Maps API not loaded");
-      return;
-    }
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setCurrentLocation([latitude, longitude]);
-        },
-        (err) => {
-          if (err.code === err.PERMISSION_DENIED) {
-            console.log("User denied the request for Geolocation.");
-          } else if (err.code === err.POSITION_UNAVAILABLE) {
-            console.log("Location information is unavailable.");
-          } else if (err.code === err.TIMEOUT) {
-            console.log("The request to get user location timed out.");
-          } else {
-            console.log("An unknown error occurred.");
-          }
-        }
-      );
-    } else {
-      console.error("Geolocation not supported");
-    }
+  const getMyLocation = async () => {
+    const check = await getCurrentLocation();
+    setCurrentLocation(check);
   };
+
+  let dataFiltered = data;
+  if (filter?.length) {
+    dataFiltered = data?.filter((e) => filter.includes(e?.Brand || 0));
+  }
 
   return (
     <ModalContainer
@@ -73,15 +57,15 @@ const ModalChargingStation: React.FC<ModalChargingStationProps> = ({
 
         <div className="flex-1 overflow-hidden relative">
           <LoadingPage loading={false}>
-            {data &&
-              data.map((item, index: number) => (
+            {dataFiltered &&
+              dataFiltered.map((item, index: number) => (
                 <ChargingLocationCard
                   key={index}
                   data={item}
                   loading={false}
                   currentLocation={currentLocation}
                   onClick={() => {
-                    navigate(`/charging-station-details/${item?.ID}`, {
+                    navigate(`/station-details/${item?.ID}`, {
                       state: { currentLocation },
                     });
                     onDismiss();

@@ -1,4 +1,3 @@
-interface Props {}
 import { WiTime4 } from "react-icons/wi";
 import { FaCheckCircle } from "react-icons/fa";
 import { FaCalendarCheck } from "react-icons/fa";
@@ -6,10 +5,14 @@ import { PiWarningCircle } from "react-icons/pi";
 import { GiSandsOfTime } from "react-icons/gi";
 import { IoIosCloseCircle } from "react-icons/io";
 
-const Status: React.FC<Props> = () => {
-  const status: number = 11;
+interface Props {
+  status: number;
+}
 
+const Status: React.FC<Props> = ({ status }) => {
+  
   const formatted = getFormatted(status);
+
   return (
     <div
       className="rounded-lg p-3 row gap-2"
@@ -34,60 +37,67 @@ const getFormatted = (status: number) => {
 
   switch (status) {
     case 1:
-    case 11:
-      label = status === 11 ? "Booking Libur" : "Menunggu Verifikasi";
+    case 5:
+      label = status === 5 ? "Booking Libur" : "Menunggu Verifikasi";
       bgColorLeft = "#F8C41F";
       bgColorRight = "#C39340";
       icon = WiTime4;
       break;
 
     case 2:
-    case 5:
-    case 8:
-    case 9:
-    case 10:
-      label =
-        status === 5
-          ? "Booking Sedang Berlangsung"
-          : status === 8
-          ? "Selesai"
-          : status === 9
-          ? "Disetujui"
-          : status === 10
-          ? "Dikembalikan"
-          : "Tidak Selesai";
-      bgColorLeft = "#19ACB6";
-      bgColorRight = "#2DBA9D";
-      icon =
-        status === 5
-          ? GiSandsOfTime
-          : status === 9
-          ? IoIosCloseCircle
-          : FaCheckCircle;
-      break;
-
-    case 3:
-    case 6:
-    case 7:
-      label =
-        status === 6
-          ? "Tenggat Waktu"
-          : status === 7
-          ? "Dihentikan Sementara"
-          : "Ditolak";
-      bgColorLeft = "#DD2E44";
-      bgColorRight = "#BA2D55";
-      icon = status === 6 ? WiTime4 : PiWarningCircle;
-      break;
-
-    case 4:
       label = "Booking Telah Dijadwalkan";
       bgColorLeft = "#031869";
       bgColorRight = "#0055CF";
       icon = FaCalendarCheck;
       break;
 
+    case 3:
+      label = "Booking Sedang Berlangsung";
+      bgColorLeft = "#19ACB6";
+      bgColorRight = "#2DBA9D";
+      icon = GiSandsOfTime;
+      break;
+
+    case 4:
+      label = "Tenggat Waktu";
+      bgColorLeft = "#DD2E44";
+      bgColorRight = "#BA2D55";
+      icon = WiTime4;
+      break;
+
+    case 6:
+      label = "Selesai";
+      bgColorLeft = "#19ACB6";
+      bgColorRight = "#2DBA9D";
+      icon = FaCheckCircle;
+      break;
+
+    case 7:
+      label = "Dihentikan Sementara";
+      bgColorLeft = "#DD2E44";
+      bgColorRight = "#BA2D55";
+      icon = PiWarningCircle;
+      break;
+
+    case 8:
+      label = "Tidak Selesai";
+      bgColorLeft = "#19ACB6";
+      bgColorRight = "#2DBA9D";
+      icon = IoIosCloseCircle;
+      break;
+
+    case 10:
+      label = "Dikembalikan";
+      bgColorLeft = "#19ACB6";
+      bgColorRight = "#2DBA9D";
+      icon = FaCheckCircle;
+      break;
+
     default:
+      label = "No Title";
+      bgColorLeft = "#F8C41F";
+      bgColorRight = "#C39340";
+      icon = IoIosCloseCircle;
       break;
   }
 

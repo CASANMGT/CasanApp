@@ -1,6 +1,5 @@
 import { FaAngleRight } from "react-icons/fa6";
 import { NavigateFunction } from "react-router-dom";
-
 import { ProgressSteps, Separator } from "../../components";
 
 interface Props {
@@ -9,7 +8,11 @@ interface Props {
   dataMilestone: Milestone[] | null;
 }
 
-const MilestoneView: React.FC<Props> = ({ navigate, dataUser, dataMilestone }) => {
+const MilestoneView: React.FC<Props> = ({
+  navigate,
+  dataUser,
+  dataMilestone,
+}) => {
   let currentStep: number = -1;
 
   if (dataUser && dataMilestone && dataMilestone?.length) {

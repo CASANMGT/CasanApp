@@ -1,11 +1,12 @@
 import React from "react";
 import { IcClose } from "../../../assets";
-import {  Voucher } from "../../../common";
+import { Voucher } from "../../../common";
 import { formatDuration, getCurrentSlot, rupiah } from "../../../helpers";
-import { BetweenText } from "../../atoms";
+import { BetweenText, Button } from "../../atoms";
 import ModalContainer from "./ModalContainer";
 
 interface Props {
+  type?: string;
   isOpen: boolean;
   dataPriceSetting: PriceSetting | undefined;
   dataDevice: Device | undefined | null;
@@ -15,9 +16,11 @@ interface Props {
   price: number | string;
   duration: number;
   onClose: () => void;
+  onClick?: () => void;
 }
 
 const ModalPriceDetails: React.FC<Props> = ({
+  type,
   isOpen,
   duration,
   power,
@@ -27,6 +30,7 @@ const ModalPriceDetails: React.FC<Props> = ({
   dataUser,
   dataVoucher,
   onClose,
+  onClick,
 }) => {
   const selectedBaseRule: PriceBaseRule | null =
     dataPriceSetting?.PriceBaseRules.find(
@@ -183,19 +187,31 @@ const ModalPriceDetails: React.FC<Props> = ({
             labelLeft="Total Pembayaran"
             labelRight={`Rp${rupiah(total)}`}
             className="border-y border-black100 py-2"
-            classNameLabelLeft="text-black100"
-            classNameLabelRight="text-black100 font-medium"
+            classNameLabelLeft="text-blackBold"
+            classNameLabelRight="text-blackBold font-medium"
           />
 
           <div className="w-full border-t border-dashed border-black30 my-4"></div>
 
-          <p className="text-xs text-black80 mb-10">
+          <p className="text-xs text-black80 ">
             *Harga sudah sesuai dengan{" "}
             <span className="text-xs text-black100 font-medium">
               Permen ESDM No. 11 Tahun 2023
             </span>{" "}
             terkait tarif pengisian kendaraan listrik.
           </p>
+
+          {type === "fully-charge" ? (
+            <div className="shadow-lg mt-4">
+              <Button
+                buttonType="lg"
+                label="Isi Penuh Daya"
+                onClick={() => onClick?.()}
+              />
+            </div>
+          ) : (
+            <div className="h-10" />
+          )}
         </div>
       </div>
     </ModalContainer>

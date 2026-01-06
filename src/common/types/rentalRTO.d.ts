@@ -1,0 +1,122 @@
+export {};
+
+declare global {
+  type RTOProps = {
+    ID: number;
+    Admin: AdminProps;
+    UserID: number;
+    VehicleID: number;
+    Color: string;
+    LicensePlate: string;
+    LastUpdateLocationAt: string;
+    Dealer: string;
+    StartDate: string;
+    CutOffTime: string;
+    Notes: string;
+    OverdueLimit: number;
+    Deposit: number;
+    OverdueCount: number;
+    IsDeposited: boolean;
+    PauseType: string;
+    CreditPaid: number;
+    CreditLeft: number;
+    Payment: number;
+    PauseDay: string;
+    TargetFinishDate: string;
+    Type: number;
+    TotalPaid: number;
+    Payment: number;
+    DayCredits: RTOCreditProps[];
+    PauseDayType: number;
+    IsCreatedByAdmin: boolean;
+    AdminID: number;
+    CreatedAt: string;
+    UpdatedAt: string;
+    User: UserProps;
+    Vehicle: VehicleProps;
+    DeletedAt: string | null;
+    NextPaymentDate: string | null;
+    Status: number;
+    isFromApprove?: boolean;
+    Program: ProgramProps;
+    ProgramID: number;
+    RTOTransactions: RTOTransactionProps[] | null;
+    RTOHolidays: RTOHolidaysProps[];
+  };
+
+  type RTOCreditProps = {
+    ID: number;
+    RTOSchemaID: number;
+    DayCount: number;
+    Price: number;
+    DiscountRate: number;
+    CreatedAt: string;
+    UpdatedAt: string;
+  };
+
+  type AddTransactionRTOBodyProps = {
+    deposit?: number;
+    paymentMethod: string;
+    paymentProof: string;
+    reference: string;
+    rtocreditID?: number;
+    rtoid: number;
+  };
+
+  type RTOTransactionProps = {
+    ID: number;
+    UserID: number;
+    User: UserProps;
+    RTOCreditID: number;
+    RTOCredit: RTOCreditProps;
+    RTOID: number;
+    RTO: RTOProps;
+    CreditAmout: number;
+    Amount: number;
+    DueAmount: number;
+    WalletUsedAmount: number;
+    Deposit: number;
+    PaymentMethodFee: number;
+    PaymentMethod: string;
+    PaymentProof: string;
+    Status: number;
+    Type: number;
+    DeepLinkRedirectURL: string;
+    GeneratedQRCodeURL: string;
+    CreatedAt: string;
+    UpdatedAt: string;
+    ExpiredAt: string | null;
+    DeletedAt: string | null;
+    CreditHistory: CreditHistoryProps;
+  };
+
+  type CreditHistoryProps = {
+    ID: number;
+    TransactionID: number;
+    Transaction: any;
+    RTOID: number;
+    RTO: RTOProps;
+    Date: string;
+    Type: number;
+    Change: number;
+    BalanceAfter: number;
+    Reference: string;
+    Method: string;
+    CreatedAt: string;
+    UpdatedAt: string;
+    DeletedAt: string | null;
+  };
+
+  type RTOHolidaysProps = {
+    ID: number;
+    RTOID: number;
+    RTO: any;
+    StartDate: string;
+    EndDate: string;
+    TotalDay: number;
+    IsUsed: boolean;
+    CreatedAt: string;
+    UpdatedAt: string;
+    DeletedAt: any;
+  };
+}

@@ -14,7 +14,6 @@ COPY .env .env
 
 RUN yarn build
 
-
 FROM node:20
 
 RUN yarn global add serve

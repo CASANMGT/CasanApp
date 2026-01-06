@@ -1,92 +1,83 @@
 import { useState } from "react";
 import { FaChevronRight } from "react-icons/fa6";
-import { FeeSettingsProps } from "../../common";
+import { useDispatch } from "react-redux";
+import {
+  AddTransactionRTOBody,
+  ERROR_MESSAGE,
+  FeeSettingsProps,
+} from "../../common";
 import { ModalPaymentMethod } from "../../components";
+import { fetchAddTransactionRTO } from "../../features";
 import { rupiah } from "../../helpers";
+import { AppDispatch, RootState } from "../../store";
+import { useSelector } from "react-redux";
 
-interface Props {}
-
-interface PackageProps {
-  title: string;
-  price: string;
-  oldPrice?: string;
-  isNormal?: boolean;
+interface Props {
+  data: RTOProps | undefined;
 }
 
-const packages: PackageProps[] = [
-  { title: "Beli 1 hari kredit", price: "50000", isNormal: true },
-  { title: "Beli 2 hari kredit", price: "100000", isNormal: true },
-  { title: "Beli 3 hari kredit", price: "150000", isNormal: true },
-  { title: "Beli 5 hari kredit", price: "180000", oldPrice: "200000" },
-  { title: "Beli 7 hari kredit", price: "200000", oldPrice: "250000" },
-  { title: "Beli 15 hari kredit", price: "400000", oldPrice: "450000" },
-  {
-    title: "Beli 30 hari kredit",
-    price: "1300000",
-    oldPrice: "1500000",
-  },
-  {
-    title: "Beli 60 hari kredit",
-    price: "2600000",
-    oldPrice: "3000000",
-  },
-];
+const Package: React.FC<Props> = ({ data }) => {
+  const dispatch = useDispatch<AppDispatch>();
 
-const Package: React.FC<Props> = () => {
+  const addTransactionRTO = useSelector(
+    (state: RootState) => state?.addTransactionRTO
+  );
+
   const [openPaymentMethod, setOpenPaymentMethod] = useState<boolean>(false);
+  const [selectedPackage, setSelectedPackage] = useState<
+    RTOCreditProps | undefined
+  >();
   const [paymentMethod, setPaymentMethod] = useState<FeeSettingsProps>();
 
+  const isShow = data?.DayCredits?.length ? true : false;
+
+  const onSelectPayment = async (select: FeeSettingsProps | undefined) => {
+    try {
+      if (!data || !selectedPackage) {
+        throw new Error("Missing required data");
+      }
+
+      const body = AddTransactionRTOBody(data, selectedPackage, select);
+      dispatch(fetchAddTransactionRTO(body));
+    } catch (error) {
+      alert(ERROR_MESSAGE);
+    }
+  };
+
   return (
-    <div className="bg-white flex-1 h-full px-4 py-6">
-      <span className="text-base font-semibold">Pilih Paket Pembayaran</span>
+    <div className="bg-[#F5F8F9]/24 flex-1 h-full px-4 py-6">
+      <p className="text-base font-semibold mb-4">Pilih Paket Pembayaran</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {packages.map((pkg, i) => (
-          <div
-            key={i}
-            onClick={() => setOpenPaymentMethod(true)}
-            className="rounded-lg overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer"
-          >
-            {/* Header */}
-            <div
-              className="bg-teal-700 text-white p-2.5 flex items-center justify-between"
-              style={{
-                background: `linear-gradient(270deg, #21927B, #327478)`,
+        {isShow ? (
+          data?.DayCredits.map((item, i) => (
+            <PaymentPackageCard
+              key={i}
+              data={item}
+              originalPrice={data?.DayCredits[0]?.Price ?? 0}
+              onClick={() => {
+                setSelectedPackage(item);
+                setOpenPaymentMethod(true);
               }}
-            >
-              <p className="font-semibold">{pkg.title}</p>
-              <FaChevronRight size={16} />
-            </div>
-
-            {/* Content */}
-            <div className="px-2.5 py-2 bg-white">
-              <p className="text-blackBold font-semibold text-base">
-                {`Rp${rupiah(pkg.price)}`}
-              </p>
-              {pkg.oldPrice ? (
-                <p className="text-[10px] text-black70 line-through">
-                  {`Rp${rupiah(pkg.oldPrice)}`}
-                </p>
-              ) : (
-                <p className="text-[10px] text-black70">Harga Normal</p>
-              )}
-            </div>
-          </div>
-        ))}
+            />
+          ))
+        ) : (
+          <span>No Data</span>
+        )}
       </div>
 
       {openPaymentMethod && (
         <ModalPaymentMethod
+          type="credit"
           visible={openPaymentMethod}
           select={paymentMethod}
           selectBalance={0}
-          total={0}
-          loading={false}
+          total={selectedPackage?.Price || 0}
+          loading={addTransactionRTO?.loading}
+          totalCredit={selectedPackage?.DayCount || 0}
+          deposit={data?.IsDeposited ? 0 : data?.Deposit || 0}
           onDismiss={() => setOpenPaymentMethod(false)}
-          onSelect={(select, value) => {
-            setOpenPaymentMethod(false);
-            setPaymentMethod(select);
-          }}
+          onSelect={onSelectPayment}
         />
       )}
     </div>
@@ -94,3 +85,47 @@ const Package: React.FC<Props> = () => {
 };
 
 export default Package;
+
+interface PaymentPackageCardProps {
+  data: RTOCreditProps;
+  originalPrice: number;
+  onClick: () => void;
+}
+
+const PaymentPackageCard: React.FC<PaymentPackageCardProps> = ({
+  data,
+  originalPrice,
+  onClick,
+}) => {
+  return (
+    <div
+      onClick={onClick}
+      className="rounded-lg overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer"
+    >
+      {/* Header */}
+      <div
+        className="bg-teal-700 text-white p-2.5 flex items-center justify-between"
+        style={{
+          background: `linear-gradient(270deg, #21927B, #327478)`,
+        }}
+      >
+        <p className="font-semibold">{`Beli ${data?.DayCount} hari kredit`}</p>
+        <FaChevronRight size={16} />
+      </div>
+
+      {/* Content */}
+      <div className="px-2.5 py-2 bg-white">
+        <p className="text-blackBold font-semibold text-base">
+          {`Rp${rupiah(data?.Price)}`}
+        </p>
+        {data?.DiscountRate ? (
+          <p className="text-[10px] text-black70 line-through">
+            {`Rp${rupiah(originalPrice * data?.DayCount)}`}
+          </p>
+        ) : (
+          <p className="text-[10px] text-black70">Harga Normal</p>
+        )}
+      </div>
+    </div>
+  );
+};

@@ -31,9 +31,9 @@ export type Transaction = {
   ExpiredAt: string;
   CreatedAt: string;
   UpdatedAt: string;
-  MilestoneDiscount: number
-  TotalFare: number
-  PaymentMethodFee: number
-  BaseFare: number
-  NetCharge: number
+  MilestoneDiscount: number;
+  TotalFare: number;
+  PaymentMethodFee: number;
+  BaseFare: number;
+  NetCharge: number;
 };

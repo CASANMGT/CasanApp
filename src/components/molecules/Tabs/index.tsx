@@ -1,20 +1,18 @@
-import { useState } from "react";
-import { TabItemProps } from "../../../common";
-
-// interface TabItemProps {
-//   id: string;
-//   label: string;
-//   content: React.ReactNode;
-// }
+import { useEffect, useState } from "react";
 
 interface TabProps {
-  type?: "secondary"|"flex";
+  type?: "secondary" | "flex";
   tabs: TabItemProps[];
-  onSelect?: (value: string|number) => void;
+  active?: string | number;
+  onSelect?: (value: string | number) => void;
 }
 
-const Tabs: React.FC<TabProps> = ({ type, tabs, onSelect }) => {
+const Tabs: React.FC<TabProps> = ({ active, type, tabs, onSelect }) => {
   const [activeTab, setActiveTab] = useState(tabs[0].id);
+
+  useEffect(() => {
+    if (active !== null && active !== undefined) setActiveTab(active);
+  }, [active]);
 
   const onSelectTab = (selectTab: TabItemProps) => {
     setActiveTab(selectTab?.id);

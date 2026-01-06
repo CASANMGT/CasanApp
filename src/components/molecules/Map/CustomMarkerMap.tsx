@@ -2,9 +2,14 @@ import L from "leaflet";
 import { useEffect, useRef } from "react";
 import { Marker, useMap } from "react-leaflet";
 import { useDispatch } from "react-redux";
+import {
+  IcCasanMarker,
+  IcMakaMarker,
+  IcTangkasMarker,
+  IcUnitedMarker
+} from "../../../assets";
 import { setFromGlobal } from "../../../features";
 import { AppDispatch } from "../../../store";
-import { IcStation } from "../../../assets";
 
 interface CustomMarkerProps {
   data: ChargingStation;
@@ -32,6 +37,30 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
     );
   };
 
+  const getIconMarker = () => {
+    let icon = null;
+
+    switch (data?.Brand) {
+      case 2:
+        icon = IcUnitedMarker;
+        break;
+
+      case 3:
+        icon = IcMakaMarker;
+        break;
+
+      case 4:
+        icon = IcTangkasMarker;
+        break;
+
+      default:
+        icon = IcCasanMarker;
+        break;
+    }
+
+    return icon;
+  };
+
   if (
     !data?.Location?.Latitude ||
     !data?.Location?.Longitude ||
@@ -46,11 +75,12 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
 
   const dataChargingStation: ChargingStation[] =
     data?.Location?.ChargingStations ?? [];
+  const iconMarker = getIconMarker();
 
   const customMyLocationIcon = L.icon({
-    iconUrl: IcStation,
-    iconSize: [40, 40],
-    iconAnchor: [22, 40],
+    iconUrl: iconMarker,
+    iconSize: [36, 36],
+    iconAnchor: [18, 36],
   });
 
   return (

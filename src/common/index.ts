@@ -14,3 +14,4 @@ export * from "./types/transactionType";
 export * from "./types/voucherType";
 export * from './formData/rtoForm'
 export * from "./types/withdrawType";
+export * from './formData/rtoForm'

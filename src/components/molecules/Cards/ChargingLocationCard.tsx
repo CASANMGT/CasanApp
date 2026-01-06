@@ -1,13 +1,10 @@
-import {
-  IcBattery2,
-  IcBike,
-  IcFlash,
-  IcFuel,
-  IcLineDown,
-  ILNoImage,
-} from "../../../assets";
+import { CiWifiOff } from "react-icons/ci";
+import { FaMotorcycle } from "react-icons/fa6";
+import { FiSlash } from "react-icons/fi";
+import { IcBattery2, IcBike, IcLineDown, ILNoImage } from "../../../assets";
 import {
   getDistanceFromLatLonInKm,
+  getFormattedBrand,
   getLabelWatt,
   moments,
   rupiah,
@@ -43,6 +40,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   const dataMaxWatt = data?.Devices?.map((device) => device?.MaxWatt);
 
   const priceType: number = data?.PriceSetting?.BikePriceType;
+  const brand = data?.Brand;
   let isFull: boolean = false;
   let isDisconnect: boolean = false;
   let price: number = 0;
@@ -80,7 +78,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   if (data?.Devices && data?.Devices.length) {
     totalSocket = data?.Devices.reduce(
       (accumulator, currentValue) =>
-        accumulator + (currentValue.Sockets.length || 0),
+        accumulator +
+        (currentValue?.Sockets?.filter((e) => e?.IsActive)?.length ?? 0),
       0
     );
 
@@ -91,9 +90,9 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
         for (const i in element?.Sockets) {
           const e = element?.Sockets[i];
 
-          if (e.IsCharging === 0) totalAvailable += 1;
+          if (e.IsCharging === 0 && e?.IsActive) totalAvailable += 1;
           else if (e.IsCharging === 1) totalFull += 1;
-          else if (e.IsCharging === 3) totalDisconnect += 1;
+          else if (e.IsCharging === 3 || !e?.IsActive) totalDisconnect += 1;
         }
       }
     }
@@ -131,7 +130,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
 
   const labelWatt = getLabelWatt(minWatt, maxWatt);
   const isUltraFast = !!data?.Devices?.some((e) => e?.Protocol === 3);
-
+  const formattedBrand = getFormattedBrand(brand || 0);
+  const IconBrand = formattedBrand.icon;
 
   return (
     <>
@@ -179,37 +179,43 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
           >
             <div className="row gap-2.5">
               <div
-                className={`h-[30px] w-[30px] rounded p-2 ${
-                  isFull
+                className={`h-[30px] w-[30px] rounded center ${
+                  isFull || data?.IsClosed
                     ? "bg-lightRed"
                     : isDisconnect
                     ? "bg-black10"
                     : "bg-primary10"
                 }`}
               >
-                <IcFuel
-                  className={
-                    isFull
-                      ? "text-red"
-                      : isDisconnect
-                      ? "text-black50"
-                      : "text-primary100"
-                  }
-                />
+                {data?.IsClosed ? (
+                  <FiSlash size={16} className="text-red" />
+                ) : isDisconnect ? (
+                  <CiWifiOff size={18} />
+                ) : (
+                  <FaMotorcycle
+                    size={18}
+                    className={`text-${isFull ? "red" : "green"}`}
+                  />
+                )}
               </div>
 
-              {isFull ? (
-                <div>
-                  <p className="font-semibold text-xs text-red">Sedang Penuh</p>
-                  <p className="text-[10px] text-red">{`Tunggu ${timeFinished} mnt`}</p>
-                </div>
-              ) : isDisconnect ? (
+              {isFull || isDisconnect || data?.IsClosed ? (
                 <div className="text-black70">
-                  <p className="text-xs font-semibold text-black70">
-                    Sedang tidak tersedia
+                  <p
+                    className={`text-xs font-semibold text-${
+                      data?.IsClosed ? "red" : "black100"
+                    }`}
+                  >
+                    {data?.IsClosed
+                      ? "Tutup Sementara"
+                      : isFull
+                      ? "Sedang Penuh"
+                      : "Sedang tidak tersedia"}
                   </p>
 
-                  <p className="text-[10px]">Mohon cek berkala</p>
+                  {isDisconnect && (
+                    <p className="text-[10px]">Mohon cek berkala</p>
+                  )}
                 </div>
               ) : (
                 <div className="flex flex-row gap-1 relative">
@@ -235,9 +241,12 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
             )}/${priceType === 2 ? "kWh" : "jam"}`}</p>
           </div>
 
-          <div className="bg-primary100 rounded-md row">
-            <div className="py-0.5 px-1 row gap-1">
-              <IcFlash className="text-white" />
+          <div
+            className="rounded-md row"
+            style={{ backgroundColor: formattedBrand.bgColor }}
+          >
+            <div className="center px-2">
+              <IconBrand className="text-white" />
             </div>
 
             <div className="text-primary100 bg-primary10 px-1 rounded-md rounded-l-[40px] gap-1 flex items-center py-0.5">
@@ -256,6 +265,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
           onClick={() => {
             if (onLoadMore) onLoadMore();
           }}
+          className="py-4 mb-10"
         />
       )}
     </>

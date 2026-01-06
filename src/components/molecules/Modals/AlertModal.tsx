@@ -6,6 +6,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
   image,
   icon,
   title,
+  loading,
   typeButtonLeft,
   labelButtonLeft,
   labelButtonRight,
@@ -24,7 +25,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
   return (
     <ModalContainer
       isOpen={visible}
-      onDismiss={onDismiss ? onDismiss : () => {}}
+      onDismiss={onDismiss && !loading ? onDismiss : () => {}}
     >
       <div>
         {isShowIcon && (
@@ -56,6 +57,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
             <Button
               type={typeButtonLeft}
               label={labelButtonLeft || ""}
+              loading={loading}
               onClick={() => {
                 if (onClick) onClick();
               }}
@@ -65,6 +67,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
             <Button
               type={typeButtonRight || "secondary"}
               label={labelButtonRight || ""}
+              loading={loading}
               onClick={onDismiss}
             />
           )}

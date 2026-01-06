@@ -4,7 +4,7 @@
 
 /* SCREEN */
 .container-screen {
-  @apply h-svh w-svw bg-baseLightGray shadow-2xl sm:max-w-[480px] ;
+  @apply h-svh w-svw bg-baseLightGray shadow-2xl sm:max-w-[480px];
 }
 
 /* BACKGROUND */
@@ -13,7 +13,7 @@
 }
 
 .background-2 {
-  @apply bg-background2 bg-cover bg-fixed bg-no-repeat bg-center container-screen;
+  @apply bg-[linear-gradient(135deg,_#BAE6E9_30%,_#FFFFFF_50%,_#FAF2C0_100%)] container-screen;
 }
 
 .background-coming-soon {
@@ -67,11 +67,13 @@
   @apply p-4 bg-white drop-shadow;
 }
 
-
 .dropdown-menu {
   @apply absolute left-0 w-full mt-1 bg-white border border-baseGray rounded-xl shadow-lg transform transition-all duration-200 max-h-[200px] overflow-auto;
 }
 
+.dropdown-button {
+  @apply flex items-center justify-between gap-2 w-auto h-[32px] bg-primary10 shadow py-2 px-3 rounded-full cursor-pointer hover:border-primary100 focus:outline-none;
+}
 
 /* Hide arrows on number input for Chrome, Edge, and Safari */
 input[type="number"]::-webkit-inner-spin-button,
@@ -84,4 +86,3 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
-

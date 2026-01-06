@@ -4,7 +4,7 @@ import BankAccount from "./BankAccount";
 import BookingDetails from "./BookingDetails";
 import BuyCredit from "./BuyCredit";
 import Charging from "./Charging";
-import ChargingStationDetails from "./ChargingStationDetails";
+import StationDetails from "./StationDetails";
 import ComingSoon from "./ComingSoon";
 import ConfirmationPin from "./ConfirmationPin";
 import EditProfile from "./EditProfile";
@@ -19,7 +19,9 @@ import PaymentSuccess from "./PaymentSuccess";
 import PrivacyPolice from "./PrivacyPolice";
 import ProfileNew from "./ProfileNew";
 import ProgressDetails from "./ProgressDetails";
+import TransactionRTODetails from "./TransactionRTODetails";
 import RentToBuy from "./RentToBuy";
+import RentalHistory from "./RentalHistory";
 import Scan from "./Scan";
 import SelectBank from "./SelectBank";
 import RentToBuyDetails from "./RentToBuyDetails";
@@ -50,7 +52,7 @@ export {
   BuyCredit,
   Charging,
   RentToBuyDetails,
-  ChargingStationDetails,
+  StationDetails,
   ComingSoon,
   ConfirmationPin,
   EditProfile,
@@ -66,6 +68,7 @@ export {
   ProfileNew,
   ProgressDetails,
   RentToBuy,
+  RentalHistory,
   Scan,
   SelectBank,
   SelectDealer,
@@ -85,6 +88,7 @@ export {
   VoucherDetails,
   Withdraw,
   WithdrawalDetails,
-  WithdrawalHistory
+  WithdrawalHistory,
+  TransactionRTODetails
 };
 

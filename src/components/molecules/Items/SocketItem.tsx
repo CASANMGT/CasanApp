@@ -4,22 +4,29 @@ interface SocketItemProps {
   data: Socket;
   position: number;
   isActive: boolean;
+  disabled?: boolean;
   onClick: () => void;
 }
 
-const SocketItem: React.FC<SocketItemProps> = ({ data, isActive, onClick }) => {
+const SocketItem: React.FC<SocketItemProps> = ({
+  data,
+  isActive,
+  disabled,
+  onClick,
+}) => {
   const getSocketStyle = useCallback(() => {
-    let value: string = "";
+    if (disabled || !data?.IsActive)
+      return "border-baseGray bg-baseGray !text-black50 cursor-not-allowed";
 
-    if (isActive) value = "border-primary100 bg-primary10 cursor-pointer";
-    else if (data.IsCharging === 0)
-      value = "border-black/1 bg-white cursor-pointer";
-    else if (data?.IsCharging === 1)
-      value = "border-primary100 bg-primary100 text-white cursor-not-allowed";
-    else value = "border-baseGray bg-baseGray !text-black50 cursor-not-allowed";
+    if (isActive) return "border-primary100 bg-primary10 cursor-pointer";
 
-    return value;
-  }, [data, isActive]);
+    if (data?.IsCharging === 0) return "border-black/1 bg-white cursor-pointer";
+
+    if (data?.IsCharging === 1)
+      return "border-primary100 bg-primary100 text-white cursor-not-allowed";
+
+    return "border-baseGray bg-baseGray !text-black50 cursor-not-allowed";
+  }, [disabled, isActive, data]);
 
   const getLabelSocket = useCallback(() => {
     let value: string | number;
@@ -42,7 +49,7 @@ const SocketItem: React.FC<SocketItemProps> = ({ data, isActive, onClick }) => {
   }, [data]);
 
   const onSelect = () => {
-    if (data?.IsCharging === 0) onClick();
+    if (data?.IsCharging === 0 && !disabled && data?.IsActive) onClick();
   };
 
   return (

@@ -1,5 +1,4 @@
-
-export { };
+export {};
 
 declare global {
   type ChargingStationBody = {
@@ -8,6 +7,7 @@ declare global {
     longitude?: number;
     latitude?: number;
     is_admin: boolean;
+    brands?: string;
   };
 
   type PriceTimeRule = {
@@ -41,6 +41,7 @@ declare global {
     StopChargingTime: string | null;
     IsCharging: number;
     SessionStatus: number;
+    IsActive: boolean;
     DeletedAt: string | null;
     CreatedAt: string;
     UpdatedAt: string;
@@ -98,6 +99,7 @@ declare global {
   type ChargingStation = {
     ID: number;
     Name: string;
+    Brand: number | null;
     Image: string;
     Phone: string;
     IsParkingFee: boolean;

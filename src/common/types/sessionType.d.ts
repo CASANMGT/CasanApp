@@ -2,7 +2,7 @@ import { FeeSettingsProps } from "./feeSettingsType";
 import { Transaction } from "./transactionType";
 import { VoucherUsage } from "./voucherType";
 
-export { };
+export {};
 
 declare global {
   type FormSession = {
@@ -19,6 +19,7 @@ declare global {
 
   type AddSessionBody = {
     id?: number;
+    ab_test?: string;
     amount: number;
     paid_kwh: number;
     device_id: number;
@@ -111,5 +112,18 @@ declare global {
     calculate: number;
     priceType?: number;
     onChange: (value: string) => void;
+  };
+
+  type CalculateGrossProps = {
+    ChargingUsage: number;
+    KwhUsed: number;
+    OtherFee: number;
+    TimeSlotFee: number;
+    PJU: number;
+    VoucherDiscount: number;
+    MilestoneDiscount: number;
+    Subtotal: number;
+    PPN: number;
+    Total: number;
   };
 }

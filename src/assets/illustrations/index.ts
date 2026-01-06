@@ -1,5 +1,3 @@
-import ILCarousel1 from "./carousel-1.png";
-import ILCarousel2 from "./carousel-2.png";
 import ILCharging from "./charging.png";
 import ILComingSoonLabel from "./coming-soon-label.png";
 import ILComingSoon from "./coming-soon.png";
@@ -11,12 +9,11 @@ import ILInstruction4 from "./instruction4.png";
 import ILLogoSlogan from "./logo-slogan.png";
 import ILLogo from "./logo.png";
 import ILNoImage from "./no-image.png";
+import ILNotFound from "./not-found.svg?react";
 import ILOrderEmpty from "./order-empty.png";
 import ILPin from "./pin.png";
 
 export {
-  ILCarousel1,
-  ILCarousel2,
   ILCharging,
   ILComingSoon,
   ILComingSoonLabel,
@@ -28,6 +25,8 @@ export {
   ILLogo,
   ILLogoSlogan,
   ILNoImage,
+  ILNotFound,
   ILOrderEmpty,
-  ILPin,
+  ILPin
 };
+

@@ -18,6 +18,7 @@ interface InputProps {
   value: string;
   error?: string;
   autoFocus?: boolean;
+  disabled?: boolean;
   onChange: (value: string) => void;
 }
 
@@ -29,6 +30,7 @@ const Input: React.FC<InputProps> = ({
   autoFocus,
   value,
   error,
+  disabled,
   onChange,
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +59,7 @@ const Input: React.FC<InputProps> = ({
       <div
         className={`w-full px-6 border border-baseGray rounded-full flex flex-row gap-2 items-center ${
           isError && "border-red"
-        }`}
+        } ${disabled && "!bg-black10 border-black30"}`}
       >
         {type === "phone" && (
           <>
@@ -72,8 +74,9 @@ const Input: React.FC<InputProps> = ({
           value={value}
           inputMode={inputMode}
           autoFocus={autoFocus}
+          disabled={disabled}
           onChange={handleChange}
-          className="h-full w-full px-0 py-3 bg-transparent text-sm text-black100 focus:outline-none  "
+          className="h-full w-full px-0 py-3 bg-transparent text-sm text-black100 focus:outline-none  disabled:text-black90 disabled:cursor-not-allowed"
         />
       </div>
 

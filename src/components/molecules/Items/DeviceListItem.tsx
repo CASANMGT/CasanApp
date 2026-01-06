@@ -6,6 +6,8 @@ interface DeviceListItemProps {
   isLast: boolean;
   data: Device;
   position: number;
+  disabled?: boolean;
+  closed?: boolean;
   onClick: () => void;
 }
 
@@ -13,6 +15,8 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
   isLast,
   data,
   position,
+  disabled,
+  closed,
   onClick,
 }) => {
   const getTotalSocketAvailable = () => {
@@ -27,7 +31,8 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
           element?.SessionStatus !== 2 &&
           element?.SessionStatus !== 3 &&
           element?.SessionStatus !== 4 &&
-          element?.SessionStatus !== 5
+          element?.SessionStatus !== 5 &&
+          element?.IsActive
         )
           value++;
       });
@@ -37,9 +42,9 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
   };
 
   let timeFinished: number = 0;
-  const total = getTotalSocketAvailable();
+  let total = getTotalSocketAvailable();
   const isUltraFast: boolean = data?.Protocol === 3;
-  const isFull: boolean =
+  let isFull: boolean =
     data?.Sockets && data?.Sockets.length
       ? !data?.Sockets.some((e) => e.IsCharging !== 1)
       : false;
@@ -61,12 +66,14 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
   return (
     <div
       onClick={() => {
-        if (!isFull && total > 0) onClick();
+        if (total > 0 && !disabled && !closed) onClick();
       }}
       className={` bg-white py-2 px-3.5 rounded-lg shadow-lg border border-${
-        isFull || !total ? "black10" : "primary30"
+        !total || disabled || closed ? "black10" : "primary30"
       } ${!isLast ? "mb-2.5" : ""} ${
-        isFull || !total ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+        !total || disabled || closed
+          ? "opacity-50 cursor-not-allowed"
+          : "cursor-pointer"
       }`}
     >
       <div className="row gap-2">
@@ -117,14 +124,10 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
             className={`font-medium  ${isFull ? "text-red" : "text-black100"}`}
           >
             {isFull ? (
-              <p>
-                Penuh
-                <a className="text-xs ml-1">{`(Tunggu ${timeFinished} mnt)`}</a>
-              </p>
+              <p>Penuh</p>
             ) : (
-              <p className="font-medium">
-                {total > 0 ? total : "Tidak"}{" "}
-                <a className="text-xs text-black70 font-normal">Tersedia</a>
+              <p className="text-xs text-black70">
+                {total > 0 && !closed ? total : "Tidak"} Tersedia
               </p>
             )}
           </div>

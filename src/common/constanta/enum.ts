@@ -57,13 +57,13 @@ export enum VoucherUsageStatus {
 }
 
 export enum DaysOfWeek {
+  Minggu = 0,
   Senin = 1,
   Selasa = 2,
   Rabu = 3,
   Kamis = 4,
   Jumat = 5,
   Sabtu = 6,
-  Minggu = 0,
 }
 
 export enum WithdrawRequestStatus {
@@ -110,4 +110,39 @@ enum DeviceProtocol {
   YKC = 1,
   OCPP = 2,
   ESP = 3,
+}
+
+enum RTOStatus {
+  RTOStatusVerifying = 1,
+  RTOStatusScheduled = 2,
+  RTOStatusOngoing = 3,
+  RTOStatusOverdue = 4,
+  RTOStatusHoliday = 5,
+  RTOStatusFinished = 6,
+  RTOStatusSuspended = 7,
+  RTOStatusTerminated = 8,
+  RTOStatusRejected = 9,
+  RTOStatusReturned = 10,
+  RTOStatusApproved = 11,
+}
+
+enum StopReason {
+  Zero = "Full stop",
+  One = "Time runs out",
+  Two = "The amount runs out",
+  Three = "Stop manually",
+  Four = "The battery runs out",
+  Five = "Port power is too high",
+  Six = "The charger is not detected",
+  Seven = "The temperature is too high to stop",
+  Eight = "Smoke stops",
+  Nine = "Smart charging stops",
+}
+
+
+export enum ChargerBrand {
+  "Casan" = 1,
+  "United" = 2,
+  "Maka" = 3,
+  "Tangkas" = 4,
 }

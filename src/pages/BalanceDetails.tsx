@@ -10,12 +10,17 @@ import {
   Separator,
 } from "../components";
 import { moments, rupiah } from "../helpers";
+import NotFound from "./NotFound";
 
 const BalanceDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [data] = useState<Balance>(location?.state?.data);
+
+  const onDismiss = () => {
+    navigate(-1);
+  };
 
   const onNext = () => {
     let nextPage: string;
@@ -41,13 +46,11 @@ const BalanceDetails = () => {
     else alert(ERROR_MESSAGE);
   };
 
+  if (!data?.ID) return <NotFound onDismiss={onDismiss} />;
+
   return (
     <div className="background-1 py-[14px] px-4">
-      <Header
-        type="secondary"
-        title="Detail Saldo"
-        onDismiss={() => navigate(-1)}
-      />
+      <Header type="secondary" title="Detail Saldo" onDismiss={onDismiss} />
 
       <LoadingPage loading={false}>
         <div className="flex flex-col gap-2 items-center justify-center my-7 ">

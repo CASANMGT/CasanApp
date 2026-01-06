@@ -1,56 +1,76 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import {
+  NavigateFunction,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { IcBackBlack, IcPinGreen } from "../assets";
-import { GeocodeResult, LIMIT_LIST } from "../common";
-import { ChargingLocationCard, Label, LoadingPage } from "../components";
-import { fetchChargingStationLocations } from "../features";
-import { getCurrentLocation, getGeoCode } from "../services/ApiAddress";
-import { AppDispatch, RootState } from "../store";
+import { ChargeBrandOption, GeocodeResult, LIMIT_LIST } from "../common";
+import {
+  ChargingLocationCard,
+  DropdownCheckbox,
+  LoadingPage,
+} from "../components";
+import { Api } from "../services";
+import { getCurrentLocation } from "../services/ApiAddress";
+
+type ResponseProps = {
+  status: string;
+  message: string;
+  data: ChargingStation[];
+  meta: MetaResponseProps;
+};
 
 const LocationList = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const navigate: NavigateFunction = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const chargingStationLocations = useSelector(
-    (state: RootState) => state?.chargingStationLocations
-  );
+  const filterParams = searchParams.get("filter") || "[]";
 
   const [loading, setLoading] = useState<boolean>(true);
+  const [data, setData] = useState<ResponseProps>();
   const [page, setPage] = useState(1);
   const [type, setType] = useState<"Semua" | "Tersedia">("Semua");
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
-  const [detailLocation, setDetailLocation] = useState<GeocodeResult>();
 
   useEffect(() => {
-    getData();
+    if (!currentLocation) getLocation();
   }, []);
 
   useEffect(() => {
-    if (!chargingStationLocations?.data) getDataList();
-  }, []);
+    getDataList();
+  }, [filterParams]);
 
-  const getData = async () => {
+  const getLocation = async () => {
     const check = await getCurrentLocation();
 
-    const res: GeocodeResult = await getGeoCode({
-      address: `${check[0]},${check[1]}`,
-    });
-
-    setDetailLocation(res);
     setCurrentLocation(check);
-    setLoading(false);
   };
 
-  const getDataList = (nextPage?: number) => {
-    if (currentLocation?.length) {
+  const getDataList = async (nextPage?: number) => {
+    try {
+      setLoading(true);
+
       const body: ChargingStationBody = {
-        page: nextPage || page,
-        limit: LIMIT_LIST,
+        page: 1,
+        limit: 100,
         is_admin: false,
       };
 
-      dispatch(fetchChargingStationLocations(body));
+      const convertFilter: number[] = JSON.parse(filterParams);
+      if (convertFilter?.length) {
+        body.brands = filterParams;
+      }
+
+      const res = await Api.get({
+        url: "stations",
+        params: body,
+      });
+
+      setData(res);
+    } catch (error) {
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -68,7 +88,7 @@ const LocationList = () => {
     alert("coming soon");
   };
 
-  const isShowData = chargingStationLocations?.data?.data ? true : false;
+  const filtered = data?.data?.filter((e) => e?.Devices?.length);
 
   return (
     <div className="background-1 overflow-hidden flex flex-col">
@@ -94,47 +114,38 @@ const LocationList = () => {
         )} */}
       </div>
 
-      <LoadingPage loading={loading || chargingStationLocations?.loading}>
+      <LoadingPage loading={loading}>
         {/* Filter */}
         <div className="between-x mx-4 mt-5">
-          <div className="row gap-3">
-            <Label
-              label="Semua"
-              isActive={type === "Semua"}
-              onClick={() => setType("Semua")}
-            />
-            {/* <Label
-              label="Tersedia"
-              isActive={type === "Tersedia"}
-              onClick={() => setType("Tersedia")}
-            /> */}
-          </div>
-
           <div className="row rounded-full bg-white/30 h-[28px] center px-[14px] text-xs text-primary100">
             <IcPinGreen />
-            <span className="font-semibold ml-1">{detailLocation?.city}</span>
-            <span className="font-medium">{`, ${detailLocation?.province}`}</span>
+            <span className="font-semibold ml-1">Indonesia</span>
           </div>
+
+          <DropdownCheckbox
+            selected={JSON.parse(filterParams)}
+            options={ChargeBrandOption}
+            onApply={(s) => setSearchParams({ filter: JSON.stringify(s) })}
+          />
         </div>
 
         {/* LIST */}
         <div className="overflow-auto px-4 pt-3 scrollbar-none">
-          {isShowData &&
-            chargingStationLocations?.data?.data.map((item, index: number) => (
+          {filtered?.length &&
+            filtered.map((item, index: number) => (
               <ChargingLocationCard
                 key={index}
                 type="location-list"
                 data={item}
                 currentLocation={currentLocation}
-                loading={chargingStationLocations?.loading}
+                loading={loading}
                 isLast={
-                  chargingStationLocations?.data?.data &&
-                  index === chargingStationLocations?.data?.data.length - 1 &&
-                  page * LIMIT_LIST ==
-                    chargingStationLocations?.data?.data.length
+                  filtered &&
+                  index === filtered.length - 1 &&
+                  page * LIMIT_LIST == filtered.length
                 }
                 onClick={() =>
-                  navigate(`/charging-station-details/${item?.ID}`, {
+                  navigate(`/station-details/${item?.ID}`, {
                     state: { currentLocation },
                   })
                 }

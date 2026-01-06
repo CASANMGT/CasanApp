@@ -1,9 +1,9 @@
 import html2canvas from "html2canvas";
 import { useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa6";
-import { IoLeaf } from "react-icons/io5";
+import { IoLeaf, IoWallet } from "react-icons/io5";
 import { RiTreeFill } from "react-icons/ri";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   IcInfoCircleGreen,
@@ -21,14 +21,15 @@ import {
   ModalPriceDetails,
   Separator,
 } from "../components";
-import { fetchDetailSession } from "../features";
 import {
   formatDuration,
   getLabelPaymentMethod,
   moments,
   rupiah,
 } from "../helpers";
-import { AppDispatch, RootState } from "../store";
+import { Api } from "../services";
+import { AppDispatch } from "../store";
+import NotFound from "./NotFound";
 
 const SessionDetails = () => {
   const navigate = useNavigate();
@@ -36,8 +37,9 @@ const SessionDetails = () => {
   const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
 
-  const detailSession = useSelector((state: RootState) => state.detailSession);
-
+  const [loading, setLoading] = useState<boolean>(true);
+  const [data, setData] = useState<Session>();
+  const [isNotFound, setIsNotFound] = useState<boolean>(false);
   const [openPriceDetails, setOpenPriceDetails] = useState<boolean>(false);
 
   useEffect(() => {
@@ -56,8 +58,20 @@ const SessionDetails = () => {
     };
   }, [navigate]);
 
-  const getData = () => {
-    dispatch(fetchDetailSession(Number(id)));
+  const getData = async () => {
+    try {
+      if (id) {
+        const res = await Api.get({
+          url: `sessions/${id}`,
+        });
+
+        setData(res?.data);
+      }
+    } catch (error: any) {
+      if (error?.message) setIsNotFound(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onDismiss = () => {
@@ -103,43 +117,44 @@ const SessionDetails = () => {
     navigate("/home/order", { replace: true });
   };
 
-  const dataSession: Session | null = detailSession?.data;
   let dataVoucher: VoucherUsage | undefined = undefined;
+  const status: number | undefined = data?.Status;
   let isShowVoucher: boolean = false;
-  const status: number | undefined = dataSession?.Status;
+  const isShowRefund =
+    (status === 6 || status === 7 || status === 8) &&
+    (data?.RefundAmount || 0) > 0
+      ? true
+      : false;
   const isFull =
-    (dataSession?.Transaction?.Amount || 0) -
-      (dataSession?.RefundAmount || 0) ===
-    0
+    (data?.Transaction?.Amount || 0) - (data?.RefundAmount || 0) === 0
       ? true
       : false;
 
   if (
-    dataSession?.VoucherUsages &&
-    dataSession?.VoucherUsages.length &&
+    data?.VoucherUsages &&
+    data?.VoucherUsages.length &&
     status !== 7 &&
     status !== 8
   ) {
     isShowVoucher = true;
-    dataVoucher = dataSession?.VoucherUsages[0];
+    dataVoucher = data?.VoucherUsages[0];
   }
 
-  const co2: number = Number(
-    ((dataSession?.TotalKwhUsed || 0) * 1.5).toFixed(3)
-  );
+  const co2: number = Number(((data?.TotalKwhUsed || 0) * 1.5).toFixed(3));
   const percentage: number = Number(
     (
-      ((dataSession?.UsedAmount || 1) /
-        (dataSession?.Transaction?.NetCharge || 1)) *
+      ((data?.UsedAmount || 1) / (data?.Transaction?.NetCharge || 1)) *
       100
     ).toFixed(0)
   );
+
+  if (!id || isNotFound) return <NotFound onDismiss={onDismiss} />;
 
   return (
     <div className="background-1 overflow-hidden justify-between flex flex-col">
       <Header type="secondary" title="Detail Sesi" onDismiss={onDismiss} />
 
-      <LoadingPage loading={detailSession?.loading}>
+      <LoadingPage loading={loading}>
         <div
           id="receipt"
           className="flex-1 overflow-auto scrollbar-none px-4 pb-7"
@@ -184,6 +199,22 @@ const SessionDetails = () => {
             </div>
           )}
 
+          {isShowRefund && (
+            <div className="bg-primary10 p-3 rounded-lg mb-4 row gap-3">
+              <div className="w-9 h-9 rounded-full bg-primary100/10 center">
+                <IoWallet size={20} className="text-primary100" />
+              </div>
+
+              <p className="flex-1">
+                Sisa kWh
+                <span className="text-primary100 font-semibold">{` Rp${rupiah(
+                  data?.RefundAmount
+                )} `}</span>
+                telah dikembalikan ke dompet Casan anda
+              </p>
+            </div>
+          )}
+
           {/* TOOL INFORMATION */}
           <div className="bg-white p-3 rounded-lg mb-4 drop-shadow">
             <div className="row gap-3 mb-3">
@@ -197,21 +228,21 @@ const SessionDetails = () => {
             <BetweenText
               type="medium-content"
               labelLeft="Lokasi"
-              labelRight={dataSession?.ChargingStation?.Name || "-"}
+              labelRight={data?.ChargingStation?.Name || "-"}
               className="bg-baseLightGray p-3 rounded-t"
             />
 
             <BetweenText
               type="medium-content"
               labelLeft="Nomor Alat"
-              labelRight={dataSession?.Device?.PileNumber || "-"}
+              labelRight={data?.Device?.PileNumber || "-"}
               className="p-3"
             />
 
             <BetweenText
               type="medium-content"
               labelLeft="Socket"
-              labelRight={`Socket ${dataSession?.Socket?.Port}`}
+              labelRight={`Socket ${data?.Socket?.Port}`}
               className="bg-baseLightGray p-3 rounded-b"
             />
           </div>
@@ -229,13 +260,11 @@ const SessionDetails = () => {
             <BetweenText
               type="medium-content"
               labelLeft="ID Sesi"
-              labelRight={dataSession?.ID || "-"}
+              labelRight={data?.ID || "-"}
               className="bg-baseLightGray p-3 rounded-t"
             />
 
-            {status !== 7 && status !== 8 && (
-              <>
-                {/* {!isFull && (
+            {/* {!isFull && (
                   <BetweenText
                     type="medium-content"
                     labelLeft="Keterangan Sesi"
@@ -244,67 +273,75 @@ const SessionDetails = () => {
                   />
                 )} */}
 
-                <BetweenText
-                  type="medium-content"
-                  labelLeft="Waktu Mulai"
-                  labelRight={moments(dataSession?.StartChargingTime).format(
-                    "DD MMM HH:mm"
-                  )}
-                  className="p-3"
-                />
+            <BetweenText
+              type="medium-content"
+              labelLeft="Waktu Mulai"
+              labelRight={
+                data?.StartChargingTime
+                  ? moments(data?.StartChargingTime).format("DD MMM HH:mm")
+                  : "-"
+              }
+              className="p-3"
+            />
 
-                <BetweenText
-                  type="medium-content"
-                  labelLeft="Waktu Selesai"
-                  labelRight={moments(dataSession?.StopChargingTime).format(
-                    "DD MMM HH:mm"
-                  )}
-                  className="bg-baseLightGray p-3"
-                />
+            <BetweenText
+              type="medium-content"
+              labelLeft="Waktu Selesai"
+              labelRight={
+                data?.StopChargingTime
+                  ? moments(data?.StopChargingTime).format("DD MMM HH:mm")
+                  : "-"
+              }
+              className="bg-baseLightGray p-3"
+            />
 
-                {!isFull && (
-                  <BetweenText
-                    type="medium-content"
-                    labelLeft="Durasi Pemakaian"
-                    labelRight={formatDuration(dataSession?.Duration)}
-                    className="p-3"
-                  />
-                )}
+            {!isFull && (
+              <BetweenText
+                type="medium-content"
+                labelLeft="Durasi Pemakaian"
+                labelRight={
+                  data?.Duration ? formatDuration(data?.Duration) : "-"
+                }
+                className="p-3"
+              />
+            )}
 
-                <BetweenText
-                  type="medium-content"
-                  labelLeft="Maksimum Watt"
-                  labelRight={`${dataSession?.MaxWatt}W`}
-                  className="bg-baseLightGray p-3"
-                />
+            {status !== 7 && status !== 8 && (
+              <BetweenText
+                type="medium-content"
+                labelLeft="Maksimum Watt"
+                labelRight={`${data?.MaxWatt}W`}
+                className="bg-baseLightGray p-3"
+              />
+            )}
 
-                <BetweenText
-                  type="medium-content"
-                  labelLeft="Tarif Pengecasan"
-                  labelRight={`Rp${rupiah(
-                    dataSession?.Transaction?.BaseFare
-                  )}/kWh`}
-                  className="p-3"
-                />
+            <BetweenText
+              type="medium-content"
+              labelLeft="Tarif Pengecasan"
+              labelRight={`Rp${rupiah(data?.Transaction?.BaseFare)}/kWh`}
+              className="p-3"
+            />
 
-                <BetweenText
-                  type="medium-content"
-                  labelLeft="Nominal Pesanan"
-                  labelRight={`Rp${rupiah(
-                    dataSession?.Transaction?.NetCharge
-                  )}`}
-                  className="bg-baseLightGray p-3"
-                />
+            <BetweenText
+              type="medium-content"
+              labelLeft="Nominal Pesanan"
+              labelRight={`${data?.PaidKWH}kWh (Rp${rupiah(
+                data?.Transaction?.NetCharge
+              )})`}
+              className="bg-baseLightGray p-3"
+            />
 
-                {!isFull && (
-                  <BetweenText
-                    type="medium-content"
-                    labelLeft="Nominal Pemakaian"
-                    labelRight={`Rp${rupiah(dataSession?.UsedAmount)}`}
-                    className="bg-baseLightGray p-3"
-                  />
-                )}
-              </>
+            {!isFull && (
+              <BetweenText
+                type="medium-content"
+                labelLeft="Nominal Pemakaian"
+                labelRight={
+                  (data?.UsedAmount || 0) > 0
+                    ? `${data?.TotalKwhUsed}kWh (Rp${rupiah(data?.UsedAmount)})`
+                    : "-"
+                }
+                className="bg-baseLightGray p-3"
+              />
             )}
           </div>
 
@@ -314,16 +351,12 @@ const SessionDetails = () => {
 
             <div className="text-black100/70 row gap-2">
               <p className="text-xs">
-                {moments(dataSession?.Transaction?.CreatedAt).format(
-                  "DD MMMM YYYY"
-                )}
+                {moments(data?.Transaction?.CreatedAt).format("DD MMMM YYYY")}
               </p>
               <p className="text-xs">
-                {moments(dataSession?.Transaction?.CreatedAt).format(
-                  "HH:mm WIB"
-                )}
+                {moments(data?.Transaction?.CreatedAt).format("HH:mm WIB")}
               </p>
-              <p className="text-xs">{`ID${dataSession?.TransactionID}`}</p>
+              <p className="text-xs">{`ID${data?.TransactionID}`}</p>
             </div>
 
             <Separator className="my-4 bg-black10" />
@@ -333,7 +366,7 @@ const SessionDetails = () => {
             <BetweenText
               labelLeft="Metode Pembayaran"
               labelRight={getLabelPaymentMethod(
-                (dataSession?.Transaction?.PaymentMethod || "")
+                (data?.Transaction?.PaymentMethod || "")
                   .replace("_TU", "")
                   .toLocaleLowerCase()
               )}
@@ -343,8 +376,8 @@ const SessionDetails = () => {
             <BetweenText
               labelLeft="Nominal Pengisian"
               labelRight={`Rp${rupiah(
-                (dataSession?.Transaction?.NetCharge || 0) -
-                  (dataSession?.Transaction?.PaymentMethodFee || 0)
+                (data?.Transaction?.NetCharge || 0) -
+                  (data?.Transaction?.PaymentMethodFee || 0)
               )}`}
               className="py-2 border-b border-b-black10"
             />
@@ -379,15 +412,13 @@ const SessionDetails = () => {
 
             <BetweenText
               labelLeft="Biaya Transaksi"
-              labelRight={`Rp${rupiah(
-                dataSession?.Transaction?.PaymentMethodFee
-              )}`}
+              labelRight={`Rp${rupiah(data?.Transaction?.PaymentMethodFee)}`}
               className="py-2 border-b border-b-black10"
             />
 
             <BetweenText
               labelLeft="Total Transaksi"
-              labelRight={`Rp${rupiah(dataSession?.Transaction?.DueAmount)}`}
+              labelRight={`Rp${rupiah(data?.Transaction?.DueAmount)}`}
               classNameLabelLeft="text-black100"
               classNameLabelRight="text-black100"
               className="py-2 border-y border-y-black100"
@@ -396,7 +427,7 @@ const SessionDetails = () => {
             {(status === 8 || (status === 6 && percentage < 100)) && (
               <BetweenText
                 labelLeft="Pengembalian Dana"
-                labelRight={`Rp${rupiah(dataSession?.RefundAmount)}`}
+                labelRight={`Rp${rupiah(data?.RefundAmount)}`}
                 className="mt-2"
               />
             )}
@@ -449,13 +480,13 @@ const SessionDetails = () => {
       {openPriceDetails && (
         <ModalPriceDetails
           isOpen={openPriceDetails}
-          dataPriceSetting={dataSession?.PriceSetting}
-          dataDevice={dataSession?.Device}
-          dataVoucher={undefined} 
-          dataUser={dataSession?.User}
-          price={dataSession?.Transaction?.TotalFare || 0}
-          power={dataSession?.PaidKWH || 0}
-          duration={dataSession?.Duration || 0}
+          dataPriceSetting={data?.PriceSetting}
+          dataDevice={data?.Device}
+          dataVoucher={undefined}
+          dataUser={data?.User}
+          price={data?.Transaction?.TotalFare || 0}
+          power={data?.PaidKWH || 0}
+          duration={data?.Duration || 0}
           onClose={() => setOpenPriceDetails(false)}
         />
       )}

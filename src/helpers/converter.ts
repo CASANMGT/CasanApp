@@ -4,12 +4,16 @@ import { RiMotorbikeFill, RiShieldCheckFill, RiTreeFill } from "react-icons/ri";
 import {
   IcAstraPay,
   IcDana,
+  IcFlash,
   IcGopay,
   IcLinkAja,
+  IcMakaLabel,
   IcNoImage,
   IcOvo,
   IcQris,
   IcShopeePay,
+  IcTangkasLabel,
+  IcUnitedLabel,
 } from "../assets";
 import {
   ASTRAPAY,
@@ -203,7 +207,6 @@ export function getCurrentSlot(
   return matchedSlot;
 }
 
-
 export const getLabelWatt = (min: number, max: number) => {
   let value: string = "";
 
@@ -215,4 +218,31 @@ export const getLabelWatt = (min: number, max: number) => {
   }
 
   return value;
+};
+
+export const getFormattedBrand = (brand: number) => {
+  let icon = IcFlash;
+  let bgColor = "#2DBA9D";
+
+  switch (brand) {
+    case 2:
+      icon = IcUnitedLabel;
+      bgColor = "#111110";
+      break;
+
+    case 3:
+      icon = IcMakaLabel;
+      bgColor = "#21D0F9";
+      break;
+
+    case 4:
+      icon = IcTangkasLabel;
+      bgColor = "#FE5900";
+      break;
+
+    default:
+      break;
+  }
+
+  return { icon, bgColor };
 };

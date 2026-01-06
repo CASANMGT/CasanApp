@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
+import { ERROR_MESSAGE } from "../../common";
+import { LoadingPage } from "../../components";
 import { moments } from "../../helpers";
-
-interface Props {}
+import { Api } from "../../services";
 
 interface TransactionProps {
   id: string;
@@ -27,48 +29,108 @@ const transactions: TransactionProps[] = [
   },
 ];
 
-const History: React.FC<Props> = () => {
-  return (
-    <div className=" px-4 py-6">
-      <div className="space-y-3">
-        {transactions.map((tx, i) => (
-          <div
-            key={i}
-            className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 between-x"
-          >
-            {/* Left section */}
-            <div>
-              <p className="text-[10px] text-black100 mb-1">
-                ID Transaksi {tx.id}
-              </p>
-              <p className="font-semibold text-base">
-                {tx.type}{" "}
-                <span
-                  className={`${
-                    tx.amount > 0 ? "text-green" : "text-red"
-                  } font-semibold`}
-                >
-                  {tx.amount > 0 ? `+${tx.amount} Days` : `${tx.amount} Day`}
-                </span>
-              </p>
-              <p className="text-xs text-black90 mt-1">
-                {moments().format("D MMM YYYY HH:mm")}
-              </p>
-            </div>
+interface Props {
+  data: RTOProps | undefined;
+}
 
-            {/* Right section */}
-            <div className="text-right">
-              <p className="text-xs text-black90">
-                {tx.type === "Top-up" ? "Balance Akhir" : "Balance After"}
-              </p>
-              <span className="text-black90 font-semibold">
-                {tx.balance} Hari
-              </span>
-            </div>
-          </div>
-        ))}
+interface ResponseProps {
+  status: string;
+  message: string;
+  data: CreditHistoryProps[];
+  meta: MetaResponseProps;
+}
+
+const History: React.FC<Props> = ({ data }) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [dataCredit, setDataCredit] = useState<ResponseProps>();
+
+  useEffect(() => {
+    getData();
+  }, [page, limit]);
+
+  const getData = async (p?: number, l?: number, q?: string) => {
+    try {
+      setLoading(true);
+
+      const res = await Api.get({
+        url: `rtos/${data?.ID}/credit-histories`,
+        params: { page: p || page, limit: l || limit, q },
+      });
+
+      setDataCredit(res);
+    } catch (error) {
+      alert(ERROR_MESSAGE);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const isShow = dataCredit?.data?.length ? true : false;
+
+  return (
+    <LoadingPage loading={loading}>
+      <div className=" px-4 py-6">
+        <div className="space-y-3">
+          {isShow ? (
+            dataCredit?.data.map((item, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 between-x"
+              >
+                {/* Left section */}
+                <div>
+                  <p className="text-[10px] text-black100 mb-1">
+                    {item?.Type === 1
+                      ? `ID Transaksi ${item?.TransactionID || "-"}`
+                      : `${item?.Type === 2 ? "Cicilan" : "Referensi"} ${
+                          item?.Reference
+                        }`}
+                  </p>
+                  <p className="font-semibold text-base">
+                    {item?.Type === 1
+                      ? "Top-up"
+                      : item?.Type === 2
+                      ? "Cicilan"
+                      : "Bayar Tagihan"}
+                    <span
+                      className={`font-semibold text-${
+                        item?.Type === 1
+                          ? "green"
+                          : item?.Type === 2
+                          ? "red"
+                          : "black100"
+                      }`}
+                    >
+                      {` ${
+                        item?.Type === 1 ? "+" : item?.Type === 2 ? "-" : ""
+                      }${item?.Change || 0} Hari`}
+                    </span>
+                  </p>
+                  <p className="text-xs text-black90 mt-1">
+                    {moments(item?.CreatedAt).format("D MMM YYYY")}{" "}
+                    <span className="text-xs text-black70">
+                      {moments(item?.CreatedAt).format("HH:mm")}
+                    </span>
+                  </p>
+                </div>
+
+                {/* Right section */}
+                <div className="text-right">
+                  <p className="text-xs text-black90">Balance Akhir</p>
+                  <span className="text-black90 font-semibold">
+                    {item?.BalanceAfter} Hari
+                  </span>
+                </div>
+              </div>
+            ))
+          ) : (
+            <span>No Data</span>
+          )}
+        </div>
       </div>
-    </div>
+    </LoadingPage>
   );
 };
 

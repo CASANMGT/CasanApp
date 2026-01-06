@@ -93,7 +93,8 @@ const Withdraw = () => {
 
     const withdraw: number = Number(nominal.replace(/\./g, "") || 0);
 
-    if (withdraw > (myUser?.data?.Balance || 0)) err = "Angka melebihi saldo yang tersedia";
+    if (withdraw > (myUser?.data?.Balance || 0))
+      err = "Angka melebihi saldo yang tersedia";
     else if (withdraw < 15000) err = "Min. Withdraw Rp15.000";
 
     if (err) setError(err);
@@ -209,6 +210,17 @@ const Withdraw = () => {
                 <span className="text-base font-semibold">{`Rp${rupiah(
                   myUser?.data?.Balance || 0
                 )}`}</span>
+              </div>
+
+              <Separator className="my-3" />
+
+              <div className="px-4 py-3 border border-primary100 bg-primary10 rounded-md">
+                <p className="text-xs">
+                  Penarikan akan diproses maksimal{" "}
+                  <span className="text-xs font-medium">2x24 jam</span> di hari
+                  kerja (tidak termasuk hari Sabtu, Minggu, serta hari
+                  libur/cuti bersama
+                </p>
               </div>
             </div>
           </div>

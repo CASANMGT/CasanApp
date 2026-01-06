@@ -6,7 +6,7 @@ import {
   BookingDetails,
   BuyCredit,
   Charging,
-  ChargingStationDetails,
+  StationDetails,
   ComingSoon,
   ConfirmationPin,
   EditProfile,
@@ -23,6 +23,7 @@ import {
   ProgressDetails,
   RentToBuy,
   RentToBuyDetails,
+  RentalHistory,
   Scan,
   SelectBank,
   SelectDealer,
@@ -36,6 +37,7 @@ import {
   TopUp,
   TransactionDetails,
   TransactionHistory,
+  TransactionRTODetails,
   Vehicle,
   VerificationNumber,
   Voucher,
@@ -60,15 +62,15 @@ const RoutesPage = () => {
         element={<ProtectedRoute element={<Charging />} />}
       />
       <Route
-        path="charging-station-details/:id"
-        element={<ChargingStationDetails />}
+        path="station-details/:id"
+        element={<StationDetails />}
       />
       <Route path="location-list" element={<LocationList />} />
       <Route path="login" element={<Login />} />
       <Route path="text-condition" element={<TermCondition />} />
       <Route path="privacy-police" element={<PrivacyPolice />} />
       <Route path="scan" element={<Scan />} />
-      <Route path="session-settings/:id?" element={<SessionSettings />} />
+      <Route path="session-settings/:id?/:socketId?" element={<SessionSettings />} />
       <Route
         path="payment-success/:id"
         element={<ProtectedRoute element={<PaymentSuccess />} />}
@@ -78,7 +80,7 @@ const RoutesPage = () => {
         element={<ProtectedRoute element={<SessionDetails />} />}
       />
       <Route
-        path="booking-details"
+        path="booking-details/:id"
         element={<ProtectedRoute element={<BookingDetails />} />}
       />
       <Route
@@ -115,10 +117,10 @@ const RoutesPage = () => {
             />
           }
         />
-        <Route
+        {/* <Route
           path="withdraw"
           element={<ProtectedRoute element={<Withdraw />} />}
-        />
+        /> */}
         <Route path="top-up" element={<ProtectedRoute element={<TopUp />} />} />
         <Route
           path="progress-details"
@@ -160,6 +162,10 @@ const RoutesPage = () => {
           element={<ProtectedRoute element={<TransactionDetails />} />}
         />
         <Route
+          path="transaction-rto-history/details/:id"
+          element={<ProtectedRoute element={<TransactionRTODetails />} />}
+        />
+        <Route
           path="withdrawal-history"
           element={
             <ProtectedRoute
@@ -185,6 +191,13 @@ const RoutesPage = () => {
         />
       </>
       {/* END PROFILE TAB */}
+
+      {/* RENTAL HISTORY */}
+      <Route
+        path="rental-history"
+        element={<ProtectedRoute element={<RentalHistory />} />}
+      />
+      {/* END RENTAL HISTORY */}
 
       {/* BOTTOM NAVIGATION */}
       <Route path="home" element={<Main />}>
