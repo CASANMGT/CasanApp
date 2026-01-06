@@ -49,7 +49,7 @@ const Home = () => {
 
   useEffect(() => {
     setPage(1);
-    getLocation();
+    if (!currentLocation) getLocation();
     if (isAuthenticated) {
       getOngoing();
       getDataRTO();

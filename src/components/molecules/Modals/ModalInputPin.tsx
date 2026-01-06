@@ -148,14 +148,16 @@ const ModalInputPin: React.FC<Props> = ({
     if (step === "input-pin") dispatch(fetchCheckPin(code.join("")));
     else if (step === "confirmation-pin") {
       const newCodes: string = newCode.join("");
-      const confirmationCode: string = codes.join("");
-      if (newCodes === confirmationCode) dispatch(fetchEditPin(code.join("")));
-      else if (countError < maxCountError) {
+      const confirmationCode: string = code.join("");
+
+      if (newCodes === confirmationCode) {
+        dispatch(fetchEditPin(code.join("")));
+      } else if (countError < maxCountError) {
         setCodes(["", "", "", ""]);
         setCountError((prev) => prev + 1);
       }
     } else {
-      setNewCodes(codes);
+      setNewCodes(code);
       setCodes(["", "", "", ""]);
       setStep("confirmation-pin");
     }
