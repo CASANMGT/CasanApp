@@ -14,6 +14,8 @@ declare global {
     SignalValue: number;
     TotalSocket: number;
     Protocol: number;
+    Type: number;
+    Integration: number | null;
     VehicleType: number;
     MaxWatt: number;
     Rating: number;

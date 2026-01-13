@@ -1,4 +1,10 @@
-import { IcBattery2, IcBattery3, IcFlash, IcFuel } from "../../../assets";
+import {
+  IcBattery2,
+  IcBatterySuper,
+  IcBatteryUltra,
+  IcFlash,
+  IcFuel,
+} from "../../../assets";
 import { moments } from "../../../helpers";
 import { Separator, Signal } from "../../atoms";
 
@@ -43,7 +49,8 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
 
   let timeFinished: number = 0;
   let total = getTotalSocketAvailable();
-  const isUltraFast: boolean = data?.Protocol === 3;
+  const isUltraFast: boolean = data?.Type === 2;
+  const isSuperFast: boolean = data?.Type === 3;
   let isFull: boolean =
     data?.Sockets && data?.Sockets.length
       ? !data?.Sockets.some((e) => e.IsCharging !== 1)
@@ -84,24 +91,26 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
           <span className="text-black50">({data?.TotalSocket})</span>
         </p>
 
-        {!isFull && total > 0 && (
-          <div className="row gap-1.5">
-            {isUltraFast ? (
-              <IcBattery3 />
-            ) : (
-              <IcBattery2 className="text-primary100" />
-            )}
-            <span
-              className={`text-xs font-semibold italic ${
-                isUltraFast
-                  ? "bg-gradient-to-r from-[#C0D749] to-[#DE0E11] bg-clip-text text-transparent"
-                  : "text-primary100"
-              }`}
-            >
-              {isUltraFast ? "ULTRA" : "FAST"}
-            </span>
-          </div>
-        )}
+        <div className="row gap-1.5">
+          {isSuperFast ? (
+            <IcBatterySuper />
+          ) : isUltraFast ? (
+            <IcBatteryUltra />
+          ) : (
+            <IcBattery2 className="text-primary100" />
+          )}
+          <span
+            className={`text-xs font-semibold italic ${
+              isSuperFast
+                ? "bg-gradient-to-r from-[#0088FF] to-[#DE0E11] bg-clip-text text-transparent"
+                : isUltraFast
+                ? "bg-gradient-to-r from-[#C0D749] to-[#DE0E11] bg-clip-text text-transparent"
+                : "text-primary100"
+            }`}
+          >
+            {isSuperFast ? "SUPER" : isUltraFast ? "ULTRA" : "FAST"}
+          </span>
+        </div>
       </div>
 
       <Separator className="my-1.5" />

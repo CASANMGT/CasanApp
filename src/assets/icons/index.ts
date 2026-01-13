@@ -2,7 +2,8 @@ import IcAstraPay from "./astrapay.svg?react";
 import IcBalance from "./balance.svg?react";
 import IcBank from "./bank.svg?react";
 import IcBattery2 from "./battery-2.svg?react";
-import IcBattery3 from "./battery-3.svg?react";
+import IcBatterySuper from "./battery-super.svg?react";
+import IcBatteryUltra from "./battery-ultra.svg?react";
 import IcBattery from "./battery.svg?react";
 import IcBike from "./bike.svg?react";
 import IcBike2 from "./bike2.svg?react";
@@ -124,7 +125,8 @@ export {
   IcBank,
   IcBattery,
   IcBattery2,
-  IcBattery3,
+  IcBatterySuper,
+  IcBatteryUltra,
   IcBike,
   IcBike2,
   IcCar,

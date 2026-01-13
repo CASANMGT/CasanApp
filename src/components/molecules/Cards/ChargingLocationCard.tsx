@@ -129,7 +129,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   }
 
   const labelWatt = getLabelWatt(minWatt, maxWatt);
-  const isUltraFast = !!data?.Devices?.some((e) => e?.Protocol === 3);
+  const isUltraFast = !!data?.Devices?.some((e) => e?.Type === 2);
+  const isSuperFast = !!data?.Devices?.some((e) => e?.Type === 3);
   const formattedBrand = getFormattedBrand(brand || 0);
   const IconBrand = formattedBrand.icon;
 
@@ -143,15 +144,21 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
           <div
             className="absolute top-0 right-0 rounded-tr-lg rounded-bl-lg row px-3 py-1"
             style={{
-              background: `linear-gradient(270deg, #${
-                isUltraFast ? "DE0E11" : "2dba9d"
-              } 0%, #${isUltraFast ? "C0D749" : "327478"} 100%)`,
+              background: `linear-gradient(225deg, #${
+                isSuperFast ? "DE0E11" : isUltraFast ? "DE0E11" : "2dba9d"
+              } 0%, #${
+                isSuperFast ? "0088FF" : isUltraFast ? "C0D749" : "327478"
+              } 100%)`,
             }}
           >
             <IcBattery2 className="text-white" />
 
             <span className="text-white ml-1.5 font-medium text-xs">
-              {isUltraFast ? "Ultra Fast Charging" : "Fast Charging"}
+              {isSuperFast
+                ? "Supra Fast Charging"
+                : isUltraFast
+                ? "Ultra Fast Charging"
+                : "Fast Charging"}
             </span>
           </div>
 

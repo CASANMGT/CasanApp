@@ -99,11 +99,13 @@ declare global {
   type ChargingStation = {
     ID: number;
     Name: string;
+    Infrastructure: string;
     Brand: number | null;
     Image: string;
     Phone: string;
     IsParkingFee: boolean;
     IsClosed: boolean;
+    IsVisibleToUser: boolean;
     PriceSettingID: number;
     AdminID: number;
     LocationID: number;
