@@ -155,7 +155,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
 
             <span className="text-white ml-1.5 font-medium text-xs">
               {isSuperFast
-                ? "Supra Fast Charging"
+                ? "Super Fast Charging"
                 : isUltraFast
                 ? "Ultra Fast Charging"
                 : "Fast Charging"}
