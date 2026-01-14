@@ -49,8 +49,8 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
 
   let timeFinished: number = 0;
   let total = getTotalSocketAvailable();
-  const isUltraFast: boolean = data?.Type === 2;
-  const isSuperFast: boolean = data?.Type === 3;
+  const isSuperFast: boolean = data?.Type === 2;
+  const isUltraFast: boolean = data?.Type === 3;
   let isFull: boolean =
     data?.Sockets && data?.Sockets.length
       ? !data?.Sockets.some((e) => e.IsCharging !== 1)
@@ -73,7 +73,8 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
   return (
     <div
       onClick={() => {
-        if (total > 0 && !disabled && !closed) onClick();
+        onClick();
+        // if (total > 0 && !disabled && !closed) onClick();
       }}
       className={` bg-white py-2 px-3.5 rounded-lg shadow-lg border border-${
         !total || disabled || closed ? "black10" : "primary30"
@@ -92,23 +93,23 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
         </p>
 
         <div className="row gap-1.5">
-          {isSuperFast ? (
-            <IcBatterySuper />
-          ) : isUltraFast ? (
+          {isUltraFast ? (
             <IcBatteryUltra />
+          ) : isSuperFast ? (
+            <IcBatterySuper />
           ) : (
             <IcBattery2 className="text-primary100" />
           )}
           <span
             className={`text-xs font-semibold italic ${
-              isSuperFast
-                ? "bg-gradient-to-r from-[#0088FF] to-[#DE0E11] bg-clip-text text-transparent"
-                : isUltraFast
+              isUltraFast
                 ? "bg-gradient-to-r from-[#C0D749] to-[#DE0E11] bg-clip-text text-transparent"
+                : isSuperFast
+                ? "bg-gradient-to-r from-[#0088FF] to-[#DE0E11] bg-clip-text text-transparent"
                 : "text-primary100"
             }`}
           >
-            {isSuperFast ? "SUPER" : isUltraFast ? "ULTRA" : "FAST"}
+            {isUltraFast ? "ULTRA" : isSuperFast ? "SUPER" : "FAST"}
           </span>
         </div>
       </div>

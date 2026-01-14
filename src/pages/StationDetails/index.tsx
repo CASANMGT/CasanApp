@@ -14,9 +14,17 @@ import {
   IcBackBlack,
   IcBike,
   IcDownCircleGreen,
+  ILComingSoon,
+  ILComingSoonLabel,
   ILNoImage,
+  ILNotFound,
 } from "../../assets";
-import { DeviceListItem, LoadingPage, Separator } from "../../components";
+import {
+  AlertModal,
+  DeviceListItem,
+  LoadingPage,
+  Separator,
+} from "../../components";
 import { showToast } from "../../features/toastSlice";
 import { getDistanceFromLatLonInKm, openGoogleMaps } from "../../helpers";
 import { Api } from "../../services";
@@ -34,6 +42,7 @@ const StationDetails = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<ChargingStation>();
   const [isNotFound, setIsNotFound] = useState<boolean>(false);
+  const [openStationNotAvailable, setOpenStationNotAvailable] = useState(false);
 
   useEffect(() => {
     getData();
@@ -59,7 +68,11 @@ const StationDetails = () => {
           url: `stations/${id}`,
         });
 
-        setData(res?.data);
+        const _data: ChargingStation = res?.data;
+
+        if (!_data.IsVisibleToUser) setOpenStationNotAvailable(true);
+
+        setData(_data);
       }
     } catch (error: any) {
       if (error?.message) setIsNotFound(true);
@@ -254,6 +267,22 @@ const StationDetails = () => {
           />
         </div>
       </div>
+
+      {/* MODAL */}
+      {openStationNotAvailable && (
+        <AlertModal
+          visible
+          icon={ILNotFound}
+          title="Stasiun Tidak Tersedia"
+          description="Maaf, saat ini stasiun sedang tidak tersedia. Silakan cek lokasi lain yang tersedia, ya!"
+          typeButtonRight="primary"
+          labelButtonRight="Tutup"
+          onDismiss={() => {
+            navigate("/home/index", { replace: true });
+          }}
+        />
+      )}
+      {/* END MODAL */}
     </LoadingPage>
   );
 };

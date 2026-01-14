@@ -98,7 +98,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
     }
 
     if (totalAvailable <= 0) {
-      if (totalSocket === totalFull) isFull = true;
+      if (totalSocket > 0 && totalSocket === totalFull) isFull = true;
       else if (totalDisconnect > 0) isDisconnect = true;
     }
 
@@ -129,10 +129,12 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   }
 
   const labelWatt = getLabelWatt(minWatt, maxWatt);
-  const isUltraFast = !!data?.Devices?.some((e) => e?.Type === 2);
-  const isSuperFast = !!data?.Devices?.some((e) => e?.Type === 3);
+  const isSuperFast = !!data?.Devices?.some((e) => e?.Type === 2);
+  const isUltraFast = !!data?.Devices?.some((e) => e?.Type === 3);
   const formattedBrand = getFormattedBrand(brand || 0);
   const IconBrand = formattedBrand.icon;
+
+  if (!data?.IsVisibleToUser || !data?.Devices?.length) return null;
 
   return (
     <>
@@ -145,19 +147,19 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
             className="absolute top-0 right-0 rounded-tr-lg rounded-bl-lg row px-3 py-1"
             style={{
               background: `linear-gradient(225deg, #${
-                isSuperFast ? "DE0E11" : isUltraFast ? "DE0E11" : "2dba9d"
+                isUltraFast ? "DE0E11" : isSuperFast ? "DE0E11" : "2dba9d"
               } 0%, #${
-                isSuperFast ? "0088FF" : isUltraFast ? "C0D749" : "327478"
+                isUltraFast ? "C0D749" : isSuperFast ? "0088FF" : "327478"
               } 100%)`,
             }}
           >
             <IcBattery2 className="text-white" />
 
             <span className="text-white ml-1.5 font-medium text-xs">
-              {isSuperFast
-                ? "Super Fast Charging"
-                : isUltraFast
+              {isUltraFast
                 ? "Ultra Fast Charging"
+                : isSuperFast
+                ? "Super Fast Charging"
                 : "Fast Charging"}
             </span>
           </div>
