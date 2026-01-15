@@ -2,32 +2,33 @@ import { useEffect, useRef, useState } from "react";
 
 const NominalInput = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [hideHeader, setHideHeader] = useState(false);
   const lastScroll = useRef(0);
+  const topSentinelRef = useRef<HTMLDivElement>(null);
+  const [hideHeader, setHideHeader] = useState(false);
 
-  const handleScroll = () => {
+  useEffect(() => {
     const el = scrollRef.current;
-    if (!el) return;
+    const sentinel = topSentinelRef.current;
+    if (!el || !sentinel) return;
 
-    const current = el.scrollTop;
-    setHideHeader(current > lastScroll.current && current > 20);
-    lastScroll.current = current;
-  };
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setHideHeader(!entry.isIntersecting);
+      },
+      {
+        root: el,
+        threshold: 1,
+      }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="w-[480px] relative min-h-screen bg-[linear-gradient(225deg,_#BAE6E9_10%,_#FFFFFF_50%,_#FAF2C0_100%)]">
-      <div className="h-screen relative bg-cyan-100">
-        <Header hide={hideHeader} />
-
-        {/* Scroll Area */}
-        <div
-          id="scrollable"
-          className={`h-full overflow-y-auto transition-all duration-300
-      ${hideHeader ? "pt-0" : "pt-14"}
-    `}
-        >
-          <ScrollableList />
-        </div>
-      </div>
+    <div ref={scrollRef} className="h-full overflow-y-auto pt-14 w-[400px]">
+      <div ref={topSentinelRef} className="h-1 bg-red" />
+      <ScrollableList />
     </div>
   );
   return (

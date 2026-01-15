@@ -63,7 +63,6 @@ const SearchStation = () => {
     } catch (error) {}
   };
 
-  console.log("cek data", data);
 
   return (
     <div className="w-[480px] relative min-h-screen bg-[linear-gradient(225deg,_#BAE6E9_10%,_#FFFFFF_50%,_#FAF2C0_100%)]">

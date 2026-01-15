@@ -8,7 +8,7 @@ import {
   DropdownCheckbox,
   LoadingPage,
   ModalCarouselDetails,
-  OngoingItem
+  OngoingItem,
 } from "../../components";
 import { useAuth } from "../../context/AuthContext";
 import { fetchOnGoingSessionList, setFromGlobal } from "../../features";
@@ -47,6 +47,28 @@ const Home = () => {
   const [hideHeader, setHideHeader] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastScroll = useRef(0);
+  const ticking = useRef(false);
+  const lastHidden = useRef(false);
+  const topSentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    const sentinel = topSentinelRef.current;
+    if (!el || !sentinel) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setHideHeader(!entry.isIntersecting);
+      },
+      {
+        root: el,
+        threshold: 1,
+      }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     setPage(1);
@@ -115,7 +137,7 @@ const Home = () => {
       setLoadingRTO(true);
       const res = await Api.get({
         url: "rtos",
-        params: { statuses: "1,2,3,4,5,8,9,11", page: 1, limit: 1 },
+        params: { statuses: "1,2,4,5,7", page: 1, limit: 1 },
       });
 
       setDataRTO(res?.data?.[0] ?? undefined);
@@ -130,8 +152,26 @@ const Home = () => {
     if (!el) return;
 
     const current = el.scrollTop;
-    setHideHeader(current > lastScroll.current && current > 20);
-    lastScroll.current = current;
+    const delta = Math.abs(current - lastScroll.current);
+
+    // ⛔ abaikan scroll kecil (touch jitter)
+    if (delta < 8) return;
+
+    if (ticking.current) return;
+    ticking.current = true;
+
+    requestAnimationFrame(() => {
+      const shouldHide = current > lastScroll.current && current > 30;
+
+      // ⛔ JANGAN update state jika sama
+      if (shouldHide !== lastHidden.current) {
+        lastHidden.current = shouldHide;
+        setHideHeader(shouldHide);
+      }
+
+      lastScroll.current = current;
+      ticking.current = false;
+    });
   };
 
   const isShowOngoing: boolean = useMemo(
@@ -142,7 +182,17 @@ const Home = () => {
     [onGoingSessionList?.data]
   );
 
-  // ${hideHeader ? "-translate-y-6 opacity-0 h-0 overflow-hidden" : "translate-y-0 opacity-100 h-auto"}
+  let pList = 16;
+
+  if (isShowOngoing) {
+    pList += 110;
+  }
+
+  if (dataRTO?.ID) {
+    pList += 140 + 16;
+  }
+
+
   return (
     <div className="overflow-hidden flex flex-col w-full">
       {/* SEARCH */}
@@ -166,71 +216,57 @@ const Home = () => {
         />
       </div>
 
-      <div className="h-screen w-full relative px-4">
-        <div
-          className={`absolute top-0 left-0 right-0 z-20 p-4 transition-all duration-300 ${
-            hideHeader
-              ? "-translate-y-full opacity-0"
-              : "translate-y-0 opacity-100"
-          } `}
-        >
-          {/* ONGOING */}
-          {isShowOngoing && (
-            <div className="bg-white rounded-lg p-3 mt-5">
-              <p className="font-medium mb-3">Sedang berlangsung</p>
-              <div className="row gap-2 overflow-x-auto scrollbar-none">
-                {onGoingSessionList?.data?.data.map(
-                  (item: any, index: number) => (
-                    <OngoingItem
-                      key={index}
-                      data={item}
-                      onClick={() => navigate(`/charging/${item?.ID}`)}
-                    />
-                  )
-                )}
-              </div>
+      <div className="h-full overflow-y-auto overscroll-contain scrollbar-none transition-all duration-300 px-3 space-y-4">
+        {/* ONGOING */}
+        {isShowOngoing && (
+          <div className="bg-white rounded-lg p-3 h-[110px]">
+            <p className="font-medium mb-3">Sedang berlangsung</p>
+            <div className="row gap-2 overflow-x-auto scrollbar-none">
+              {onGoingSessionList?.data?.data.map(
+                (item: any, index: number) => (
+                  <OngoingItem
+                    key={index}
+                    data={item}
+                    onClick={() => navigate(`/charging/${item?.ID}`)}
+                  />
+                )
+              )}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* STATUS RTO */}
-          {dataRTO?.ID && (
-            <StatusRTO
-              data={dataRTO}
-              onClick={() => navigate(`/booking-details/${dataRTO?.ID}`)}
-            />
-          )}
-        </div>
+        {/* STATUS RTO */}
+        {dataRTO?.ID && (
+          <StatusRTO
+            data={dataRTO}
+            onClick={() => navigate(`/booking-details/${dataRTO?.ID}`)}
+          />
+        )}
 
         {/* CHARGING LIST */}
-        <div
-          ref={scrollRef}
-          onScroll={handleScroll}
-          className={`h-full overflow-y-auto scrollbar-none transition-all duration-300
-          ${hideHeader ? "pt-0" : "pt-0"}
-        `}
-        >
-          <LoadingPage loading={!data?.data && loading} color="primary100">
-            {data?.data &&
-              data?.data.map((item, index: number) => (
-                <ChargingLocationCard
-                  key={index}
-                  data={item}
-                  loading={loading}
-                  currentLocation={currentLocation}
-                  isLast={
-                    index === data?.data.length - 1 &&
-                    page * LIMIT_LIST === data?.data.length
-                  }
-                  onClick={() =>
-                    navigate(`/station-details/${item?.ID}`, {
-                      state: { currentLocation },
-                    })
-                  }
-                  onLoadMore={() => setPage((prev) => prev + 1)}
-                />
-              ))}
-          </LoadingPage>
-        </div>
+        <LoadingPage loading={!data?.data && loading} color="primary100">
+          {data?.data &&
+            data?.data.map((item, index: number) => (
+              <ChargingLocationCard
+                key={index}
+                data={item}
+                loading={loading}
+                currentLocation={currentLocation}
+                isLast={
+                  index === data?.data.length - 1 &&
+                  page * LIMIT_LIST === data?.data.length
+                }
+                onClick={() =>
+                  navigate(`/station-details/${item?.ID}`, {
+                    state: { currentLocation },
+                  })
+                }
+                onLoadMore={() => setPage((prev) => prev + 1)}
+              />
+            ))}
+        </LoadingPage>
+
+        <div className="h-10"/>
       </div>
 
       {/* MODAL */}
