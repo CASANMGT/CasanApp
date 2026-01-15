@@ -13,6 +13,7 @@ import Location from "./Location";
 import LocationList from "./LocationList";
 import Login from "./Login";
 import Main from "./Main";
+import SearchStation from "./SearchStation";
 import NotFound from "./NotFound";
 import Order from "./Order";
 import PaymentSuccess from "./PaymentSuccess";
@@ -89,6 +90,6 @@ export {
   Withdraw,
   WithdrawalDetails,
   WithdrawalHistory,
-  TransactionRTODetails
+  TransactionRTODetails,
+  SearchStation,
 };
-

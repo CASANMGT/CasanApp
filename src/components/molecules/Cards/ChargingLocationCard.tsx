@@ -17,7 +17,7 @@ interface ChargingLocationCardProps {
   data: ChargingStation;
   currentLocation: LatLng | undefined;
   isLast?: boolean | undefined;
-  loading: boolean;
+  loading?: boolean;
   onClick: () => void;
   onLoadMore?: () => void;
 }

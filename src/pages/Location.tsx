@@ -158,7 +158,7 @@ const Location = () => {
           {/* SHARE */}
           <button
             onClick={onShare}
-            className="absolute right-4 top-14 px-4 py-2 bg-white rounded-full row gap-2 font-medium text-blackBold"
+            className="absolute right-4 top-16 px-4 py-2 bg-white rounded-full row gap-2 font-medium text-blackBold"
           >
             <LuShare size={16} />
             Bagikan Peta

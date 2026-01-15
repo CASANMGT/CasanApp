@@ -45,6 +45,7 @@ import {
   Withdraw,
   WithdrawalDetails,
   WithdrawalHistory,
+  SearchStation,
 } from "../pages";
 import { useAxiosInterceptor } from "../services/ApiClient";
 import ProtectedRoute from "./ProtectedRoute";
@@ -60,6 +61,10 @@ const RoutesPage = () => {
       <Route
         path="charging/:id"
         element={<ProtectedRoute element={<Charging />} />}
+      />
+      <Route
+        path="search-station"
+        element={<SearchStation />}
       />
       <Route
         path="station-details/:id"

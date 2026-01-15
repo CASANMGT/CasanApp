@@ -1,17 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
-import { FaChevronRight } from "react-icons/fa6";
-import { IoIosPin } from "react-icons/io";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { CiSearch } from "react-icons/ci";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { IcCartGreen, IcLogoSymbol, IcMotorcycleGreen } from "../../assets";
 import { ChargeBrandOption, LIMIT_LIST } from "../../common";
 import {
-  Carousel,
   ChargingLocationCard,
   DropdownCheckbox,
   LoadingPage,
   ModalCarouselDetails,
-  OngoingItem,
+  OngoingItem
 } from "../../components";
 import { useAuth } from "../../context/AuthContext";
 import { fetchOnGoingSessionList, setFromGlobal } from "../../features";
@@ -46,6 +43,10 @@ const Home = () => {
   const [place, setPlace] = useState<string>("terdekat");
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
   const [filter, setFilter] = useState<number[]>([]);
+
+  const [hideHeader, setHideHeader] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const lastScroll = useRef(0);
 
   useEffect(() => {
     setPage(1);
@@ -124,6 +125,15 @@ const Home = () => {
     }
   };
 
+  const handleScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const current = el.scrollTop;
+    setHideHeader(current > lastScroll.current && current > 20);
+    lastScroll.current = current;
+  };
+
   const isShowOngoing: boolean = useMemo(
     () =>
       onGoingSessionList?.data?.data && onGoingSessionList?.data?.data.length
@@ -132,59 +142,38 @@ const Home = () => {
     [onGoingSessionList?.data]
   );
 
+  // ${hideHeader ? "-translate-y-6 opacity-0 h-0 overflow-hidden" : "translate-y-0 opacity-100 h-auto"}
   return (
-    <div className="overflow-hidden flex w-full">
-      <div className="px-4 py-3 flex flex-col w-full overflow-hidden">
-        <div>
-          {/* INFORMATION */}
-          <div className="bg-[#D5F1EB] row gap-4 p-4 -mx-4 mb-6">
-            <IcLogoSymbol />
-            <p className="text-black70">
-              Casan.id - Solusi pengisian daya untuk sepeda dan motor listrik
-            </p>
-          </div>
+    <div className="overflow-hidden flex flex-col w-full">
+      {/* SEARCH */}
+      <div className="between-x m-4 gap-4">
+        <div
+          onClick={() => navigate("/search-station")}
+          className="row px-3 h-10 rounded-full bg-baseLightGray/70 gap-2.5 flex-1 cursor-pointer"
+        >
+          <CiSearch size={20} className="text-black70" />
+          <span className="text-black70 text-xs">Cari lokasi pengecasan</span>
+        </div>
 
-          {/* LOCATION */}
-          <div className="between-x">
-            <div className="inline-flex items-center gap-2 mb-2 bg-primary30 py-2 px-4 rounded-full shadow-lg">
-              <IoIosPin size={18} className="text-primary100" />
-              <span className="text-black100 font-semibold">Indonesia</span>
-            </div>
+        <DropdownCheckbox
+          isIconOnly
+          selected={filter}
+          options={ChargeBrandOption}
+          onApply={(s) => {
+            setPage(1);
+            setFilter(s);
+          }}
+        />
+      </div>
 
-            <DropdownCheckbox
-              selected={filter}
-              options={ChargeBrandOption}
-              onApply={(s) => {
-                setPage(1);
-                setFilter(s);
-              }}
-            />
-          </div>
-
-          {/* SEARCH */}
-          {/* <div className="row gap-3 mt-2.5 mb-5">
-            <div
-              onClick={onSearch}
-              className="row px-3 h-10 rounded-full bg-baseLightGray/70 gap-2.5 flex-1 cursor-pointer"
-            >
-              <IcSearchGray />
-
-              <span className="text-black opacity-50 text-xs">
-                Cari lokasi pengecasan
-              </span>
-            </div>
-
-            <div
-              onClick={onNotification}
-              className="h-10 w-10 rounded-full bg-baseLightGray/70 items-center justify-center flex cursor-pointer"
-            >
-              {false ? <IcNotificationBadgesGreen /> : <IcNotificationGreen />}
-            </div>
-          </div> */}
-
-          {/* CAROUSEL */}
-          {false && <Carousel slides={[]} />}
-
+      <div className="h-screen w-full relative px-4">
+        <div
+          className={`absolute top-0 left-0 right-0 z-20 p-4 transition-all duration-300 ${
+            hideHeader
+              ? "-translate-y-full opacity-0"
+              : "translate-y-0 opacity-100"
+          } `}
+        >
           {/* ONGOING */}
           {isShowOngoing && (
             <div className="bg-white rounded-lg p-3 mt-5">
@@ -203,76 +192,24 @@ const Home = () => {
             </div>
           )}
 
-          {/* FILTER */}
-          {/* <div className="between-x mt-5">
-            <div className="row gap-3 flex-1">
-              {optionsTypeVehicle.map((item, index: number) => (
-                <AvailableTypeVehicleItem
-                  key={index}
-                  data={item}
-                  isActive={item?.value === typeVehicle}
-                  onClick={() => setTypeVehicle(item.value)}
-                />
-              ))}
-            </div>
-
-            <Dropdown
-              select={place}
-              type="sm"
-              placeholder="Voltage"
-              options={optionsPlace}
-              onSelect={(select) => setPlace(select?.value.toString())}
-              className="!w-[120px]"
+          {/* STATUS RTO */}
+          {dataRTO?.ID && (
+            <StatusRTO
+              data={dataRTO}
+              onClick={() => navigate(`/booking-details/${dataRTO?.ID}`)}
             />
-          </div> */}
+          )}
         </div>
 
-        {/* CHARGING SERVICE */}
-        {false && (
-          <div className="bg-white rounded-lg p-4 mt-4">
-            <span className="text-base font-semibold">Layanan Casan</span>
-
-            <div className="mt-5 between-x gap-2.5">
-              <div
-                onClick={() => navigate("/select-dealer")}
-                className="row gap-2 p-2 rounded-lg border border-black10 flex-1 cursor-pointer"
-              >
-                <div className="w-12 h-12 rounded-full border border-primary100 bg-primary10 center">
-                  <IcMotorcycleGreen />
-                </div>
-
-                <span className="flex-1 text-blackBold">Isi Daya Motor</span>
-
-                <FaChevronRight />
-              </div>
-
-              <div
-                onClick={() => navigate("/select-rent-buy")}
-                className="row gap-2 p-2 rounded-lg border border-black10 flex-1 cursor-pointer"
-              >
-                <div className="w-12 h-12 rounded-full border border-primary100 bg-primary10 center">
-                  <IcCartGreen />
-                </div>
-
-                <span className="flex-1 text-blackBold">Sewa Beli</span>
-
-                <FaChevronRight />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* STATUS RTO */}
-        {dataRTO?.ID && (
-          <StatusRTO
-            data={dataRTO}
-            onClick={() => navigate(`/booking-details/${dataRTO?.ID}`)}
-          />
-        )}
-
         {/* CHARGING LIST */}
-        <div className="flex flex-col overflow-auto scrollbar-none pt-3">
-          <LoadingPage loading={!data?.data && loading}>
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className={`h-full overflow-y-auto scrollbar-none transition-all duration-300
+          ${hideHeader ? "pt-0" : "pt-0"}
+        `}
+        >
+          <LoadingPage loading={!data?.data && loading} color="primary100">
             {data?.data &&
               data?.data.map((item, index: number) => (
                 <ChargingLocationCard
@@ -281,9 +218,8 @@ const Home = () => {
                   loading={loading}
                   currentLocation={currentLocation}
                   isLast={
-                    data?.data &&
                     index === data?.data.length - 1 &&
-                    page * LIMIT_LIST == data?.data.length
+                    page * LIMIT_LIST === data?.data.length
                   }
                   onClick={() =>
                     navigate(`/station-details/${item?.ID}`, {
@@ -298,18 +234,20 @@ const Home = () => {
       </div>
 
       {/* MODAL */}
-      <ModalCarouselDetails
-        visible={global?.openCarousel}
-        data={global?.data}
-        onDismiss={() =>
-          dispatch(
-            setFromGlobal({
-              type: "openCarousel",
-              value: false,
-            })
-          )
-        }
-      />
+      {global?.openCarousel && (
+        <ModalCarouselDetails
+          visible
+          data={global?.data}
+          onDismiss={() =>
+            dispatch(
+              setFromGlobal({
+                type: "openCarousel",
+                value: false,
+              })
+            )
+          }
+        />
+      )}
       {/* END MODAL */}
     </div>
   );
