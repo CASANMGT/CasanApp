@@ -39,8 +39,6 @@ const ModalChargingStation: React.FC<ModalChargingStationProps> = ({
     dataFiltered = data?.filter((e) => filter.includes(e?.Brand || 0));
   }
 
-  
-
   return (
     <ModalContainer
       isOpen={isOpen}

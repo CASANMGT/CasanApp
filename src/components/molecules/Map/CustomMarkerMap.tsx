@@ -6,7 +6,7 @@ import {
   IcCasanMarker,
   IcMakaMarker,
   IcTangkasMarker,
-  IcUnitedMarker
+  IcUnitedMarker,
 } from "../../../assets";
 import { setFromGlobal } from "../../../features";
 import { AppDispatch } from "../../../store";
@@ -33,7 +33,7 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
         type: "openChargingStation",
         value: true,
         data: dataChargingStation,
-      })
+      }),
     );
   };
 

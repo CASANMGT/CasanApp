@@ -111,7 +111,7 @@ const BookingDetails = () => {
     if (pendingStatuses.includes(status) && isTransactionPending) {
       return navigate(
         `/transaction-rto-history/details/${dataTransaction?.ID}`,
-        { state: data }
+        { state: data },
       );
     }
 
@@ -239,8 +239,8 @@ const BookingDetails = () => {
                       pendingStatuses.includes(status) && isTransactionPending
                         ? "Lanjutkan Pembayaran"
                         : billStatuses.includes(status)
-                        ? "Bayar Tagihan"
-                        : "Beli Kredit harian"
+                          ? "Bayar Tagihan"
+                          : "Beli Kredit harian"
                     }
                     iconRight={FaChevronRight}
                     loading={loadingPay}
@@ -261,7 +261,7 @@ const BookingDetails = () => {
 
                         <span className="text-blackBold font-semibold">{`Rp${rupiah(
                           (data?.OverdueCount || 0) *
-                            (dataDayCredit?.Price || 1)
+                            (dataDayCredit?.Price || 1),
                         )}`}</span>
                       </>
                     )}
@@ -410,7 +410,7 @@ const BookingDetails = () => {
                     onClick={() =>
                       openGoogleMaps(
                         dataStation?.Location?.Latitude || 0,
-                        dataStation?.Location?.Longitude || 0
+                        dataStation?.Location?.Longitude || 0,
                       )
                     }
                     className="w-16 h-16 rounded-sm cursor-pointer"
@@ -521,7 +521,7 @@ const BookingDetails = () => {
                     status !== 6 && status !== 7 && "rounded-b"
                   }`}
                 />
-                {status !== 6 && status !== 7 && (
+                {status !== 6 && (
                   <BetweenText
                     labelLeft="Progres"
                     labelRight={`${current}/${total}`}

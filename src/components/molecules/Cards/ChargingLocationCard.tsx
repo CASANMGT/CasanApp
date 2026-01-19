@@ -35,7 +35,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
 
   const distance = getDistanceFromLatLonInKm(
     { lat: data?.Location?.Latitude, lon: data?.Location?.Longitude },
-    currentLocation
+    currentLocation,
   );
   const dataMaxWatt = data?.Devices?.map((device) => device?.MaxWatt);
 
@@ -67,7 +67,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
     const filtered = data?.PriceSetting?.PriceBaseRules[0].PriceBaseTime.filter(
       (e) =>
         currentTime > timeToSeconds(e?.PriceTimeRule.From) &&
-        currentTime < timeToSeconds(e?.PriceTimeRule.To)
+        currentTime < timeToSeconds(e?.PriceTimeRule.To),
     )[0];
 
     price =
@@ -80,7 +80,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
       (accumulator, currentValue) =>
         accumulator +
         (currentValue?.Sockets?.filter((e) => e?.IsActive)?.length ?? 0),
-      0
+      0,
     );
 
     for (const key in data?.Devices) {
@@ -159,8 +159,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
               {isUltraFast
                 ? "Ultra Fast Charging"
                 : isSuperFast
-                ? "Super Fast Charging"
-                : "Fast Charging"}
+                  ? "Super Fast Charging"
+                  : "Fast Charging"}
             </span>
           </div>
 
@@ -192,8 +192,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
                   isFull || data?.IsClosed
                     ? "bg-lightRed"
                     : isDisconnect
-                    ? "bg-black10"
-                    : "bg-primary10"
+                      ? "bg-black10"
+                      : "bg-primary10"
                 }`}
               >
                 {data?.IsClosed ? (
@@ -218,8 +218,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
                     {data?.IsClosed
                       ? "Tutup Sementara"
                       : isFull
-                      ? "Sedang Penuh"
-                      : "Sedang tidak tersedia"}
+                        ? "Sedang Penuh"
+                        : "Sedang tidak tersedia"}
                   </p>
 
                   {isDisconnect && (
@@ -246,7 +246,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
 
             <p className="text-xs text-primary100 font-semibold">Rp</p>
             <p className="text-lg text-primary100 font-semibold mr-1">{`${rupiah(
-              price
+              price,
             )}/${priceType === 2 ? "kWh" : "jam"}`}</p>
           </div>
 
