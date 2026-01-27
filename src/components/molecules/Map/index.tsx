@@ -22,6 +22,8 @@ const Map: React.FC<MapProps> = ({ data, myLocation, center }) => {
 
   const isShowData = data && data.length ? true : false;
 
+  
+
   return (
     <div className="w-full h-full">
       <MapContainer center={center} zoom={13} className="h-full w-full !z-0">

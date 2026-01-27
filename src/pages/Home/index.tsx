@@ -1,12 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
-import { FaChevronRight } from "react-icons/fa6";
-import { IoIosPin } from "react-icons/io";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { CiSearch } from "react-icons/ci";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { IcCartGreen, IcLogoSymbol, IcMotorcycleGreen } from "../../assets";
 import { ChargeBrandOption, LIMIT_LIST } from "../../common";
 import {
-  Carousel,
   ChargingLocationCard,
   DropdownCheckbox,
   LoadingPage,
@@ -46,6 +43,32 @@ const Home = () => {
   const [place, setPlace] = useState<string>("terdekat");
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
   const [filter, setFilter] = useState<number[]>([]);
+
+  const [hideHeader, setHideHeader] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const lastScroll = useRef(0);
+  const ticking = useRef(false);
+  const lastHidden = useRef(false);
+  const topSentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    const sentinel = topSentinelRef.current;
+    if (!el || !sentinel) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setHideHeader(!entry.isIntersecting);
+      },
+      {
+        root: el,
+        threshold: 1,
+      }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     setPage(1);
@@ -114,7 +137,7 @@ const Home = () => {
       setLoadingRTO(true);
       const res = await Api.get({
         url: "rtos",
-        params: { statuses: "1,2,3,4,5,8,9,11", page: 1, limit: 1 },
+        params: { statuses: "1,2,4,5,7", page: 1, limit: 1 },
       });
 
       setDataRTO(res?.data?.[0] ?? undefined);
@@ -122,6 +145,33 @@ const Home = () => {
     } finally {
       setLoadingRTO(false);
     }
+  };
+
+  const handleScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const current = el.scrollTop;
+    const delta = Math.abs(current - lastScroll.current);
+
+    // ⛔ abaikan scroll kecil (touch jitter)
+    if (delta < 8) return;
+
+    if (ticking.current) return;
+    ticking.current = true;
+
+    requestAnimationFrame(() => {
+      const shouldHide = current > lastScroll.current && current > 30;
+
+      // ⛔ JANGAN update state jika sama
+      if (shouldHide !== lastHidden.current) {
+        lastHidden.current = shouldHide;
+        setHideHeader(shouldHide);
+      }
+
+      lastScroll.current = current;
+      ticking.current = false;
+    });
   };
 
   const isShowOngoing: boolean = useMemo(
@@ -132,132 +182,55 @@ const Home = () => {
     [onGoingSessionList?.data]
   );
 
+  let pList = 16;
+
+  if (isShowOngoing) {
+    pList += 110;
+  }
+
+  if (dataRTO?.ID) {
+    pList += 140 + 16;
+  }
+
+
   return (
-    <div className="overflow-hidden flex w-full">
-      <div className="px-4 py-3 flex flex-col w-full overflow-hidden">
-        <div>
-          {/* INFORMATION */}
-          <div className="bg-[#D5F1EB] row gap-4 p-4 -mx-4 mb-6">
-            <IcLogoSymbol />
-            <p className="text-black70">
-              Casan.id - Solusi pengisian daya untuk sepeda dan motor listrik
-            </p>
-          </div>
-
-          {/* LOCATION */}
-          <div className="between-x">
-            <div className="inline-flex items-center gap-2 mb-2 bg-primary30 py-2 px-4 rounded-full shadow-lg">
-              <IoIosPin size={18} className="text-primary100" />
-              <span className="text-black100 font-semibold">Indonesia</span>
-            </div>
-
-            <DropdownCheckbox
-              selected={filter}
-              options={ChargeBrandOption}
-              onApply={(s) => {
-                setPage(1);
-                setFilter(s);
-              }}
-            />
-          </div>
-
-          {/* SEARCH */}
-          {/* <div className="row gap-3 mt-2.5 mb-5">
-            <div
-              onClick={onSearch}
-              className="row px-3 h-10 rounded-full bg-baseLightGray/70 gap-2.5 flex-1 cursor-pointer"
-            >
-              <IcSearchGray />
-
-              <span className="text-black opacity-50 text-xs">
-                Cari lokasi pengecasan
-              </span>
-            </div>
-
-            <div
-              onClick={onNotification}
-              className="h-10 w-10 rounded-full bg-baseLightGray/70 items-center justify-center flex cursor-pointer"
-            >
-              {false ? <IcNotificationBadgesGreen /> : <IcNotificationGreen />}
-            </div>
-          </div> */}
-
-          {/* CAROUSEL */}
-          {false && <Carousel slides={[]} />}
-
-          {/* ONGOING */}
-          {isShowOngoing && (
-            <div className="bg-white rounded-lg p-3 mt-5">
-              <p className="font-medium mb-3">Sedang berlangsung</p>
-              <div className="row gap-2 overflow-x-auto scrollbar-none">
-                {onGoingSessionList?.data?.data.map(
-                  (item: any, index: number) => (
-                    <OngoingItem
-                      key={index}
-                      data={item}
-                      onClick={() => navigate(`/charging/${item?.ID}`)}
-                    />
-                  )
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* FILTER */}
-          {/* <div className="between-x mt-5">
-            <div className="row gap-3 flex-1">
-              {optionsTypeVehicle.map((item, index: number) => (
-                <AvailableTypeVehicleItem
-                  key={index}
-                  data={item}
-                  isActive={item?.value === typeVehicle}
-                  onClick={() => setTypeVehicle(item.value)}
-                />
-              ))}
-            </div>
-
-            <Dropdown
-              select={place}
-              type="sm"
-              placeholder="Voltage"
-              options={optionsPlace}
-              onSelect={(select) => setPlace(select?.value.toString())}
-              className="!w-[120px]"
-            />
-          </div> */}
+    <div className="overflow-hidden flex flex-col w-full">
+      {/* SEARCH */}
+      <div className="between-x m-4 gap-4">
+        <div
+          onClick={() => navigate("/search-station")}
+          className="row px-3 h-10 rounded-full bg-baseLightGray/70 gap-2.5 flex-1 cursor-pointer"
+        >
+          <CiSearch size={20} className="text-black70" />
+          <span className="text-black70 text-xs">Cari lokasi pengecasan</span>
         </div>
 
-        {/* CHARGING SERVICE */}
-        {false && (
-          <div className="bg-white rounded-lg p-4 mt-4">
-            <span className="text-base font-semibold">Layanan Casan</span>
+        <DropdownCheckbox
+          isIconOnly
+          selected={filter}
+          options={ChargeBrandOption}
+          onApply={(s) => {
+            setPage(1);
+            setFilter(s);
+          }}
+        />
+      </div>
 
-            <div className="mt-5 between-x gap-2.5">
-              <div
-                onClick={() => navigate("/select-dealer")}
-                className="row gap-2 p-2 rounded-lg border border-black10 flex-1 cursor-pointer"
-              >
-                <div className="w-12 h-12 rounded-full border border-primary100 bg-primary10 center">
-                  <IcMotorcycleGreen />
-                </div>
-
-                <span className="flex-1 text-blackBold">Isi Daya Motor</span>
-
-                <FaChevronRight />
-              </div>
-
-              <div
-                onClick={() => navigate("/select-rent-buy")}
-                className="row gap-2 p-2 rounded-lg border border-black10 flex-1 cursor-pointer"
-              >
-                <div className="w-12 h-12 rounded-full border border-primary100 bg-primary10 center">
-                  <IcCartGreen />
-                </div>
-
-                <span className="flex-1 text-blackBold">Sewa Beli</span>
-
-                <FaChevronRight />
-              </div>
+      <div className="h-full overflow-y-auto overscroll-contain scrollbar-none transition-all duration-300 px-3 space-y-4">
+        {/* ONGOING */}
+        {isShowOngoing && (
+          <div className="bg-white rounded-lg p-3 h-[110px]">
+            <p className="font-medium mb-3">Sedang berlangsung</p>
+            <div className="row gap-2 overflow-x-auto scrollbar-none">
+              {onGoingSessionList?.data?.data.map(
+                (item: any, index: number) => (
+                  <OngoingItem
+                    key={index}
+                    data={item}
+                    onClick={() => navigate(`/charging/${item?.ID}`)}
+                  />
+                )
+              )}
             </div>
           </div>
         )}
@@ -271,45 +244,46 @@ const Home = () => {
         )}
 
         {/* CHARGING LIST */}
-        <div className="flex flex-col overflow-auto scrollbar-none pt-3">
-          <LoadingPage loading={!data?.data && loading}>
-            {data?.data &&
-              data?.data.map((item, index: number) => (
-                <ChargingLocationCard
-                  key={index}
-                  data={item}
-                  loading={loading}
-                  currentLocation={currentLocation}
-                  isLast={
-                    data?.data &&
-                    index === data?.data.length - 1 &&
-                    page * LIMIT_LIST == data?.data.length
-                  }
-                  onClick={() =>
-                    navigate(`/station-details/${item?.ID}`, {
-                      state: { currentLocation },
-                    })
-                  }
-                  onLoadMore={() => setPage((prev) => prev + 1)}
-                />
-              ))}
-          </LoadingPage>
-        </div>
+        <LoadingPage loading={!data?.data && loading} color="primary100">
+          {data?.data &&
+            data?.data.map((item, index: number) => (
+              <ChargingLocationCard
+                key={index}
+                data={item}
+                loading={loading}
+                currentLocation={currentLocation}
+                isLast={
+                  index === data?.data.length - 1 &&
+                  page * LIMIT_LIST === data?.data.length
+                }
+                onClick={() =>
+                  navigate(`/station-details/${item?.ID}`, {
+                    state: { currentLocation },
+                  })
+                }
+                onLoadMore={() => setPage((prev) => prev + 1)}
+              />
+            ))}
+        </LoadingPage>
+
+        <div className="h-10"/>
       </div>
 
       {/* MODAL */}
-      <ModalCarouselDetails
-        visible={global?.openCarousel}
-        data={global?.data}
-        onDismiss={() =>
-          dispatch(
-            setFromGlobal({
-              type: "openCarousel",
-              value: false,
-            })
-          )
-        }
-      />
+      {global?.openCarousel && (
+        <ModalCarouselDetails
+          visible
+          data={global?.data}
+          onDismiss={() =>
+            dispatch(
+              setFromGlobal({
+                type: "openCarousel",
+                value: false,
+              })
+            )
+          }
+        />
+      )}
       {/* END MODAL */}
     </div>
   );

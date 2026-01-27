@@ -40,7 +40,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ phone, data }) => {
         </>
       )}
 
-      <Separator className="my-3" />
+      {/* <Separator className="my-3" />
 
       <div className="between-x">
         <div className="row gap-2">
@@ -61,7 +61,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ phone, data }) => {
             // className="!h-[24px] text-xs"
           />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

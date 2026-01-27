@@ -13,6 +13,7 @@ import {
   IcEditGreen,
   IcRightGreen,
   IcSocketCircleGreen,
+  ILNotFound,
 } from "../../assets";
 import {
   ERROR_MESSAGE,
@@ -23,6 +24,7 @@ import {
   Voucher,
 } from "../../common";
 import {
+  AlertModal,
   Button,
   Container,
   InputOTPModal,
@@ -115,6 +117,7 @@ const SessionSettings = () => {
   const [openVA, setOpenVA] = useState<boolean>(false);
   const [openFullyCharger, setOpenFullyCharger] = useState(false);
   const [openResetPin, setOpenResetPin] = useState(false);
+  const [openToolNotAvailable, setOpenToolNotAvailable] = useState(false);
   const [priceType, setPriceType] = useState<number>();
   const [tabs, setTabs] = useState<TabItemProps[]>();
   const [typePriceDetails, setTypePriceDetails] = useState<"fully-charge">();
@@ -147,6 +150,8 @@ const SessionSettings = () => {
       };
 
       setUp();
+
+      if (!data?.IsVisibleToUser) setOpenToolNotAvailable(true);
     }
   }, [data]);
 
@@ -1093,6 +1098,20 @@ const SessionSettings = () => {
                 : valueCalculate
             }
             onClose={() => setOpenPriceDetails(false)}
+          />
+        )}
+
+        {openToolNotAvailable && (
+          <AlertModal
+            visible
+            icon={ILNotFound}
+            title="Alat Tidak Tersedia"
+            description="Maaf, saat ini alat sedang tidak tersedia. Silakan pakai alat lain yang tersedia, ya!"
+            typeButtonRight="primary"
+            labelButtonRight="Tutup"
+            onDismiss={() => {
+              navigate("/home/index", { replace: true });
+            }}
           />
         )}
       </>

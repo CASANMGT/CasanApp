@@ -17,7 +17,7 @@ interface ChargingLocationCardProps {
   data: ChargingStation;
   currentLocation: LatLng | undefined;
   isLast?: boolean | undefined;
-  loading: boolean;
+  loading?: boolean;
   onClick: () => void;
   onLoadMore?: () => void;
 }
@@ -35,7 +35,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
 
   const distance = getDistanceFromLatLonInKm(
     { lat: data?.Location?.Latitude, lon: data?.Location?.Longitude },
-    currentLocation
+    currentLocation,
   );
   const dataMaxWatt = data?.Devices?.map((device) => device?.MaxWatt);
 
@@ -67,7 +67,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
     const filtered = data?.PriceSetting?.PriceBaseRules[0].PriceBaseTime.filter(
       (e) =>
         currentTime > timeToSeconds(e?.PriceTimeRule.From) &&
-        currentTime < timeToSeconds(e?.PriceTimeRule.To)
+        currentTime < timeToSeconds(e?.PriceTimeRule.To),
     )[0];
 
     price =
@@ -80,7 +80,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
       (accumulator, currentValue) =>
         accumulator +
         (currentValue?.Sockets?.filter((e) => e?.IsActive)?.length ?? 0),
-      0
+      0,
     );
 
     for (const key in data?.Devices) {
@@ -98,7 +98,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
     }
 
     if (totalAvailable <= 0) {
-      if (totalSocket === totalFull) isFull = true;
+      if (totalSocket > 0 && totalSocket === totalFull) isFull = true;
       else if (totalDisconnect > 0) isDisconnect = true;
     }
 
@@ -129,9 +129,12 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   }
 
   const labelWatt = getLabelWatt(minWatt, maxWatt);
-  const isUltraFast = !!data?.Devices?.some((e) => e?.Protocol === 3);
+  const isSuperFast = !!data?.Devices?.some((e) => e?.Type === 2);
+  const isUltraFast = !!data?.Devices?.some((e) => e?.Type === 3);
   const formattedBrand = getFormattedBrand(brand || 0);
   const IconBrand = formattedBrand.icon;
+
+  if (!data?.IsVisibleToUser || !data?.Devices?.length) return null;
 
   return (
     <>
@@ -143,15 +146,21 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
           <div
             className="absolute top-0 right-0 rounded-tr-lg rounded-bl-lg row px-3 py-1"
             style={{
-              background: `linear-gradient(270deg, #${
-                isUltraFast ? "DE0E11" : "2dba9d"
-              } 0%, #${isUltraFast ? "C0D749" : "327478"} 100%)`,
+              background: `linear-gradient(225deg, #${
+                isUltraFast ? "DE0E11" : isSuperFast ? "DE0E11" : "2dba9d"
+              } 0%, #${
+                isUltraFast ? "C0D749" : isSuperFast ? "0088FF" : "327478"
+              } 100%)`,
             }}
           >
             <IcBattery2 className="text-white" />
 
             <span className="text-white ml-1.5 font-medium text-xs">
-              {isUltraFast ? "Ultra Fast Charging" : "Fast Charging"}
+              {isUltraFast
+                ? "Ultra Fast Charging"
+                : isSuperFast
+                  ? "Super Fast Charging"
+                  : "Fast Charging"}
             </span>
           </div>
 
@@ -183,8 +192,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
                   isFull || data?.IsClosed
                     ? "bg-lightRed"
                     : isDisconnect
-                    ? "bg-black10"
-                    : "bg-primary10"
+                      ? "bg-black10"
+                      : "bg-primary10"
                 }`}
               >
                 {data?.IsClosed ? (
@@ -209,8 +218,8 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
                     {data?.IsClosed
                       ? "Tutup Sementara"
                       : isFull
-                      ? "Sedang Penuh"
-                      : "Sedang tidak tersedia"}
+                        ? "Sedang Penuh"
+                        : "Sedang tidak tersedia"}
                   </p>
 
                   {isDisconnect && (
@@ -237,7 +246,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
 
             <p className="text-xs text-primary100 font-semibold">Rp</p>
             <p className="text-lg text-primary100 font-semibold mr-1">{`${rupiah(
-              price
+              price,
             )}/${priceType === 2 ? "kWh" : "jam"}`}</p>
           </div>
 

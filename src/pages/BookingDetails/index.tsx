@@ -27,7 +27,7 @@ import {
 } from "../../components";
 import { useAuth } from "../../context/AuthContext";
 import { fetchMyUser } from "../../features";
-import { moments, openGoogleMaps, openWhatsApp, rupiah } from "../../helpers";
+import { openGoogleMaps, openWhatsApp, rupiah } from "../../helpers";
 import { Api } from "../../services";
 import { AppDispatch, RootState } from "../../store";
 import Container from "./Container";
@@ -111,7 +111,7 @@ const BookingDetails = () => {
     if (pendingStatuses.includes(status) && isTransactionPending) {
       return navigate(
         `/transaction-rto-history/details/${dataTransaction?.ID}`,
-        { state: data }
+        { state: data },
       );
     }
 
@@ -187,14 +187,6 @@ const BookingDetails = () => {
                   <span className="text-xs text-black90">Kredit Hari</span>
                 </div>
 
-                <div className="flex-1 h-3 bg-black10 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-primary100 transition-all duration-300"
-                    style={{
-                      width: `${(current / total) * 100}%`,
-                    }}
-                  />
-                </div>
                 {status !== 2 && (
                   <div className="row gap-1.5 mt-1">
                     <span className="text-xs text-black70">Jatuh Tempo:</span>
@@ -247,8 +239,8 @@ const BookingDetails = () => {
                       pendingStatuses.includes(status) && isTransactionPending
                         ? "Lanjutkan Pembayaran"
                         : billStatuses.includes(status)
-                        ? "Bayar Tagihan"
-                        : "Beli Kredit harian"
+                          ? "Bayar Tagihan"
+                          : "Beli Kredit harian"
                     }
                     iconRight={FaChevronRight}
                     loading={loadingPay}
@@ -269,7 +261,7 @@ const BookingDetails = () => {
 
                         <span className="text-blackBold font-semibold">{`Rp${rupiah(
                           (data?.OverdueCount || 0) *
-                            (dataDayCredit?.Price || 1)
+                            (dataDayCredit?.Price || 1),
                         )}`}</span>
                       </>
                     )}
@@ -280,21 +272,30 @@ const BookingDetails = () => {
             <Container className="mt-2">
               <div className="row gap-4 ">
                 <div className="flex-1 flex flex-col gap-1">
-                  <p className="text-blackBold font-semibold">
-                    {data?.Vehicle?.VehicleModel?.ModelName || "-"}
-
-                    {(status === 3 ||
-                      status === 4 ||
-                      status === 5 ||
-                      status === 6 ||
-                      status === 7) && (
-                      <span className="text-black70 font-semibold">{` (${
-                        data?.LicensePlate || "-"
-                      })`}</span>
+                  <div className="row gap-2">
+                    {color?.ImageURL && (
+                      <img
+                        src={color?.ImageURL}
+                        alt="logo"
+                        className="w-6 h-auto"
+                      />
                     )}
-                  </p>
+                    <p className="text-blackBold font-semibold">
+                      {data?.Vehicle?.VehicleModel?.ModelName || "-"}
 
-                  <span className="text-black70 text-xs">{`${dataVehicleModel?.BatteryCapacity}W ${dataVehicleModel?.Volt}V ${dataVehicleModel?.Ampere}Ah (jarak ${dataVehicleModel?.Range}km)`}</span>
+                      {(status === 3 ||
+                        status === 4 ||
+                        status === 5 ||
+                        status === 6 ||
+                        status === 7) && (
+                        <span className="text-black70 font-semibold">{` (${
+                          data?.LicensePlate || "-"
+                        })`}</span>
+                      )}
+                    </p>
+                  </div>
+
+                  <span className="text-black70 text-xs">{`${dataVehicleModel?.Volt}V ${dataVehicleModel?.Ampere}Ah (estimasi ${dataVehicleModel?.Range}km)`}</span>
 
                   {status !== 2 && status !== 8 && status !== 10 && (
                     <span
@@ -409,7 +410,7 @@ const BookingDetails = () => {
                     onClick={() =>
                       openGoogleMaps(
                         dataStation?.Location?.Latitude || 0,
-                        dataStation?.Location?.Longitude || 0
+                        dataStation?.Location?.Longitude || 0,
                       )
                     }
                     className="w-16 h-16 rounded-sm cursor-pointer"
@@ -491,22 +492,6 @@ const BookingDetails = () => {
                 />
 
                 <BetweenText
-                  labelLeft="Cicilan"
-                  labelRight={`Rp${rupiah(dataDayCredit?.Price || 0)}/hari`}
-                  classNameLabelRight="font-semibold"
-                  className="p-3 rounded-t bg-baseLightGray"
-                />
-                <BetweenText
-                  labelLeft="Total Pembayaran"
-                  labelRight={`(Rp${rupiah(
-                    (dataDayCredit?.Price || 0) * (data?.Payment || 0)
-                  )}) ${
-                    (dataDayCredit?.DayCount || 0) * (data?.Payment || 0)
-                  } hari`}
-                  classNameLabelRight="font-semibold"
-                  className="p-3 "
-                />
-                <BetweenText
                   labelLeft="Deposit"
                   labelRight={`Rp${rupiah(data?.Deposit || 0)}`}
                   classNameLabelRight="font-semibold"
@@ -514,14 +499,14 @@ const BookingDetails = () => {
                     status === 3 && "rounded-b"
                   }`}
                 />
+
                 <BetweenText
-                  labelLeft="Perkiraan Selesai"
-                  labelRight={moments(data?.TargetFinishDate).format(
-                    "DD MMMM YYYY"
-                  )}
+                  labelLeft="Cicilan"
+                  labelRight={`Rp${rupiah(dataDayCredit?.Price || 0)}/hari`}
                   classNameLabelRight="font-semibold"
-                  className="p-3 "
+                  className="p-3"
                 />
+
                 <BetweenText
                   labelLeft="Libur Pembayaran"
                   labelRight={`Setiap ${
@@ -536,7 +521,7 @@ const BookingDetails = () => {
                     status !== 6 && status !== 7 && "rounded-b"
                   }`}
                 />
-                {status !== 6 && status !== 7 && (
+                {status !== 6 && (
                   <BetweenText
                     labelLeft="Progres"
                     labelRight={`${current}/${total}`}

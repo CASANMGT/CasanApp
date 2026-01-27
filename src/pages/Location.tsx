@@ -21,13 +21,6 @@ import { AppDispatch, RootState } from "../store";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-type ResponseProps = {
-  status: string;
-  message: string;
-  data: ChargingStation[];
-  meta: MetaResponseProps;
-};
-
 const Location = () => {
   const navigate: NavigateFunction = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -39,7 +32,7 @@ const Location = () => {
 
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingLocation, setLoadingLocation] = useState(false);
-  const [data, setData] = useState<ResponseProps>();
+  const [data, setData] = useState<ChargingStation[]>();
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
   const [centerLocation, setCenterLocation] = useState<LatLng>([
     -6.208763, 106.845599,
@@ -69,7 +62,10 @@ const Location = () => {
         params: body,
       });
 
-      setData(res);
+      const filter: ChargingStation[] =
+        res?.data.filter((e: ChargingStation) => e?.IsVisibleToUser) ?? [];
+
+      setData(filter);
     } catch (error) {
     } finally {
       setLoading(false);
@@ -90,7 +86,7 @@ const Location = () => {
     let brands: string = "";
     let total = filtered?.length ?? 0;
     const dataFilter = ChargeBrandOption.filter((e) =>
-      JSON.parse(filterParams).includes(Number(e?.value))
+      JSON.parse(filterParams).includes(Number(e?.value)),
     );
 
     if (dataFilter?.length) brands = dataFilter?.map((e) => e?.name).join(", ");
@@ -109,13 +105,13 @@ const Location = () => {
       encodeURIComponent(
         `Klik link untuk melihat stasiun charging ${
           brands ? `${brands} ` : ""
-        }(${total} stasiun) ${urlDevice}`
+        }(${total} stasiun) ${urlDevice}`,
       );
 
     window.open(url, "_blank");
   };
 
-  const filtered = data?.data?.filter((e) => e?.Devices?.length);
+  const filtered = data?.filter((e) => e?.Devices?.length);
 
   return (
     <div className="container-screen relative">
@@ -158,7 +154,7 @@ const Location = () => {
           {/* SHARE */}
           <button
             onClick={onShare}
-            className="absolute right-4 top-14 px-4 py-2 bg-white rounded-full row gap-2 font-medium text-blackBold"
+            className="absolute right-4 top-16 px-4 py-2 bg-white rounded-full row gap-2 font-medium text-blackBold"
           >
             <LuShare size={16} />
             Bagikan Peta
@@ -183,7 +179,7 @@ const Location = () => {
           filter={JSON.parse(filterParams)}
           onDismiss={() =>
             dispatch(
-              setFromGlobal({ type: "openChargingStation", value: false })
+              setFromGlobal({ type: "openChargingStation", value: false }),
             )
           }
         />

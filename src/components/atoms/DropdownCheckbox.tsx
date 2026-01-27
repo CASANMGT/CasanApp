@@ -64,7 +64,7 @@ const DropdownCheckbox: React.FC<Props> = ({
       {/* Dropdown Button */}
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className={`dropdown-button ${isIconOnly && "!aspect-square !p-2"}`}
+        className={`dropdown-button ${isIconOnly && "!aspect-square !h-10 !center-x !rounded-full"}`}
       >
         {!isIconOnly && (
           <>
@@ -76,7 +76,7 @@ const DropdownCheckbox: React.FC<Props> = ({
           </>
         )}
 
-        <TbFilter size={16} className="text-primary100" />
+        <TbFilter size={20} className="text-primary100" />
       </div>
 
       {/* Dropdown Menu */}
@@ -93,7 +93,7 @@ const DropdownCheckbox: React.FC<Props> = ({
             return (
               <div
                 key={index}
-                className="row gap-2 p-3 rounded hover:bg-black10 "
+                className="row gap-2 p-4 rounded hover:bg-black10 "
               >
                 {isShowIcon && <Icon size={20} />}
 
