@@ -65,7 +65,7 @@ const SearchStation = () => {
 
 
   return (
-    <div className="w-[480px] relative min-h-screen bg-[linear-gradient(225deg,_#BAE6E9_10%,_#FFFFFF_50%,_#FAF2C0_100%)]">
+    <div className="container-screen relative min-h-screen bg-[linear-gradient(225deg,_#BAE6E9_10%,_#FFFFFF_50%,_#FAF2C0_100%)] overflow-hidden">
       {/* SEARCH */}
       <div className="row gap-4 p-4">
         <div
