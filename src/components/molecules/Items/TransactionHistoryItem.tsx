@@ -16,10 +16,11 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
   const dataBalance: Balance = data;
   const isTransaction = cloneData?.Transaction?.ID ? true : false;
 
+  const status = dataBalance?.Status;
   const details: { condition: string; color: string; label: string } =
     getDetailsByStatus(
-      isTransaction ? cloneData?.Transaction?.Status : dataBalance?.Status,
-      isTransaction ? cloneData?.Transaction?.Type : undefined
+      isTransaction ? cloneData?.Transaction?.Status : status,
+      isTransaction ? cloneData?.Transaction?.Type : undefined,
     );
 
   return (
@@ -28,14 +29,14 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
         <div className="row gap-2">
           <div
             className={`w-9 h-9 center rounded-full bg-${
-              dataBalance?.Status === 3 || dataBalance?.Status === 4
+              status === 3 || status === 4 || status === 7
                 ? "lightRed"
                 : "primary10"
             }`}
           >
-            {dataBalance?.Status === 1 || dataBalance?.Status === 2 ? (
+            {status === 1 || status === 2 ? (
               <IcMoneyReceive />
-            ) : dataBalance?.Status === 3 || dataBalance?.Status === 4 ? (
+            ) : status === 3 || status === 4 || status === 7 ? (
               <IcMoneySend />
             ) : (
               <IcFuel className="text-primary100" />
@@ -58,7 +59,7 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
                 {moments(
                   cloneData?.Session?.StartChargingTime ||
                     cloneData?.Transaction?.CreatedAt ||
-                    dataBalance?.CreatedAt
+                    dataBalance?.CreatedAt,
                 ).format("DD MMM YYYY HH:mm")}
               </p>
               {isTransaction && cloneData?.Transaction?.Type !== 1 && (
@@ -79,12 +80,12 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
           Math.abs(dataBalance?.Amount) > 0
             ? isTransaction
               ? ""
-              : dataBalance?.Status === 1 || dataBalance?.Status === 2
-              ? "+"
-              : "-"
+              : status === 1 || status === 2
+                ? "+"
+                : "-"
             : ""
         }Rp${rupiah(
-          cloneData?.Transaction?.DueAmount || Math.abs(dataBalance?.Amount)
+          cloneData?.Transaction?.DueAmount || Math.abs(dataBalance?.Amount),
         )}`}</p>
       </div>
 
@@ -123,6 +124,12 @@ const getDetailsByStatus = (status: number, type?: number) => {
       condition = "Expired";
       color = "red";
       label = "Penarikan Saldo";
+      break;
+
+    case 7:
+      condition = "Expired";
+      color = "red";
+      label = "Potong Saldo";
       break;
 
     default:
