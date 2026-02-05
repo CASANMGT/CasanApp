@@ -2,7 +2,11 @@ import { useEffect } from "react";
 import { FaChevronRight } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { IcBike2, ILOrderEmpty } from "../../assets";
+import {
+  IcCartGreen,
+  IcMotorcycleGreen,
+  ILOrderEmpty
+} from "../../assets";
 import { EmptyList, LoadingPage, OrderCard } from "../../components";
 import { fetchOnGoingSessionList } from "../../features";
 import { AppDispatch, RootState } from "../../store";
@@ -12,7 +16,7 @@ const OngoingOrder = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const onGoingSessionList = useSelector(
-    (state: RootState) => state.onGoingSessionList
+    (state: RootState) => state.onGoingSessionList,
   );
 
   useEffect(() => {
@@ -53,17 +57,17 @@ const OngoingOrder = () => {
       color="primary100"
     >
       <div className="mb-[100px]">
-        <div
-          onClick={() => navigate("/rental-history")}
-          className="row gap-2 mx-4 mt-6 rounded-lg bg-gradient-to-b from-[#2DBA9D] to-[#327478] px-4 py-3 cursor-pointer"
-        >
-          <IcBike2 />
-
-          <span className="flex-1 text-white text-base font-medium">
-            Riwayat Sewa
-          </span>
-
-          <FaChevronRight className="text-white" />
+        <div className="row gap-2.5 px-4 pt-4">
+          <Card
+            icon={IcMotorcycleGreen}
+            name="Riwayat Sewa"
+            onClick={() => navigate("/rental-history")}
+          />
+          <Card
+            icon={IcCartGreen}
+            name="Riwayat RTO"
+            onClick={() => navigate("/rto-history")}
+          />
         </div>
 
         {onGoingSessionList?.data?.data &&
@@ -90,3 +94,26 @@ const OngoingOrder = () => {
 };
 
 export default OngoingOrder;
+
+interface CardProps {
+  icon: any;
+  name: string;
+  onClick: () => void;
+}
+
+export const Card: React.FC<CardProps> = ({ icon, name, onClick }) => {
+  const Icon = icon;
+  return (
+    <div
+      onClick={onClick}
+      className="flex-1 row gap-2 bg-gradient-to-b from-[#2DBA9D] to-[#327478] p-2 rounded-lg cursor-pointer"
+    >
+      <div className="w-12 h-auto aspect-square rounded-full bg-[#e8f7f8] center">
+        <Icon />
+      </div>
+
+      <span className="font-medium text-white">{name}</span>
+      <FaChevronRight size={16} className="text-white" />
+    </div>
+  );
+};

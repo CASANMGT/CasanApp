@@ -12,6 +12,8 @@ import {
 import { openWhatsApp } from "../../helpers";
 import { CUSTOMER_SERVICES } from "../../common";
 import { FiInfo } from "react-icons/fi";
+import { FaHeadphonesAlt } from "react-icons/fa";
+import { FaHeadphones } from "react-icons/fa6";
 
 interface HeaderProps {
   type?:
@@ -87,7 +89,9 @@ const Header: React.FC<HeaderProps> = ({
             }}
             className="relative w-10 h-10 rounded-full center cursor-pointer bg-baseLightGray/70"
           >
-            {type === "charging" ? (
+            {type === "booking" ? (
+              <FaHeadphones />
+            ) : type === "charging" ? (
               <IcCustomerService />
             ) : (
               <>
@@ -103,15 +107,13 @@ const Header: React.FC<HeaderProps> = ({
                         : "opacity-0 translate-y-2 invisible"
                     }`}
                   >
-                    {type !== "booking" && (
-                      <div onClick={onPress} className="row gap-2">
-                        <IcClose className="text-red" />
+                    <div onClick={onPress} className="row gap-2">
+                      <IcClose className="text-red" />
 
-                        <span className="text-red whitespace-nowrap">
-                          Batalkan Sesi
-                        </span>
-                      </div>
-                    )}
+                      <span className="text-red whitespace-nowrap">
+                        Batalkan Sesi
+                      </span>
+                    </div>
 
                     <div
                       className="row gap-2"

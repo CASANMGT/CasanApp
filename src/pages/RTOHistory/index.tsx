@@ -1,20 +1,20 @@
 import { FaArrowLeft } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { TabSwipe } from "../../components";
-import CompleteRental from "./CompleteRental";
-import OngoingRental from "./OngoingRental";
-import ScheduleRental from "./ScheduleRental";
+import CompleteRTO from "./CompleteRTO";
+import OngoingRTO from "./OngoingRTO";
+import ScheduleRTO from "./ScheduleRTO";
 
 const tabs = [
-  { label: "Berlangsung", content: <OngoingRental /> },
-  { label: "Jadwal", content: <ScheduleRental /> },
+  { label: "Berlangsung", content: <OngoingRTO /> },
+  { label: "Jadwal", content: <ScheduleRTO /> },
   {
     label: "Selesai",
-    content: <CompleteRental />,
+    content: <CompleteRTO />,
   },
 ];
 
-const RentalHistory = () => {
+const RTOHistory = () => {
   const navigate = useNavigate();
 
   return (
@@ -24,9 +24,9 @@ const RentalHistory = () => {
         <button onClick={() => navigate(-1)} className="w-6 h-6 center ">
           <FaArrowLeft className="text-white" />
         </button>
-
+        
         <h4 className="flex-1 text-center text-base text-white font-semibold">
-          Riwayat Sewa
+          Riwayat RTO
         </h4>
 
         <div className="w-6"></div>
@@ -37,4 +37,4 @@ const RentalHistory = () => {
   );
 };
 
-export default RentalHistory;
+export default RTOHistory;

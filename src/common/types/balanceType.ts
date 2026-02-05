@@ -1,4 +1,3 @@
-
 export type Balance = {
   ID: number;
   UserID: number;
@@ -8,4 +7,5 @@ export type Balance = {
   SeasonID: number | null;
   CreatedAt: string;
   UpdatedAt: string;
+  Notes: string;
 };

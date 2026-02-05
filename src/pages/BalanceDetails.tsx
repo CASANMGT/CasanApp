@@ -94,6 +94,14 @@ const BalanceDetails = () => {
             classNameLabelRight="text-black100 font-medium"
           />
 
+          <BetweenText
+            type="medium-content"
+            labelLeft="Alasan"
+            labelRight={data?.Notes || "-"}
+            classNameLabelRight="font-medium text-black100"
+            className="mt-2"
+          />
+
           <Separator className="my-6 bg-black10" />
 
           <Button type="secondary" label="Lihat Transaksi" onClick={onNext} />

@@ -1,12 +1,10 @@
-import { FaRegCheckCircle } from "react-icons/fa";
-import { FaRegCalendarCheck, FaRegCalendarMinus } from "react-icons/fa6";
-import { PiWarningCircle } from "react-icons/pi";
+import { FaRegCalendarCheck } from "react-icons/fa6";
 import { IcBike, IcBike2 } from "../../assets";
 import { Separator } from "../../components";
 import { moments } from "../../helpers";
 
 interface Props {
-  data: RTOProps;
+  data: RentalProps;
   position: number;
   onClick: () => void;
 }
@@ -19,33 +17,13 @@ const CardRental: React.FC<Props> = ({ data, position, onClick }) => {
   let daysLeft: number = 0;
 
   if (status === 3 || status === 4) {
-    daysLeft = moments(data?.TargetFinishDate).diff(moments(), "days");
+    daysLeft = moments(data?.StartDate)
+      .add(data?.DurationDays, "days")
+      .diff(moments(), "days");
   }
 
   const formatted = getFormatted(status);
-  const isShowRTO =
-    status !== 2 &&
-    status !== 4 &&
-    status !== 6 &&
-    status !== 7 &&
-    status !== 9 &&
-    status !== 10
-      ? true
-      : false;
-
-  let dataHoliday: RTOHolidaysProps | undefined = undefined;
-
-  if (data?.RTOHolidays && data?.RTOHolidays.length) {
-    const today = new Date();
-
-    dataHoliday =
-      data?.RTOHolidays.filter((item) => {
-        const start = new Date(item.StartDate);
-        const end = new Date(item.EndDate);
-
-        return today >= start && today <= end;
-      })[0] ?? undefined;
-  }
+  const isShowRTO: boolean = status === 3;
 
   return (
     <div
@@ -68,11 +46,11 @@ const CardRental: React.FC<Props> = ({ data, position, onClick }) => {
         )}
 
         <div className="flex flex-col">
-          <span className="font-medium">{data?.Admin?.Name || "-"}</span>
+          <span className="font-medium">{`${data?.Admin?.Name || "-"} Seri ${vehicleModel?.ModelName || "-"}`}</span>
           <span className="text-xs text-black90">
             {`${vehicleModel.BatteryCapacity || 0}W ${
               vehicleModel?.Volt || 0
-            }V ${vehicleModel?.Ampere || 0}Ah (jarak ${
+            }V ${vehicleModel?.Ampere || 0}Ah (estimasi ${
               vehicleModel?.Range || 0
             }km)`}
           </span>
@@ -82,21 +60,9 @@ const CardRental: React.FC<Props> = ({ data, position, onClick }) => {
       <Separator className="my-3" />
 
       <div className="row">
-        {status === 1 ||
-        status === 2 ||
-        status === 6 ||
-        status === 8 ||
-        status === 9 ||
-        status === 10 ||
-        status === 11 ? (
-          <div
-            className={`rounded-full w-9 h-9 center bg-${
-              status === 1 || status === 2 || status === 11
-                ? "lightGreen"
-                : "black10"
-            }`}
-          >
-            {status === 1 || status === 2 || status === 11 ? (
+        {status === 2 || status === 10 ? (
+          <div className="rounded-full w-9 h-9 center bg-black10">
+            {status === 2 ? (
               <FaRegCalendarCheck className="text-primary100" />
             ) : (
               <IcBike className="text-black50" />
@@ -108,34 +74,23 @@ const CardRental: React.FC<Props> = ({ data, position, onClick }) => {
               status == 3 ? "primary10" : "lightRed"
             }`}
             style={{
-              backgroundColor:
-                status === 3 ? "#E8F7F8" : status === 5 ? "#FDFBEA" : "#FCEEF0",
+              backgroundColor: status === 3 ? "#E8F7F8" : "#FCEEF0",
             }}
           >
             <span
               className={`text-[10px] font-medium text-${
-                status === 3 || status === 5 ? "black100" : "red"
+                status === 3 ? "black100" : "red"
               }`}
             >
-              {status === 3 || status === 5 ? "Tesisa" : "Tenggat"}
+              {status === 3 ? "Tesisa" : "Tenggat"}
             </span>
             <span
               className={`font-semibold `}
               style={{
-                color:
-                  status === 3
-                    ? "#2dba9d"
-                    : status === 5
-                    ? "#EDD22D"
-                    : "#DD2E44",
+                color: status === 3 ? "#2dba9d" : "#DD2E44",
               }}
             >
-              {status === 5
-                ? dataHoliday?.TotalDay || 0
-                : daysLeft > 0
-                ? daysLeft
-                : 0}
-              H
+              {daysLeft}H
             </span>
           </div>
         )}
@@ -144,55 +99,29 @@ const CardRental: React.FC<Props> = ({ data, position, onClick }) => {
           <div className="row gap-1">
             {isShowRTO && (
               <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-b from-[#2DBA9D] to-[#327478]">
-                RTO
+                SEWA
               </span>
             )}
             <span className={`font-medium text-${formatted.color}`}>
               {formatted?.label}
             </span>
-
-            {status === 2 && (
-              <FaRegCalendarMinus size={14} className="text-primary100" />
-            )}
-            {status === 4 && <PiWarningCircle size={14} className="text-red" />}
-            {(status === 1 || status === 6 || status === 11) && (
-              <FaRegCheckCircle size={14} className="text-primary100" />
-            )}
           </div>
 
-          {status != 1 && status != 8 && status != 9 && status !== 11 && (
+          {(status == 2 || status == 10) && (
             <div className="row gap-1 font-medium">
-              {status !== 2 && status !== 5 && status !== 10 && (
-                <>
-                  <span className="text-xs">
-                    {moments(data?.StartDate).format("DD MMMM YYYY")}
-                  </span>
-                  <span>-</span>
-                </>
-              )}
-              <span
-                className={`text-xs text-${status === 4 ? "red" : "black100"}`}
-              >
-                {`${status === 5 ? `Libur Sampai ` : ""}${moments(
-                  status === 5 ? dataHoliday?.EndDate : data?.TargetFinishDate
-                ).format("DD MMMM YYYY")}`}
+              <span className="text-xs text-black100">
+                {moments(
+                  status === 10 ? data?.ReturnDate : data?.StartDate,
+                ).format("DD MMMM YYYY")}
               </span>
-              <span
-                className={`text-xs font-normal text-${
-                  status === 4 ? "red" : "black70"
-                }`}
-              >{`${
-                status === 5
-                  ? moments(dataHoliday?.EndDate).format("HH:mm")
-                  : data?.CutOffTime
-              } WIB`}</span>
+              <span className="text-xs font-normal text-black70">{`${status === 10 ? moments(data?.ReturnDate).format("HH:mm") : data?.BookTime} WIB`}</span>
             </div>
           )}
         </div>
       </div>
 
       <div className="absolute top-0 right-0 rounded-tr-lg rounded-bl-lg px-3 py-1 text-xs font-medium text-white bg-gradient-to-b from-[#2DBA9D] to-[#327478]">
-        RTO
+        SEWA
       </div>
     </div>
   );
@@ -207,10 +136,6 @@ const getFormatted = (status: number) => {
   let bgColor: string = "lightRed";
 
   switch (status) {
-    case 1:
-      label = "Terverifikasi";
-      break;
-
     case 2:
       label = "Booking Telah Dijadwalkan";
       break;
@@ -225,34 +150,8 @@ const getFormatted = (status: number) => {
       label = "Tenggat Waktu";
       break;
 
-    case 5:
-      label = "Sedang Libur";
-      break;
-
-    case 6:
-      label = "Selesai";
-      break;
-
-    case 7:
-      label = "Dihentikan Sementara";
-      color = "red";
-      break;
-
-    case 8:
-      label = "Tidak Selesai";
-      break;
-
-    case 9:
-      label = "Ditolak";
-      color = "red";
-      break;
-
     case 10:
       label = "Dikembalikan";
-      break;
-
-    case 11:
-      label = "Disetujui";
       break;
 
     default:

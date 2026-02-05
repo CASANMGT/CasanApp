@@ -239,7 +239,7 @@ const Home = () => {
         {dataRTO?.ID && (
           <StatusRTO
             data={dataRTO}
-            onClick={() => navigate(`/booking-details/${dataRTO?.ID}`)}
+            onClick={() => navigate(`/rto-details/${dataRTO?.ID}`)}
           />
         )}
 
