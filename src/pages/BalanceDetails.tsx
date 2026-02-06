@@ -102,7 +102,7 @@ const BalanceDetails = () => {
             className="mt-2"
           />
 
-          {data?.Status != 7 && (
+          {data?.Status != 7 && data?.SeasonID && (
             <>
               <Separator className="my-6 bg-black10" />
               <Button
