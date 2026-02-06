@@ -102,9 +102,16 @@ const BalanceDetails = () => {
             className="mt-2"
           />
 
-          <Separator className="my-6 bg-black10" />
-
-          <Button type="secondary" label="Lihat Transaksi" onClick={onNext} />
+          {data?.Status != 7 && (
+            <>
+              <Separator className="my-6 bg-black10" />
+              <Button
+                type="secondary"
+                label="Lihat Transaksi"
+                onClick={onNext}
+              />
+            </>
+          )}
         </div>
       </LoadingPage>
     </div>
