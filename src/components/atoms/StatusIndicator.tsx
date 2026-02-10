@@ -32,10 +32,10 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
 
   if (priceType === 2) {
     totalKwh = Number(
-      ((data?.PaidKWH || 0) - (data?.TotalKwhUsed || 0)).toFixed(2)
+      ((data?.PaidKWH || 0) - (data?.TotalKwhUsed || 0)).toFixed(2),
     );
     chargingPercentage = Number(
-      (((data?.TotalKwhUsed || 0) / (data?.PaidKWH || 0)) * 100).toFixed(0)
+      (((data?.TotalKwhUsed || 0) / (data?.PaidKWH || 0)) * 100).toFixed(0),
     );
   }
 
@@ -64,12 +64,21 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
                 />
               )
             ) : (
-              <p className="text-[34px] font-semibold">
-                {type === 2
-                  ? priceType === 2
-                    ? `${totalKwh}kWh`
-                    : formatTime(duration)
-                  : "Persiapan..."}
+              <p className="font-semibold text-3xl text-black100">
+                {type === 2 ? (
+                  priceType === 2 ? (
+                    <>
+                      {data?.TotalKwhUsed.toFixed(2)}/
+                      <span className="text-black70 text-3xl">
+                        {data?.PaidKWH.toFixed(2)}kWh
+                      </span>
+                    </>
+                  ) : (
+                    formatTime(duration)
+                  )
+                ) : (
+                  "Persiapan..."
+                )}
               </p>
             )}
 

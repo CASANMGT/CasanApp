@@ -56,14 +56,17 @@ const DropdownCheckbox: React.FC<Props> = ({
 
   const isSelected = useMemo(
     () => (selected?.length ? true : false),
-    [selected]
+    [selected],
   );
 
   return (
     <div ref={dropdownRef} className={`relative ${className}`}>
       {/* Dropdown Button */}
-      <div
-        onClick={() => setIsOpen(!isOpen)}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsOpen(!isOpen);
+        }}
         className={`dropdown-button ${isIconOnly && "!aspect-square !h-10 !center-x !rounded-full"}`}
       >
         {!isIconOnly && (
@@ -77,7 +80,7 @@ const DropdownCheckbox: React.FC<Props> = ({
         )}
 
         <TbFilter size={20} className="text-primary100" />
-      </div>
+      </button>
 
       {/* Dropdown Menu */}
       <div

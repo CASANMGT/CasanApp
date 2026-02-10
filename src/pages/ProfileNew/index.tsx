@@ -29,6 +29,7 @@ import { fetchMilestoneList, fetchMyUser } from "../../features";
 import { formatPhoneNumber, openWhatsApp, rupiah } from "../../helpers";
 import { AppDispatch, RootState } from "../../store";
 import MilestoneView from "./MilestoneView";
+import { FiInfo } from "react-icons/fi";
 
 const ProfileNew = () => {
   const navigate = useNavigate();
@@ -222,6 +223,14 @@ const ProfileNew = () => {
           label="Pengaturan"
           onClick={onMyVehicle}
         /> */}
+
+          <Separator className="my-4" />
+
+          <MenuItem
+            icon={FiInfo}
+            label="Tentan Kami"
+            onClick={() => window.open("https://about.casan.id/", "_blank")}
+          />
         </div>
 
         <div
