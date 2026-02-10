@@ -217,11 +217,11 @@ const Home = () => {
       </div>
 
       {/* SEARCH */}
-      <div
-        onClick={() => navigate("/search-station")}
-        className="between-x p-1 rounded-full bg-white flex-1 cursor-pointer mx-4 mb-4 z-20"
-      >
-        <div className="row gap-2.5 px-3">
+      <div className="between-x p-1 rounded-full bg-white flex-1 cursor-pointer mx-4 mb-4 z-20">
+        <div
+          onClick={() => navigate("/search-station")}
+          className="row gap-2.5 px-3"
+        >
           <CiSearch size={20} className="text-black70" />
           <span className="text-black70 text-xs">Cari lokasi pengecasan</span>
         </div>

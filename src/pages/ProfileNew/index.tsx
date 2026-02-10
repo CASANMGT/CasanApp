@@ -228,7 +228,7 @@ const ProfileNew = () => {
 
           <MenuItem
             icon={FiInfo}
-            label="Tentan Kami"
+            label="Tentang Kami"
             onClick={() => window.open("https://about.casan.id/", "_blank")}
           />
         </div>
