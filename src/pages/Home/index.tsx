@@ -18,7 +18,6 @@ import { Api } from "../../services";
 import { getCurrentLocation } from "../../services/ApiAddress";
 import { AppDispatch, RootState } from "../../store";
 import StatusRTO from "./StatusRTO";
-import { openURL } from "../../helpers";
 
 type ResponseProps = {
   status: string;
@@ -220,7 +219,7 @@ const Home = () => {
       <div className="between-x p-1 rounded-full bg-white flex-1 cursor-pointer mx-4 mb-4 z-20">
         <div
           onClick={() => navigate("/search-station")}
-          className="row gap-2.5 px-3"
+          className="row gap-2.5 px-3 flex-1 h-full"
         >
           <CiSearch size={20} className="text-black70" />
           <span className="text-black70 text-xs">Cari lokasi pengecasan</span>
