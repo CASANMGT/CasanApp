@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaLeaf } from "react-icons/fa6";
+import { FiInfo } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -29,7 +30,6 @@ import { fetchMilestoneList, fetchMyUser } from "../../features";
 import { formatPhoneNumber, openWhatsApp, rupiah } from "../../helpers";
 import { AppDispatch, RootState } from "../../store";
 import MilestoneView from "./MilestoneView";
-import { FiInfo } from "react-icons/fi";
 
 const ProfileNew = () => {
   const navigate = useNavigate();
@@ -215,14 +215,6 @@ const ProfileNew = () => {
             label="Customer Support"
             onClick={() => openWhatsApp(CUSTOMER_SERVICES)}
           />
-
-          {/* <Separator className="my-4" />
-
-        <MenuItem
-          icon={IcSettingBlack}
-          label="Pengaturan"
-          onClick={onMyVehicle}
-        /> */}
 
           <Separator className="my-4" />
 
