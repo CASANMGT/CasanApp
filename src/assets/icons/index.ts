@@ -54,6 +54,7 @@ import IcLinkAja from "./link-aja.svg?react";
 import IcLocationActive from "./location-active.svg?react";
 import IcLocationInactive from "./location-inactive.svg?react";
 import IcLogoSymbol from "./logo-symbol.svg?react";
+import IcLogo from "./logo.svg?react";
 import IcLogout from "./logout.svg?react";
 import IcMakaCircle from "./maka-circle.svg?react";
 import IcMakaLabel from "./maka-label.svg?react";
@@ -173,6 +174,7 @@ export {
   IcLinkAja,
   IcLocationActive,
   IcLocationInactive,
+  IcLogo,
   IcLogoSymbol,
   IcLogout,
   IcMakaCircle,

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaLeaf } from "react-icons/fa6";
+import { FiInfo } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -215,13 +216,13 @@ const ProfileNew = () => {
             onClick={() => openWhatsApp(CUSTOMER_SERVICES)}
           />
 
-          {/* <Separator className="my-4" />
+          <Separator className="my-4" />
 
-        <MenuItem
-          icon={IcSettingBlack}
-          label="Pengaturan"
-          onClick={onMyVehicle}
-        /> */}
+          <MenuItem
+            icon={FiInfo}
+            label="Tentang Kami"
+            onClick={() => window.open("https://about.casan.id/", "_blank")}
+          />
         </div>
 
         <div

@@ -14,7 +14,12 @@ import { WiTime4 } from "react-icons/wi";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { ILNoImage, ILPin } from "../../assets";
-import { DaysOfWeek, ERROR_MESSAGE, FeeSettingsProps } from "../../common";
+import {
+  CUSTOMER_SERVICES,
+  DaysOfWeek,
+  ERROR_MESSAGE,
+  FeeSettingsProps,
+} from "../../common";
 import {
   BetweenText,
   Button,
@@ -36,7 +41,7 @@ import Status from "./Status";
 const pendingStatuses = [2, 3, 4, 5, 7];
 const billStatuses = [4, 7];
 
-const BookingDetails = () => {
+const RTORTOBookingDetails = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -155,7 +160,7 @@ const BookingDetails = () => {
         type="booking"
         title="Detail Booking"
         onDismiss={() => navigate(-1)}
-        onPress={() => {}}
+        onPress={() => openWhatsApp(CUSTOMER_SERVICES)}
       />
 
       <LoadingPage loading={loading}>
@@ -618,4 +623,4 @@ const BookingDetails = () => {
   );
 };
 
-export default BookingDetails;
+export default RTORTOBookingDetails;

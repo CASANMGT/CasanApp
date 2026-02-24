@@ -140,7 +140,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
     <>
       <div
         onClick={onClick}
-        className="mb-3 shadow-md rounded-lg cursor-pointer"
+        className="mb-3 shadow-md rounded-lg cursor-pointer bg-white"
       >
         <div className="p-3 pt-6 bg-chargingLocation bg-center rounded-t-lg relative ">
           <div

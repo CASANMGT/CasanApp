@@ -8,7 +8,7 @@ import { useAuth } from "../../context/AuthContext";
 import { Api } from "../../services";
 import CardRental from "./CardRental";
 
-interface MetaResponseRTOProps {
+interface MetaResponseRentalProps {
   Approved: number;
   Finished: number;
   Holiday: number;
@@ -29,11 +29,11 @@ interface MetaResponseRTOProps {
 interface ResponseProps {
   status: string;
   message: string;
-  data: RTOProps[];
-  meta: MetaResponseRTOProps;
+  data: RentalProps[];
+  meta: MetaResponseRentalProps;
 }
 
-const CompleteRental = () => {
+const CompleteRTO = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -49,18 +49,23 @@ const CompleteRental = () => {
   const getData = async (p?: number, l?: number, q?: string) => {
     try {
       const res = await Api.get({
-        url: "rtos",
-        params: { statuses: "6,9,10", page: p || page, limit: l || limit, q },
+        url: "rentals",
+        params: {
+          statuses: "10",
+          page: p || page,
+          limit: l || limit,
+          q,
+        },
       });
 
       setData(res);
-      setLoading(false);
     } catch (error: any) {
-      setLoading(false);
       if (error?.response?.data?.message === "invalid token") {
         logout();
         navigate("login", { replace: true });
       } else alert(ERROR_MESSAGE);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -68,12 +73,12 @@ const CompleteRental = () => {
     <LoadingPage loading={loading} color="primary100">
       <div className="mb-[100px]">
         {data?.data && data?.data.length ? (
-          data?.data.map((item: RTOProps, index: number) => (
+          data?.data.map((item: RentalProps, index: number) => (
             <CardRental
               key={index}
               data={item}
               position={index}
-              onClick={() => navigate(`/booking-details/${item?.ID}`)}
+              onClick={() => navigate(`/rental-details/${item?.ID}`)}
             />
           ))
         ) : (
@@ -98,4 +103,4 @@ const CompleteRental = () => {
   );
 };
 
-export default CompleteRental;
+export default CompleteRTO;

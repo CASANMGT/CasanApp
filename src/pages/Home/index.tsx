@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CiSearch } from "react-icons/ci";
+import { FiInfo } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { IcLogo } from "../../assets";
 import { ChargeBrandOption, LIMIT_LIST } from "../../common";
 import {
   ChargingLocationCard,
@@ -31,7 +33,7 @@ const Home = () => {
 
   const global = useSelector((state: RootState) => state.global);
   const onGoingSessionList = useSelector(
-    (state: RootState) => state.onGoingSessionList
+    (state: RootState) => state.onGoingSessionList,
   );
 
   const [loading, setLoading] = useState(false);
@@ -63,7 +65,7 @@ const Home = () => {
       {
         root: el,
         threshold: 1,
-      }
+      },
     );
 
     observer.observe(sentinel);
@@ -115,7 +117,7 @@ const Home = () => {
       setData((prev) =>
         page > 1 && prev?.data?.length
           ? { ...prev, data: [...prev.data, ...res.data] }
-          : res
+          : res,
       );
     } catch (error) {
     } finally {
@@ -179,7 +181,7 @@ const Home = () => {
       onGoingSessionList?.data?.data && onGoingSessionList?.data?.data.length
         ? true
         : false,
-    [onGoingSessionList?.data]
+    [onGoingSessionList?.data],
   );
 
   let pList = 16;
@@ -192,14 +194,32 @@ const Home = () => {
     pList += 140 + 16;
   }
 
-
   return (
     <div className="overflow-hidden flex flex-col w-full">
+      {/* BACKGROUND HEADER */}
+      <div
+        className="absolute right-0 left-0 top-0 w-auto h-[260px] rounded-b-2xl z-0"
+        style={{
+          background: `linear-gradient(270deg, #19ACB6, #2DBA9D)`,
+        }}
+      ></div>
+
+      {/* LOGO */}
+      <div className="z-10 between-x m-4 mb-2.5 ">
+        <IcLogo />
+
+        <button
+          onClick={() => window.open("https://about.casan.id/", "_blank")}
+        >
+          <FiInfo size={20} className="text-white" />
+        </button>
+      </div>
+
       {/* SEARCH */}
-      <div className="between-x m-4 gap-4">
+      <div className="between-x p-1 rounded-full bg-white flex-1 cursor-pointer mx-4 mb-4 z-20">
         <div
           onClick={() => navigate("/search-station")}
-          className="row px-3 h-10 rounded-full bg-baseLightGray/70 gap-2.5 flex-1 cursor-pointer"
+          className="row gap-2.5 px-3 flex-1 h-full"
         >
           <CiSearch size={20} className="text-black70" />
           <span className="text-black70 text-xs">Cari lokasi pengecasan</span>
@@ -216,7 +236,7 @@ const Home = () => {
         />
       </div>
 
-      <div className="h-full overflow-y-auto overscroll-contain scrollbar-none transition-all duration-300 px-3 space-y-4">
+      <div className="h-full overflow-y-auto overscroll-contain scrollbar-none transition-all duration-300 px-3 space-y-4 z-10">
         {/* ONGOING */}
         {isShowOngoing && (
           <div className="bg-white rounded-lg p-3 h-[110px]">
@@ -229,7 +249,7 @@ const Home = () => {
                     data={item}
                     onClick={() => navigate(`/charging/${item?.ID}`)}
                   />
-                )
+                ),
               )}
             </div>
           </div>
@@ -239,7 +259,7 @@ const Home = () => {
         {dataRTO?.ID && (
           <StatusRTO
             data={dataRTO}
-            onClick={() => navigate(`/booking-details/${dataRTO?.ID}`)}
+            onClick={() => navigate(`/rto-details/${dataRTO?.ID}`)}
           />
         )}
 
@@ -266,7 +286,7 @@ const Home = () => {
             ))}
         </LoadingPage>
 
-        <div className="h-10"/>
+        <div className="h-10" />
       </div>
 
       {/* MODAL */}
@@ -279,7 +299,7 @@ const Home = () => {
               setFromGlobal({
                 type: "openCarousel",
                 value: false,
-              })
+              }),
             )
           }
         />

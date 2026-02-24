@@ -6,9 +6,9 @@ import { ERROR_MESSAGE } from "../../common";
 import { Button, EmptyList, LoadingPage } from "../../components";
 import { useAuth } from "../../context/AuthContext";
 import { Api } from "../../services";
-import CardRental from "./CardRental";
+import CardRTO from "./CardRTO";
 
-interface MetaResponseRentalProps {
+interface MetaResponseRTOProps {
   Approved: number;
   Finished: number;
   Holiday: number;
@@ -29,11 +29,11 @@ interface MetaResponseRentalProps {
 interface ResponseProps {
   status: string;
   message: string;
-  data: RentalProps[];
-  meta: MetaResponseRentalProps;
+  data: RTOProps[];
+  meta: MetaResponseRTOProps;
 }
 
-const OngoingRental = () => {
+const OngoingRTO = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -49,9 +49,9 @@ const OngoingRental = () => {
   const getData = async (p?: number, l?: number, q?: string) => {
     try {
       const res = await Api.get({
-        url: "rentals",
+        url: "rtos",
         params: {
-          statuses: "3,4",
+          statuses: "3,4,5,7,8",
           page: p || page,
           limit: l || limit,
           q,
@@ -73,12 +73,12 @@ const OngoingRental = () => {
     <LoadingPage loading={loading} color="primary100">
       <div className="mb-[100px]">
         {data?.data && data?.data.length ? (
-          data?.data.map((item: RentalProps, index: number) => (
-            <CardRental
+          data?.data.map((item: RTOProps, index: number) => (
+            <CardRTO
               key={index}
               data={item}
               position={index}
-              onClick={() => navigate(`/rental-details/${item?.ID}`)}
+              onClick={() => navigate(`/rto-details/${item?.ID}`)}
             />
           ))
         ) : (
@@ -103,4 +103,4 @@ const OngoingRental = () => {
   );
 };
 
-export default OngoingRental;
+export default OngoingRTO;

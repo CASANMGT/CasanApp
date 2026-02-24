@@ -88,15 +88,30 @@ const BalanceDetails = () => {
 
           <BetweenText
             labelLeft="Nominal Casan Wallet"
-            labelRight={`Rp${rupiah(data?.Amount)}`}
+            labelRight={`${data?.Amount < 0 ? "-" : ""}Rp${rupiah(Math.abs(data?.Amount))}`}
             className="border-y border-black100 py-2"
             classNameLabelLeft="text-black100"
             classNameLabelRight="text-black100 font-medium"
           />
 
-          <Separator className="my-6 bg-black10" />
+          <BetweenText
+            type="medium-content"
+            labelLeft="Alasan"
+            labelRight={data?.Notes || "-"}
+            classNameLabelRight="font-medium text-black100"
+            className="mt-2"
+          />
 
-          <Button type="secondary" label="Lihat Transaksi" onClick={onNext} />
+          {data?.Status != 7 && data?.SeasonID && (
+            <>
+              <Separator className="my-6 bg-black10" />
+              <Button
+                type="secondary"
+                label="Lihat Transaksi"
+                onClick={onNext}
+              />
+            </>
+          )}
         </div>
       </LoadingPage>
     </div>
@@ -123,6 +138,10 @@ const getLabelType = (status: number, isType?: boolean) => {
 
     case 4:
       value = "Penarikan Selesai";
+      break;
+
+    case 7:
+      value = "Potong Saldo";
       break;
 
     default:
