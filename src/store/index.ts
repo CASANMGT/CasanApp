@@ -24,7 +24,6 @@ import addTransactionReducer from "../features/transactions/addTransactionSlice.
 import transactionListReducer from "../features/transactions/transactionListSlice.ts";
 import checkPinReducer from "../features/users/checkPinSlice.ts";
 import editPinReducer from "../features/users/editPinSlice.ts";
-import editUserReducer from "../features/users/editUserSlice.ts";
 import myUserReducer from "../features/users/myUserSlice.ts";
 import voucherAvailableReducer from "../features/voucher/voucherAvailableSlice.ts";
 import addWithdrawReducer from "../features/withdraw/addWithdrawSlice.ts";
@@ -40,7 +39,6 @@ export const store = configureStore({
 
     // USER
     myUser: myUserReducer,
-    editUser: editUserReducer,
     editPin: editPinReducer,
     checkPin: checkPinReducer,
 

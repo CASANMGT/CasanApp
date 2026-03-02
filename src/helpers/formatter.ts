@@ -36,3 +36,15 @@ export const formatPhoneNumber = (phone: string) => {
 export const formatSpaceNumber = (number: string) => {
   return number.replace(/\d{4}(?=.)/g, "$& ");
 };
+
+export const convertPhoneTo62 = (phone?: string): string => {
+  if (!phone) return "";
+
+  const trimmed = phone.trim();
+
+  if (trimmed.startsWith("+62")) return trimmed;
+  if (trimmed.startsWith("62")) return `+${trimmed}`;
+  if (trimmed.startsWith("0")) return `+62${trimmed.slice(1)}`;
+
+  return `+62${trimmed}`;
+};

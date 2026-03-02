@@ -11,7 +11,7 @@ const SubTitle: React.FC<SubTitleProps> = ({ className, icon, label }) => {
   return (
     <div className={`row gap-3 ${className}`}>
       <div className="w-[30px] h-[30px] rounded-full bg-primary10 center">
-        <Icon />
+        <Icon  className="text-primary100"/>
       </div>
 
       <span className="text-blackBold font-medium">{label}</span>

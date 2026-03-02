@@ -13,7 +13,9 @@ interface InputProps {
     | "numeric"
     | "decimal"
     | undefined;
-  placeholder: string;
+  placeholder?: string;
+  label?: string;
+  labelExtra?: string;
   value: string;
   error?: string;
   autoFocus?: boolean;
@@ -23,6 +25,8 @@ interface InputProps {
 
 const Input: React.FC<InputProps> = ({
   type = "text",
+  label,
+  labelExtra,
   inputMode,
   placeholder,
   autoFocus,
@@ -47,19 +51,38 @@ const Input: React.FC<InputProps> = ({
     onChange(value);
   };
 
+  const isShowLabel = useMemo(() => (label ? true : false), [label]);
+  const isShowLabelExtra = useMemo(
+    () => (labelExtra ? true : false),
+    [labelExtra],
+  );
   const isError = useMemo(() => (error ? true : false), [error]);
 
   return (
     <div className="flex flex-col w-full">
+      {isShowLabel && (
+        <div className="row mb-1 gap-1">
+          <label>{label}</label>
+          {isShowLabelExtra && (
+            <p className="text-black50">({labelExtra})</p>
+          )}
+        </div>
+      )}
+
       <div
-        className={`w-full px-6 border border-baseGray rounded-full flex flex-row gap-2 items-center ${
+        className={`w-full h-12 px-4 border border-black10 rounded-xl shadow flex flex-row gap-2 items-center ${
           isError && "border-red"
-        } ${disabled && "!bg-black10 border-black30"}`}
+        } ${disabled && "!bg-black10"}`}
       >
         {type === "phone" && (
           <>
             <span>+62</span>
-            <div className="w-px h-6 bg-baseGray" />
+            <div
+              className="w-px h-6"
+              style={{
+                backgroundColor: disabled ? "#d9dadd" : "#F5F5F5",
+              }}
+            />
           </>
         )}
 
@@ -71,11 +94,11 @@ const Input: React.FC<InputProps> = ({
           autoFocus={autoFocus}
           disabled={disabled}
           onChange={handleChange}
-          className="h-full w-full px-0 py-3 bg-transparent text-sm text-black100 focus:outline-none  disabled:text-black90 disabled:cursor-not-allowed"
+          className="h-full w-full px-0 py-0 bg-transparent text-sm text-black100 placeholder-black50 focus:outline-none  disabled:text-black90 disabled:cursor-not-allowed"
         />
       </div>
 
-      {isError && <span className="text-xs ml-6 text-red mt-1">{error}</span>}
+      {isError && <span className="text-xs text-red mt-1">{error}</span>}
     </div>
   );
 };
