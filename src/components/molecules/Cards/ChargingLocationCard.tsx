@@ -134,7 +134,19 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
   const formattedBrand = getFormattedBrand(brand || 0);
   const IconBrand = formattedBrand.icon;
 
-  if (!data?.IsVisibleToUser || !data?.Devices?.length) return null;
+  if (!data?.IsVisibleToUser || !data?.Devices?.length)
+    return isLast ? (
+      <Button
+        type="secondary"
+        label="Muat Lainnya"
+        loading={loading}
+        iconRight={IcLineDown}
+        onClick={() => {
+          if (onLoadMore) onLoadMore();
+        }}
+        className="py-4 mb-10"
+      />
+    ) : null;
 
   return (
     <>
