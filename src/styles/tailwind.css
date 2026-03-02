@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+label,
+p,
+a,
+span,
+b,
+input {
+  @apply text-sm;
+}
+
 /* SCREEN */
 .container-screen {
   @apply h-svh w-svw bg-baseLightGray shadow-2xl sm:max-w-[480px];
