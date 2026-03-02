@@ -13,6 +13,7 @@ import {
 import { Button } from "../../atoms";
 
 interface ChargingLocationCardProps {
+  className?:string
   type?: "location-list";
   data: ChargingStation;
   currentLocation: LatLng | undefined;
@@ -23,6 +24,7 @@ interface ChargingLocationCardProps {
 }
 
 const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
+  className,
   type,
   data,
   isLast,
@@ -140,7 +142,7 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
     <>
       <div
         onClick={onClick}
-        className="mb-3 shadow-md rounded-lg cursor-pointer bg-white"
+        className={`mb-3 shadow-md rounded-lg cursor-pointer bg-white ${className}`}
       >
         <div className="p-3 pt-6 bg-chargingLocation bg-center rounded-t-lg relative ">
           <div
