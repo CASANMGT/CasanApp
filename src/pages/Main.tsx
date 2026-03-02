@@ -95,7 +95,7 @@ const Main = () => {
       <BottomNavigation page={currentPage} onClick={onClick} />
 
       <InputPhoneNumberModal
-        open={!openInputPhoneNumber}
+        open={openInputPhoneNumber}
         value={phoneNumber}
         onDismiss={() => setOpenInputPhoneNumber(false)}
         onChange={(value) => setPhoneNumber(value)}
