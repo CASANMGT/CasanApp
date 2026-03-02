@@ -28,7 +28,7 @@ const SearchStation = () => {
   const debouncedData = useRef(
     debounce(async (q: string) => {
       getData(q);
-    }, 500) //
+    }, 500), //
   ).current;
 
   useEffect(() => {
@@ -62,7 +62,6 @@ const SearchStation = () => {
       setCurrentLocation(check);
     } catch (error) {}
   };
-
 
   return (
     <div className="container-screen relative min-h-screen bg-[linear-gradient(225deg,_#BAE6E9_10%,_#FFFFFF_50%,_#FAF2C0_100%)] overflow-hidden">
@@ -115,6 +114,7 @@ const SearchStation = () => {
                     state: { currentLocation },
                   })
                 }
+                className={index === data?.data.length - 1 ? "mb-[150px]" : ""}
               />
             ))}
           </div>
