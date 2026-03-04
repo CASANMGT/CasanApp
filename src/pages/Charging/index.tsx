@@ -188,11 +188,6 @@ const Charging = () => {
     .add(data?.ExpectedDuration || 0, "seconds")
     .diff(moments(), "seconds");
 
-  console.log("cek data", data);
-  console.log("cek duration", duration);
-  console.log("cek exp", data?.ExpectedDuration);
-  console.log("cek exp", data?.ExpectedDuration);
-
   const isCharging: boolean = status === 5 || status === 6 ? true : false;
 
   if (data?.VoucherUsages && data?.VoucherUsages.length)
@@ -264,7 +259,7 @@ const Charging = () => {
           </div>
 
           {/* STATUS */}
-          {(status === 5 && (data?.MaxWatt || 0) > 1)||status===6 ? (
+          {(status === 5 && (data?.MaxWatt || 0) > 1) || status === 6 ? (
             <ChargeProgress
               currentKwh={data?.TotalKwhUsed || 0}
               totalKwh={data?.PaidKWH || 0}

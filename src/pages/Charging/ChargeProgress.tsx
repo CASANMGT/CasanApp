@@ -57,7 +57,7 @@ export default function ChargeProgress({
                 x2="100%"
                 y2="100%"
               >
-                <stop offset="0%" stopColor="#E8F7F8" />
+                <stop offset="0%" stopColor="#2dba9d" />
                 <stop offset="100%" stopColor="#2dba9d" />
               </linearGradient>
             </defs>
