@@ -23,6 +23,7 @@ import Signal from "./Signal";
 import Spinner from "./Spinner";
 import StatusIndicator from "./StatusIndicator";
 import SubTitle from "./SubTitle";
+import UploadImage from "./UploadImage";
 import WheelPicker from "./WheelPicker";
 
 export {
@@ -51,5 +52,7 @@ export {
   Spinner,
   StatusIndicator,
   SubTitle,
-  WheelPicker,
+  UploadImage,
+  WheelPicker
 };
+
