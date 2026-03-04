@@ -11,6 +11,7 @@ import {
   LoadingPage,
   ModalCarouselDetails,
   OngoingItem,
+  Separator,
 } from "../../components";
 import { useAuth } from "../../context/AuthContext";
 import { fetchOnGoingSessionList, setFromGlobal } from "../../features";
@@ -205,18 +206,21 @@ const Home = () => {
       ></div>
 
       {/* LOGO */}
-      <div className="z-10 between-x m-4 mb-2.5 ">
+      <div className="z-10 between-x m-4 mb-2 pb-5 border-b border-b-white ">
         <IcLogo />
 
         <button
           onClick={() => window.open("https://about.casan.id/", "_blank")}
+          className="row gap-3 text-white font-semibold"
         >
           <FiInfo size={20} className="text-white" />
+          {"Tentang Casan ->"}
         </button>
       </div>
 
+
       {/* SEARCH */}
-      <div className="between-x p-1 rounded-full bg-white flex-1 cursor-pointer mx-4 mb-4 z-10">
+      <div className="between-x p-1 rounded-full bg-white flex-1 cursor-pointer mx-4 mb-4 z-10 mt-3">
         <div
           onClick={() => navigate("/search-station")}
           className="row gap-2.5 px-3 flex-1 h-full"

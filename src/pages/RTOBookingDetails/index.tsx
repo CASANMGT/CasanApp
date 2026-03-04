@@ -32,7 +32,7 @@ import {
 } from "../../components";
 import { useAuth } from "../../context/AuthContext";
 import { fetchMyUser } from "../../features";
-import { openGoogleMaps, openWhatsApp, rupiah } from "../../helpers";
+import { moments, openGoogleMaps, openWhatsApp, rupiah } from "../../helpers";
 import { Api } from "../../services";
 import { AppDispatch, RootState } from "../../store";
 import Container from "./Container";
@@ -154,6 +154,12 @@ const RTORTOBookingDetails = () => {
     isTransactionPending = data?.RTOTransactions.some((e) => e.Status === 2);
   }
 
+  const nextPaymentMoment = moments(data?.NextPaymentDate);
+
+  const isWithin24Hours =
+    nextPaymentMoment.isAfter(moments()) &&
+    nextPaymentMoment.diff(moments(), "hours") <= 24;
+
   return (
     <div className="background-1 overflow-hidden justify-between flex flex-col">
       <Header
@@ -166,7 +172,8 @@ const RTORTOBookingDetails = () => {
       <LoadingPage loading={loading}>
         <div className="flex flex-col flex-1 overflow-hidden relative">
           <div className="flex-1 overflow-auto scrollbar-none space-y-3 px-4 pb-7 pt-6 ">
-            <Status status={status} />
+            <Status status={status} data={data} />
+
             {(status === 2 ||
               status === 3 ||
               status === 4 ||
@@ -186,8 +193,10 @@ const RTORTOBookingDetails = () => {
                 </div>
 
                 <div className="row gap-1.5 mb-1">
-                  <span className="text-blackBold font-semibold">
-                    {data?.CreditLeft || 0}
+                  <span
+                    className={`font-semibold text-${status === 4 || status === 7 ? "red" : (status === 3 && data?.CreditLeft === 0) || isWithin24Hours ? "orange" : "blackBold"}`}
+                  >
+                    {isWithin24Hours ? "<1" : data?.CreditLeft || 0}
                   </span>
                   <span className="text-xs text-black90">Kredit Hari</span>
                 </div>
@@ -195,18 +204,14 @@ const RTORTOBookingDetails = () => {
                 {status !== 2 && (
                   <div className="row gap-1.5 mt-1">
                     <span className="text-xs text-black70">Jatuh Tempo:</span>
-                    {/* <span className="text-xs ">
-                      {moments(data?.NextPaymentDate || undefined)
-                        .add(1, "days")
-                        .format("DD MMMM YYYY")}
-                    </span> */}
+                    <span className="text-xs ">
+                      {nextPaymentMoment.format("DD MMMM YYYY")}
+                    </span>
                     {(status === 3 ||
                       status === 4 ||
                       status === 5 ||
                       status === 7) && (
-                      <span className="text-xs">
-                        Jam {data?.CutOffTime} selain libur pembayaran
-                      </span>
+                      <span className="text-xs">Jam {data?.CutOffTime}</span>
                     )}
 
                     {(status === 4 || status === 7) && (
