@@ -85,7 +85,7 @@ export default function ChargeProgress({
 
           <defs>
             <linearGradient id="gradient">
-              <stop offset="0%" stopColor="#34d399" />
+              <stop offset="0%" stopColor="#2dba9d" />
               <stop offset="100%" stopColor="#10b981" />
             </linearGradient>
           </defs>

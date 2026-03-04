@@ -16,10 +16,7 @@ import {
   IcWalletGreen,
   ILCharging,
 } from "../../assets";
-import {
-  CUSTOMER_SERVICES,
-  VoucherUsage
-} from "../../common";
+import { CUSTOMER_SERVICES, VoucherUsage } from "../../common";
 import {
   AlertModal,
   BetweenText,
@@ -122,32 +119,30 @@ const Charging = () => {
         });
 
         setData(res?.data);
-        console.log("cek d", res?.data);
 
-        // dummy
-        // const resSession: Session = res?.data;
-        // const currentStatus = resSession?.Status;
+        const resSession: Session = res?.data;
+        const currentStatus = resSession?.Status;
 
-        // if (currentStatus === 6) {
-        //   setOpenFinished(true);
-        // } else if (
-        //   currentStatus === 1 ||
-        //   currentStatus === 7 ||
-        //   currentStatus === 8
-        // ) {
-        //   navigate(
-        //     `/transaction-history/details/${
-        //       data?.Transaction?.ID || resSession?.Transaction?.ID
-        //     }`,
-        //     {
-        //       replace: true,
-        //       state: { isGoOrder: true },
-        //     }
-        //   );
-        // }
+        if (currentStatus === 6) {
+          setOpenFinished(true);
+        } else if (
+          currentStatus === 1 ||
+          currentStatus === 7 ||
+          currentStatus === 8
+        ) {
+          navigate(
+            `/transaction-history/details/${
+              data?.Transaction?.ID || resSession?.Transaction?.ID
+            }`,
+            {
+              replace: true,
+              state: { isGoOrder: true },
+            },
+          );
+        }
       }
     } catch (error: any) {
-      // if (error?.message) setIsNotFound(true); dummy
+      if (error?.message) setIsNotFound(true);
     } finally {
       setLoading(false);
     }
@@ -192,6 +187,11 @@ const Charging = () => {
   const duration: number = moments(data?.StartChargingTime)
     .add(data?.ExpectedDuration || 0, "seconds")
     .diff(moments(), "seconds");
+
+  console.log("cek data", data);
+  console.log("cek duration", duration);
+  console.log("cek exp", data?.ExpectedDuration);
+  console.log("cek exp", data?.ExpectedDuration);
 
   const isCharging: boolean = status === 5 || status === 6 ? true : false;
 
@@ -244,7 +244,7 @@ const Charging = () => {
               label="Daya"
               content={
                 status === 5
-                  ? `${(data?.MaxWatt || 0) > 1 ? data?.MaxWatt : 0} Watt`
+                  ? `${(data?.LatestWatt || 0) > 1 ? data?.LatestWatt : 0} Watt`
                   : "-"
               }
             />
@@ -264,10 +264,11 @@ const Charging = () => {
           </div>
 
           {/* STATUS */}
-          {status === 5 ? (
+          {(status === 5 && (data?.MaxWatt || 0) > 1)||status===6 ? (
             <ChargeProgress
-              duration={duration || 0}
+              currentKwh={data?.TotalKwhUsed || 0}
               totalKwh={data?.PaidKWH || 0}
+              onFinish={getData}
             />
           ) : (
             <StatusIndicator

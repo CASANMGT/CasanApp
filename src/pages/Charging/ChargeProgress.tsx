@@ -1,63 +1,40 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 interface Props {
-  duration: number;
+  currentKwh: number;
   totalKwh: number;
+  onFinish: () => {};
 }
 
-export default function ChargeProgress({ duration, totalKwh }: Props) {
-  // State for the charging simulation
-  const [progress, setProgress] = useState(0);
+export default function ChargeProgress({
+  currentKwh,
+  totalKwh,
+  onFinish,
+}: Props) {
   const alerted = useRef(false);
-  const animationRef = useRef<number>();
-  const startTimeRef = useRef<number>();
 
-  useEffect(() => {
-    const totalDurationMs = duration * 1000;
-
-    const animate = (timestamp: number) => {
-      if (!startTimeRef.current) startTimeRef.current = timestamp;
-
-      const elapsed = timestamp - startTimeRef.current;
-      const percent = Math.min((elapsed / totalDurationMs) * 100, 100);
-
-      setProgress(percent);
-
-      if (percent < 100) {
-        animationRef.current = requestAnimationFrame(animate);
-      } else {
-        if (!alerted.current) {
-          alerted.current = true;
-          setTimeout(() => {
-            alert("Charging Completed ⚡ Battery 100%");
-          }, 300);
-        }
-      }
-    };
-
-    animationRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-    };
-  }, [duration]);
-
-  // SVG Circular Progress Math
+  // Clamp max 100%
+  const progress = Math.min((currentKwh / totalKwh) * 100, 100);
   const size = 240;
   const strokeWidth = 20;
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const usedKwh = ((progress / 100) * totalKwh).toFixed(2);
-  const strokeDashoffset2 = circumference - (progress / 100) * circumference;
+  const strokeDashoffset = circumference - (progress / 100) * circumference;
+
+  // ✅ Trigger once when >= 100
+  useEffect(() => {
+    if (progress >= 100 && !alerted.current) {
+      alerted.current = true;
+      onFinish();
+    }
+  }, [progress, onFinish]);
 
   return (
-    <div
-      className="my-5"
-     
-    >
+    <div className="my-5">
       <div className="w-full flex flex-col items-center">
         {/* Circular Progress Container */}
-        <div className="relative flex items-center justify-center">
+        <div className="relative flex items-center bg-white rounded-full justify-center">
           {/* SVG Ring */}
           <svg
             width={size}
@@ -80,8 +57,8 @@ export default function ChargeProgress({ duration, totalKwh }: Props) {
                 x2="100%"
                 y2="100%"
               >
-                <stop offset="0%" stopColor="#4ade80" /> {/* emerald-400 */}
-                <stop offset="100%" stopColor="#2dd4bf" /> {/* teal-400 */}
+                <stop offset="0%" stopColor="#E8F7F8" />
+                <stop offset="100%" stopColor="#2dba9d" />
               </linearGradient>
             </defs>
 
@@ -91,7 +68,7 @@ export default function ChargeProgress({ duration, totalKwh }: Props) {
               cy={size / 2}
               r={radius}
               fill="transparent"
-              stroke="#d1f0e8"
+              stroke="#E8F7F8"
               strokeWidth={strokeWidth}
               className="opacity-60"
             />
@@ -106,7 +83,7 @@ export default function ChargeProgress({ duration, totalKwh }: Props) {
               strokeWidth={strokeWidth}
               strokeLinecap="round"
               strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset2}
+              strokeDashoffset={strokeDashoffset}
               filter="url(#glow)"
               className="transition-all duration-500 ease-out"
             />

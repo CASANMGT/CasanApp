@@ -58,7 +58,7 @@ export default function App({
       className="min-h-screen flex flex-col items-center justify-center font-sans text-gray-800 p-6"
       style={{
         background:
-          "linear-gradient(to bottom right, #e6f7f4, #f0f9f8, #e0f2ee)",
+         "white"
       }}
     >
       <div className="max-w-md w-full flex flex-col items-center">
@@ -86,8 +86,8 @@ export default function App({
                 x2="100%"
                 y2="100%"
               >
-                <stop offset="0%" stopColor="#4ade80" /> {/* emerald-400 */}
-                <stop offset="100%" stopColor="#2dd4bf" /> {/* teal-400 */}
+                <stop offset="0%" stopColor="#E8F7F8" /> 
+                <stop offset="100%" stopColor="#2dba9d" />
               </linearGradient>
             </defs>
 
@@ -97,7 +97,7 @@ export default function App({
               cy={size / 2}
               r={radius}
               fill="transparent"
-              stroke="#d1f0e8"
+              stroke="#E8F7F8"
               strokeWidth={strokeWidth}
               className="opacity-60"
             />
