@@ -216,7 +216,7 @@ const Home = () => {
       </div>
 
       {/* SEARCH */}
-      <div className="between-x p-1 rounded-full bg-white flex-1 cursor-pointer mx-4 mb-4 z-10">
+      <div className="between-x p-1 rounded-full bg-white flex-1 cursor-pointer mx-4 mb-4 z-20">
         <div
           onClick={() => navigate("/search-station")}
           className="row gap-2.5 px-3 flex-1 h-full"

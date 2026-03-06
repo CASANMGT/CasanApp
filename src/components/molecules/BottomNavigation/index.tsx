@@ -18,7 +18,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
   onClick,
 }) => {
   return (
-    <div className="flex flex-row justify-around bg-white drop-shadow z-50">
+    <div className="flex flex-row justify-around bg-white drop-shadow z-10">
       {MENU.map((item: MenuBottomNavigationProps) => (
         <BottomNavigationItem
           key={item?.id}
