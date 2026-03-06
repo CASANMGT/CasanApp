@@ -47,7 +47,7 @@ const InputOTPModal: React.FC<InputOTPProps> = ({
 
   useEffect(() => {
     if (counter > 0) {
-      const interval: number = setInterval(() => {
+      const interval = setInterval(() => {
         onCounter();
       }, 1000);
 
