@@ -15,12 +15,8 @@ import {
   IcSuccessGreen,
   IcWalletGreen,
   ILCharging,
-} from "../assets";
-import {
-  CalculateDurationBody,
-  CUSTOMER_SERVICES,
-  VoucherUsage,
-} from "../common";
+} from "../../assets";
+import { CUSTOMER_SERVICES, VoucherUsage } from "../../common";
 import {
   AlertModal,
   BetweenText,
@@ -31,7 +27,7 @@ import {
   ModalInstructions,
   Signal,
   StatusIndicator,
-} from "../components";
+} from "../../components";
 import {
   fetchCancelSession,
   fetchStartSession,
@@ -42,11 +38,12 @@ import {
   resetDataStartSession,
   resetDataStopSession,
   showLoading,
-} from "../features";
-import { formatDuration, moments, openWhatsApp, rupiah } from "../helpers";
-import { Api } from "../services";
-import { AppDispatch, RootState } from "../store";
-import NotFound from "./NotFound";
+} from "../../features";
+import { formatDuration, moments, openWhatsApp, rupiah } from "../../helpers";
+import { Api } from "../../services";
+import { AppDispatch, RootState } from "../../store";
+import NotFound from "../NotFound";
+import ChargeProgress from "./ChargeProgress";
 
 const Charging = () => {
   const navigate = useNavigate();
@@ -140,21 +137,8 @@ const Charging = () => {
             {
               replace: true,
               state: { isGoOrder: true },
-            }
+            },
           );
-        } else if (
-          currentStatus === 2 &&
-          resSession?.ChargingStationID &&
-          resSession?.MaxWatt
-        ) {
-          const body: CalculateDurationBody = {
-            id: resSession?.ChargingStationID,
-            total_charge: Number(resSession?.Transaction?.Amount),
-            vehicle_type: 1,
-            watt: Number(resSession?.MaxWatt),
-          };
-
-          // dispatch(fetchCalculateDuration(body));
         }
       }
     } catch (error: any) {
@@ -241,12 +225,12 @@ const Charging = () => {
                 status === 2
                   ? "-"
                   : (data?.MaxWatt || 0) > 1
-                  ? formatDuration(
-                      data?.PriceType === 2
-                        ? data?.Duration
-                        : data?.ExpectedDuration
-                    ) ?? "-"
-                  : "Persiapan..."
+                    ? (formatDuration(
+                        data?.PriceType === 2
+                          ? data?.Duration
+                          : data?.ExpectedDuration,
+                      ) ?? "-")
+                    : "Persiapan..."
               }
             />
 
@@ -255,7 +239,7 @@ const Charging = () => {
               label="Daya"
               content={
                 status === 5
-                  ? `${(data?.MaxWatt || 0) > 1 ? data?.MaxWatt : 0} Watt`
+                  ? `${(data?.LatestWatt || 0) > 1 ? data?.LatestWatt : 0} Watt`
                   : "-"
               }
             />
@@ -275,13 +259,21 @@ const Charging = () => {
           </div>
 
           {/* STATUS */}
-          <StatusIndicator
-            data={data}
-            type={status || 2}
-            duration={duration > 0 ? duration : 0}
-            onFinish={getData}
-            className="my-5"
-          />
+          {(status === 5 && (data?.MaxWatt || 0) > 1) || status === 6 ? (
+            <ChargeProgress
+              currentKwh={data?.TotalKwhUsed || 0}
+              totalKwh={data?.PaidKWH || 0}
+              onFinish={getData}
+            />
+          ) : (
+            <StatusIndicator
+              data={data}
+              type={status || 2}
+              duration={duration > 0 ? duration : 0}
+              onFinish={getData}
+              className="my-5"
+            />
+          )}
 
           <div className="flex justify-center mb-5 ">
             <div
@@ -396,8 +388,8 @@ const Charging = () => {
                 status === 2
                   ? "Mulai Pengisian"
                   : status === 6
-                  ? "Kembali"
-                  : "Selesaikan Pengisian"
+                    ? "Kembali"
+                    : "Selesaikan Pengisian"
               }
               loading={startSession?.loading || stopSession?.loading}
               onClick={onStartStop}
