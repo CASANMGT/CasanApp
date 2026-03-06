@@ -80,7 +80,7 @@ const EditProfile = () => {
       setLoading(true);
       const [ktpimage, simcimage, kkimage] = await Promise.all([
         getImageUrl(form.ktpImage),
-        getImageUrl(form.simc),
+        getImageUrl(form.simcImage),
         getImageUrl(form.kkImage),
       ]);
 
