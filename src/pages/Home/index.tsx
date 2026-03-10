@@ -10,8 +10,7 @@ import {
   DropdownCheckbox,
   LoadingPage,
   ModalCarouselDetails,
-  OngoingItem,
-  Separator,
+  OngoingItem
 } from "../../components";
 import { useAuth } from "../../context/AuthContext";
 import { fetchOnGoingSessionList, setFromGlobal } from "../../features";
@@ -140,8 +139,10 @@ const Home = () => {
       setLoadingRTO(true);
       const res = await Api.get({
         url: "rtos",
-        params: { statuses: "1,2,4,5,7", page: 1, limit: 1 },
+        params: { statuses: "1,2,3,4,5,7", page: 1, limit: 1 },
       });
+
+      
 
       setDataRTO(res?.data?.[0] ?? undefined);
     } catch (error) {
