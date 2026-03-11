@@ -1,9 +1,7 @@
 import { FaAngleRight } from "react-icons/fa6";
 import { GiSandsOfTime } from "react-icons/gi";
 import { IoWarningOutline } from "react-icons/io5";
-import {
-  MdOutlineAccessTimeFilled
-} from "react-icons/md";
+import { MdOutlineAccessTimeFilled } from "react-icons/md";
 import { WiTime4 } from "react-icons/wi";
 import { ILNoImage } from "../../assets";
 import { moments } from "../../helpers";
@@ -28,7 +26,6 @@ const StatusRTO: React.FC<Props> = ({ data, onClick }) => {
 
       return now >= start && now <= end;
     })[0] ?? null;
-
 
   return (
     <div className="bg-white rounded-lg">
@@ -109,7 +106,7 @@ const StatusRTO: React.FC<Props> = ({ data, onClick }) => {
             )}
             <span className="text-xs text-blackBold font-medium">
               {moments(data?.NextPaymentDate || undefined).format(
-                "ddd, DD MMM"
+                "ddd, DD MMM",
               )}
             </span>
             <span className="ml-1 text-xs text-blackBold">
@@ -141,6 +138,7 @@ const getFormatted = (status: number) => {
   switch (status) {
     case 1:
     case 2:
+    case 3:
       icon = GiSandsOfTime;
       label = "Berlangsung";
       labelInfo = "Bayar Selanjutnya:";

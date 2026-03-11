@@ -17,8 +17,7 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   className,
   onFinish,
 }) => {
-  const isCharging: boolean =
-    type === 5 || type === 6 || type !== 2 ? true : false;
+  const isCharging = type !== 2;
   const classNameAnimation: string = `absolute -left-[30px] -top-[30px] w-[280px] h-[280px] rounded-full ${
     isCharging
       ? "animate-soundWave bg-primary100"
@@ -49,18 +48,15 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
 
         {/* Inner Static Circle */}
         <div className="relative flex items-center justify-center w-[220px] h-[220px] bg-white rounded-full shadow-md">
-          <div className="text-center">
-            <p className="text-black70 font-semibold mb-2">
-              {priceType === 2 ? "Sisa Energi" : "Sisa Durasi"}
-            </p>
+          <div className="text-center space-y-1">
             {type === 5 && maxWatt > 1 ? (
               priceType === 2 ? (
-                <p className="text-[34px] font-semibold">{`${totalKwh}kWh`}</p>
+                <p className="h-8 text-[32px] font-semibold">{`${totalKwh}kWh`}</p>
               ) : (
                 <CountdownTimer
                   initialSeconds={duration}
                   onFinish={onFinish}
-                  className="text-[34px] font-semibold"
+                  className="text-[32px] font-semibold"
                 />
               )
             ) : (
@@ -82,25 +78,27 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
               </p>
             )}
 
-            <div className="flex justify-center">
-              <div
-                className={`rounded-lg h-6 px-2.5 space-x-2 flex items-center ${
-                  isCharging ? "bg-primary10" : "bg-secondary10"
-                }`}
-              >
-                {isCharging && <IcBattery />}
-
-                <span
-                  className={`text-xs font-medium ${
-                    isCharging ? "text-primary100" : "text-[#E8A126]"
+            {!isCharging && (
+              <div className="flex justify-center">
+                <div
+                  className={`rounded-lg h-6 px-2.5 space-x-2 flex items-center ${
+                    isCharging ? "bg-primary10" : "bg-secondary10"
                   }`}
                 >
-                  {isCharging
-                    ? `Charging ${chargingPercentage}%`
-                    : `Socket ${port}`}
-                </span>
+                  {isCharging && <IcBattery />}
+
+                  <span
+                    className={`text-xs font-medium ${
+                      isCharging ? "text-primary100" : "text-[#E8A126]"
+                    }`}
+                  >
+                    {isCharging
+                      ? `Charging ${chargingPercentage}%`
+                      : `Socket ${port}`}
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

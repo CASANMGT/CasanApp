@@ -10,7 +10,7 @@ import {
   DropdownCheckbox,
   LoadingPage,
   ModalCarouselDetails,
-  OngoingItem,
+  OngoingItem
 } from "../../components";
 import { useAuth } from "../../context/AuthContext";
 import { fetchOnGoingSessionList, setFromGlobal } from "../../features";
@@ -139,8 +139,10 @@ const Home = () => {
       setLoadingRTO(true);
       const res = await Api.get({
         url: "rtos",
-        params: { statuses: "1,2,4,5,7", page: 1, limit: 1 },
+        params: { statuses: "1,2,3,4,5,7", page: 1, limit: 1 },
       });
+
+      
 
       setDataRTO(res?.data?.[0] ?? undefined);
     } catch (error) {
@@ -205,15 +207,18 @@ const Home = () => {
       ></div>
 
       {/* LOGO */}
-      <div className="z-10 between-x m-4 mb-2.5 ">
+      <div className="z-10 between-x m-4 mb-2 pb-5 border-b border-b-white ">
         <IcLogo />
 
         <button
           onClick={() => window.open("https://about.casan.id/", "_blank")}
+          className="row gap-3 text-white font-semibold"
         >
           <FiInfo size={20} className="text-white" />
+          {"Tentang Casan ->"}
         </button>
       </div>
+
 
       {/* SEARCH */}
       <div className="between-x p-1 rounded-full bg-white flex-1 cursor-pointer mx-4 mb-4 z-20">

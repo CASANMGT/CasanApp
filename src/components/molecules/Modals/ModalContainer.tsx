@@ -48,7 +48,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
   return (
     <div
       onClick={onDismiss}
-      className="z-10 fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 "
+      className="z-50 fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 "
     >
       <div
         className={

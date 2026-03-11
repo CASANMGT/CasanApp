@@ -10,3 +10,12 @@ export const isValidURL = (str: string): boolean => {
     return false;
   }
 };
+
+export const isHttpUrl = (path: string): boolean => {
+  try {
+    const url = new URL(path);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+};
