@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaLeaf } from "react-icons/fa6";
 import { FiInfo } from "react-icons/fi";
+import { MdOutlineHistory } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -23,6 +24,7 @@ import {
   Button,
   LoadingPage,
   MenuItem,
+  ModalChangelog,
   Separator,
 } from "../../components";
 import { useAuth } from "../../context/AuthContext";
@@ -40,6 +42,7 @@ const ProfileNew = () => {
   const milestoneList = useSelector((state: RootState) => state.milestoneList);
 
   const [openNotAvailable, setOpenNotAvailable] = useState(false);
+  const [openChangelog, setOpenChangelog] = useState(false);
 
   useEffect(() => {
     getData();
@@ -223,6 +226,14 @@ const ProfileNew = () => {
             label="Tentang Kami"
             onClick={() => window.open("https://about.casan.id/", "_blank")}
           />
+
+          <Separator className="my-4" />
+
+          <MenuItem
+            icon={MdOutlineHistory}
+            label="Changelog"
+            onClick={() => setOpenChangelog(true)}
+          />
         </div>
 
         <div
@@ -233,7 +244,15 @@ const ProfileNew = () => {
           <span className="text-base text-red font-medium">Keluar Akun</span>
         </div>
 
-        <span className="ml-4 text-xs text-black90">{`Version ${VERSION}`}</span>
+        <span
+          role="button"
+          tabIndex={0}
+          onClick={() => setOpenChangelog(true)}
+          onKeyDown={(e) => e.key === "Enter" && setOpenChangelog(true)}
+          className="ml-4 text-xs text-black90 cursor-pointer underline decoration-dotted"
+        >
+          {`Version ${VERSION} · Lihat Changelog`}
+        </span>
 
         <div className="mb-[100px]" />
       </LoadingPage>
@@ -247,6 +266,11 @@ const ProfileNew = () => {
         typeButtonRight="primary"
         labelButtonRight="Tutup"
         onDismiss={() => setOpenNotAvailable(false)}
+      />
+
+      <ModalChangelog
+        isOpen={openChangelog}
+        onDismiss={() => setOpenChangelog(false)}
       />
       {/* END MODAL */}
     </div>
