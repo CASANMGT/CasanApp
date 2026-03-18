@@ -45,6 +45,15 @@ export const APP_CHANGELOG: ChangelogRelease[] = [
           "Mock rental cards (Maka Motors R1, United T1800, Uwinfly C70) with price and Sewa → button.",
         ],
       },
+      {
+        title: "RTO program details (Jelajahi → dealer → motor)",
+        details: [
+          "Jelajahi program lain: daftar operator/dealer dengan jarak cabang terdekat, urut terdekat jika lokasi tersedia.",
+          "Detail dealer: banner, bagikan WhatsApp, pilih cabang + jarak, buka Maps, jam buka, telepon/WhatsApp, foto dealer, daftar motor.",
+          "Detail motor: galeri sudut tampilan, Harian (Rp × N hari) & Min. gaji, tenaga/spesifikasi, charging + cek stasiun, jadwal bayar + estimasi selesai, benefit, ajukan + share WA.",
+          "Estimasi tanggal selesai bayar (hari kerja tanpa Sabtu–Minggu), anchor dari hari ini; data mock multi-motor per operator.",
+        ],
+      },
     ],
     changed: [
       {
