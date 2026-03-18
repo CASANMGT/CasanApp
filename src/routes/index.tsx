@@ -25,6 +25,9 @@ import {
   RentToBuyDetails,
   RTOBookingDetails,
   RTOHistory,
+  RTOProgramExplore,
+  RTOOperatorDetail,
+  RTOMotorbikeProgram,
   Scan,
   SearchStation,
   SelectBank,
@@ -109,6 +112,18 @@ const RoutesPage = () => {
       <Route
         path="rent-to-buy-details"
         element={<ProtectedRoute element={<RentToBuyDetails />} />}
+      />
+      <Route
+        path="rto-program-explore"
+        element={<ProtectedRoute element={<RTOProgramExplore />} />}
+      />
+      <Route
+        path="rto-program-explore/operator/:operatorId"
+        element={<ProtectedRoute element={<RTOOperatorDetail />} />}
+      />
+      <Route
+        path="rto-program-explore/bike/:bikeId"
+        element={<ProtectedRoute element={<RTOMotorbikeProgram />} />}
       />
 
       <Route path="vehicle" element={<Vehicle />} />
