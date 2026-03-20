@@ -46,12 +46,13 @@ export const APP_CHANGELOG: ChangelogRelease[] = [
         ],
       },
       {
-        title: "RTO program details (Jelajahi → dealer → motor)",
+        title: "RTO program details (multi-bike)",
         details: [
-          "Jelajahi program lain: daftar operator/dealer dengan jarak cabang terdekat, urut terdekat jika lokasi tersedia.",
-          "Detail dealer: banner, bagikan WhatsApp, pilih cabang + jarak, buka Maps, jam buka, telepon/WhatsApp, foto dealer, daftar motor.",
-          "Detail motor: galeri sudut tampilan, Harian (Rp × N hari) & Min. gaji, tenaga/spesifikasi, charging + cek stasiun, jadwal bayar + estimasi selesai, benefit, ajukan + share WA.",
-          "Estimasi tanggal selesai bayar (hari kerja tanpa Sabtu–Minggu), anchor dari hari ini; data mock multi-motor per operator.",
+          "Jelajahi program lain: daftar dealer, jarak ke cabang terdekat, urut terdekat jika lokasi diizinkan.",
+          "Halaman dealer: banner program, bagikan WhatsApp, pill cabang + km, Google Maps, jam buka, telepon & WhatsApp, foto dealer, daftar motor (Harian & min. gaji).",
+          "Halaman motor: galeri sudut tampilan, kartu Harian (Rp untuk N hari) & Min. gaji, tenaga & spesifikasi, charging + jumlah stasiun terdekat, jadwal bayar + estimasi selesai, benefit, ajukan program & share WA.",
+          "Estimasi lunas: hari kerja (luar Sabtu–Minggu), dihitung dari hari ini; beberapa motor per operator (mock).",
+          "UI RTO dirapikan: kartu & judul section konsisten (alur Jelajahi → dealer → motor).",
         ],
       },
     ],

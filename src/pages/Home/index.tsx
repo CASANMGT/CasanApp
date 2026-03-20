@@ -3,28 +3,66 @@ import { CiSearch } from "react-icons/ci";
 import { FiInfo } from "react-icons/fi";
 import { IoFlash, IoTimeOutline } from "react-icons/io5";
 
+/** Brand teal — aligned with RTO / app primary */
+const HOME_ICON_TEAL = "#4DB6AC";
+
 const IcIsiDaya = ({ size = 28 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
-    <path d="M21.5 5L12 20h7l-2 11L27.5 16H20l1.5-11z" fill="#4DB6AC" />
-    <path d="M21.5 5L12 20h7l-2 11L27.5 16H20l1.5-11z" fill="#F5A623" opacity="0.35" />
+  <svg width={size} height={size} viewBox="0 0 36 36" fill="none" aria-hidden>
+    <circle cx="18" cy="18" r="14" fill={HOME_ICON_TEAL} />
+    {/* Yellow lightning bolt */}
+    <path
+      d="M20 8L13 19h4.2L15 28l8-12h-4.2L20 8z"
+      fill="#FFCA28"
+    />
   </svg>
 );
 
 const IcRentToOwn = ({ size = 28 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
-    <circle cx="13" cy="18" r="6" stroke="#4DB6AC" strokeWidth="2.5" fill="none" />
-    <circle cx="13" cy="18" r="2" fill="#F5A623" />
-    <path d="M18.5 18h10" stroke="#4DB6AC" strokeWidth="2.5" strokeLinecap="round" />
-    <path d="M25 18v4" stroke="#4DB6AC" strokeWidth="2" strokeLinecap="round" />
-    <path d="M28 18v4" stroke="#4DB6AC" strokeWidth="2" strokeLinecap="round" />
+  <svg width={size} height={size} viewBox="0 0 36 36" fill="none" aria-hidden>
+    <circle cx="18" cy="18" r="14" fill={HOME_ICON_TEAL} />
+    {/*
+      Key + plus: drawn horizontal (head on the right), then rotated so head reads top-right
+      and bit bottom-left (~45°), matching the reference mock.
+    */}
+    <g transform="translate(18,18) rotate(-44) translate(-18,-18)">
+      {/* Key head */}
+      <circle cx="24.2" cy="18" r="4.6" fill="#FFC107" />
+      {/* Hole offset toward top-right of head */}
+      <circle cx="25.9" cy="16.1" r="1.35" fill={HOME_ICON_TEAL} />
+      {/* Shaft */}
+      <rect x="9.2" y="16.15" width="14.5" height="3.7" rx="0.9" fill="#FFC107" />
+      {/* Bit: three notches on the left */}
+      <path
+        d="M9.2 15.1H6.4v1.55H7.9v1.75H6.4v1.55H7.9v1.75H6.4v1.55h2.8v-8.15z"
+        fill="#FFC107"
+      />
+      {/* Plus — sits below / beside shaft, still inside circle */}
+      <path
+        d="M21.6 22.4h1.35v-1.35h1.35v1.35h1.35v1.35h-1.35v1.35h-1.35v-1.35h-1.35z"
+        fill="#FFC107"
+      />
+    </g>
   </svg>
 );
 
 const IcRent = ({ size = 28 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
-    <circle cx="18" cy="18" r="12" stroke="#4DB6AC" strokeWidth="2.5" fill="none" />
-    <circle cx="18" cy="18" r="1.8" fill="#F5A623" />
-    <path d="M18 9v9l5.5 4" stroke="#4DB6AC" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+  <svg width={size} height={size} viewBox="0 0 36 36" fill="none" aria-hidden>
+    <circle cx="18" cy="18" r="14" fill={HOME_ICON_TEAL} />
+    {/* Yellow stopwatch body */}
+    <circle cx="18" cy="18.5" r="7" stroke="#FFCA28" strokeWidth="2" fill="none" />
+    {/* Stopwatch top button */}
+    <rect x="16.2" y="8.5" width="3.6" height="2.2" rx="1" fill="#FFCA28" />
+    {/* Stopwatch side lug */}
+    <rect x="22.8" y="12" width="2" height="3.2" rx="1" fill="#FFCA28" />
+    {/* Hands */}
+    <path
+      d="M18 14.5v4l2.8 2"
+      stroke="#FFCA28"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle cx="18" cy="18.5" r="1.1" fill="#FFCA28" />
   </svg>
 );
 import { useDispatch, useSelector } from "react-redux";
@@ -67,6 +105,7 @@ const TAB_CONFIG: {
   id: ActiveTab;
   label: string;
   sub: string;
+  ariaLabel: string;
   icon: React.ElementType;
   bgClass: string;
   activeBorder: string;
@@ -76,6 +115,7 @@ const TAB_CONFIG: {
     id: "isi-daya",
     label: "Isi Daya",
     sub: "Cas motor kamu",
+    ariaLabel: "Isi Daya — cas motor di stasiun terdekat",
     icon: IcIsiDaya,
     bgClass: "bg-[#e0f2f1]",
     activeBorder: "border-[#4DB6AC]",
@@ -85,6 +125,7 @@ const TAB_CONFIG: {
     id: "rent-to-own",
     label: "Rent to Own",
     sub: "Cicil, lalu miliki",
+    ariaLabel: "Rent to Own — cicilan sampai motor jadi milik kamu",
     icon: IcRentToOwn,
     bgClass: "bg-[#e0f2f1]",
     activeBorder: "border-[#4DB6AC]",
@@ -93,7 +134,8 @@ const TAB_CONFIG: {
   {
     id: "rent",
     label: "Rent",
-    sub: "Sewa kapan saja",
+    sub: "Sewa harian / bulanan",
+    ariaLabel: "Rent — sewa motor harian atau bulanan",
     icon: IcRent,
     bgClass: "bg-[#e0f2f1]",
     activeBorder: "border-[#4DB6AC]",
@@ -368,23 +410,33 @@ const Home = () => {
 
       <div className="h-full overflow-y-auto overscroll-contain scrollbar-none transition-all duration-300 px-3 space-y-4 z-10">
         {/* SERVICE TAB CARDS */}
-        <div className="flex gap-2.5">
+        <div
+          role="tablist"
+          aria-label="Pilih layanan utama"
+          className="flex gap-2.5"
+        >
           {TAB_CONFIG.map((tab) => {
             const isActive = activeTab === tab.id;
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
+                type="button"
+                id={`home-tab-${tab.id}`}
+                role="tab"
+                aria-selected={isActive}
+                aria-controls={`home-tabpanel-${tab.id}`}
+                aria-label={tab.ariaLabel}
                 onClick={() => {
                   setActiveTab(tab.id);
                   if (tab.id !== "rent-to-own" && searchParams.get("tab")) {
                     setSearchParams({}, { replace: true });
                   }
                 }}
-                className={`flex-1 flex flex-col items-center gap-2 p-3 rounded-[14px] border-2 transition-all duration-300 relative ${
+                className={`relative flex-1 flex flex-col items-center gap-2 p-3 rounded-[14px] border-2 transition-all duration-200 ease-out ${
                   isActive
-                    ? "bg-white border-[#4DB6AC] shadow-[0_4px_16px_rgba(77,182,172,0.12)]"
-                    : "bg-white/70 backdrop-blur-sm border-transparent"
+                    ? "cursor-default bg-white border-[#4DB6AC] shadow-[0_4px_16px_rgba(77,182,172,0.12)]"
+                    : "cursor-pointer bg-white/50 backdrop-blur-sm border-transparent opacity-55 hover:opacity-100"
                 }`}
               >
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
@@ -396,17 +448,20 @@ const Home = () => {
                 </div>
                 <span className={`text-[11px] font-bold leading-tight ${isActive ? "text-blackBold" : "text-black50"}`}>{tab.label}</span>
                 <span className={`text-[9px] ${isActive ? "text-black70" : "text-black30"}`}>{tab.sub}</span>
-                {isActive && (
-                  <div className="absolute -bottom-1.5 w-[5px] h-[5px] rounded-full bg-[#4DB6AC]" />
-                )}
               </button>
             );
           })}
         </div>
 
+        {activeTab === "rent-to-own" && (
+          <p className="-mt-1 px-1 text-center text-[10px] leading-snug text-gray-500">
+            Cicilan sampai motor jadi milik kamu — berbeda dengan sewa harian di tab Rent.
+          </p>
+        )}
+
         {/* ===== ISI DAYA TAB ===== */}
         {activeTab === "isi-daya" && (
-          <>
+          <div id="home-tabpanel-isi-daya" role="tabpanel" aria-labelledby="home-tab-isi-daya" className="space-y-4">
             {/* SECTION HEADER */}
             <div className="flex justify-between items-center">
               <span className="text-[15px] font-bold text-blackBold">Stasiun terdekat</span>
@@ -440,12 +495,17 @@ const Home = () => {
                   />
                 ))}
             </LoadingPage>
-          </>
+          </div>
         )}
 
         {/* ===== RENT TO OWN TAB ===== */}
         {activeTab === "rent-to-own" && (
-          <>
+          <div
+            id="home-tabpanel-rent-to-own"
+            role="tabpanel"
+            aria-labelledby="home-tab-rent-to-own"
+            className="space-y-4"
+          >
             {/* PROGRAM SEKARANG — hanya login + ada program RTO aktif */}
             {isAuthenticated && dataRTO?.ID ? (
               <>
@@ -461,7 +521,14 @@ const Home = () => {
 
                 {(() => {
               const creditLeft = dataRTO?.CreditLeft ?? 0;
-              const vehicleName = dataRTO?.Vehicle?.Model || dataRTO?.Vehicle?.Brand || "Motor";
+              const creditPaid = dataRTO?.CreditPaid ?? 0;
+              const totalCredits = creditLeft + creditPaid;
+              const completedCredits = creditPaid;
+              const progressPct =
+                totalCredits > 0 ? Math.round((completedCredits / totalCredits) * 100) : 0;
+              const brand = dataRTO?.Vehicle?.Brand || "";
+              const model = dataRTO?.Vehicle?.Model || "";
+              const vehicleName = [brand, model].filter(Boolean).join(" ") || "Motor listrik";
               const colorData = dataRTO?.Vehicle?.Colors?.[0];
               const imageUrl = colorData?.ImageURL || ILNoImage;
               const licensePlate = dataRTO?.LicensePlate || "-";
@@ -475,68 +542,123 @@ const Home = () => {
               let statusLabel = "Berlangsung";
               let statusBg = "bg-emerald-100";
               let statusText = "text-emerald-700";
-              if (isOverdue) { statusLabel = "Tenggat Waktu"; statusBg = "bg-red-100"; statusText = "text-red-600"; }
-              if (isSuspended) { statusLabel = "Di-suspend"; statusBg = "bg-red-500"; statusText = "text-white"; }
-              if (status === 5) { statusLabel = "Libur Bayar"; statusBg = "bg-amber-100"; statusText = "text-amber-700"; }
+              if (isOverdue) {
+                statusLabel = "Tenggat waktu";
+                statusBg = "bg-red-100";
+                statusText = "text-red-600";
+              }
+              if (isSuspended) {
+                statusLabel = "Di-suspend";
+                statusBg = "bg-red-500";
+                statusText = "text-white";
+              }
+              if (status === 5) {
+                statusLabel = "Libur bayar";
+                statusBg = "bg-amber-100";
+                statusText = "text-amber-700";
+              }
 
               return (
                 <button
                   type="button"
                   onClick={() => navigate(`/rto-details/${dataRTO?.ID}`)}
-                  className="w-full text-left bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 active:scale-[0.99] transition-transform"
+                  className="w-full overflow-hidden rounded-2xl border border-gray-100/90 bg-white text-left shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-all active:scale-[0.99] hover:shadow-[0_6px_24px_rgba(0,0,0,0.08)]"
                 >
-                  <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-100">
-                    <div>
-                      <p className="font-bold text-gray-900 text-[14px]">{dataRTO?.Program?.Name || "Go Green"}</p>
-                      <p className="text-[11px] text-gray-500 mt-0.5">Oleh {dataRTO?.Admin?.Name || dataRTO?.Dealer || "-"}</p>
+                  <div className="border-b border-gray-100 px-4 pb-3 pt-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="truncate text-[15px] font-bold leading-tight text-gray-900">
+                          {vehicleName}
+                        </p>
+                        <p className="mt-1 text-[11px] leading-snug text-gray-500">
+                          {dataRTO?.Program?.Name || "Program RTO"}
+                          <span className="text-gray-300"> · </span>
+                          {dataRTO?.Admin?.Name || dataRTO?.Dealer || "-"}
+                        </p>
+                        <p className="mt-0.5 text-[11px] text-gray-400">{licensePlate}</p>
+                      </div>
+                      <span
+                        className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold ${statusBg} ${statusText}`}
+                      >
+                        {statusLabel}
+                      </span>
                     </div>
-                    <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg ${statusBg} ${statusText}`}>
-                      {statusLabel}
-                    </span>
                   </div>
 
                   <div className="flex gap-3 p-4">
-                    <div className="w-[72px] h-[72px] rounded-xl border border-gray-100 overflow-hidden shrink-0 bg-gray-50">
-                      <img src={imageUrl} alt={vehicleName} className="w-full h-full object-cover" />
+                    <div className="h-[76px] w-[76px] shrink-0 overflow-hidden rounded-xl border border-gray-100 bg-gray-50">
+                      <img src={imageUrl} alt={vehicleName} className="h-full w-full object-cover" />
                     </div>
 
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-gray-900 text-[14px] truncate">{vehicleName}</p>
-                      <p className="text-[11px] text-gray-500 mt-0.5">{licensePlate}</p>
-
-                      <div className="flex items-end gap-1.5 mt-2">
-                        <span className={`text-2xl font-extrabold leading-none ${isLowCredit || isSuspended ? "text-red-500" : "text-[#4DB6AC]"}`}>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-end gap-1.5">
+                        <span
+                          className={`text-2xl font-extrabold leading-none tabular-nums ${
+                            isLowCredit || isSuspended ? "text-red-500" : "text-[#4DB6AC]"
+                          }`}
+                        >
                           {creditLeft}
                         </span>
-                        <span className="text-[12px] text-gray-600 pb-0.5">Kredit Hari tersisa</span>
+                        <span className="pb-0.5 text-[12px] text-gray-600">hari tersisa</span>
                       </div>
+
+                      {totalCredits > 0 && (
+                        <div className="mt-3">
+                          <div className="mb-1 flex items-center justify-between text-[11px] text-gray-500">
+                            <span>
+                              {completedCredits}/{totalCredits} hari dibayar
+                            </span>
+                            <span className="font-semibold tabular-nums text-gray-800">{progressPct}%</span>
+                          </div>
+                          <div
+                            className="h-2 w-full overflow-hidden rounded-full bg-gray-100"
+                            role="progressbar"
+                            aria-valuenow={progressPct}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                            aria-label="Progres cicilan"
+                          >
+                            <div
+                              className={`h-full rounded-full transition-[width] ${
+                                isSuspended || isOverdue ? "bg-red-400" : "bg-[#4DB6AC]"
+                              }`}
+                              style={{ width: `${progressPct}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  <div className="px-4 pb-3 flex flex-wrap gap-x-4 gap-y-1">
-                    {nextPay && (
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[11px] text-gray-500">
-                          {isOverdue ? "Akan di-suspend:" : "Bayar selanjutnya:"}
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 bg-gray-50/80 px-4 py-3">
+                    <div className="flex min-w-0 flex-1 flex-col gap-1 text-[11px]">
+                      {nextPay && (
+                        <div className="flex flex-wrap items-baseline gap-x-1.5">
+                          <span className="text-gray-500">
+                            {isOverdue ? "Akan di-suspend:" : "Bayar selanjutnya:"}
+                          </span>
+                          <span
+                            className={`font-semibold ${isOverdue ? "text-red-600" : "text-gray-900"}`}
+                          >
+                            {moments(nextPay).format("ddd, DD MMM HH:mm")} WIB
+                          </span>
+                        </div>
+                      )}
+                      {targetFinish && (
+                        <div className="flex flex-wrap items-baseline gap-x-1.5 text-gray-600">
+                          <span className="text-gray-500">Estimasi selesai:</span>
+                          <span className="font-semibold text-gray-900">
+                            {moments(targetFinish).format("DD MMM YYYY")}
+                          </span>
+                        </div>
+                      )}
+                      {isSuspended && dataRTO?.OverdueCount > 0 && (
+                        <span className="font-semibold text-red-500">
+                          {dataRTO.OverdueCount} hari di-suspend
                         </span>
-                        <span className={`text-[11px] font-semibold ${isOverdue ? "text-red-500" : "text-gray-900"}`}>
-                          {moments(nextPay).format("ddd, DD MMM HH:mm")} WIB
-                        </span>
-                      </div>
-                    )}
-                    {targetFinish && (
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[11px] text-gray-500">Selesai:</span>
-                        <span className="text-[11px] font-semibold text-gray-900">
-                          {moments(targetFinish).format("DD MMM YYYY")}
-                        </span>
-                      </div>
-                    )}
-                    {isSuspended && dataRTO?.OverdueCount > 0 && (
-                      <span className="text-[11px] font-semibold text-red-500">
-                        ({dataRTO.OverdueCount} hari di-suspend)
-                      </span>
-                    )}
+                      )}
+                    </div>
+                    <span className="shrink-0 text-xs font-bold text-[#4DB6AC]">Detail →</span>
                   </div>
                 </button>
               );
@@ -566,7 +688,7 @@ const Home = () => {
                 key={op.id}
                 type="button"
                 onClick={() => navigate(rtoOperatorPath(op.id))}
-                className="w-full text-left bg-white rounded-2xl p-4 mb-3 shadow-sm border border-gray-100 active:scale-[0.99] transition-transform"
+                className="mb-3 w-full rounded-2xl border border-gray-100 bg-white p-4 text-left shadow-sm transition-all active:scale-[0.99] hover:border-[#4DB6AC]/25 hover:shadow-md"
               >
                 <div className="flex gap-3">
                   <div className="w-14 h-14 rounded-xl bg-[#e0f2f1] flex items-center justify-center text-[#4DB6AC] font-bold text-xl shrink-0">
@@ -629,12 +751,17 @@ const Home = () => {
                 Lihat program lainnya →
               </button>
             )}
-          </>
+          </div>
         )}
 
         {/* ===== RENT TAB ===== */}
         {activeTab === "rent" && (
-          <>
+          <div
+            id="home-tabpanel-rent"
+            role="tabpanel"
+            aria-labelledby="home-tab-rent"
+            className="space-y-4"
+          >
             {/* SECTION HEADER */}
             <div className="flex justify-between items-center">
               <span className="text-[15px] font-bold text-blackBold">Sewa motor listrik</span>
@@ -696,7 +823,7 @@ const Home = () => {
                 </div>
               </div>
             ))}
-          </>
+          </div>
         )}
 
         <div className="h-10" />
