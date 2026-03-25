@@ -112,7 +112,7 @@ export default function Step6Score({ onBack }: Props) {
       </div>
 
       <details className="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-        <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-bold text-gray-800 [&::-webkit-details-marker]:hidden">
+        <summary className="flex cursor-pointer list-none items-center justify-between rounded-t-2xl px-4 py-3 text-sm font-bold text-gray-800 outline-none transition-colors hover:bg-gray-50/80 focus-visible:ring-2 focus-visible:ring-[#4DB6AC] focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
           <span>Detail per dimensi &amp; panduan skor</span>
           <span className="text-gray-400 transition-transform group-open:rotate-180" aria-hidden>
             ▼

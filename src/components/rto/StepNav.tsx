@@ -37,6 +37,7 @@ const StepNav: React.FC<Props> = ({ currentStep, onStepTap }) => {
           const step = i + 1;
           const isActive = step === currentStep;
           const isDone = step < currentStep;
+          const isFuture = step > currentStep;
 
           return (
             <button
@@ -44,14 +45,25 @@ const StepNav: React.FC<Props> = ({ currentStep, onStepTap }) => {
               type="button"
               role="tab"
               aria-selected={isActive}
-              title={`Langkah ${step}: ${label}`}
-              onClick={() => onStepTap?.(step)}
+              aria-disabled={isFuture}
+              disabled={isFuture}
+              title={
+                isFuture
+                  ? `Selesaikan langkah ${currentStep} dulu`
+                  : `Langkah ${step}: ${label}`
+              }
+              onClick={() => {
+                if (isFuture) return;
+                onStepTap?.(step);
+              }}
               className={`flex min-w-0 w-full sm:w-auto sm:shrink-0 items-center justify-center gap-1 rounded-full px-2 py-1.5 text-[10px] font-semibold leading-tight transition-all sm:px-2.5 sm:text-[11px] ${
-                isActive
-                  ? "bg-[#4DB6AC] text-white shadow-md shadow-[#4DB6AC]/25"
-                  : isDone
-                    ? "bg-[#4DB6AC]/12 text-[#2d8a7d] ring-1 ring-[#4DB6AC]/20"
-                    : "bg-gray-100/90 text-gray-400"
+                isFuture
+                  ? "cursor-not-allowed bg-gray-100/60 text-gray-300 opacity-70"
+                  : isActive
+                    ? "bg-[#4DB6AC] text-white shadow-md shadow-[#4DB6AC]/25"
+                    : isDone
+                      ? "bg-[#4DB6AC]/12 text-[#2d8a7d] ring-1 ring-[#4DB6AC]/20"
+                      : "bg-gray-100/90 text-gray-400"
               }`}
             >
               <span

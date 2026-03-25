@@ -21,7 +21,7 @@ const CTABar: React.FC<Props> = ({
             <button
               type="button"
               onClick={onBack}
-              className="flex h-12 items-center justify-center rounded-2xl border-2 border-gray-200 px-5 text-sm font-semibold text-gray-600 transition-colors hover:bg-gray-50"
+              className="flex h-12 items-center justify-center rounded-2xl border-2 border-gray-200 px-5 text-sm font-semibold text-gray-600 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2"
             >
               {backLabel}
             </button>
@@ -30,7 +30,7 @@ const CTABar: React.FC<Props> = ({
             type="button"
             onClick={onPrimary}
             disabled={disabled}
-            className="min-h-12 flex-1 rounded-2xl bg-[#4DB6AC] text-base font-bold text-white shadow-lg shadow-[#4DB6AC]/30 transition-transform active:scale-[0.99] hover:bg-[#45a89e] disabled:opacity-50 disabled:shadow-none"
+            className="min-h-12 flex-1 rounded-2xl bg-[#4DB6AC] text-base font-bold text-white shadow-lg shadow-[#4DB6AC]/30 transition-transform active:scale-[0.99] hover:bg-[#45a89e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4DB6AC] focus-visible:ring-offset-2 disabled:opacity-50 disabled:shadow-none"
           >
             {primaryLabel}
           </button>
