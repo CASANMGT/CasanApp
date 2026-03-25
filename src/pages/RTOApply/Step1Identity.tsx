@@ -343,10 +343,69 @@ interface NominatimResult {
     town?: string;
     county?: string;
     state?: string;
+    region?: string;
+    state_district?: string;
     country?: string;
+    [key: string]: string | undefined;
   };
   lat: string;
   lon: string;
+}
+
+/** Map OSM / Nominatim labels to short Indonesian province names users expect */
+function normalizeProvinceLabel(s: string): string {
+  const t = s.trim();
+  if (!t) return "";
+  if (/daerah khusus ibukota|^dki\b/i.test(t)) return "DKI Jakarta";
+  if (/^jakarta$/i.test(t)) return "DKI Jakarta";
+  return t;
+}
+
+/**
+ * Nominatim often leaves `state` empty for nested addresses (e.g. Kembangan, Jakarta Barat).
+ * Without this, `province` stays "" and the Provinsi field shows only the gray placeholder.
+ */
+function extractIndonesiaProvince(addr: NominatimResult["address"], displayName: string): string {
+  const a = addr as Record<string, string | undefined>;
+  const fromKeys = [a.state, a.region, a.province, a.state_district].find(
+    (x) => x && String(x).trim(),
+  );
+  if (fromKeys) {
+    return normalizeProvinceLabel(fromKeys);
+  }
+
+  const blob = [
+    addr.city,
+    addr.town,
+    addr.county,
+    addr.suburb,
+    addr.city_district,
+    addr.village,
+    displayName,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  if (
+    /\bjakarta\b/.test(blob) ||
+    /\bjakarta\s+(barat|pusat|selatan|timur|utara)\b/.test(blob) ||
+    /\bdki\b/.test(blob) ||
+    /\bkepulauan seribu\b/.test(blob)
+  ) {
+    return "DKI Jakarta";
+  }
+
+  const parts = displayName.split(",").map((p) => p.trim()).filter(Boolean);
+  const indonesiaIdx = parts.findIndex((p) => p.toLowerCase() === "indonesia");
+  if (indonesiaIdx > 0) {
+    const maybe = parts[indonesiaIdx - 1];
+    if (maybe && !/^indonesia$/i.test(maybe)) {
+      return normalizeProvinceLabel(maybe);
+    }
+  }
+
+  return "";
 }
 
 function AddressAutocomplete({
@@ -416,7 +475,7 @@ function AddressAutocomplete({
     const subdistrict =
       addr.suburb || addr.village || addr.city_district || "";
     const city = addr.city || addr.town || addr.county || "";
-    const province = addr.state || "";
+    const province = extractIndonesiaProvince(addr, r.display_name);
 
     setQuery(r.display_name.split(",").slice(0, 3).join(",").trim());
     onChange(r.display_name.split(",").slice(0, 3).join(",").trim());
@@ -717,7 +776,7 @@ export default function Step1Identity() {
               <TextInput
                 value={draft.province ?? ""}
                 onChange={(v) => update({ province: v })}
-                placeholder="DKI Jakarta"
+                placeholder="Isi dari pencarian atau ketik manual"
               />
             </div>
           </div>
