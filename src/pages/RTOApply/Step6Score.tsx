@@ -74,113 +74,129 @@ export default function Step6Score({ onBack }: Props) {
   };
 
   return (
-    <div className="space-y-5 px-4 py-6 pb-28 sm:px-5">
-      {/* Score card */}
+    <div className="space-y-4 px-4 py-6 pb-28 sm:px-5">
+      {operatorName && (
+        <p className="text-center text-[11px] text-gray-500">
+          <span className="font-semibold text-gray-700">{bikeName || "Motor listrik"}</span>
+          {" · "}
+          {operatorName}
+          {pricePerDay > 0 && (
+            <>
+              {" · "}
+              Rp {pricePerDay.toLocaleString("id-ID")}/hari
+            </>
+          )}
+        </p>
+      )}
+
       <div
-        className={`rounded-2xl border-2 p-6 text-center shadow-[0_8px_28px_rgba(0,0,0,0.07)] ${decision.bg} ${decision.border}`}
+        className={`rounded-2xl border-2 p-5 text-center shadow-[0_8px_28px_rgba(0,0,0,0.07)] ${decision.bg} ${decision.border}`}
       >
-        <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">
+        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">
           Skor live
         </p>
-        <div className="text-5xl font-black tabular-nums text-gray-900">
+        <div className="text-4xl font-black tabular-nums text-gray-900 sm:text-5xl">
           {score.total}
           <span className="text-lg font-semibold text-gray-400">/100</span>
         </div>
-        <p className={`mt-2 text-sm font-bold ${decision.color}`}>
+        <p className={`mt-1.5 text-sm font-bold ${decision.color}`}>
           {decision.label}
         </p>
-        <div className="mt-2 h-2 rounded-full bg-gray-200 overflow-hidden">
+        <div className="mt-2 h-2 overflow-hidden rounded-full bg-gray-200">
           <div
             className="h-full rounded-full bg-[#4DB6AC] transition-all"
             style={{ width: `${score.total}%` }}
           />
         </div>
-        <p className="mt-3 text-xs text-gray-500">{decision.eta}</p>
+        <p className="mt-2.5 text-[11px] leading-relaxed text-gray-500">{decision.eta}</p>
       </div>
 
-      {/* Dimension breakdown */}
-      <section>
-        <h3 className={rtoSectionTitle}>Breakdown per dimensi</h3>
-        <div className={`${rtoCard} space-y-3 p-5`}>
-          {DIMENSIONS.map(({ key, label, max }) => {
-            const val = score[key];
-            const pct = Math.round((val / max) * 100);
-            return (
-              <div key={key}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-semibold text-gray-700">{label}</span>
-                  <span className="text-xs font-bold tabular-nums text-gray-500">
-                    {val}/{max}
+      <details className="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-bold text-gray-800 [&::-webkit-details-marker]:hidden">
+          <span>Detail per dimensi &amp; panduan skor</span>
+          <span className="text-gray-400 transition-transform group-open:rotate-180" aria-hidden>
+            ▼
+          </span>
+        </summary>
+        <div className="space-y-4 border-t border-gray-50 px-4 pb-4 pt-3">
+          <div>
+            <h3 className={rtoSectionTitle}>Breakdown</h3>
+            <div className={`${rtoCard} space-y-2.5 p-4`}>
+              {DIMENSIONS.map(({ key, label, max }) => {
+                const val = score[key];
+                const pct = Math.round((val / max) * 100);
+                return (
+                  <div key={key}>
+                    <div className="mb-1 flex items-center justify-between">
+                      <span className="text-[11px] font-semibold text-gray-700">{label}</span>
+                      <span className="text-[11px] font-bold tabular-nums text-gray-500">
+                        {val}/{max}
+                      </span>
+                    </div>
+                    <div className="h-1.5 overflow-hidden rounded-full bg-gray-100">
+                      <div
+                        className="h-full rounded-full bg-[#4DB6AC] transition-all"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div>
+            <h3 className={rtoSectionTitle}>Panduan skor</h3>
+            <div className={`${rtoCard} overflow-hidden`}>
+              {SCORE_GUIDE.map((tier, i) => (
+                <div
+                  key={tier.range}
+                  className={`flex items-center gap-2 px-3 py-2 ${
+                    i < SCORE_GUIDE.length - 1 ? "border-b border-gray-50" : ""
+                  }`}
+                >
+                  <div className={`h-2.5 w-2.5 shrink-0 rounded-full ${tier.color}`} />
+                  <span className="w-12 shrink-0 text-[10px] font-bold tabular-nums text-gray-600">
+                    {tier.range}
                   </span>
+                  <div className="min-w-0 flex-1 text-[10px] leading-snug text-gray-700">
+                    <span className="font-semibold">{tier.label}</span>
+                    <span className="text-gray-400"> — {tier.desc}</span>
+                  </div>
                 </div>
-                <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-[#4DB6AC] transition-all"
-                    style={{ width: `${pct}%` }}
-                  />
-                </div>
-              </div>
-            );
-          })}
+              ))}
+            </div>
+          </div>
         </div>
-      </section>
+      </details>
 
-      {/* Scoring guide */}
-      <section>
-        <h3 className={rtoSectionTitle}>Panduan skor</h3>
-        <div className={`${rtoCard} overflow-hidden`}>
-          {SCORE_GUIDE.map((tier, i) => (
-            <div
-              key={tier.range}
-              className={`flex items-center gap-3 px-4 py-2.5 ${
-                i < SCORE_GUIDE.length - 1 ? "border-b border-gray-50" : ""
-              }`}
-            >
-              <div className={`h-3 w-3 rounded-full ${tier.color} shrink-0`} />
-              <span className="text-xs font-bold text-gray-700 w-14 tabular-nums shrink-0">
-                {tier.range}
+      <div className="rounded-xl border border-strokeOrange bg-lightOrange p-3">
+        <p className="text-xs leading-relaxed text-gold">
+          <span className="font-bold">Catatan:</span> Skor indikasi dari data yang kamu isi — bukan
+          kontrak kredit. Keputusan akhir dari dealer setelah verifikasi.
+        </p>
+      </div>
+
+      <div className="rounded-2xl border-2 border-[#4DB6AC]/35 bg-gradient-to-b from-white to-[#f0faf8] p-4 shadow-sm">
+        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#327478]">
+          Ringkasan sebelum ajukan
+        </p>
+        <div className="mt-2 flex flex-wrap items-baseline gap-2">
+          <span className="text-2xl font-black tabular-nums text-gray-900">{score.total}</span>
+          <span className="text-sm font-semibold text-gray-400">/100</span>
+          <span className={`text-sm font-bold ${decision.color}`}>{decision.label}</span>
+        </div>
+        <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-[10px] text-gray-600">
+          {DIMENSIONS.map(({ key, label, max }) => (
+            <div key={key} className="flex items-center justify-between gap-1 border-b border-gray-100/80 pb-1">
+              <span className="truncate text-gray-500">{label}</span>
+              <span className="shrink-0 tabular-nums font-semibold text-gray-800">
+                {score[key]}/{max}
               </span>
-              <div className="flex-1 min-w-0">
-                <span className="text-xs font-semibold text-gray-800">
-                  {tier.label}
-                </span>
-                <span className="text-[10px] text-gray-400 ml-1.5">
-                  — {tier.desc}
-                </span>
-              </div>
             </div>
           ))}
         </div>
-      </section>
-
-      {/* Program recap */}
-      {operatorName && (
-        <section>
-          <h3 className={rtoSectionTitle}>Program dipilih</h3>
-          <div className={`${rtoCard} flex items-center gap-3 p-4`}>
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#4DB6AC]/25 to-primary10 text-lg shadow-inner">
-              🛵
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-gray-900 truncate">
-                {bikeName || "Motor Listrik"}
-              </p>
-              <p className="text-xs text-gray-500 truncate">
-                {operatorName}
-                {pricePerDay > 0 && (
-                  <> &middot; Rp {pricePerDay.toLocaleString("id-ID")}/hari</>
-                )}
-              </p>
-            </div>
-          </div>
-        </section>
-      )}
-
-      <div className="rounded-xl bg-lightOrange border border-strokeOrange p-3">
-        <p className="text-xs text-gold">
-          <span className="font-bold">Catatan:</span> Skor dihitung dari data yang kamu isi sebagai
-          indikasi kelengkapan — bukan kontrak kredit. Skor tinggi membantu prioritas review, tidak
-          menggantikan verifikasi manual atau keputusan dealer.
+        <p className="mt-3 text-[10px] leading-relaxed text-gray-500">
+          Periksa ringkasan di atas. Jika sudah sesuai, lanjut ajukan — data akan dikirim ke dealer.
         </p>
       </div>
 

@@ -8,9 +8,9 @@ import {
   resumeApplicationEdit,
 } from "../../features/rto/rtoApplicationSlice";
 import { openWhatsApp } from "../../helpers/linking";
-import { getPickupDocumentReminders } from "../../helpers/rtoPickupReminderDocs";
+import { getPickupDocumentsShortSummary } from "../../helpers/rtoPickupReminderDocs";
 import { rtoBikePath } from "../../constants/rtoRoutes";
-import { getBikeById, getOperatorById } from "../../data/rtoProgramExplore";
+import { getBikeById } from "../../data/rtoProgramExplore";
 import { CUSTOMER_SERVICES } from "../../common";
 import { rtoCard, rtoCardSubtle, rtoSectionTitle } from "../RTOProgramExplore/rtoUi";
 
@@ -369,10 +369,9 @@ export default function RTOStatus() {
   }
 
   const programExplore = useMemo(() => getBikeById(app.bikeId), [app.bikeId]);
-  const operatorExplore = useMemo(() => getOperatorById(app.operatorId), [app.operatorId]);
-  const pickupDocsReminder = useMemo(() => {
-    if (app.status !== "approved" && app.status !== "pickup_scheduled") return [];
-    return getPickupDocumentReminders(app);
+  const pickupDocsShortLine = useMemo(() => {
+    if (app.status !== "approved" && app.status !== "pickup_scheduled") return null;
+    return getPickupDocumentsShortSummary(app);
   }, [app]);
 
   const activeIdx = getActiveIndex(app.status);
@@ -812,57 +811,12 @@ export default function RTOStatus() {
               </span>
             </button>
 
-            {programExplore && (
-              <div className="border-t border-gray-100 px-3 pb-3 pt-2">
-                <p className="text-[10px] leading-snug text-gray-600">{programExplore.bike.specLine}</p>
-                <div className="mt-2 flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-gray-600">
-                  <span>
-                    <span className="text-gray-400">Daya</span> {programExplore.bike.watt}
-                  </span>
-                  <span className="text-gray-200">|</span>
-                  <span>
-                    <span className="text-gray-400">Jarak</span> {programExplore.bike.rangeKm}
-                  </span>
-                  <span className="text-gray-200">|</span>
-                  <span>
-                    <span className="text-gray-400">Bat.</span> {programExplore.bike.batteryWh}
-                  </span>
-                  <span className="text-gray-200">|</span>
-                  <span>
-                    <span className="text-gray-400">Th</span> {programExplore.bike.year}
-                  </span>
-                </div>
-                {operatorExplore?.benefits?.length ? (
-                  <p className="mt-2 line-clamp-2 text-[10px] leading-relaxed text-gray-500">
-                    {operatorExplore.benefits.slice(0, 3).join(" · ")}
-                  </p>
-                ) : null}
-                {typeof app.minSalary === "number" && app.minSalary > 0 && (
-                  <p className="mt-1.5 text-[10px] text-gray-400">
-                    Min. gaji acuan Rp {app.minSalary.toLocaleString("id-ID")}/bln
-                  </p>
-                )}
-              </div>
-            )}
-
-            {pickupDocsReminder.length > 0 && (
-              <div className="border-t border-amber-100/80 bg-amber-50/35 px-3 py-2.5">
-                <p className="text-[10px] font-bold uppercase tracking-wide text-amber-900/80">
+            {pickupDocsShortLine && (
+              <div className="border-t border-amber-100/80 bg-amber-50/30 px-3 py-2">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-amber-900/75">
                   Bawa saat ambil motor
                 </p>
-                <ul className="mt-1.5 space-y-1">
-                  {pickupDocsReminder.map((row, i) => (
-                    <li key={i} className="flex gap-1.5 text-[10px] leading-snug text-gray-700">
-                      <span className="shrink-0 opacity-90" aria-hidden>
-                        {row.icon}
-                      </span>
-                      <span>
-                        <span className="font-medium">{row.title}</span>
-                        {row.detail ? <span className="text-gray-500"> — {row.detail}</span> : null}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+                <p className="mt-1 text-[10px] leading-relaxed text-gray-700">{pickupDocsShortLine}</p>
               </div>
             )}
 

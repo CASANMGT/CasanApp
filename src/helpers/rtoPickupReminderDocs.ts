@@ -55,3 +55,12 @@ export function getPickupDocumentReminders(app: Application): PickupDocReminder[
 
   return lines;
 }
+
+/** Satu kalimat untuk kartu status — hindari daftar panjang. */
+export function getPickupDocumentsShortSummary(app: Application): string {
+  const hasG = app.form.guarantorType !== "none";
+  if (hasG) {
+    return "Bawa asli: KTP & SIM, bukti pendapatan, serta KTP & bukti penghasilan penjamin sesuai data pengajuan.";
+  }
+  return "Bawa asli: KTP, SIM, dan bukti pendapatan sesuai pengajuan. Siapkan HP untuk verifikasi jika diminta.";
+}
