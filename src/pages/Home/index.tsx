@@ -716,18 +716,13 @@ const Home = () => {
                         <p className="text-[12px] text-gray-500 mt-0.5">{op.area}</p>
                       </div>
                       <div className="text-right shrink-0">
-                        <div className="flex items-center gap-1 text-amber-500 text-[12px] font-semibold">
-                          <span>★</span>
-                          <span>{op.rating}</span>
-                          <span className="text-gray-400 font-normal">({op.reviewCount})</span>
-                        </div>
-                        <p className="text-[11px] font-semibold text-[#4DB6AC] mt-0.5">{distLabel}</p>
+                        <p className="text-[11px] font-semibold text-[#4DB6AC]">{distLabel}</p>
                         <p className="text-[10px] text-gray-400">
                           {dKm != null
                             ? nCabang > 1
                               ? `Cabang terdekat · ${nCabang} lokasi`
                               : "Dari lokasi kamu"
-                            : "Perkiraan"}
+                            : ""}
                         </p>
                       </div>
                     </div>
@@ -745,7 +740,7 @@ const Home = () => {
                     </div>
                     <div className="flex items-center justify-between mt-2.5 pt-2.5 border-t border-gray-100">
                       <span className="text-[12px] text-gray-600">
-                        Min. gaji <span className="font-semibold text-gray-900">{rupiah(op.minSalary)}</span>
+                        Min. gaji <span className="font-semibold text-gray-900">Rp{rupiah(op.minSalary)}</span>
                       </span>
                       <span className="text-[12px] font-semibold text-[#4DB6AC] flex items-center gap-0.5">
                         {op.bikes.length} motor <span aria-hidden>›</span>
