@@ -5,6 +5,7 @@ import type {
   ApplicationStatus,
   PickupBooking,
   ScoreBreakdown,
+  SupplementaryDocUpload,
 } from "../../types/rtoApplication";
 import { EMPTY_FORM } from "../../types/rtoApplication";
 
@@ -136,6 +137,7 @@ const rtoApplicationSlice = createSlice({
         status: ApplicationStatus;
         reviewerNote?: string;
         requestedDocIds?: string[] | null;
+        supplementarySubmissions?: SupplementaryDocUpload[];
         rejectionReason?: string;
         rejectionCooldownUntil?: string;
         pickup?: PickupBooking | null;
@@ -152,6 +154,12 @@ const rtoApplicationSlice = createSlice({
           action.payload.requestedDocIds === null
             ? undefined
             : action.payload.requestedDocIds;
+      if (action.payload.supplementarySubmissions?.length) {
+        app.supplementarySubmissions = [
+          ...(app.supplementarySubmissions ?? []),
+          ...action.payload.supplementarySubmissions,
+        ];
+      }
       if (action.payload.rejectionReason !== undefined)
         app.rejectionReason = action.payload.rejectionReason;
       if (action.payload.rejectionCooldownUntil !== undefined)

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import type { AppDispatch, RootState } from "../../store";
@@ -369,13 +369,39 @@ export default function RTOStatus() {
     ? Math.max(0, Math.floor((new Date(app.rejectionCooldownUntil).getTime() - Date.now()) / 1000))
     : 0;
 
-  const handleResubmitDocs = () => {
+  const [pendingSupplementaryNames, setPendingSupplementaryNames] = useState<Record<string, string>>(
+    {},
+  );
+
+  useEffect(() => {
+    setPendingSupplementaryNames({});
+  }, [app.id]);
+
+  const requestedDocIdsList = app.requestedDocIds ?? [];
+  const allSupplementaryChosen =
+    requestedDocIdsList.length > 0 &&
+    requestedDocIdsList.every((docId) => Boolean(pendingSupplementaryNames[docId]?.trim()));
+
+  const handleSupplementaryFileChange = (docId: string, fileList: FileList | null) => {
+    const file = fileList?.[0];
+    if (!file) return;
+    setPendingSupplementaryNames((prev) => ({ ...prev, [docId]: file.name }));
+  };
+
+  const handleSubmitSupplementaryDocs = () => {
+    if (!allSupplementaryChosen) return;
+    const supplementarySubmissions = requestedDocIdsList.map((docId) => ({
+      docId,
+      fileName: pendingSupplementaryNames[docId],
+      submittedAt: new Date().toISOString(),
+    }));
     dispatch(
       updateApplicationStatus({
         id: app.id,
         status: "submitted",
         reviewerNote: undefined,
         requestedDocIds: null,
+        supplementarySubmissions,
       }),
     );
   };
@@ -471,29 +497,69 @@ export default function RTOStatus() {
           <section className={`${rtoCard} border-strokeOrange/80 bg-gradient-to-b from-[#FFFAF1] to-white p-5`}>
             <h3 className={rtoSectionTitle}>Yang perlu dilengkapi</h3>
             {app.reviewerNote && <p className="-mt-1 mb-3 text-sm leading-relaxed text-gray-800">{app.reviewerNote}</p>}
-            <ul className="space-y-2">
-              {(app.requestedDocIds ?? []).map((id) => (
-                <li
-                  key={id}
-                  className="flex items-center gap-3 rounded-xl border border-strokeOrange/50 bg-white/90 px-3 py-2.5 text-sm font-medium text-gray-800"
-                >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange/15 text-xs font-bold text-[#b37400]">
-                    📄
-                  </span>
-                  {DOC_LABELS[id] ?? id}
-                </li>
-              ))}
+            <ul className="space-y-3">
+              {requestedDocIdsList.map((id) => {
+                const inputId = `rto-supplementary-${app.id}-${id}`;
+                const picked = pendingSupplementaryNames[id];
+                return (
+                  <li
+                    key={id}
+                    className="rounded-xl border border-strokeOrange/55 bg-white/95 p-3 shadow-sm shadow-orange/5"
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange/15 text-sm text-[#b37400]">
+                        📄
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-gray-900">{DOC_LABELS[id] ?? id}</p>
+                        <p className="mt-1 text-[11px] text-gray-500">
+                          PDF atau foto (JPG/PNG); ukuran berkas mengikuti kebijakan unggah.
+                        </p>
+                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                          <input
+                            id={inputId}
+                            type="file"
+                            accept="image/*,.pdf,application/pdf"
+                            className="sr-only"
+                            onChange={(e) => handleSupplementaryFileChange(id, e.target.files)}
+                          />
+                          <label
+                            htmlFor={inputId}
+                            className="inline-flex cursor-pointer items-center justify-center rounded-xl border-2 border-[#4DB6AC] bg-white px-4 py-2 text-xs font-bold text-[#327478] transition-colors hover:bg-primary10"
+                          >
+                            Pilih berkas
+                          </label>
+                          {picked ? (
+                            <span className="max-w-[200px] truncate text-xs font-medium text-green" title={picked}>
+                              ✓ {picked}
+                            </span>
+                          ) : (
+                            <span className="text-xs text-gray-400">Belum ada berkas</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
             <p className="mt-4 text-[11px] leading-relaxed text-gray-500">
-              Rilis penuh: unggah di sini. Untuk demo, kirim ulang untuk lanjut simulasi.
+              Setelah semua dokumen dipilih, kirim ke dealer untuk dilanjutkan verifikasi. Unggahan nyata
+              tersambung API di rilis penuh — untuk saat ini nama berkas disimpan secara lokal (demo).
             </p>
             <button
               type="button"
-              onClick={handleResubmitDocs}
-              className="mt-4 w-full rounded-2xl bg-[#4DB6AC] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#4DB6AC]/25"
+              disabled={!allSupplementaryChosen}
+              onClick={handleSubmitSupplementaryDocs}
+              className="mt-4 w-full rounded-2xl bg-[#4DB6AC] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#4DB6AC]/25 disabled:cursor-not-allowed disabled:opacity-45 disabled:shadow-none"
             >
-              Kirim ulang (demo)
+              Kirim dokumen
             </button>
+            {!allSupplementaryChosen && requestedDocIdsList.length > 0 && (
+              <p className="mt-2 text-center text-[11px] text-gray-500">
+                Pilih berkas untuk setiap dokumen di atas agar tombol aktif.
+              </p>
+            )}
           </section>
         )}
 

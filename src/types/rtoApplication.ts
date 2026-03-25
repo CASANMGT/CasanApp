@@ -142,6 +142,13 @@ export interface PickupBooking {
   status: "scheduled" | "completed" | "cancelled";
 }
 
+/** Bukti unggahan saat memenuhi permintaan dokumen tambahan (demo: nama berkas saja). */
+export interface SupplementaryDocUpload {
+  docId: string;
+  fileName: string;
+  submittedAt: string;
+}
+
 export interface Application {
   id: string;
   operatorId: string;
@@ -158,6 +165,8 @@ export interface Application {
   lastUpdatedAt: string;
   reviewerNote?: string;
   requestedDocIds?: string[];
+  /** Riwayat berkas yang dikirim dari halaman status (need_documents). */
+  supplementarySubmissions?: SupplementaryDocUpload[];
   rejectionReason?: string;
   rejectionCooldownUntil?: string;
   pickup?: PickupBooking;
