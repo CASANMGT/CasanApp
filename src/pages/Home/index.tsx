@@ -609,14 +609,14 @@ const Home = () => {
                         >
                           {creditLeft}
                         </span>
-                        <span className="pb-0.5 text-[12px] text-gray-600">hari tersisa</span>
+                        <span className="pb-0.5 text-[12px] text-gray-600">Kredit Hari Tersisa</span>
                       </div>
 
                       {totalCredits > 0 && (
                         <div className="mt-3">
                           <div className="mb-1 flex items-center justify-between text-[11px] text-gray-500">
                             <span>
-                              {creditPaid}/{totalCredits} hari dibayar
+                              {creditPaid}/{totalCredits} hari terbayar
                             </span>
                             <span className="font-semibold tabular-nums text-gray-800">{progressPct}%</span>
                           </div>
@@ -629,10 +629,11 @@ const Home = () => {
                             aria-label="Progres cicilan"
                           >
                             <div
-                              className={`h-full rounded-full transition-[width] ${
-                                isSuspended || isOverdue ? "bg-red-400" : "bg-[#4DB6AC]"
-                              }`}
-                              style={{ width: `${progressPct}%` }}
+                              className={`h-full rounded-full transition-[width]`}
+                              style={{ 
+                                width: `${progressPct}%`,
+                                backgroundColor: isSuspended || isOverdue ? '#f87171' : status === 5 ? '#fbbf24' : '#4DB6AC'
+                              }}
                             />
                           </div>
                         </div>
