@@ -362,9 +362,9 @@ const Home = () => {
 
   const headerBg = useMemo(() => {
     return [
-      "radial-gradient(ellipse 130% 50% at 20% -5%, rgba(77,182,172,0.3) 0%, transparent 60%)",
-      "radial-gradient(ellipse 90% 45% at 80% 5%, rgba(77,182,172,0.18) 0%, transparent 55%)",
-      "linear-gradient(180deg, #c8ebe7 0%, #daf0ed 35%, #ecf2f0 65%, #f4f6f5 100%)",
+      "radial-gradient(ellipse 130% 50% at 20% -5%, rgba(38,166,154,0.7) 0%, transparent 60%)",
+      "radial-gradient(ellipse 90% 45% at 80% 5%, rgba(38,166,154,0.5) 0%, transparent 55%)",
+      "linear-gradient(180deg, #26a69a 0%, #4DB6AC 40%, #b2dfdb 70%, #f4f6f5 100%)",
     ].join(", ");
   }, [activeTab]);
 
@@ -381,9 +381,9 @@ const Home = () => {
         <IcLogo />
         <button
           onClick={() => window.open("https://about.casan.id/", "_blank")}
-          className="row gap-2 text-blackBold/70 font-semibold text-sm"
+          className="row gap-2 text-white font-semibold text-sm"
         >
-          <FiInfo size={18} className="text-blackBold/50" />
+          <FiInfo size={18} className="text-white/80" />
           Tentang Casan →
         </button>
       </div>
@@ -436,7 +436,7 @@ const Home = () => {
                 className={`relative flex-1 flex flex-col items-center gap-2 p-3 rounded-[14px] border-2 transition-all duration-200 ease-out ${
                   isActive
                     ? "cursor-default bg-white border-[#4DB6AC] shadow-[0_4px_16px_rgba(77,182,172,0.12)]"
-                    : "cursor-pointer bg-white/50 backdrop-blur-sm border-transparent opacity-55 hover:opacity-100"
+                    : "cursor-pointer bg-white/70 backdrop-blur-sm border-transparent opacity-85 hover:opacity-100"
                 }`}
               >
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
@@ -446,8 +446,8 @@ const Home = () => {
                 }`}>
                   <Icon size={28} />
                 </div>
-                <span className={`text-[11px] font-bold leading-tight ${isActive ? "text-blackBold" : "text-black50"}`}>{tab.label}</span>
-                <span className={`text-[9px] ${isActive ? "text-black70" : "text-black30"}`}>{tab.sub}</span>
+                <span className={`text-[11px] font-bold leading-tight ${isActive ? "text-blackBold" : "text-black70"}`}>{tab.label}</span>
+                <span className={`text-[9px] ${isActive ? "text-black70" : "text-black50"}`}>{tab.sub}</span>
               </button>
             );
           })}
