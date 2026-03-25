@@ -55,6 +55,27 @@ export const APP_CHANGELOG: ChangelogRelease[] = [
           "UI RTO dirapikan: kartu & judul section konsisten (alur Jelajahi → dealer → motor).",
         ],
       },
+      {
+        title: "Pengajuan RTO multi-langkah",
+        details: [
+          "Rute /rto-apply: enam langkah (identitas, pekerjaan & aset, keluarga & penjamin, riwayat kredit, dokumen, skor live).",
+          "Skoring memperhatikan min. gaji program; draft disimpan di perangkat.",
+          "Dari halaman motor: Ajukan membawa minSalary operator ke alur apply.",
+        ],
+      },
+      {
+        title: "Status & jadwal ambil RTO (mock)",
+        details: [
+          "/rto-status/:id: submitted, review, approved, need_documents, rejected; lanjut edit kembali ke apply.",
+          "/rto-pickup/:id: pilih tanggal & slot → pickup_scheduled.",
+        ],
+      },
+      {
+        title: "Beranda — kartu pengajuan",
+        details: [
+          "Menampilkan aplikasi RTO terbaru yang masih berjalan; disembunyikan setelah pickup_done.",
+        ],
+      },
     ],
     changed: [
       {
@@ -69,6 +90,12 @@ export const APP_CHANGELOG: ChangelogRelease[] = [
       {
         title: "Rent tab",
         details: ["Restored rupiah import for price formatting so the Rent tab no longer crashes."],
+      },
+      {
+        title: "Rute select-rent-buy",
+        details: [
+          "Mengalihkan ke /rto-program-explore agar satu pintu masuk jelajahi program RTO.",
+        ],
       },
     ],
   },

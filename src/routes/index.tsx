@@ -52,6 +52,7 @@ import {
   WithdrawalHistory,
   RTOApply,
   RTOStatus,
+  RTOPickup,
 } from "../pages";
 import { useAxiosInterceptor } from "../services/ApiClient";
 import ProtectedRoute from "./ProtectedRoute";
@@ -134,6 +135,10 @@ const RoutesPage = () => {
       <Route
         path="rto-status/:applicationId"
         element={<ProtectedRoute element={<RTOStatus />} />}
+      />
+      <Route
+        path="rto-pickup/:applicationId"
+        element={<ProtectedRoute element={<RTOPickup />} />}
       />
 
       <Route path="vehicle" element={<Vehicle />} />

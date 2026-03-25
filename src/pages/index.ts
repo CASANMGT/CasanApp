@@ -51,6 +51,7 @@ import WithdrawalDetails from "./WithdrawalDetails";
 import WithdrawalHistory from "./WithdrawalHistory";
 import RTOApply from "./RTOApply";
 import RTOStatus from "./RTOStatus";
+import RTOPickup from "./RTOPickup";
 
 export {
   BalanceDetails,
@@ -106,5 +107,6 @@ export {
   WithdrawalHistory,
   RTOApply,
   RTOStatus,
+  RTOPickup,
 };
 

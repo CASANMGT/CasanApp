@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Motor**: angle gallery, Harian (Rp for N days) & min. salary cards, specs & charging + nearby station count, payment schedule + estimated completion, benefits, apply + WhatsApp share.
   - Completion estimate: weekdays only (excludes Sat–Sun), anchored to “today”; mock data with multiple bikes per operator.
   - RTO screens: shared card/section styling for a cleaner flow.
+- **RTO multi-step application** — `/rto-apply` (query `?step=`) with six steps: identitas, pekerjaan & aset, keluarga & penjamin, riwayat kredit, unggah dokumen, **skor live** dari mesin scoring (memperhatikan **min. gaji program**). Draft + status tersimpan di `localStorage`; mulai dari halaman motor dengan `minSalary` operator.
+- **RTO status (mock review)** — `/rto-status/:applicationId`: alur `submitted` → `under_review` → `approved` / `need_documents` / `rejected`; panel permintaan dokumen, penolakan, persetujuan; **Edit** melanjutkan ke `/rto-apply` dengan data draft.
+- **Jadwal ambil motor** — `/rto-pickup/:applicationId`: strip tanggal + slot waktu → `pickup_scheduled` dan detail booking.
+- **Beranda — kartu pengajuan** — Kartu “Aplikasi pengajuan” untuk aplikasi RTO terbaru yang masih berjalan (disembunyikan jika status `pickup_done`).
 
 ### Changed
 
@@ -31,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Rent tab no longer crashes (restored `rupiah` import for price formatting).
+- **Ruta lama Sewa/Beli** — `/select-rent-buy` mengalihkan ke `/rto-program-explore` (alur RTO resmi).
 
 ---
 

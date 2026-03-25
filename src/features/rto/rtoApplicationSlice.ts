@@ -3,6 +3,7 @@ import type {
   Application,
   ApplicationForm,
   ApplicationStatus,
+  PickupBooking,
   ScoreBreakdown,
 } from "../../types/rtoApplication";
 import { EMPTY_FORM } from "../../types/rtoApplication";
@@ -115,6 +116,7 @@ const rtoApplicationSlice = createSlice({
         operatorName: state.operatorName,
         bikeName: state.bikeName,
         pricePerDay: state.pricePerDay,
+        minSalary: state.minSalary > 0 ? state.minSalary : undefined,
         form,
         score,
         status: "submitted",
@@ -133,9 +135,10 @@ const rtoApplicationSlice = createSlice({
         id: string;
         status: ApplicationStatus;
         reviewerNote?: string;
-        requestedDocIds?: string[];
+        requestedDocIds?: string[] | null;
         rejectionReason?: string;
         rejectionCooldownUntil?: string;
+        pickup?: PickupBooking | null;
       }>,
     ) {
       const app = state.applications.find((a) => a.id === action.payload.id);
@@ -145,11 +148,31 @@ const rtoApplicationSlice = createSlice({
       if (action.payload.reviewerNote !== undefined)
         app.reviewerNote = action.payload.reviewerNote;
       if (action.payload.requestedDocIds !== undefined)
-        app.requestedDocIds = action.payload.requestedDocIds;
+        app.requestedDocIds =
+          action.payload.requestedDocIds === null
+            ? undefined
+            : action.payload.requestedDocIds;
       if (action.payload.rejectionReason !== undefined)
         app.rejectionReason = action.payload.rejectionReason;
       if (action.payload.rejectionCooldownUntil !== undefined)
         app.rejectionCooldownUntil = action.payload.rejectionCooldownUntil;
+      if (action.payload.pickup !== undefined)
+        app.pickup =
+          action.payload.pickup === null ? undefined : action.payload.pickup;
+    },
+
+    resumeApplicationEdit(state, action: PayloadAction<string>) {
+      const app = state.applications.find((a) => a.id === action.payload);
+      if (!app) return;
+      state.draft = { ...app.form };
+      state.selectedOperatorId = app.operatorId;
+      state.selectedBikeId = app.bikeId;
+      state.operatorName = app.operatorName;
+      state.bikeName = app.bikeName;
+      state.pricePerDay = app.pricePerDay;
+      state.minSalary = app.minSalary ?? 0;
+      state.currentStep = 1;
+      state.activeApplicationId = app.id;
     },
 
     resetDraft(state) {
@@ -171,6 +194,7 @@ export const {
   goToStep,
   submitApplication,
   updateApplicationStatus,
+  resumeApplicationEdit,
   resetDraft,
 } = rtoApplicationSlice.actions;
 

@@ -22,6 +22,9 @@ Keep these in sync when you ship user-facing changes.
 - **RTO tab:** Mock program list + pagination + Ajukan.
 - **Rent tab:** Mock rental cards.
 - **RTO program details:** Jelajahi → dealer list (distance / nearest sort) → **dealer** (banner, WA share, branches + km, Maps, hours, call/WA, photos, motor list) → **motor** (gallery, Harian & min gaji, specs, charging + stations, jadwal bayar + estimated finish, benefits, apply + WA). Multi-bike mock data per operator; weekend-excluded payment estimate from “today”.
+- **RTO multi-step apply:** `/rto-apply` (6 langkah + skor live, gate min. gaji, persist).
+- **RTO status & pickup:** `/rto-status/:id` (mock review, need docs / rejected / approved, lanjut edit), `/rto-pickup/:id` (jadwal ambil).
+- **Home:** kartu aplikasi RTO terbaru (sembunyi jika `pickup_done`).
 
 **Changed**
 
@@ -30,6 +33,7 @@ Keep these in sync when you ship user-facing changes.
 **Fixed**
 
 - Rent tab: `rupiah` import restored (no crash).
+- `/select-rent-buy` → redirect ke `/rto-program-explore`.
 
 ---
 

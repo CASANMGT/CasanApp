@@ -149,6 +149,8 @@ export interface Application {
   operatorName: string;
   bikeName: string;
   pricePerDay: number;
+  /** Program min monthly salary — synced from operator at apply time */
+  minSalary?: number;
   form: ApplicationForm;
   score: ScoreBreakdown;
   status: ApplicationStatus;
