@@ -15,16 +15,37 @@ const TIME_SLOTS = [
   "16:00",
 ];
 
-function nextDays(count: number): Date[] {
+/**
+ * First selectable day is tomorrow. Returns at least `minDays` slots, then every day
+ * through the last day of the *next* calendar month so the strip always includes
+ * upcoming-month dates (not only the current month).
+ */
+function upcomingPickupDays(minDays = 14): Date[] {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const cursor = new Date(today);
+  cursor.setDate(cursor.getDate() + 1);
+
+  const endOfNextMonth = new Date(today.getFullYear(), today.getMonth() + 2, 0);
+  endOfNextMonth.setHours(0, 0, 0, 0);
+
   const out: Date[] = [];
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  for (let i = 0; i < count; i += 1) {
-    const x = new Date(d);
-    x.setDate(x.getDate() + 1 + i);
-    out.push(x);
+  while (out.length < minDays) {
+    out.push(new Date(cursor));
+    cursor.setDate(cursor.getDate() + 1);
+    if (out.length > 180) return out;
+  }
+  while (cursor.getTime() <= endOfNextMonth.getTime()) {
+    out.push(new Date(cursor));
+    cursor.setDate(cursor.getDate() + 1);
+    if (out.length > 180) break;
   }
   return out;
+}
+
+function localDayKey(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
 function sameDay(a: Date, b: Date | null): boolean {
@@ -47,7 +68,7 @@ export default function RTOPickup() {
     return applications.find((a) => a.id === applicationId);
   }, [applications, applicationId]);
 
-  const days = useMemo(() => nextDays(14), []);
+  const days = useMemo(() => upcomingPickupDays(14), []);
   const [picked, setPicked] = useState<Date | null>(null);
   const [slot, setSlot] = useState("");
 
@@ -148,7 +169,7 @@ export default function RTOPickup() {
               const label = d.toLocaleDateString("id-ID", { weekday: "short", day: "numeric", month: "short" });
               return (
                 <button
-                  key={d.toISOString()}
+                  key={localDayKey(d)}
                   type="button"
                   onClick={() => setPicked(d)}
                   className={`shrink-0 rounded-xl border-2 px-3 py-2 text-center text-xs font-semibold ${
