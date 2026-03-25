@@ -2,20 +2,21 @@ import { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import type { AppDispatch, RootState } from "../../store";
-import type { Application } from "../../types/rtoApplication";
+import type { Application, ScoreBreakdown } from "../../types/rtoApplication";
 import {
   updateApplicationStatus,
   resumeApplicationEdit,
 } from "../../features/rto/rtoApplicationSlice";
 import { openWhatsApp } from "../../helpers/linking";
 import { CUSTOMER_SERVICES } from "../../common";
+import { rtoCard, rtoCardSubtle, rtoSectionTitle } from "../RTOProgramExplore/rtoUi";
 
 const STATUS_STEPS = [
-  { label: "Terkirim", key: "submitted" },
-  { label: "Sedang Direview", key: "under_review" },
-  { label: "Keputusan", key: "decided" },
-  { label: "Ambil Motor", key: "pickup" },
-];
+  { label: "Terkirim", key: "submitted", hint: "Data masuk ke dealer" },
+  { label: "Direview", key: "under_review", hint: "Tim menilai kelayakan" },
+  { label: "Keputusan", key: "decided", hint: "Disetujui, ditolak, atau perlu dokumen" },
+  { label: "Ambil motor", key: "pickup", hint: "Jadwal & pengambilan" },
+] as const;
 
 const DOC_LABELS: Record<string, string> = {
   ktp: "KTP",
@@ -25,6 +26,15 @@ const DOC_LABELS: Record<string, string> = {
   slip_gaji: "Slip gaji / bukti pendapatan",
   slik: "Hasil SLIK OJK",
 };
+
+const SCORE_ROWS: { key: keyof ScoreBreakdown; label: string; max: number }[] = [
+  { key: "identity", label: "Identitas & alamat", max: 18 },
+  { key: "income", label: "Pendapatan", max: 22 },
+  { key: "employment", label: "Pekerjaan", max: 15 },
+  { key: "family", label: "Keluarga & penjamin", max: 12 },
+  { key: "credit", label: "Riwayat kredit", max: 18 },
+  { key: "documents", label: "Dokumen", max: 15 },
+];
 
 function getActiveIndex(status: string): number {
   switch (status) {
@@ -37,8 +47,9 @@ function getActiveIndex(status: string): number {
     case "rejected":
       return 2;
     case "pickup_scheduled":
-    case "pickup_done":
       return 3;
+    case "pickup_done":
+      return 4;
     default:
       return 0;
   }
@@ -48,10 +59,10 @@ function formatDate(iso: string): string {
   try {
     const d = new Date(iso);
     return d.toLocaleDateString("id-ID", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
+      weekday: "short",
       day: "numeric",
+      month: "short",
+      year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
@@ -60,28 +71,143 @@ function formatDate(iso: string): string {
   }
 }
 
-function getStatusLabel(status: string): { text: string; color: string } {
+type StatusVisual = {
+  text: string;
+  pillClass: string;
+  ringClass: string;
+  heroGradient: string;
+};
+
+function getStatusVisual(status: string): StatusVisual {
   switch (status) {
     case "submitted":
-      return { text: "Aplikasi Terkirim", color: "text-primaryDark" };
+      return {
+        text: "Aplikasi terkirim",
+        pillClass: "bg-white/20 text-white border border-white/25",
+        ringClass: "from-primary30/90 to-primary10",
+        heroGradient: "from-[#4DB6AC] via-[#4aa89e] to-[#3d9a91]",
+      };
     case "under_review":
-      return { text: "Sedang Direview", color: "text-primaryDark" };
+      return {
+        text: "Sedang direview",
+        pillClass: "bg-white/20 text-white border border-white/25",
+        ringClass: "from-primary70/40 to-primary30/60",
+        heroGradient: "from-[#45a89e] via-[#3f9d94] to-[#358f87]",
+      };
     case "need_documents":
-      return { text: "Dokumen Tambahan Diperlukan", color: "text-gold" };
+      return {
+        text: "Perlu dokumen",
+        pillClass: "bg-orange/25 text-[#9a6200] border border-orange/40",
+        ringClass: "from-orange/35 to-secondary30",
+        heroGradient: "from-[#e8a54a] via-[#d99a3c] to-[#c9892e]",
+      };
     case "approved":
-      return { text: "Disetujui!", color: "text-green" };
+      return {
+        text: "Disetujui",
+        pillClass: "bg-green/20 text-green border border-strokeGreen",
+        ringClass: "from-strokeGreen to-lightGreen",
+        heroGradient: "from-[#3db86b] via-[#2fa65d] to-[#24904f]",
+      };
     case "rejected":
-      return { text: "Tidak Disetujui", color: "text-red" };
+      return {
+        text: "Belum disetujui",
+        pillClass: "bg-white/95 text-red border border-strokeRed shadow-sm",
+        ringClass: "from-strokeRed/80 to-lightRed",
+        heroGradient: "from-[#e85d6f] via-[#d64d5f] to-[#c44452]",
+      };
     case "pickup_scheduled":
-      return { text: "Pickup Terjadwal", color: "text-primaryDark" };
+      return {
+        text: "Pickup dijadwalkan",
+        pillClass: "bg-white/20 text-white border border-white/25",
+        ringClass: "from-primary50/50 to-primary10",
+        heroGradient: "from-[#4DB6AC] via-[#439f96] to-[#3a8f87]",
+      };
     case "pickup_done":
-      return { text: "Selesai", color: "text-green" };
+      return {
+        text: "Selesai",
+        pillClass: "bg-green/15 text-green border border-strokeGreen",
+        ringClass: "from-strokeGreen to-lightGreen",
+        heroGradient: "from-[#34b56a] via-[#2aa35f] to-[#219152]",
+      };
     default:
-      return { text: "Diproses", color: "text-black70" };
+      return {
+        text: "Diproses",
+        pillClass: "bg-white/15 text-white border border-white/20",
+        ringClass: "from-gray-200 to-gray-100",
+        heroGradient: "from-[#4DB6AC] to-[#327478]",
+      };
   }
 }
 
-/** Simulasi review (PRD): skor menentukan hasil setelah under_review */
+function statusSubtitle(status: string): string {
+  switch (status) {
+    case "submitted":
+    case "under_review":
+      return "Tim kami memeriksa kelengkapan dan kelayakan pengajuan Anda.";
+    case "approved":
+      return "Silakan jadwalkan pengambilan motor dan siapkan dokumen asli.";
+    case "rejected":
+      return "Anda bisa melihat program lain; pengajuan baru mengikuti kebijakan masa tunggu.";
+    case "need_documents":
+      return "Lengkapi dokumen yang diminta agar verifikasi bisa dilanjutkan.";
+    case "pickup_scheduled":
+      return "Datang sesuai jadwal; bawa identitas dan dokumen pendukung.";
+    case "pickup_done":
+      return "Terima kasih telah melengkapi proses pengambilan motor.";
+    default:
+      return "Pantau langkah berikutnya di bawah.";
+  }
+}
+
+function StatusGlyph({ status }: { status: string }) {
+  const common = "h-9 w-9 text-current";
+  switch (status) {
+    case "submitted":
+    case "under_review":
+      return (
+        <svg className={common} viewBox="0 0 24 24" fill="none" aria-hidden>
+          <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.75" className="opacity-35" />
+          <path d="M12 7v6l4 2" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+        </svg>
+      );
+    case "need_documents":
+      return (
+        <svg className={common} viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M8 4h6l4 4v12a1 1 0 01-1 1H8a1 1 0 01-1-1V5a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+          <path d="M14 4v4h4M10 13h6M10 17h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      );
+    case "approved":
+    case "pickup_done":
+      return (
+        <svg className={common} viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="currentColor" strokeWidth="1.6" />
+          <path d="M8.5 12.5l2.5 2.5 5-6" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    case "rejected":
+      return (
+        <svg className={common} viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="currentColor" strokeWidth="1.6" />
+          <path d="M9 15l6-6M15 15L9 9" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+        </svg>
+      );
+    case "pickup_scheduled":
+      return (
+        <svg className={common} viewBox="0 0 24 24" fill="none" aria-hidden>
+          <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" strokeWidth="1.6" />
+          <path d="M8 3v4M16 3v4M4 11h16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      );
+    default:
+      return (
+        <svg className={common} viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M12 2l2.2 7.2L22 12l-7.8 2.8L12 22l-2.2-7.2L2 12l7.8-2.8L12 2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+        </svg>
+      );
+  }
+}
+
 function useMockReviewLifecycle(app: Application | undefined, dispatch: AppDispatch) {
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
@@ -138,6 +264,64 @@ function useMockReviewLifecycle(app: Application | undefined, dispatch: AppDispa
   }, [app?.id, app?.status, app?.score?.total, dispatch]);
 }
 
+function ScoreBreakdownPanel({ score }: { score: ScoreBreakdown }) {
+  return (
+    <div className={`${rtoCard} overflow-hidden p-5`}>
+      <div className="mb-5 flex items-end justify-between gap-3">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gray-400">Skor kelayakan</p>
+          <p className="mt-1 text-2xl font-bold tabular-nums tracking-tight text-gray-900">
+            {score.total}
+            <span className="text-base font-semibold text-gray-400">/100</span>
+          </p>
+        </div>
+        <div className="relative h-14 w-14 shrink-0">
+          <svg className="-rotate-90 transform" viewBox="0 0 36 36" aria-hidden>
+            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#E8F0EF" strokeWidth="3" />
+            <circle
+              cx="18"
+              cy="18"
+              r="15.9155"
+              fill="none"
+              stroke="#4DB6AC"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeDasharray={`${score.total} 100`}
+              pathLength="100"
+            />
+          </svg>
+          <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-primaryDark">
+            {score.total}
+          </span>
+        </div>
+      </div>
+      <div className="space-y-3">
+        {SCORE_ROWS.map(({ key, label, max }) => {
+          const v = score[key] as number;
+          const pct = max > 0 ? Math.min(100, (v / max) * 100) : 0;
+          return (
+            <div key={key}>
+              <div className="mb-1 flex justify-between text-[11px]">
+                <span className="font-medium text-gray-600">{label}</span>
+                <span className="tabular-nums font-semibold text-gray-900">
+                  {v}
+                  <span className="font-normal text-gray-400">/{max}</span>
+                </span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-gray-100">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-[#4DB6AC] to-primary70 transition-all duration-500"
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function RTOStatus() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -155,23 +339,32 @@ export default function RTOStatus() {
 
   if (!app) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-6 text-center">
-        <div className="mb-4 text-5xl">🔍</div>
-        <h2 className="mb-2 text-lg font-bold text-gray-800">Aplikasi tidak ditemukan</h2>
-        <p className="mb-6 text-sm text-gray-500">ID: {applicationId}</p>
-        <button
-          type="button"
-          onClick={() => navigate("/home/index")}
-          className="rounded-2xl bg-[#4DB6AC] px-6 py-3 text-sm font-bold text-white shadow-lg"
-        >
-          Kembali ke Beranda
-        </button>
+      <div className="flex min-h-svh flex-col bg-gradient-to-b from-[#d9f2ef] via-[#f5f8f9] to-[#eef5f4]">
+        <header className="bg-gradient-to-br from-[#4DB6AC] via-[#45a89e] to-[#3a9a90] px-4 pb-16 pt-10 text-center shadow-lg shadow-[#4DB6AC]/20 rounded-b-[28px]">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 text-3xl backdrop-blur-md">
+            🔍
+          </div>
+          <h1 className="text-lg font-bold text-white">Aplikasi tidak ditemukan</h1>
+          <p className="mx-auto mt-2 max-w-xs text-sm text-white/85">ID: {applicationId}</p>
+        </header>
+        <div className="mx-auto -mt-10 w-full max-w-lg flex-1 px-4">
+          <div className={`${rtoCard} p-6 text-center`}>
+            <p className="text-sm text-gray-600">Periksa tautan atau ajukan program dari beranda.</p>
+            <button
+              type="button"
+              onClick={() => navigate("/home/index")}
+              className="mt-6 w-full rounded-2xl bg-[#4DB6AC] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#4DB6AC]/30"
+            >
+              Kembali ke beranda
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
 
   const activeIdx = getActiveIndex(app.status);
-  const statusInfo = getStatusLabel(app.status);
+  const visual = getStatusVisual(app.status);
   const cooldownSeconds = app.rejectionCooldownUntil
     ? Math.max(0, Math.floor((new Date(app.rejectionCooldownUntil).getTime() - Date.now()) / 1000))
     : 0;
@@ -202,97 +395,130 @@ export default function RTOStatus() {
     });
   };
 
+  /** Solid/light pills that need contrast on tinted headers */
+  const headerSolidPill =
+    app.status === "need_documents" || app.status === "rejected";
+
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50">
-      <div className="sticky top-0 z-30 border-b border-gray-100 bg-white shadow-sm">
-        <div className="mx-auto flex max-w-lg items-center gap-3 px-4 py-3">
+    <div className="min-h-svh overflow-x-hidden antialiased">
+      {/* Hero */}
+      <header
+        className={`relative bg-gradient-to-br px-4 pb-14 pt-10 shadow-lg shadow-black/10 rounded-b-[28px] ${visual.heroGradient}`}
+      >
+        <div className="mx-auto flex max-w-lg items-start gap-3">
           <button
             type="button"
             onClick={() => navigate("/home/index")}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-600"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/18 text-white backdrop-blur-sm transition-colors hover:bg-white/28"
             aria-label="Kembali"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
-          <div className="min-w-0 flex-1">
-            <h1 className="text-sm font-bold text-gray-900">Status Aplikasi</h1>
-            <p className="font-mono text-[11px] text-gray-400">{app.id}</p>
+          <div className="min-w-0 flex-1 pt-0.5">
+            <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/70">Status aplikasi</p>
+            <h1 className="mt-1 text-[22px] font-bold leading-tight tracking-tight text-white">Pengajuan RTO</h1>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span
+                className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold ${headerSolidPill ? visual.pillClass : "bg-white/20 text-white ring-1 ring-white/30 backdrop-blur-sm"}`}
+              >
+                {visual.text}
+              </span>
+              <span className="font-mono text-[10px] text-white/75">#{app.id}</span>
+            </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="mx-auto w-full max-w-lg flex-1 space-y-6 px-4 py-6">
+      <main className="mx-auto w-full max-w-lg -mt-8 space-y-5 px-4 pb-28">
+        {/* Status summary card */}
+        <div className={`${rtoCard} relative overflow-hidden p-6`}>
+          <div
+            className={`pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-gradient-to-br opacity-[0.85] blur-2xl ${visual.ringClass}`}
+            aria-hidden
+          />
+          <div className="relative flex gap-4">
+            <div
+              className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl shadow-inner ${
+                app.status === "rejected"
+                  ? "bg-white text-red"
+                  : app.status === "need_documents"
+                    ? "bg-white text-orange"
+                    : "bg-white/90 text-[#2d8a7d]"
+              }`}
+            >
+              <StatusGlyph status={app.status} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-base font-bold leading-snug text-gray-900">{visual.text}</p>
+              <p className="mt-1.5 text-sm leading-relaxed text-gray-600">{statusSubtitle(app.status)}</p>
+            </div>
+          </div>
+        </div>
+
         {(app.status === "submitted" || app.status === "under_review") && (
-          <div className="rounded-xl border border-primary30 bg-primary10 px-3 py-2">
-            <p className="text-[11px] text-primaryDark">
-              <span className="font-bold">Simulasi review:</span> status akan diperbarui otomatis beberapa detik — seperti notifikasi dari dealer.
+          <div
+            className={`${rtoCardSubtle} border-primary30/60 bg-gradient-to-r from-primary10 to-white px-4 py-3.5`}
+          >
+            <p className="text-xs leading-relaxed text-primaryDark">
+              <span className="font-bold">Demo review:</span> status berubah otomatis dalam beberapa detik — mirip notifikasi dari dealer.
             </p>
           </div>
         )}
 
-        <div className="rounded-2xl border border-gray-100 bg-white p-6 text-center shadow-sm">
-          <div className="mb-3 text-4xl">
-            {app.status === "submitted" || app.status === "under_review"
-              ? "🕐"
-              : app.status === "approved"
-                ? "🎉"
-                : app.status === "rejected"
-                  ? "❌"
-                  : app.status === "need_documents"
-                    ? "📋"
-                    : "📦"}
-          </div>
-          <h2 className={`text-lg font-bold ${statusInfo.color}`}>{statusInfo.text}</h2>
-          <p className="mt-1 text-xs text-gray-500">
-            {app.status === "submitted" || app.status === "under_review"
-              ? "Kami sedang memeriksa data kamu."
-              : app.status === "approved"
-                ? "Selamat! Lanjut jadwalkan pengambilan motor."
-                : app.status === "rejected"
-                  ? "Kamu bisa browsing program lain, tapi pengajuan baru baru bisa lagi setelah masa tunggu."
-                  : "Proses aplikasi kamu sedang berlangsung."}
-          </p>
-        </div>
-
         {app.status === "need_documents" && (
-          <section className="rounded-2xl border border-strokeOrange bg-lightOrange p-4 shadow-sm">
-            <h3 className="text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-600">
-              Yang perlu dilengkapi
-            </h3>
-            {app.reviewerNote && <p className="mt-2 text-sm text-gray-800">{app.reviewerNote}</p>}
-            <ul className="mt-3 list-inside list-disc space-y-1 text-sm text-gray-700">
+          <section className={`${rtoCard} border-strokeOrange/80 bg-gradient-to-b from-[#FFFAF1] to-white p-5`}>
+            <h3 className={rtoSectionTitle}>Yang perlu dilengkapi</h3>
+            {app.reviewerNote && <p className="-mt-1 mb-3 text-sm leading-relaxed text-gray-800">{app.reviewerNote}</p>}
+            <ul className="space-y-2">
               {(app.requestedDocIds ?? []).map((id) => (
-                <li key={id}>{DOC_LABELS[id] ?? id}</li>
+                <li
+                  key={id}
+                  className="flex items-center gap-3 rounded-xl border border-strokeOrange/50 bg-white/90 px-3 py-2.5 text-sm font-medium text-gray-800"
+                >
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange/15 text-xs font-bold text-[#b37400]">
+                    📄
+                  </span>
+                  {DOC_LABELS[id] ?? id}
+                </li>
               ))}
             </ul>
-            <p className="mt-3 text-[11px] text-gray-500">
-              Di rilis penuh, unggah langsung di sini. Untuk demo: kirim ulang untuk lanjut simulasi.
+            <p className="mt-4 text-[11px] leading-relaxed text-gray-500">
+              Rilis penuh: unggah di sini. Untuk demo, kirim ulang untuk lanjut simulasi.
             </p>
             <button
               type="button"
               onClick={handleResubmitDocs}
-              className="mt-4 w-full rounded-2xl bg-[#4DB6AC] py-3 text-sm font-bold text-white shadow-md"
+              className="mt-4 w-full rounded-2xl bg-[#4DB6AC] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#4DB6AC]/25"
             >
-              Upload &amp; kirim ulang (demo)
+              Kirim ulang (demo)
             </button>
           </section>
         )}
 
         {app.status === "approved" && (
-          <section className="rounded-2xl border border-strokeGreen bg-lightGreen p-4 shadow-sm">
+          <section className={`${rtoCard} border-strokeGreen/70 bg-gradient-to-b from-[#EDF8EF] to-white p-5`}>
             <h3 className="text-sm font-bold text-green">Langkah berikutnya</h3>
-            <ol className="mt-3 list-inside list-decimal space-y-2 text-xs text-gray-700">
-              <li>Jadwalkan ambil motor</li>
-              <li>Bawa dokumen asli (KTP, dll.)</li>
-              <li>Tanda tangan kontrak di dealer</li>
-              <li>Motor langsung bisa dibawa</li>
+            <ol className="mt-4 space-y-3">
+              {[
+                "Jadwalkan pengambilan motor",
+                "Bawa dokumen asli (KTP, dll.)",
+                "Tanda tangan kontrak di dealer",
+                "Motor siap dibawa",
+              ].map((item, i) => (
+                <li key={item} className="flex gap-3 text-sm text-gray-700">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-green/15 text-xs font-bold text-green">
+                    {i + 1}
+                  </span>
+                  <span className="pt-0.5 leading-snug">{item}</span>
+                </li>
+              ))}
             </ol>
             <button
               type="button"
               onClick={() => navigate(`/rto-pickup/${app.id}`)}
-              className="mt-4 w-full rounded-2xl bg-[#4DB6AC] py-3.5 text-sm font-bold text-white shadow-lg"
+              className="mt-5 w-full rounded-2xl bg-[#4DB6AC] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#4DB6AC]/30"
             >
               Atur jadwal ambil motor
             </button>
@@ -300,75 +526,97 @@ export default function RTOStatus() {
         )}
 
         {app.status === "pickup_scheduled" && app.pickup && (
-          <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-            <h3 className="text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-400">
-              Jadwal pickup
-            </h3>
-            <p className="mt-2 text-sm font-bold text-gray-900">
-              {new Date(app.pickup.date + "T12:00:00").toLocaleDateString("id-ID", {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}{" "}
-              · {app.pickup.timeSlot} WIB
-            </p>
-            <p className="mt-1 text-xs text-gray-600">{app.pickup.dealerName}</p>
-            <p className="text-xs text-gray-500">{app.pickup.dealerAddress}</p>
-            <div className="mt-3 flex flex-wrap gap-2">
+          <section className={`${rtoCard} p-5`}>
+            <h3 className={rtoSectionTitle}>Jadwal pengambilan</h3>
+            <div className="-mt-1 rounded-2xl border border-gray-100 bg-baseLightGray2/80 p-4">
+              <p className="text-base font-bold text-gray-900">
+                {new Date(app.pickup.date + "T12:00:00").toLocaleDateString("id-ID", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </p>
+              <p className="mt-1 text-sm font-semibold text-[#327478]">{app.pickup.timeSlot} WIB</p>
+              <p className="mt-3 text-sm font-medium text-gray-800">{app.pickup.dealerName}</p>
+              <p className="text-xs leading-relaxed text-gray-500">{app.pickup.dealerAddress}</p>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={() => navigate(`/rto-pickup/${app.id}`)}
-                className="rounded-xl border-2 border-[#4DB6AC] px-4 py-2 text-xs font-bold text-[#4DB6AC]"
+                className="flex-1 min-w-[120px] rounded-2xl border-2 border-[#4DB6AC] bg-white py-3 text-xs font-bold text-[#4DB6AC]"
               >
                 Ubah jadwal
               </button>
               <button
                 type="button"
                 onClick={() => dispatch(updateApplicationStatus({ id: app.id, status: "pickup_done" }))}
-                className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-600"
+                className="flex-1 min-w-[120px] rounded-2xl border border-gray-200 bg-gray-50 py-3 text-xs font-semibold text-gray-600"
               >
-                Tandai sudah diambil (demo)
+                Sudah diambil (demo)
               </button>
             </div>
           </section>
         )}
 
+        {app.status === "pickup_done" && (
+          <section className={`${rtoCard} border-strokeGreen/60 bg-gradient-to-br from-lightGreen to-white p-5 text-center`}>
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm text-green">
+              <StatusGlyph status="pickup_done" />
+            </div>
+            <p className="mt-4 text-base font-bold text-gray-900">Pengambilan selesai</p>
+            <p className="mx-auto mt-2 max-w-[280px] text-sm text-gray-600">
+              Semoga aktivitas dengan motor listriknya menyenangkan. Hubungi dealer untuk pertanyaan layanan paska-pengambilan.
+            </p>
+          </section>
+        )}
+
         {app.status === "rejected" && (
-          <section className="rounded-2xl border border-strokeRed bg-lightRed p-4 shadow-sm">
-            <h3 className="text-sm font-bold text-red">Alasan</h3>
-            <p className="mt-2 text-sm text-gray-800">{app.rejectionReason ?? "Tidak memenuhi syarat program."}</p>
-            <div className="mt-3 rounded-lg bg-white/80 p-3 text-[11px] text-gray-600">
-              <p className="font-semibold text-gray-800">Tips naikkan skor</p>
-              <ul className="mt-1 list-inside list-disc space-y-0.5">
-                <li>Tambah penjamin dengan penghasilan tetap (+poin keluarga)</li>
-                <li>Lengkapi dokumen &amp; bukti pendapatan (+poin dokumen)</li>
-                <li>Pilih program dengan minimal gaji lebih rendah</li>
+          <section className={`${rtoCard} border-strokeRed/70 bg-gradient-to-b from-[#FCEEF0] to-white p-5`}>
+            <h3 className="text-sm font-bold text-red">Ringkasan keputusan</h3>
+            <p className="mt-2 text-sm leading-relaxed text-gray-800">{app.rejectionReason ?? "Tidak memenuhi syarat program."}</p>
+            <div className="mt-4 rounded-2xl border border-strokeRed/40 bg-white/90 p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-gray-700">Tips meningkatkan peluang</p>
+              <ul className="mt-2 space-y-2 text-xs leading-relaxed text-gray-600">
+                <li className="flex gap-2">
+                  <span className="text-green">✓</span>
+                  Tambah penjamin dengan penghasilan tetap
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-green">✓</span>
+                  Lengkapi dokumen &amp; bukti pendapatan
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-green">✓</span>
+                  Pertimbangkan program dengan syarat lebih ringan
+                </li>
               </ul>
             </div>
             {cooldownSeconds > 0 && app.rejectionCooldownUntil && (
-              <p className="mt-3 text-xs text-gray-600">
-                Pengajuan program lain bisa dilakukan lagi setelah{" "}
-                <span className="font-bold text-red">
-                  {new Date(app.rejectionCooldownUntil).toLocaleDateString("id-ID", {
-                    weekday: "long",
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </span>{" "}
-                (30 hari sejak penolakan). Sementara itu satu akun juga tidak boleh punya dua pengajuan aktif
-                — tapi kamu bisa bagikan program ke teman.
-              </p>
+              <div className="mt-4 rounded-2xl bg-white/90 p-3 text-xs leading-relaxed text-gray-700">
+                <p className="font-semibold text-gray-900">Masa tunggu pengajuan baru</p>
+                <p className="mt-1">
+                  Setelah{" "}
+                  <span className="font-bold text-red">
+                    {new Date(app.rejectionCooldownUntil).toLocaleDateString("id-ID", {
+                      weekday: "long",
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </span>{" "}
+                  Anda dapat mengajukan program lain. Satu akun hanya satu pengajuan aktif; bagikan program ke teman tetap boleh.
+                </p>
+              </div>
             )}
-            <p className="mt-2 text-[11px] leading-relaxed text-gray-500">
-              &ldquo;Lihat program lainnya&rdquo; hanya untuk melihat info &amp; membagikan; tombol{" "}
-              <strong>Ajukan</strong> di program lain akan aktif lagi setelah masa tunggu.
+            <p className="mt-3 text-[11px] leading-relaxed text-gray-500">
+              &ldquo;Lihat program lainnya&rdquo; untuk menjelajah &amp; membagikan. Tombol <strong>Ajukan</strong> mengikuti kebijakan di atas.
             </p>
             <button
               type="button"
               onClick={() => navigate("/rto-program-explore")}
-              className="mt-4 w-full rounded-2xl border-2 border-[#4DB6AC] py-3 text-sm font-bold text-[#4DB6AC]"
+              className="mt-4 w-full rounded-2xl border-2 border-[#4DB6AC] bg-white py-3.5 text-sm font-bold text-[#4DB6AC] shadow-sm"
             >
               Lihat program lainnya
             </button>
@@ -378,56 +626,62 @@ export default function RTOStatus() {
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 flex w-full items-center justify-center rounded-2xl bg-[#25D366]/12 py-3 text-sm font-bold text-[#128C7E]"
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] py-3.5 text-sm font-bold text-white shadow-md shadow-green/20"
             >
-              Bagikan program ke teman (WhatsApp)
+              <span aria-hidden>💬</span>
+              Bagikan ke teman
             </a>
             <button
               type="button"
               onClick={() => openWhatsApp(CUSTOMER_SERVICES)}
-              className="mt-2 w-full rounded-2xl border border-gray-200 py-3 text-sm font-semibold text-gray-600"
+              className="mt-2 w-full rounded-2xl border border-gray-200 bg-white py-3 text-sm font-semibold text-gray-600"
             >
               Hubungi support CASAN
             </button>
           </section>
         )}
 
+        {/* Timeline */}
         <section>
-          <h3 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-400">
-            Status Timeline
-          </h3>
-          <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+          <h3 className={rtoSectionTitle}>Alur proses</h3>
+          <div className={`${rtoCard} p-5`}>
             {STATUS_STEPS.map((step, i) => {
               const isDone = i < activeIdx;
-              const isCurrent = i === activeIdx;
+              const isCurrent = i === activeIdx && activeIdx < STATUS_STEPS.length;
 
               return (
-                <div key={step.key} className="flex gap-3">
+                <div key={step.key} className="flex gap-4">
                   <div className="flex flex-col items-center">
                     <div
-                      className={`flex h-5 w-5 items-center justify-center rounded-full border-2 text-[10px] font-bold ${
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[11px] font-bold shadow-sm transition-all ${
                         isDone
-                          ? "border-[#4DB6AC] bg-[#4DB6AC] text-white"
+                          ? "bg-[#4DB6AC] text-white shadow-sm shadow-[#4DB6AC]/25"
                           : isCurrent
-                            ? "animate-pulse border-[#4DB6AC] bg-white text-[#4DB6AC]"
-                            : "border-gray-200 bg-gray-50 text-gray-300"
+                            ? "bg-white text-[#4DB6AC] ring-2 ring-[#4DB6AC] ring-offset-2"
+                            : "bg-gray-100 text-gray-300"
                       }`}
                     >
-                      {isDone ? "✓" : ""}
+                      {isDone ? "✓" : i + 1}
                     </div>
                     {i < STATUS_STEPS.length - 1 && (
-                      <div className={`min-h-[24px] w-0.5 flex-1 ${isDone ? "bg-[#4DB6AC]" : "bg-gray-200"}`} />
+                      <div
+                        className={`my-0.5 w-0.5 flex-1 min-h-[28px] rounded-full ${
+                          isDone ? "bg-[#4DB6AC]" : "bg-gray-200"
+                        }`}
+                        aria-hidden
+                      />
                     )}
                   </div>
-                  <div className="pb-4 pt-0.5">
-                    <p className={`text-xs font-semibold ${isDone || isCurrent ? "text-gray-900" : "text-gray-400"}`}>
+                  <div className={`min-w-0 flex-1 ${i < STATUS_STEPS.length - 1 ? "pb-5" : ""} pt-0.5`}>
+                    <p className={`text-sm font-semibold ${isDone || isCurrent ? "text-gray-900" : "text-gray-400"}`}>
                       {step.label}
                     </p>
+                    <p className="text-[11px] leading-snug text-gray-500">{step.hint}</p>
                     {i === 0 && app.submittedAt && (
-                      <p className="mt-0.5 text-[10px] text-gray-400">{formatDate(app.submittedAt)}</p>
+                      <p className="mt-1 text-[10px] text-gray-400">{formatDate(app.submittedAt)}</p>
                     )}
-                    {isCurrent && i > 0 && (
-                      <p className="mt-0.5 text-[10px] text-[#4DB6AC]">Sedang berlangsung...</p>
+                    {isCurrent && (
+                      <p className="mt-1 text-[11px] font-medium text-[#327478]">Berlangsung…</p>
                     )}
                   </div>
                 </div>
@@ -436,63 +690,50 @@ export default function RTOStatus() {
           </div>
         </section>
 
-        <section>
-          <h3 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-400">
-            Skor kamu
-          </h3>
-          <div className="flex items-center gap-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-            <div className="text-3xl font-black tabular-nums text-gray-900">
-              {app.score.total}
-              <span className="text-sm font-semibold text-gray-400">/100</span>
-            </div>
-            <div className="flex-1">
-              <div className="h-2 overflow-hidden rounded-full bg-gray-100">
-                <div className="h-full rounded-full bg-[#4DB6AC]" style={{ width: `${app.score.total}%` }} />
-              </div>
-            </div>
-          </div>
-        </section>
+        <ScoreBreakdownPanel score={app.score} />
 
+        {/* Program */}
         <section>
-          <h3 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-400">
-            Program
-          </h3>
-          <div className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#4DB6AC]/10 text-lg">
+          <h3 className={rtoSectionTitle}>Program dipilih</h3>
+          <div className={`${rtoCard} flex items-center gap-4 p-4`}>
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#4DB6AC]/20 to-primary10 text-xl shadow-inner">
               🛵
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-bold text-gray-900">{app.bikeName || "Motor Listrik"}</p>
+              <p className="truncate text-sm font-bold text-gray-900">{app.bikeName || "Motor listrik"}</p>
               <p className="truncate text-xs text-gray-500">
                 {app.operatorName}
                 {app.pricePerDay > 0 && (
-                  <> &middot; Rp {app.pricePerDay.toLocaleString("id-ID")}/hari</>
+                  <>
+                    <span className="text-gray-300"> · </span>
+                    Rp {app.pricePerDay.toLocaleString("id-ID")}/hari
+                  </>
                 )}
               </p>
             </div>
           </div>
         </section>
 
-        <div className="space-y-3 pb-8">
+        <div className="space-y-3">
           <button
             type="button"
             onClick={() => openWhatsApp(CUSTOMER_SERVICES)}
-            className="w-full rounded-2xl border-2 border-[#4DB6AC]/30 bg-white py-3.5 text-sm font-bold text-[#4DB6AC] transition-colors hover:bg-[#4DB6AC]/5"
+            className={`${rtoCardSubtle} w-full border-[#4DB6AC]/25 bg-white py-3.5 text-sm font-bold text-[#327478] shadow-sm transition-colors hover:bg-primary10/40`}
           >
-            Hubungi dealer via WhatsApp
+            Hubungi dealer / CASAN
           </button>
 
           {(app.status === "submitted" || app.status === "under_review" || app.status === "need_documents") && (
             <button
               type="button"
               onClick={handleEditApplication}
-              className="w-full rounded-2xl border-2 border-gray-200 bg-white py-3.5 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-50"
+              className="w-full rounded-2xl border-2 border-gray-200 bg-white py-3.5 text-sm font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
             >
               Edit &amp; lengkapi aplikasi
             </button>
           )}
         </div>
-      </div>
+      </main>
     </div>
   );
 }
