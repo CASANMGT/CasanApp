@@ -435,19 +435,19 @@ const Home = () => {
                 }}
                 className={`relative flex-1 flex flex-col items-center gap-2 p-3 rounded-[14px] border-2 transition-all duration-200 ease-out ${
                   isActive
-                    ? "cursor-default bg-white border-[#4DB6AC] shadow-[0_4px_16px_rgba(77,182,172,0.12)]"
+                    ? "cursor-default bg-white border-[#4DB6AC] shadow-[0_4px_20px_rgba(77,182,172,0.25)]"
                     : "cursor-pointer bg-white/70 backdrop-blur-sm border-transparent opacity-85 hover:opacity-100"
                 }`}
               >
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
                   isActive
-                    ? "bg-gradient-to-br from-[#b2dfdb] to-[#80cbc4] shadow-[0_2px_8px_rgba(77,182,172,0.25)]"
+                    ? "bg-gradient-to-br from-[#4DB6AC] to-[#26a69a] shadow-[0_0_12px_rgba(77,182,172,0.4)]"
                     : tab.bgClass
                 }`}>
                   <Icon size={28} />
                 </div>
-                <span className={`text-[11px] font-bold leading-tight ${isActive ? "text-blackBold" : "text-black70"}`}>{tab.label}</span>
-                <span className={`text-[9px] ${isActive ? "text-black70" : "text-black50"}`}>{tab.sub}</span>
+                <span className={`font-bold leading-tight ${isActive ? "text-[13px] text-[#4DB6AC] tracking-wide" : "text-[11px] text-black70"}`}>{tab.label}</span>
+                <span className={`text-[9px] ${isActive ? "text-blackBold" : "text-black50"}`}>{tab.sub}</span>
               </button>
             );
           })}
@@ -464,7 +464,7 @@ const Home = () => {
           <div id="home-tabpanel-isi-daya" role="tabpanel" aria-labelledby="home-tab-isi-daya" className="space-y-4">
             {/* SECTION HEADER */}
             <div className="flex justify-between items-center">
-              <span className="text-[15px] font-bold text-blackBold">Stasiun terdekat</span>
+              <span className="text-[15px] font-medium text-blackBold">Stasiun terdekat</span>
               <span
                 className="text-xs font-semibold text-primary100 cursor-pointer"
                 onClick={() => navigate("/location-list")}
@@ -510,7 +510,7 @@ const Home = () => {
             {isAuthenticated && dataRTO?.ID ? (
               <>
                 <div className="flex justify-between items-center">
-                  <span className="text-[15px] font-bold text-blackBold">Program sekarang</span>
+                  <span className="text-[15px] font-medium text-blackBold">Program sekarang</span>
                   <span
                     className="text-xs font-semibold text-[#4DB6AC] cursor-pointer"
                     onClick={() => navigate("/rto-history")}
@@ -668,7 +668,7 @@ const Home = () => {
 
             {/* RTO PROGRAMS */}
             <div className="px-0.5">
-              <span className="text-[15px] font-bold text-blackBold">
+              <span className="text-[15px] font-medium text-blackBold">
                 {isAuthenticated ? "Lihat RTO program lainnya" : "Program RTO yang ada"}
               </span>
             </div>
@@ -764,7 +764,7 @@ const Home = () => {
           >
             {/* SECTION HEADER */}
             <div className="flex justify-between items-center">
-              <span className="text-[15px] font-bold text-blackBold">Sewa motor listrik</span>
+              <span className="text-[15px] font-medium text-blackBold">Sewa motor listrik</span>
               <span className="text-xs font-semibold text-[#4DB6AC] cursor-pointer">
                 Filter →
               </span>
