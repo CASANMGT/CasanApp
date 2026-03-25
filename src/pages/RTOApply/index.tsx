@@ -15,7 +15,8 @@ import {
   gateRtoApplicationFromProgramBrowse,
 } from "../../helpers";
 import type { RtoApplyGateResult } from "../../helpers";
-import StepNav from "../../components/rto/StepNav";
+import StepNav, { RTO_APPLY_STEP_LABELS } from "../../components/rto/StepNav";
+import { rtoApplyPageBg, rtoCard } from "../RTOProgramExplore/rtoUi";
 import Step1Identity from "./Step1Identity";
 import Step2Employment from "./Step2Employment";
 import Step3Family from "./Step3Family";
@@ -118,8 +119,13 @@ export default function RTOApply() {
 
   if (browseGate && !browseGate.ok && browseGate.reason === "same_program_use_status") {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-6 text-center">
-        <p className="text-sm text-gray-600">Mengalihkan ke halaman status pengajuan…</p>
+      <div className={`flex min-h-svh flex-col items-center justify-center px-6 text-center ${rtoApplyPageBg}`}>
+        <div className={`${rtoCard} px-8 py-10`}>
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary10 text-2xl">
+            ⏳
+          </div>
+          <p className="text-sm font-medium text-gray-700">Mengalihkan ke status pengajuan…</p>
+        </div>
       </div>
     );
   }
@@ -127,65 +133,67 @@ export default function RTOApply() {
   if (browseGate && !browseGate.ok) {
     const g = browseGate;
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50">
-        <div className="sticky top-0 z-30 border-b border-gray-100 bg-white px-4 py-3 shadow-sm">
+      <div className={`flex min-h-svh flex-col ${rtoApplyPageBg}`}>
+        <header className="bg-gradient-to-br from-[#4DB6AC] via-[#45a89e] to-[#3a9a90] px-4 pb-12 pt-10 text-white shadow-lg shadow-[#4DB6AC]/15 rounded-b-[28px]">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-600"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/18 backdrop-blur-sm transition-colors hover:bg-white/28"
             aria-label="Kembali"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
-        </div>
-        <div className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center px-6 py-8">
-          <h1 className="text-lg font-bold text-gray-900">
-            {g.reason === "cooldown" && "Belum bisa mengajukan program ini"}
-            {g.reason === "active_other_program" && "Satu akun, satu pengajuan aktif"}
+          <h1 className="mt-6 text-xl font-bold leading-tight">
+            {g.reason === "cooldown" && "Belum bisa mengajukan"}
+            {g.reason === "active_other_program" && "Satu pengajuan aktif"}
           </h1>
-          {g.reason === "cooldown" && (
-            <p className="mt-3 text-sm leading-relaxed text-gray-600">
-              Pengajuan RTO baru bisa dilakukan lagi setelah{" "}
-              <span className="font-semibold text-gray-900">
-                {formatRtoCooldownDeadlineId(g.cooldownUntil)}
-              </span>
-              . Kamu bisa melihat katalog program atau membagikan info ke teman.
-            </p>
-          )}
-          {g.reason === "active_other_program" && (
-            <p className="mt-3 text-sm leading-relaxed text-gray-600">
-              Selesaikan dulu pengajuan yang sedang berjalan:{" "}
-              <span className="font-semibold text-gray-900">
-                {g.blocking.bikeName}
-              </span>{" "}
-              ({g.blocking.operatorName}). Tidak bisa membuka form pengajuan kedua untuk program lain
-              dalam akun yang sama.
-            </p>
-          )}
-          <div className="mt-8 flex flex-col gap-3">
-            {shareWaHref && (
-              <a
-                href={shareWaHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex w-full items-center justify-center rounded-2xl bg-[#25D366] py-3.5 text-sm font-bold text-white"
-              >
-                Bagikan program ke teman (WhatsApp)
-              </a>
+          <p className="mt-2 max-w-md text-sm leading-relaxed text-white/88">
+            {g.reason === "cooldown" && "Program ini memerlukan jeda sebelum pengajuan baru."}
+            {g.reason === "active_other_program" && "Selesaikan pengajuan yang berjalan terlebih dahulu."}
+          </p>
+        </header>
+        <div className="mx-auto -mt-8 w-full max-w-lg flex-1 px-4 pb-10">
+          <div className={`${rtoCard} p-6`}>
+            {g.reason === "cooldown" && (
+              <p className="text-sm leading-relaxed text-gray-600">
+                Pengajuan RTO baru bisa dilakukan lagi setelah{" "}
+                <span className="font-semibold text-gray-900">
+                  {formatRtoCooldownDeadlineId(g.cooldownUntil)}
+                </span>
+                . Kamu tetap bisa melihat katalog atau membagikan program ke teman.
+              </p>
             )}
-            <button
-              type="button"
-              onClick={() =>
-                g.reason === "active_other_program"
-                  ? navigate(`/rto-status/${g.blocking.id}`)
-                  : navigate("/rto-program-explore")
-              }
-              className="w-full rounded-2xl bg-[#4DB6AC] py-3.5 text-sm font-bold text-white shadow-lg"
-            >
-              {g.reason === "active_other_program" ? "Lihat status pengajuan" : "Kembali ke jelajahi"}
-            </button>
+            {g.reason === "active_other_program" && (
+              <p className="text-sm leading-relaxed text-gray-600">
+                <span className="font-semibold text-gray-900">{g.blocking.bikeName}</span>{" "}
+                ({g.blocking.operatorName}) masih aktif di akunmu.
+              </p>
+            )}
+            <div className="mt-6 flex flex-col gap-3">
+              {shareWaHref && (
+                <a
+                  href={shareWaHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex w-full items-center justify-center rounded-2xl bg-[#25D366] py-3.5 text-sm font-bold text-white shadow-md shadow-green/20"
+                >
+                  Bagikan ke teman (WhatsApp)
+                </a>
+              )}
+              <button
+                type="button"
+                onClick={() =>
+                  g.reason === "active_other_program"
+                    ? navigate(`/rto-status/${g.blocking.id}`)
+                    : navigate("/rto-program-explore")
+                }
+                className="w-full rounded-2xl bg-[#4DB6AC] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#4DB6AC]/25"
+              >
+                {g.reason === "active_other_program" ? "Lihat status pengajuan" : "Kembali jelajahi program"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -195,21 +203,34 @@ export default function RTOApply() {
   // If no operator selected and no nav state, redirect back
   if (!selectedOperatorId && !navState?.operatorId) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-6 text-center">
-        <div className="text-5xl mb-4">📋</div>
-        <h2 className="text-lg font-bold text-gray-800 mb-2">
-          Belum ada program dipilih
-        </h2>
-        <p className="text-sm text-gray-500 mb-6">
-          Pilih program RTO terlebih dahulu dari halaman jelajahi program.
-        </p>
-        <button
-          type="button"
-          onClick={() => navigate("/rto-program-explore")}
-          className="rounded-2xl bg-[#4DB6AC] px-6 py-3 text-sm font-bold text-white shadow-lg"
-        >
-          Jelajahi Program
-        </button>
+      <div className={`flex min-h-svh flex-col ${rtoApplyPageBg}`}>
+        <header className="bg-gradient-to-br from-[#4DB6AC] via-[#45a89e] to-[#3a9a90] rounded-b-[28px] px-4 pb-14 pt-10 text-center shadow-lg shadow-[#4DB6AC]/20">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-white/18 text-3xl backdrop-blur-md">
+            📋
+          </div>
+          <h1 className="mt-5 text-lg font-bold text-white">Belum ada program dipilih</h1>
+          <p className="mx-auto mt-2 max-w-xs text-sm text-white/85">
+            Mulai dari halaman jelajahi program untuk memilih motor dan dealer.
+          </p>
+        </header>
+        <div className="mx-auto -mt-10 w-full max-w-lg px-4">
+          <div className={`${rtoCard} p-6 text-center`}>
+            <button
+              type="button"
+              onClick={() => navigate("/rto-program-explore")}
+              className="w-full rounded-2xl bg-[#4DB6AC] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#4DB6AC]/30"
+            >
+              Jelajahi program RTO
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/home/index")}
+              className="mt-3 w-full py-2 text-sm font-semibold text-gray-500"
+            >
+              Kembali ke beranda
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -233,47 +254,63 @@ export default function RTOApply() {
   };
 
   const step = currentStep >= 1 ? currentStep : 1;
+  const stepTitle = RTO_APPLY_STEP_LABELS[step - 1] ?? RTO_APPLY_STEP_LABELS[0];
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50">
-      {/* Header */}
-      <div className="sticky top-0 z-30 bg-white border-b border-gray-100 shadow-sm">
-        <div className="mx-auto flex max-w-lg items-center gap-3 px-4 py-3">
-          <button
-            type="button"
-            onClick={handleBack}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-600"
-            aria-label="Kembali"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </button>
-          <div className="flex-1 min-w-0">
-            <h1 className="text-sm font-bold text-gray-900 truncate">
-              Ajukan Program RTO
-            </h1>
-            {operatorName && (
-              <p className="text-[11px] text-gray-400 truncate">
-                {operatorName} &middot; {bikeName}
-                {pricePerDay > 0 && (
-                  <> &middot; Rp {pricePerDay.toLocaleString("id-ID")}/hari</>
-                )}
-              </p>
-            )}
+    <div className={`flex min-h-svh flex-col ${rtoApplyPageBg}`}>
+      <div className="sticky top-0 z-40">
+        <header className="bg-gradient-to-br from-[#4DB6AC] via-[#45a89e] to-[#3a9a90] px-4 pb-6 pt-9 shadow-md shadow-[#4DB6AC]/20 sm:rounded-b-[26px]">
+          <div className="mx-auto flex max-w-lg items-start gap-3">
+            <button
+              type="button"
+              onClick={handleBack}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/18 text-white backdrop-blur-sm transition-colors hover:bg-white/28"
+              aria-label="Kembali"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+            <div className="min-w-0 flex-1 pt-0.5">
+              <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/75">Pengajuan RTO</p>
+              <h1 className="mt-1 text-[20px] font-bold leading-snug tracking-tight text-white">{stepTitle}</h1>
+              {(operatorName || bikeName) && (
+                <p className="mt-2 truncate text-xs text-white/88">
+                  <span className="font-semibold">{operatorName}</span>
+                  {bikeName && (
+                    <>
+                      <span className="text-white/50"> · </span>
+                      {bikeName}
+                    </>
+                  )}
+                  {pricePerDay > 0 && (
+                    <>
+                      <span className="text-white/50"> · </span>
+                      Rp {pricePerDay.toLocaleString("id-ID")}/hari
+                    </>
+                  )}
+                </p>
+              )}
+              <span className="mt-3 inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white ring-1 ring-white/25">
+                Langkah {step} dari 6
+              </span>
+            </div>
           </div>
+        </header>
+        <div className="mx-auto w-full max-w-lg -mt-1">
+          <StepNav currentStep={step} onStepTap={handleStepTap} />
         </div>
-        <StepNav currentStep={step} onStepTap={handleStepTap} />
       </div>
 
-      {/* Step content */}
-      <div className="flex-1 overflow-y-auto pb-28">
-        {step === 1 && <Step1Identity />}
-        {step === 2 && <Step2Employment />}
-        {step === 3 && <Step3Family />}
-        {step === 4 && <Step4Credit />}
-        {step === 5 && <Step5Documents />}
-        {step === 6 && <Step6Score onBack={handleBack} />}
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto w-full max-w-lg">
+          {step === 1 && <Step1Identity />}
+          {step === 2 && <Step2Employment />}
+          {step === 3 && <Step3Family />}
+          {step === 4 && <Step4Credit />}
+          {step === 5 && <Step5Documents />}
+          {step === 6 && <Step6Score onBack={handleBack} />}
+        </div>
       </div>
     </div>
   );

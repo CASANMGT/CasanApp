@@ -6,6 +6,7 @@ import { submitApplication } from "../../features/rto/rtoApplicationSlice";
 import { calculateScore } from "../../features/rto/rtoScoringEngine";
 import type { ScoreBreakdown } from "../../types/rtoApplication";
 import CTABar from "../../components/rto/CTABar";
+import { rtoCard, rtoSectionTitle } from "../RTOProgramExplore/rtoUi";
 
 const DIMENSIONS: { key: keyof Omit<ScoreBreakdown, "total">; label: string; max: number }[] = [
   { key: "identity", label: "Identitas", max: 18 },
@@ -67,11 +68,13 @@ export default function Step6Score({ onBack }: Props) {
   };
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-6 space-y-6">
+    <div className="space-y-5 px-4 py-6 pb-28 sm:px-5">
       {/* Score card */}
-      <div className={`rounded-2xl ${decision.bg} ${decision.border} border p-6 text-center`}>
-        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
-          Live Scoring
+      <div
+        className={`rounded-2xl border-2 p-6 text-center shadow-[0_8px_28px_rgba(0,0,0,0.07)] ${decision.bg} ${decision.border}`}
+      >
+        <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500">
+          Skor live
         </p>
         <div className="text-5xl font-black tabular-nums text-gray-900">
           {score.total}
@@ -91,10 +94,8 @@ export default function Step6Score({ onBack }: Props) {
 
       {/* Dimension breakdown */}
       <section>
-        <h3 className="text-[10px] font-semibold text-gray-400 uppercase tracking-[0.14em] mb-3">
-          Breakdown per Dimensi
-        </h3>
-        <div className="space-y-3">
+        <h3 className={rtoSectionTitle}>Breakdown per dimensi</h3>
+        <div className={`${rtoCard} space-y-3 p-5`}>
           {DIMENSIONS.map(({ key, label, max }) => {
             const val = score[key];
             const pct = Math.round((val / max) * 100);
@@ -120,10 +121,8 @@ export default function Step6Score({ onBack }: Props) {
 
       {/* Scoring guide */}
       <section>
-        <h3 className="text-[10px] font-semibold text-gray-400 uppercase tracking-[0.14em] mb-3">
-          Panduan Skor
-        </h3>
-        <div className="rounded-2xl border border-gray-100 bg-white overflow-hidden">
+        <h3 className={rtoSectionTitle}>Panduan skor</h3>
+        <div className={`${rtoCard} overflow-hidden`}>
           {SCORE_GUIDE.map((tier, i) => (
             <div
               key={tier.range}
@@ -151,11 +150,9 @@ export default function Step6Score({ onBack }: Props) {
       {/* Program recap */}
       {operatorName && (
         <section>
-          <h3 className="text-[10px] font-semibold text-gray-400 uppercase tracking-[0.14em] mb-3">
-            Program Dipilih
-          </h3>
-          <div className="rounded-2xl border border-gray-100 bg-white p-4 flex items-center gap-3 shadow-sm">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#4DB6AC]/10 text-lg">
+          <h3 className={rtoSectionTitle}>Program dipilih</h3>
+          <div className={`${rtoCard} flex items-center gap-3 p-4`}>
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#4DB6AC]/25 to-primary10 text-lg shadow-inner">
               🛵
             </div>
             <div className="flex-1 min-w-0">

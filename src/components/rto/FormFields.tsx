@@ -1,4 +1,5 @@
 import React from "react";
+import { rtoSectionTitle } from "../../pages/RTOProgramExplore/rtoUi";
 
 // ─── Field label ────────────────────────────────────────────────
 
@@ -187,7 +188,7 @@ export function Toggle({
 // ─── Section heading ────────────────────────────────────────────
 
 export function SectionHeading({ children }: { children: React.ReactNode }) {
-  return <h2 className="text-sm font-bold text-gray-800 mb-4">{children}</h2>;
+  return <h2 className={rtoSectionTitle}>{children}</h2>;
 }
 
 // ─── Info box ───────────────────────────────────────────────────

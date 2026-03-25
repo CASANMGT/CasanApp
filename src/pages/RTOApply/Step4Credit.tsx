@@ -173,7 +173,7 @@ export default function Step4Credit() {
   };
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-6 space-y-6">
+    <div className="space-y-6 px-4 py-6 pb-28 sm:px-5">
       {/* ── Toggle ── */}
       <section>
         <SectionHeading>Riwayat Kredit</SectionHeading>

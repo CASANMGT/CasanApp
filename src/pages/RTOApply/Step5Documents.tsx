@@ -193,7 +193,7 @@ export default function Step5Documents() {
   const totalCount = DOC_SLOTS.length;
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-6 space-y-6">
+    <div className="space-y-6 px-4 py-6 pb-28 sm:px-5">
       <section>
         <SectionHeading>Upload Dokumen</SectionHeading>
 

@@ -11,6 +11,7 @@ import type {
 } from "../../types/rtoApplication";
 import { INDONESIAN_CITIES, RELATION_OPTIONS } from "../../data/rtoIndonesianCities";
 import CTABar from "../../components/rto/CTABar";
+import { SectionHeading } from "../../components/rto/FormFields";
 
 // ─── Pill selector ──────────────────────────────────────────────
 const GENDER_OPTIONS: { value: Gender; label: string }[] = [
@@ -491,10 +492,10 @@ export default function Step1Identity() {
   const nikValid = nikLen === 16;
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-6 space-y-6">
+    <div className="space-y-6 px-4 py-6 pb-28 sm:px-5">
       {/* ── Identitas ── */}
       <section>
-        <h2 className="text-sm font-bold text-gray-800 mb-4">Identitas</h2>
+        <SectionHeading>Identitas</SectionHeading>
 
         <div className="space-y-4">
           <div>
@@ -602,7 +603,7 @@ export default function Step1Identity() {
 
       {/* ── Kontak Darurat ── */}
       <section>
-        <h2 className="text-sm font-bold text-gray-800 mb-4">Kontak Darurat</h2>
+        <SectionHeading>Kontak darurat</SectionHeading>
         <div className="space-y-3">
           <div>
             <FieldLabel>Nama</FieldLabel>
@@ -671,7 +672,7 @@ export default function Step1Identity() {
 
       {/* ── Alamat ── */}
       <section>
-        <h2 className="text-sm font-bold text-gray-800 mb-4">Alamat</h2>
+        <SectionHeading>Alamat</SectionHeading>
         <div className="space-y-4">
           <div>
             <FieldLabel>Cari Alamat</FieldLabel>
