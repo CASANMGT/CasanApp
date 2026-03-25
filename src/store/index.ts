@@ -13,6 +13,7 @@ import globalReducer from "../features/globalSlice";
 import locationByIdReducer from "../features/location/locationByIdSlice.tsx";
 import milestoneListReducer from "../features/milestone/milestoneListSlice.ts";
 import addTransactionRTOReducer from "../features/rto/addTransactionRTOSlice.ts";
+import rtoApplicationReducer, { persistRtoApplication } from "../features/rto/rtoApplicationSlice";
 import addSessionReducer from "../features/sessions/addSessionSlice.ts";
 import cancelSessionReducer from "../features/sessions/cancelSessionSlice.ts";
 import completeSessionListReducer from "../features/sessions/completeSessionListSlice.ts";
@@ -85,7 +86,12 @@ export const store = configureStore({
 
     // RTO
     addTransactionRTO: addTransactionRTOReducer,
+    rtoApplication: rtoApplicationReducer,
   },
+});
+
+store.subscribe(() => {
+  persistRtoApplication(store.getState().rtoApplication);
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

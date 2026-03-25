@@ -49,6 +49,8 @@ import VoucherDetails from "./VoucherDetails";
 import Withdraw from "./Withdraw";
 import WithdrawalDetails from "./WithdrawalDetails";
 import WithdrawalHistory from "./WithdrawalHistory";
+import RTOApply from "./RTOApply";
+import RTOStatus from "./RTOStatus";
 
 export {
   BalanceDetails,
@@ -101,6 +103,8 @@ export {
   VoucherDetails,
   Withdraw,
   WithdrawalDetails,
-  WithdrawalHistory
+  WithdrawalHistory,
+  RTOApply,
+  RTOStatus,
 };
 

@@ -526,9 +526,21 @@ const Home = () => {
               const completedCredits = creditPaid;
               const progressPct =
                 totalCredits > 0 ? Math.round((completedCredits / totalCredits) * 100) : 0;
-              const brand = dataRTO?.Vehicle?.Brand || "";
-              const model = dataRTO?.Vehicle?.Model || "";
-              const vehicleName = [brand, model].filter(Boolean).join(" ") || "Motor listrik";
+              /** Brand/model dari nested API (VehicleModel), fallback ke field lama jika ada */
+              const v = dataRTO?.Vehicle;
+              const vehicleName = (() => {
+                if (!v) return "Motor listrik";
+                const fromModel = [
+                  v.VehicleModel?.VehicleBrand?.Name,
+                  v.VehicleModel?.ModelName,
+                ]
+                  .filter((s): s is string => Boolean(s && String(s).trim()))
+                  .join(" ");
+                if (fromModel.trim()) return fromModel.trim();
+                const legacy = v as VehicleProps & { Brand?: string; Model?: string };
+                const alt = [legacy.Brand, legacy.Model].filter(Boolean).join(" ").trim();
+                return alt || "Motor listrik";
+              })();
               const colorData = dataRTO?.Vehicle?.Colors?.[0];
               const imageUrl = colorData?.ImageURL || ILNoImage;
               const licensePlate = dataRTO?.LicensePlate || "-";

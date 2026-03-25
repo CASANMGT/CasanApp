@@ -50,6 +50,8 @@ import {
   VoucherDetails,
   WithdrawalDetails,
   WithdrawalHistory,
+  RTOApply,
+  RTOStatus,
 } from "../pages";
 import { useAxiosInterceptor } from "../services/ApiClient";
 import ProtectedRoute from "./ProtectedRoute";
@@ -124,6 +126,14 @@ const RoutesPage = () => {
       <Route
         path="rto-program-explore/bike/:bikeId"
         element={<ProtectedRoute element={<RTOMotorbikeProgram />} />}
+      />
+      <Route
+        path="rto-apply"
+        element={<ProtectedRoute element={<RTOApply />} />}
+      />
+      <Route
+        path="rto-status/:applicationId"
+        element={<ProtectedRoute element={<RTOStatus />} />}
       />
 
       <Route path="vehicle" element={<Vehicle />} />

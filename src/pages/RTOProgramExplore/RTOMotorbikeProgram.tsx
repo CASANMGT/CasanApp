@@ -439,7 +439,17 @@ export default function RTOMotorbikeProgram() {
             </a>
             <button
               type="button"
-              onClick={() => navigate("/select-rent-buy")}
+              onClick={() =>
+                navigate("/rto-apply", {
+                  state: {
+                    operatorId: op.id,
+                    bikeId: bike.id,
+                    operatorName: op.name,
+                    bikeName: bike.name,
+                    pricePerDay: bike.pricePerDay,
+                  },
+                })
+              }
               className="min-h-12 flex-1 rounded-2xl bg-[#4DB6AC] text-base font-bold text-white shadow-lg shadow-[#4DB6AC]/30 transition-transform active:scale-[0.99] hover:bg-[#45a89e]"
             >
               Ajukan program ini
