@@ -1,22 +1,11 @@
+import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import type { AppDispatch, RootState } from "../../store";
 import { submitApplication } from "../../features/rto/rtoApplicationSlice";
+import { calculateScore } from "../../features/rto/rtoScoringEngine";
 import type { ScoreBreakdown } from "../../types/rtoApplication";
 import CTABar from "../../components/rto/CTABar";
-
-/** Placeholder scoring — returns a fixed 50/100 until Slice 3 adds the real engine */
-function placeholderScore(): ScoreBreakdown {
-  return {
-    identity: 10,
-    income: 8,
-    employment: 7,
-    family: 5,
-    credit: 8,
-    documents: 5,
-    total: 43,
-  };
-}
 
 const DIMENSIONS: { key: keyof Omit<ScoreBreakdown, "total">; label: string; max: number }[] = [
   { key: "identity", label: "Identitas", max: 18 },
@@ -27,17 +16,33 @@ const DIMENSIONS: { key: keyof Omit<ScoreBreakdown, "total">; label: string; max
   { key: "documents", label: "Dokumen", max: 15 },
 ];
 
-function getDecision(total: number) {
-  if (total >= 80)
-    return { label: "Disetujui Otomatis", color: "text-green-500", bg: "bg-green-50", eta: "Motor siap 1-2 hari kerja" };
-  if (total >= 60)
-    return { label: "Disetujui", color: "text-teal-600", bg: "bg-teal-50", eta: "Dealer hubungi 24 jam" };
-  if (total >= 41)
-    return { label: "Sedang Direview", color: "text-blue-500", bg: "bg-blue-50", eta: "Analisis 1-3 hari kerja" };
-  if (total >= 21)
-    return { label: "Perlu Penjamin", color: "text-amber-500", bg: "bg-amber-50", eta: "Lengkapi penjamin & dokumen" };
-  return { label: "Tidak Disetujui", color: "text-red-500", bg: "bg-red-50", eta: "Bisa mendaftar ulang setelah 30 hari" };
+interface Decision {
+  label: string;
+  color: string;
+  bg: string;
+  border: string;
+  eta: string;
 }
+
+function getDecision(total: number): Decision {
+  if (total >= 80)
+    return { label: "Disetujui Otomatis", color: "text-green", bg: "bg-lightGreen", border: "border-strokeGreen", eta: "Motor siap 1-2 hari kerja" };
+  if (total >= 60)
+    return { label: "Disetujui", color: "text-primaryDark", bg: "bg-primary10", border: "border-primary30", eta: "Dealer hubungi via WhatsApp dalam 24 jam" };
+  if (total >= 41)
+    return { label: "Sedang Direview", color: "text-gold", bg: "bg-lightOrange", border: "border-strokeOrange", eta: "Analisis manual 1-3 hari kerja" };
+  if (total >= 21)
+    return { label: "Perlu Penjamin", color: "text-orange", bg: "bg-lightOrange", border: "border-strokeOrange", eta: "Lengkapi penjamin & dokumen tambahan" };
+  return { label: "Tidak Disetujui", color: "text-red", bg: "bg-lightRed", border: "border-strokeRed", eta: "Bisa mendaftar ulang setelah 30 hari" };
+}
+
+const SCORE_GUIDE = [
+  { range: "80 - 100", label: "Disetujui Otomatis", desc: "Motor siap 1-2 hari kerja", color: "bg-green" },
+  { range: "60 - 79", label: "Disetujui", desc: "Dealer hubungi 24 jam", color: "bg-primary100" },
+  { range: "41 - 59", label: "Sedang Direview", desc: "Analisis 1-3 hari kerja", color: "bg-orange" },
+  { range: "21 - 40", label: "Perlu Penjamin", desc: "Lengkapi penjamin & dokumen", color: "bg-gold" },
+  { range: "0 - 20", label: "Tidak Disetujui", desc: "Daftar ulang setelah 30 hari", color: "bg-red" },
+];
 
 interface Props {
   onBack: () => void;
@@ -46,11 +51,14 @@ interface Props {
 export default function Step6Score({ onBack }: Props) {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { operatorName, bikeName, pricePerDay } = useSelector(
+  const { draft, operatorName, bikeName, pricePerDay, minSalary } = useSelector(
     (s: RootState) => s.rtoApplication,
   );
 
-  const score = placeholderScore();
+  const score = useMemo(
+    () => calculateScore(draft, minSalary),
+    [draft, minSalary],
+  );
   const decision = getDecision(score.total);
 
   const handleSubmit = () => {
@@ -61,7 +69,7 @@ export default function Step6Score({ onBack }: Props) {
   return (
     <div className="mx-auto max-w-lg px-4 py-6 space-y-6">
       {/* Score card */}
-      <div className={`rounded-2xl ${decision.bg} border border-gray-100 p-6 text-center`}>
+      <div className={`rounded-2xl ${decision.bg} ${decision.border} border p-6 text-center`}>
         <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
           Live Scoring
         </p>
@@ -110,6 +118,36 @@ export default function Step6Score({ onBack }: Props) {
         </div>
       </section>
 
+      {/* Scoring guide */}
+      <section>
+        <h3 className="text-[10px] font-semibold text-gray-400 uppercase tracking-[0.14em] mb-3">
+          Panduan Skor
+        </h3>
+        <div className="rounded-2xl border border-gray-100 bg-white overflow-hidden">
+          {SCORE_GUIDE.map((tier, i) => (
+            <div
+              key={tier.range}
+              className={`flex items-center gap-3 px-4 py-2.5 ${
+                i < SCORE_GUIDE.length - 1 ? "border-b border-gray-50" : ""
+              }`}
+            >
+              <div className={`h-3 w-3 rounded-full ${tier.color} shrink-0`} />
+              <span className="text-xs font-bold text-gray-700 w-14 tabular-nums shrink-0">
+                {tier.range}
+              </span>
+              <div className="flex-1 min-w-0">
+                <span className="text-xs font-semibold text-gray-800">
+                  {tier.label}
+                </span>
+                <span className="text-[10px] text-gray-400 ml-1.5">
+                  — {tier.desc}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Program recap */}
       {operatorName && (
         <section>
@@ -135,8 +173,8 @@ export default function Step6Score({ onBack }: Props) {
         </section>
       )}
 
-      <div className="rounded-xl bg-amber-50 border border-amber-100 p-3">
-        <p className="text-xs text-amber-700">
+      <div className="rounded-xl bg-lightOrange border border-strokeOrange p-3">
+        <p className="text-xs text-gold">
           <span className="font-bold">Catatan:</span> Skor dihitung otomatis dari data yang kamu isi.
           Kamu tetap bisa submit meskipun ada data yang belum lengkap — skor mencerminkan kelengkapan.
         </p>

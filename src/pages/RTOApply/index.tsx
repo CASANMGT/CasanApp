@@ -12,6 +12,10 @@ import {
 } from "../../features/rto/rtoApplicationSlice";
 import StepNav from "../../components/rto/StepNav";
 import Step1Identity from "./Step1Identity";
+import Step2Employment from "./Step2Employment";
+import Step3Family from "./Step3Family";
+import Step4Credit from "./Step4Credit";
+import Step5Documents from "./Step5Documents";
 import Step6Score from "./Step6Score";
 
 interface LocationState {
@@ -20,6 +24,7 @@ interface LocationState {
   operatorName?: string;
   bikeName?: string;
   pricePerDay?: number;
+  minSalary?: number;
 }
 
 export default function RTOApply() {
@@ -42,6 +47,7 @@ export default function RTOApply() {
           operatorName: navState.operatorName ?? "",
           bikeName: navState.bikeName ?? "",
           pricePerDay: navState.pricePerDay ?? 0,
+          minSalary: navState.minSalary ?? 0,
         }),
       );
       setSearchParams({ step: "1" }, { replace: true });
@@ -146,17 +152,10 @@ export default function RTOApply() {
       {/* Step content */}
       <div className="flex-1 overflow-y-auto pb-28">
         {step === 1 && <Step1Identity />}
-        {step >= 2 && step <= 5 && (
-          <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
-            <div className="text-4xl mb-3">🚧</div>
-            <p className="text-sm font-semibold text-gray-500">
-              Langkah {step} — Segera hadir
-            </p>
-            <p className="text-xs text-gray-400 mt-1">
-              Lanjut ke langkah 6 untuk submit
-            </p>
-          </div>
-        )}
+        {step === 2 && <Step2Employment />}
+        {step === 3 && <Step3Family />}
+        {step === 4 && <Step4Credit />}
+        {step === 5 && <Step5Documents />}
         {step === 6 && <Step6Score onBack={handleBack} />}
       </div>
     </div>

@@ -14,6 +14,7 @@ interface RtoApplicationState {
   operatorName: string;
   bikeName: string;
   pricePerDay: number;
+  minSalary: number;
   currentStep: number;
   applications: Application[];
   activeApplicationId: string | null;
@@ -33,6 +34,7 @@ function loadPersistedState(): Partial<RtoApplicationState> {
       operatorName: parsed.operatorName ?? "",
       bikeName: parsed.bikeName ?? "",
       pricePerDay: parsed.pricePerDay ?? 0,
+      minSalary: parsed.minSalary ?? 0,
       currentStep: parsed.currentStep,
       applications: parsed.applications ?? [],
       activeApplicationId: parsed.activeApplicationId,
@@ -51,6 +53,7 @@ const initialState: RtoApplicationState = {
   operatorName: persisted.operatorName ?? "",
   bikeName: persisted.bikeName ?? "",
   pricePerDay: persisted.pricePerDay ?? 0,
+  minSalary: persisted.minSalary ?? 0,
   currentStep: persisted.currentStep ?? -1,
   applications: persisted.applications ?? [],
   activeApplicationId: persisted.activeApplicationId ?? null,
@@ -77,15 +80,17 @@ const rtoApplicationSlice = createSlice({
         operatorName: string;
         bikeName: string;
         pricePerDay: number;
+        minSalary?: number;
       }>,
     ) {
-      const { operatorId, bikeId, operatorName, bikeName, pricePerDay } =
+      const { operatorId, bikeId, operatorName, bikeName, pricePerDay, minSalary } =
         action.payload;
       state.selectedOperatorId = operatorId;
       state.selectedBikeId = bikeId;
       state.operatorName = operatorName;
       state.bikeName = bikeName;
       state.pricePerDay = pricePerDay;
+      state.minSalary = minSalary ?? 0;
       state.currentStep = 1;
       if (!state.draft.fullName) {
         state.draft = { ...EMPTY_FORM };
@@ -154,6 +159,7 @@ const rtoApplicationSlice = createSlice({
       state.operatorName = "";
       state.bikeName = "";
       state.pricePerDay = 0;
+      state.minSalary = 0;
       state.currentStep = -1;
     },
   },
@@ -182,6 +188,7 @@ export function persistRtoApplication(
       operatorName: state.operatorName,
       bikeName: state.bikeName,
       pricePerDay: state.pricePerDay,
+      minSalary: state.minSalary,
       currentStep: state.currentStep,
       applications: state.applications,
       activeApplicationId: state.activeApplicationId,

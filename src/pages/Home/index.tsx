@@ -101,6 +101,72 @@ type ResponseProps = {
 
 type ActiveTab = "isi-daya" | "rent-to-own" | "rent";
 
+function homeRtoApplicationBadge(status: string): {
+  label: string;
+  sub: string;
+  pillBg: string;
+  pillText: string;
+} {
+  switch (status) {
+    case "submitted":
+      return {
+        label: "Aplikasi terkirim",
+        sub: "Dealer akan meninjau data kamu.",
+        pillBg: "bg-primary30",
+        pillText: "text-primaryDark",
+      };
+    case "under_review":
+      return {
+        label: "Sedang direview",
+        sub: "Tunggu kabar dari dealer.",
+        pillBg: "bg-primary30",
+        pillText: "text-primaryDark",
+      };
+    case "need_documents":
+      return {
+        label: "Perlu dokumen",
+        sub: "Lengkapi dokumen yang diminta.",
+        pillBg: "bg-lightOrange",
+        pillText: "text-gold",
+      };
+    case "approved":
+      return {
+        label: "Disetujui",
+        sub: "Ikuti langkah berikutnya di detail.",
+        pillBg: "bg-lightGreen",
+        pillText: "text-green",
+      };
+    case "rejected":
+      return {
+        label: "Tidak disetujui",
+        sub: "Lihat alasannya di detail.",
+        pillBg: "bg-lightRed",
+        pillText: "text-red",
+      };
+    case "pickup_scheduled":
+      return {
+        label: "Jadwal ambil motor",
+        sub: "Cek waktu & lokasi dealer.",
+        pillBg: "bg-primary10",
+        pillText: "text-primaryDark",
+      };
+    case "pickup_done":
+      return {
+        label: "Selesai",
+        sub: "Motor sudah diambil.",
+        pillBg: "bg-lightGreen",
+        pillText: "text-green",
+      };
+    default:
+      return {
+        label: "Diproses",
+        sub: "Cek status terbaru.",
+        pillBg: "bg-baseGray",
+        pillText: "text-black70",
+      };
+  }
+}
+
 const TAB_CONFIG: {
   id: ActiveTab;
   label: string;
@@ -160,6 +226,17 @@ const Home = () => {
   const onGoingSessionList = useSelector(
     (state: RootState) => state.onGoingSessionList,
   );
+  const rtoApplications = useSelector(
+    (state: RootState) => state.rtoApplication.applications,
+  );
+  /** Kartu home hanya untuk status yang masih “buka”; selesai ambil motor disembunyikan */
+  const latestOpenRtoApplication = useMemo(() => {
+    for (let i = rtoApplications.length - 1; i >= 0; i -= 1) {
+      const app = rtoApplications[i];
+      if (app.status !== "pickup_done") return app;
+    }
+    return null;
+  }, [rtoApplications]);
 
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -506,6 +583,72 @@ const Home = () => {
             aria-labelledby="home-tab-rent-to-own"
             className="space-y-4"
           >
+            {/* AJUKAN RTO — status pengajuan terakhir (local / Redux) */}
+            {isAuthenticated && latestOpenRtoApplication ? (
+              <>
+                <div className="flex justify-between items-center">
+                  <span className="text-[15px] font-bold text-blackBold">
+                    Aplikasi pengajuan
+                  </span>
+                </div>
+                {(() => {
+                  const app = latestOpenRtoApplication;
+                  const badge = homeRtoApplicationBadge(app.status);
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/rto-status/${app.id}`)}
+                      className="w-full overflow-hidden rounded-2xl border border-gray-100/90 bg-white text-left shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-all active:scale-[0.99] hover:shadow-[0_6px_24px_rgba(0,0,0,0.08)]"
+                    >
+                      <div className="flex gap-3 p-4">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#e0f2f1] text-xl">
+                          📋
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span
+                              className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${badge.pillBg} ${badge.pillText}`}
+                            >
+                              {badge.label}
+                            </span>
+                            <span className="text-[10px] font-mono text-gray-400">
+                              {app.id}
+                            </span>
+                          </div>
+                          <p className="mt-1 truncate text-[14px] font-bold text-gray-900">
+                            {app.bikeName || "Motor listrik"}
+                          </p>
+                          <p className="truncate text-[11px] text-gray-500">
+                            {app.operatorName}
+                            {app.pricePerDay > 0 && (
+                              <>
+                                <span className="text-gray-300"> · </span>
+                                Rp {app.pricePerDay.toLocaleString("id-ID")}/hari
+                              </>
+                            )}
+                          </p>
+                          <p className="mt-1 text-[11px] leading-snug text-gray-500">
+                            {badge.sub}
+                          </p>
+                          {app.score?.total != null && (
+                            <p className="mt-1 text-[11px] text-gray-400">
+                              Skor:{" "}
+                              <span className="font-semibold tabular-nums text-gray-700">
+                                {app.score.total}/100
+                              </span>
+                            </p>
+                          )}
+                        </div>
+                        <span className="shrink-0 self-center text-xs font-bold text-[#4DB6AC]">
+                          Detail →
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })()}
+              </>
+            ) : null}
+
             {/* PROGRAM SEKARANG — hanya login + ada program RTO aktif */}
             {isAuthenticated && dataRTO?.ID ? (
               <>

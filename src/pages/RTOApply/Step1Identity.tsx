@@ -199,13 +199,11 @@ function DropdownSelect({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       className={`w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm transition-colors focus:border-[#4DB6AC] focus:outline-none focus:ring-1 focus:ring-[#4DB6AC]/30 appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%239CA3AF%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22/%3E%3C/svg%3E')] bg-[length:12px] bg-[right_16px_center] bg-no-repeat pr-10 ${
-        !value ? "text-gray-300" : "text-gray-900"
+        !value ? "text-gray-400" : "text-gray-900"
       }`}
     >
       {placeholder && (
-        <option value="" disabled>
-          {placeholder}
-        </option>
+        <option value="">{placeholder}</option>
       )}
       {options.map((opt) => (
         <option key={opt} value={opt}>
@@ -235,16 +233,26 @@ function DateDropdowns({
   value: string;
   onChange: (v: string) => void;
 }) {
-  const parsed = value ? new Date(value) : null;
-  const day = parsed ? parsed.getDate() : 0;
-  const month = parsed ? parsed.getMonth() + 1 : 0;
-  const year = parsed ? parsed.getFullYear() : 0;
+  const parsedInit = value ? new Date(value) : null;
+  const [dd, setDd] = useState(parsedInit ? parsedInit.getDate() : 0);
+  const [mm, setMm] = useState(parsedInit ? parsedInit.getMonth() + 1 : 0);
+  const [yy, setYy] = useState(parsedInit ? parsedInit.getFullYear() : 0);
+
+  useEffect(() => {
+    if (!value) return;
+    const p = new Date(value);
+    if (!isNaN(p.getTime())) {
+      setDd(p.getDate());
+      setMm(p.getMonth() + 1);
+      setYy(p.getFullYear());
+    }
+  }, [value]);
 
   const currentYear = new Date().getFullYear();
   const years: number[] = [];
   for (let y = currentYear; y >= currentYear - 80; y--) years.push(y);
 
-  const maxDay = daysInMonth(month, year || currentYear);
+  const maxDay = daysInMonth(mm, yy || currentYear);
   const days: number[] = [];
   for (let d = 1; d <= maxDay; d++) days.push(d);
 
@@ -256,43 +264,68 @@ function DateDropdowns({
     }
   };
 
+  const handleDay = (v: number) => { setDd(v); emit(v, mm, yy); };
+  const handleMonth = (v: number) => { setMm(v); emit(dd, v, yy); };
+  const handleYear = (v: number) => { setYy(v); emit(dd, mm, v); };
+
   const selectCls = (filled: boolean) =>
-    `w-full rounded-xl border border-gray-200 bg-white px-2.5 py-3 text-sm transition-colors focus:border-[#4DB6AC] focus:outline-none focus:ring-1 focus:ring-[#4DB6AC]/30 appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%239CA3AF%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22/%3E%3C/svg%3E')] bg-[length:10px] bg-[right_8px_center] bg-no-repeat pr-6 ${filled ? "text-gray-900" : "text-gray-300"}`;
+    `w-full rounded-xl border border-gray-200 bg-white px-2.5 py-3 text-sm transition-colors focus:border-[#4DB6AC] focus:outline-none focus:ring-1 focus:ring-[#4DB6AC]/30 appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%239CA3AF%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22/%3E%3C/svg%3E')] bg-[length:10px] bg-[right_8px_center] bg-no-repeat pr-6 ${filled ? "text-gray-900" : "text-gray-400"}`;
+
+  const age =
+    dd && mm && yy
+      ? Math.floor(
+          (Date.now() - new Date(yy, mm - 1, dd).getTime()) /
+            (365.25 * 24 * 60 * 60 * 1000),
+        )
+      : null;
 
   return (
-    <div className="grid grid-cols-3 gap-2">
-      <select
-        value={day || ""}
-        onChange={(e) => emit(Number(e.target.value), month, year)}
-        className={selectCls(day > 0)}
-      >
-        <option value="" disabled>Tgl</option>
-        {days.map((d) => (
-          <option key={d} value={d}>{d}</option>
-        ))}
-      </select>
+    <div>
+      <div className="grid grid-cols-3 gap-2">
+        <select
+          value={dd || ""}
+          onChange={(e) => handleDay(Number(e.target.value))}
+          className={selectCls(dd > 0)}
+        >
+          <option value="">Tgl</option>
+          {days.map((d) => (
+            <option key={d} value={d}>{d}</option>
+          ))}
+        </select>
 
-      <select
-        value={month || ""}
-        onChange={(e) => emit(day, Number(e.target.value), year)}
-        className={selectCls(month > 0)}
-      >
-        <option value="" disabled>Bulan</option>
-        {MONTH_NAMES.map((name, i) => (
-          <option key={i + 1} value={i + 1}>{name}</option>
-        ))}
-      </select>
+        <select
+          value={mm || ""}
+          onChange={(e) => handleMonth(Number(e.target.value))}
+          className={selectCls(mm > 0)}
+        >
+          <option value="">Bulan</option>
+          {MONTH_NAMES.map((name, i) => (
+            <option key={i + 1} value={i + 1}>{name}</option>
+          ))}
+        </select>
 
-      <select
-        value={year || ""}
-        onChange={(e) => emit(day, month, Number(e.target.value))}
-        className={selectCls(year > 0)}
-      >
-        <option value="" disabled>Tahun</option>
-        {years.map((y) => (
-          <option key={y} value={y}>{y}</option>
-        ))}
-      </select>
+        <select
+          value={yy || ""}
+          onChange={(e) => handleYear(Number(e.target.value))}
+          className={selectCls(yy > 0)}
+        >
+          <option value="">Tahun</option>
+          {years.map((y) => (
+            <option key={y} value={y}>{y}</option>
+          ))}
+        </select>
+      </div>
+
+      {age !== null && age > 0 && (
+        <p className="mt-1.5 text-xs font-semibold text-gray-500">
+          Usia: {age} tahun
+          {age >= 21 && age <= 55 ? (
+            <span className="ml-1.5 text-green">&#10003; usia optimal</span>
+          ) : (
+            <span className="ml-1.5 text-red">&#10007; di luar 21-55 tahun</span>
+          )}
+        </p>
+      )}
     </div>
   );
 }
@@ -456,12 +489,6 @@ export default function Step1Identity() {
 
   const nikLen = (draft.nik ?? "").length;
   const nikValid = nikLen === 16;
-  const age = draft.birthDate
-    ? Math.floor(
-        (Date.now() - new Date(draft.birthDate).getTime()) /
-          (365.25 * 24 * 60 * 60 * 1000),
-      )
-    : null;
 
   return (
     <div className="mx-auto max-w-lg px-4 py-6 space-y-6">
@@ -540,14 +567,6 @@ export default function Step1Identity() {
               value={draft.birthDate ?? ""}
               onChange={(v) => update({ birthDate: v })}
             />
-            {age !== null && age > 0 && (
-              <p className="mt-1 text-[11px] text-gray-400">
-                Usia: {age} tahun
-                {age >= 21 && age <= 55 && (
-                  <span className="ml-1 text-green">&#10003; optimal</span>
-                )}
-              </p>
-            )}
           </div>
 
           <div>

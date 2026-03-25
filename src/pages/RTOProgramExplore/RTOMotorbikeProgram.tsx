@@ -447,6 +447,7 @@ export default function RTOMotorbikeProgram() {
                     operatorName: op.name,
                     bikeName: bike.name,
                     pricePerDay: bike.pricePerDay,
+                    minSalary: op.minSalary,
                   },
                 })
               }
