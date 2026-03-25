@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CiSearch } from "react-icons/ci";
-import { FiInfo } from "react-icons/fi";
+import { FiInfo, FiAlertTriangle } from "react-icons/fi";
 import { IoFlash, IoTimeOutline } from "react-icons/io5";
 
 /** Brand teal — aligned with RTO / app primary */
@@ -522,16 +522,15 @@ const Home = () => {
                 {(() => {
               const creditLeft = dataRTO?.CreditLeft ?? 0;
               const creditPaid = dataRTO?.CreditPaid ?? 0;
-              const totalCredits = creditLeft + creditPaid;
-              const completedCredits = creditPaid;
+              const totalCredits = dataRTO?.Payment ?? (creditLeft + creditPaid);
               const progressPct =
-                totalCredits > 0 ? Math.round((completedCredits / totalCredits) * 100) : 0;
-              const brand = dataRTO?.Vehicle?.Brand || "";
-              const model = dataRTO?.Vehicle?.Model || "";
-              const vehicleName = [brand, model].filter(Boolean).join(" ") || "Motor listrik";
+                totalCredits > 0 ? Math.round((creditPaid / totalCredits) * 100) : 0;
+              const brand = dataRTO?.Vehicle?.VehicleModel?.VehicleBrand || "";
+              const model = dataRTO?.Vehicle?.VehicleModel?.ModelName || "";
+              const vehicleName = [brand, model].filter(Boolean).join(" ");
               const colorData = dataRTO?.Vehicle?.Colors?.[0];
               const imageUrl = colorData?.ImageURL || ILNoImage;
-              const licensePlate = dataRTO?.LicensePlate || "-";
+              const licensePlate = dataRTO?.LicensePlate;
               const status = dataRTO?.Status;
               const nextPay = dataRTO?.NextPaymentDate;
               const targetFinish = dataRTO?.TargetFinishDate;
@@ -567,19 +566,30 @@ const Home = () => {
                   <div className="border-b border-gray-100 px-4 pb-3 pt-4">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="truncate text-[15px] font-bold leading-tight text-gray-900">
-                          {vehicleName}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <p className="truncate text-[15px] font-bold leading-tight text-gray-900">
+                            {vehicleName}
+                          </p>
+                          {licensePlate && (
+                            <span className="shrink-0 text-[11px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                              {licensePlate}
+                            </span>
+                          )}
+                        </div>
                         <p className="mt-1 text-[11px] leading-snug text-gray-500">
                           {dataRTO?.Program?.Name || "Program RTO"}
                           <span className="text-gray-300"> · </span>
                           {dataRTO?.Admin?.Name || dataRTO?.Dealer || "-"}
                         </p>
-                        <p className="mt-0.5 text-[11px] text-gray-400">{licensePlate}</p>
                       </div>
                       <span
-                        className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold ${statusBg} ${statusText}`}
+                        className={`shrink-0 rounded-md px-2.5 py-1 text-[10px] font-semibold flex items-center gap-1 ${statusBg} ${statusText}`}
+                        style={{ 
+                          backgroundColor: isSuspended ? '#ef4444' : isOverdue ? '#fee2e2' : status === 5 ? '#fef3c7' : '#d1fae5',
+                          color: isSuspended ? '#ffffff' : isOverdue ? '#dc2626' : status === 5 ? '#b45309' : '#047857'
+                        }}
                       >
+                        {(isSuspended || isOverdue) && <FiAlertTriangle size={12} />}
                         {statusLabel}
                       </span>
                     </div>
@@ -606,7 +616,7 @@ const Home = () => {
                         <div className="mt-3">
                           <div className="mb-1 flex items-center justify-between text-[11px] text-gray-500">
                             <span>
-                              {completedCredits}/{totalCredits} hari dibayar
+                              {creditPaid}/{totalCredits} hari dibayar
                             </span>
                             <span className="font-semibold tabular-nums text-gray-800">{progressPct}%</span>
                           </div>
