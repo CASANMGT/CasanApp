@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import type { RootState } from "../../store";
 import {
   estimateRtoFinishExcludingWeekends,
   formatRtoEstimatedFinishId,
+  formatRtoCooldownDeadlineId,
+  gateRtoApplicationFromProgramBrowse,
   openGoogleMapsSearch,
   rupiah,
+  type RtoApplyGateResult,
 } from "../../helpers";
 import { rtoOperatorPath } from "../../constants/rtoRoutes";
 import { getBikeById, getBikeGallery } from "../../data/rtoProgramExplore";
@@ -84,6 +89,10 @@ function BikeImage({
 export default function RTOMotorbikeProgram() {
   const { bikeId } = useParams<{ bikeId: string }>();
   const navigate = useNavigate();
+  const applications = useSelector((s: RootState) => s.rtoApplication.applications);
+  const [applyBlock, setApplyBlock] = useState<Extract<RtoApplyGateResult, { ok: false }> | null>(
+    null,
+  );
   const estimateStart = usePaymentScheduleStartDate();
   const found = bikeId ? getBikeById(bikeId) : undefined;
   const [activeAngle, setActiveAngle] = useState(0);
@@ -118,6 +127,32 @@ export default function RTOMotorbikeProgram() {
       `Ajukan sekarang di app CASAN!`,
   );
   const waShareLink = `https://wa.me/?text=${shareText}`;
+
+  const tryStartApply = () => {
+    const gate = gateRtoApplicationFromProgramBrowse(
+      applications,
+      { operatorId: op.id, bikeId: bike.id },
+      { bypassForResume: false },
+    );
+    if (!gate.ok) {
+      if (gate.reason === "same_program_use_status") {
+        navigate(`/rto-status/${gate.applicationId}`);
+        return;
+      }
+      setApplyBlock(gate);
+      return;
+    }
+    navigate("/rto-apply", {
+      state: {
+        operatorId: op.id,
+        bikeId: bike.id,
+        operatorName: op.name,
+        bikeName: bike.name,
+        pricePerDay: bike.pricePerDay,
+        minSalary: op.minSalary,
+      },
+    });
+  };
 
   useEffect(() => {
     let active = true;
@@ -439,18 +474,7 @@ export default function RTOMotorbikeProgram() {
             </a>
             <button
               type="button"
-              onClick={() =>
-                navigate("/rto-apply", {
-                  state: {
-                    operatorId: op.id,
-                    bikeId: bike.id,
-                    operatorName: op.name,
-                    bikeName: bike.name,
-                    pricePerDay: bike.pricePerDay,
-                    minSalary: op.minSalary,
-                  },
-                })
-              }
+              onClick={tryStartApply}
               className="min-h-12 flex-1 rounded-2xl bg-[#4DB6AC] text-base font-bold text-white shadow-lg shadow-[#4DB6AC]/30 transition-transform active:scale-[0.99] hover:bg-[#45a89e]"
             >
               Ajukan program ini
@@ -458,6 +482,73 @@ export default function RTOMotorbikeProgram() {
           </div>
         </div>
       </div>
+
+      {applyBlock && (
+        <div
+          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 p-4 sm:items-center"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="rto-apply-block-title"
+        >
+          <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl">
+            <h2 id="rto-apply-block-title" className="text-base font-bold text-gray-900">
+              {applyBlock.reason === "cooldown" && "Belum bisa ajukan program lain"}
+              {applyBlock.reason === "active_other_program" && "Satu akun, satu pengajuan aktif"}
+            </h2>
+            {applyBlock.reason === "cooldown" && (
+              <p className="mt-3 text-sm leading-relaxed text-gray-600">
+                Setelah penolakan, pengajuan program RTO baru bisa dilakukan lagi setelah{" "}
+                <span className="font-semibold text-gray-900">
+                  {formatRtoCooldownDeadlineId(applyBlock.cooldownUntil)}
+                </span>
+                . Kamu tetap boleh melihat info program lain atau membagikan ke teman lewat
+                WhatsApp.
+              </p>
+            )}
+            {applyBlock.reason === "active_other_program" && (
+              <p className="mt-3 text-sm leading-relaxed text-gray-600">
+                Kamu masih punya pengajuan / program aktif:&nbsp;
+                <span className="font-semibold text-gray-900">
+                  {applyBlock.blocking.bikeName}
+                </span>{" "}
+                ({applyBlock.blocking.operatorName}). Selesaikan atau pantau lewat status — tidak
+                bisa mengajukan program kedua dalam akun yang sama. Ajak teman pakai{" "}
+                <strong>Bagikan</strong> di bawah.
+              </p>
+            )}
+            <div className="mt-5 flex flex-col gap-2">
+              <a
+                href={waShareLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-full items-center justify-center rounded-2xl bg-[#25D366] py-3 text-sm font-bold text-white"
+              >
+                Bagikan program ini (WhatsApp)
+              </a>
+              <button
+                type="button"
+                onClick={() =>
+                  applyBlock.reason === "active_other_program"
+                    ? navigate(`/rto-status/${applyBlock.blocking.id}`)
+                    : navigate("/rto-program-explore")
+                }
+                className="w-full rounded-2xl border-2 border-[#4DB6AC] py-3 text-sm font-bold text-[#4DB6AC]"
+              >
+                {applyBlock.reason === "active_other_program"
+                  ? "Lihat status pengajuan"
+                  : "Mengerti"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setApplyBlock(null)}
+                className="w-full py-2 text-sm font-semibold text-gray-500"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

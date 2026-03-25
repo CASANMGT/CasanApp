@@ -197,6 +197,7 @@ export default function RTOStatus() {
         bikeName: app.bikeName,
         pricePerDay: app.pricePerDay,
         minSalary: app.minSalary ?? 0,
+        __resume: true,
       },
     });
   };
@@ -250,7 +251,7 @@ export default function RTOStatus() {
               : app.status === "approved"
                 ? "Selamat! Lanjut jadwalkan pengambilan motor."
                 : app.status === "rejected"
-                  ? "Silakan perbaiki profil atau pilih program lain."
+                  ? "Kamu bisa browsing program lain, tapi pengajuan baru baru bisa lagi setelah masa tunggu."
                   : "Proses aplikasi kamu sedang berlangsung."}
           </p>
         </div>
@@ -345,14 +346,25 @@ export default function RTOStatus() {
                 <li>Pilih program dengan minimal gaji lebih rendah</li>
               </ul>
             </div>
-            {cooldownSeconds > 0 && (
+            {cooldownSeconds > 0 && app.rejectionCooldownUntil && (
               <p className="mt-3 text-xs text-gray-600">
-                Estimasi bisa ajukan ulang:{" "}
+                Pengajuan program lain bisa dilakukan lagi setelah{" "}
                 <span className="font-bold text-red">
-                  {Math.ceil(cooldownSeconds / 86400)} hari lagi
-                </span>
+                  {new Date(app.rejectionCooldownUntil).toLocaleDateString("id-ID", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </span>{" "}
+                (30 hari sejak penolakan). Sementara itu satu akun juga tidak boleh punya dua pengajuan aktif
+                — tapi kamu bisa bagikan program ke teman.
               </p>
             )}
+            <p className="mt-2 text-[11px] leading-relaxed text-gray-500">
+              &ldquo;Lihat program lainnya&rdquo; hanya untuk melihat info &amp; membagikan; tombol{" "}
+              <strong>Ajukan</strong> di program lain akan aktif lagi setelah masa tunggu.
+            </p>
             <button
               type="button"
               onClick={() => navigate("/rto-program-explore")}
@@ -360,6 +372,16 @@ export default function RTOStatus() {
             >
               Lihat program lainnya
             </button>
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(
+                `Cek program RTO "${app.operatorName}"!\n\n🛵 ${app.bikeName}\n📍 ${app.operatorName}\n\nInfo & ajukan lewat app CASAN — Rent to Own.`,
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 flex w-full items-center justify-center rounded-2xl bg-[#25D366]/12 py-3 text-sm font-bold text-[#128C7E]"
+            >
+              Bagikan program ke teman (WhatsApp)
+            </a>
             <button
               type="button"
               onClick={() => openWhatsApp(CUSTOMER_SERVICES)}
