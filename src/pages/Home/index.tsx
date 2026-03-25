@@ -603,9 +603,8 @@ const Home = () => {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-end gap-1.5">
                         <span
-                          className={`text-2xl font-extrabold leading-none tabular-nums ${
-                            isLowCredit || isSuspended ? "text-red-500" : "text-[#4DB6AC]"
-                          }`}
+                          className="text-2xl font-extrabold leading-none tabular-nums"
+                          style={{ color: isLowCredit || isSuspended ? '#ef4444' : '#4DB6AC' }}
                         >
                           {creditLeft}
                         </span>
@@ -645,14 +644,23 @@ const Home = () => {
                     <div className="flex min-w-0 flex-1 flex-col gap-1 text-[11px]">
                       {nextPay && (
                         <div className="flex flex-wrap items-baseline gap-x-1.5">
-                          <span className="text-gray-500">
-                            {isOverdue ? "Akan di-suspend:" : "Bayar selanjutnya:"}
-                          </span>
-                          <span
-                            className={`font-semibold ${isOverdue ? "text-red-600" : "text-gray-900"}`}
-                          >
-                            {moments(nextPay).format("ddd, DD MMM HH:mm")} WIB
-                          </span>
+                          {isSuspended ? (
+                            <span style={{ color: '#dc2626' }}>
+                              Lunasi tagihan terlebih dahulu
+                              {dataRTO?.OverdueCount > 0 && (
+                                <span className="font-semibold"> ({dataRTO.OverdueCount} hari di-suspend)</span>
+                              )}
+                            </span>
+                          ) : (
+                            <>
+                              <span className="text-gray-500">Bayar selanjutnya:</span>
+                              <span
+                                className={`font-semibold ${isOverdue ? "text-red-600" : "text-gray-900"}`}
+                              >
+                                {moments(nextPay).format("ddd, DD MMM HH:mm")} WIB
+                              </span>
+                            </>
+                          )}
                         </div>
                       )}
                       {targetFinish && (
@@ -663,11 +671,7 @@ const Home = () => {
                           </span>
                         </div>
                       )}
-                      {isSuspended && dataRTO?.OverdueCount > 0 && (
-                        <span className="font-semibold text-red-500">
-                          {dataRTO.OverdueCount} hari di-suspend
-                        </span>
-                      )}
+
                     </div>
                     <span className="shrink-0 text-xs font-bold text-[#4DB6AC]">Detail →</span>
                   </div>
