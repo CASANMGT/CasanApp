@@ -8,6 +8,9 @@ import {
   resumeApplicationEdit,
 } from "../../features/rto/rtoApplicationSlice";
 import { openWhatsApp } from "../../helpers/linking";
+import { getPickupDocumentReminders } from "../../helpers/rtoPickupReminderDocs";
+import { rtoBikePath } from "../../constants/rtoRoutes";
+import { getBikeById, getOperatorById } from "../../data/rtoProgramExplore";
 import { CUSTOMER_SERVICES } from "../../common";
 import { rtoCard, rtoCardSubtle, rtoSectionTitle } from "../RTOProgramExplore/rtoUi";
 
@@ -25,6 +28,8 @@ const DOC_LABELS: Record<string, string> = {
   kk: "Kartu Keluarga",
   slip_gaji: "Slip gaji / bukti pendapatan",
   slik: "Hasil SLIK OJK",
+  ktp_penjamin: "KTP penjamin",
+  slip_gaji_penjamin: "Slip gaji / bukti penghasilan penjamin",
 };
 
 const SCORE_ROWS: { key: keyof ScoreBreakdown; label: string; max: number }[] = [
@@ -362,6 +367,13 @@ export default function RTOStatus() {
       </div>
     );
   }
+
+  const programExplore = useMemo(() => getBikeById(app.bikeId), [app.bikeId]);
+  const operatorExplore = useMemo(() => getOperatorById(app.operatorId), [app.operatorId]);
+  const pickupDocsReminder = useMemo(() => {
+    if (app.status !== "approved" && app.status !== "pickup_scheduled") return [];
+    return getPickupDocumentReminders(app);
+  }, [app]);
 
   const activeIdx = getActiveIndex(app.status);
   const visual = getStatusVisual(app.status);
@@ -761,21 +773,107 @@ export default function RTOStatus() {
         {/* Program */}
         <section>
           <h3 className={rtoSectionTitle}>Program dipilih</h3>
-          <div className={`${rtoCard} flex items-center gap-4 p-4`}>
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#4DB6AC]/20 to-primary10 text-xl shadow-inner">
-              🛵
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-bold text-gray-900">{app.bikeName || "Motor listrik"}</p>
-              <p className="truncate text-xs text-gray-500">
-                {app.operatorName}
-                {app.pricePerDay > 0 && (
-                  <>
-                    <span className="text-gray-300"> · </span>
-                    Rp {app.pricePerDay.toLocaleString("id-ID")}/hari
-                  </>
+          <div className={`${rtoCard} overflow-hidden p-0`}>
+            <button
+              type="button"
+              onClick={() => navigate(rtoBikePath(app.bikeId))}
+              className="flex w-full items-center gap-3 p-3 text-left transition-colors hover:bg-gray-50/80"
+              aria-label={`Buka katalog program ${app.bikeName}`}
+            >
+              <div className="relative h-12 w-14 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-[#dff5f2] to-[#c8ebe5]">
+                {programExplore?.bike.photoUrl ? (
+                  <img
+                    src={programExplore.bike.photoUrl}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center text-lg">🛵</div>
                 )}
-              </p>
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="line-clamp-1 text-xs font-bold text-gray-900">
+                  {app.bikeName || "Motor listrik"}
+                </p>
+                <p className="mt-0.5 truncate text-[10px] text-gray-500">
+                  {app.operatorName}
+                  {app.pricePerDay > 0 && (
+                    <>
+                      <span className="text-gray-300"> · </span>
+                      Rp {app.pricePerDay.toLocaleString("id-ID")}/hari
+                    </>
+                  )}
+                </p>
+              </div>
+              <span className="shrink-0 text-[#4DB6AC]" aria-hidden>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            </button>
+
+            {programExplore && (
+              <div className="border-t border-gray-100 px-3 pb-3 pt-2">
+                <p className="text-[10px] leading-snug text-gray-600">{programExplore.bike.specLine}</p>
+                <div className="mt-2 flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-gray-600">
+                  <span>
+                    <span className="text-gray-400">Daya</span> {programExplore.bike.watt}
+                  </span>
+                  <span className="text-gray-200">|</span>
+                  <span>
+                    <span className="text-gray-400">Jarak</span> {programExplore.bike.rangeKm}
+                  </span>
+                  <span className="text-gray-200">|</span>
+                  <span>
+                    <span className="text-gray-400">Bat.</span> {programExplore.bike.batteryWh}
+                  </span>
+                  <span className="text-gray-200">|</span>
+                  <span>
+                    <span className="text-gray-400">Th</span> {programExplore.bike.year}
+                  </span>
+                </div>
+                {operatorExplore?.benefits?.length ? (
+                  <p className="mt-2 line-clamp-2 text-[10px] leading-relaxed text-gray-500">
+                    {operatorExplore.benefits.slice(0, 3).join(" · ")}
+                  </p>
+                ) : null}
+                {typeof app.minSalary === "number" && app.minSalary > 0 && (
+                  <p className="mt-1.5 text-[10px] text-gray-400">
+                    Min. gaji acuan Rp {app.minSalary.toLocaleString("id-ID")}/bln
+                  </p>
+                )}
+              </div>
+            )}
+
+            {pickupDocsReminder.length > 0 && (
+              <div className="border-t border-amber-100/80 bg-amber-50/35 px-3 py-2.5">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-amber-900/80">
+                  Bawa saat ambil motor
+                </p>
+                <ul className="mt-1.5 space-y-1">
+                  {pickupDocsReminder.map((row, i) => (
+                    <li key={i} className="flex gap-1.5 text-[10px] leading-snug text-gray-700">
+                      <span className="shrink-0 opacity-90" aria-hidden>
+                        {row.icon}
+                      </span>
+                      <span>
+                        <span className="font-medium">{row.title}</span>
+                        {row.detail ? <span className="text-gray-500"> — {row.detail}</span> : null}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div className="border-t border-gray-100 px-3 py-2">
+              <button
+                type="button"
+                onClick={() => navigate(rtoBikePath(app.bikeId))}
+                className="w-full rounded-lg border border-[#4DB6AC]/40 bg-white py-2 text-[11px] font-semibold text-[#327478] transition-colors hover:bg-primary10/40"
+              >
+                Detail program di katalog
+              </button>
             </div>
           </div>
         </section>

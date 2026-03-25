@@ -27,8 +27,9 @@ const StepNav: React.FC<Props> = ({ currentStep, onStepTap }) => {
           style={{ width: `${pct}%` }}
         />
       </div>
+      {/* Grid on narrow screens = all 6 steps visible (2×3); flex wrap on wider = no clipped steps */}
       <div
-        className="flex items-center gap-1.5 overflow-x-auto px-3 py-3 scrollbar-none sm:px-4"
+        className="grid grid-cols-3 gap-x-1 gap-y-2 px-2 py-3 sm:flex sm:flex-wrap sm:justify-center sm:gap-2 sm:px-3"
         role="tablist"
         aria-label="Langkah formulir"
       >
@@ -43,8 +44,9 @@ const StepNav: React.FC<Props> = ({ currentStep, onStepTap }) => {
               type="button"
               role="tab"
               aria-selected={isActive}
+              title={`Langkah ${step}: ${label}`}
               onClick={() => onStepTap?.(step)}
-              className={`flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[11px] font-semibold transition-all sm:px-3 ${
+              className={`flex min-w-0 w-full sm:w-auto sm:shrink-0 items-center justify-center gap-1 rounded-full px-2 py-1.5 text-[10px] font-semibold leading-tight transition-all sm:px-2.5 sm:text-[11px] ${
                 isActive
                   ? "bg-[#4DB6AC] text-white shadow-md shadow-[#4DB6AC]/25"
                   : isDone
@@ -53,7 +55,7 @@ const StepNav: React.FC<Props> = ({ currentStep, onStepTap }) => {
               }`}
             >
               <span
-                className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold ${
+                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
                   isActive
                     ? "bg-white/25 text-white"
                     : isDone
@@ -63,7 +65,7 @@ const StepNav: React.FC<Props> = ({ currentStep, onStepTap }) => {
               >
                 {isDone ? "✓" : step}
               </span>
-              <span className="max-w-[5.5rem] truncate whitespace-nowrap sm:max-w-none">
+              <span className="min-w-0 truncate text-left sm:max-w-[6.5rem]">
                 {label}
               </span>
             </button>

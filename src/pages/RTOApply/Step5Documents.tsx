@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store";
 import { updateDraft, goToStep } from "../../features/rto/rtoApplicationSlice";
@@ -14,7 +14,24 @@ interface DocSlot {
   required: boolean;
 }
 
-const DOC_SLOTS: DocSlot[] = [
+const GUARANTOR_DOC_SLOTS: DocSlot[] = [
+  {
+    docId: "ktp_penjamin",
+    label: "KTP Penjamin",
+    description: "Foto KTP penjamin yang jelas — nama harus sama dengan data penjamin",
+    icon: "🪪",
+    required: true,
+  },
+  {
+    docId: "slip_gaji_penjamin",
+    label: "Slip gaji / bukti penghasilan penjamin",
+    description: "Bukti penghasilan bulan terakhir (gaji, rekening koran bisnis penjamin, dll.)",
+    icon: "💼",
+    required: true,
+  },
+];
+
+const BASE_DOC_SLOTS: DocSlot[] = [
   {
     docId: "ktp",
     label: "KTP",
@@ -58,6 +75,12 @@ const DOC_SLOTS: DocSlot[] = [
     required: false,
   },
 ];
+
+function buildDocSlots(guarantorActive: boolean): DocSlot[] {
+  return guarantorActive
+    ? [...BASE_DOC_SLOTS, ...GUARANTOR_DOC_SLOTS]
+    : [...BASE_DOC_SLOTS];
+}
 
 function DocumentCard({
   slot,
@@ -151,6 +174,11 @@ function DocumentCard({
 export default function Step5Documents() {
   const dispatch = useDispatch<AppDispatch>();
   const draft = useSelector((s: RootState) => s.rtoApplication.draft);
+  const guarantorActive = draft.guarantorType !== "none";
+  const docSlots = useMemo(
+    () => buildDocSlots(guarantorActive),
+    [guarantorActive],
+  );
 
   const [localFiles, setLocalFiles] = useState<Record<string, File>>({});
 
@@ -183,19 +211,31 @@ export default function Step5Documents() {
     });
   };
 
-  const requiredIds = DOC_SLOTS.filter((s) => s.required).map((s) => s.docId);
+  const requiredIds = docSlots.filter((s) => s.required).map((s) => s.docId);
   const uploadedIds = draft.uploadedDocs.map((d) => d.docId);
   const allRequiredUploaded = requiredIds.every((id) =>
     uploadedIds.includes(id),
   );
 
   const uploadedCount = draft.uploadedDocs.length;
-  const totalCount = DOC_SLOTS.length;
+  const totalCount = docSlots.length;
 
   return (
     <div className="space-y-6 px-4 py-6 pb-28 sm:px-5">
       <section>
         <SectionHeading>Upload Dokumen</SectionHeading>
+
+        {guarantorActive && (
+          <div className="mb-3">
+            <InfoBox variant="info">
+              <span className="font-bold">Penjamin aktif:</span> unggah{" "}
+              <strong>KTP penjamin</strong> dan{" "}
+              <strong>bukti penghasilan penjamin</strong> di bagian bawah. Ini
+              membantu verifikasi hubungan dan daya bayar bersama — bukan jaminan
+              persetujuan otomatis.
+            </InfoBox>
+          </div>
+        )}
 
         {/* Progress bar */}
         <div className="mb-4">
@@ -218,7 +258,7 @@ export default function Step5Documents() {
         </div>
 
         <div className="space-y-3">
-          {DOC_SLOTS.map((slot) => (
+          {docSlots.map((slot) => (
             <DocumentCard
               key={slot.docId}
               slot={slot}

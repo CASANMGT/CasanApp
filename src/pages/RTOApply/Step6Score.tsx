@@ -27,9 +27,15 @@ interface Decision {
 
 function getDecision(total: number): Decision {
   if (total >= 80)
-    return { label: "Disetujui Otomatis", color: "text-green", bg: "bg-lightGreen", border: "border-strokeGreen", eta: "Motor siap 1-2 hari kerja" };
+    return {
+      label: "Review diprioritaskan",
+      color: "text-green",
+      bg: "bg-lightGreen",
+      border: "border-strokeGreen",
+      eta: "Estimasi proses lebih cepat (1–2 hari kerja). Keputusan akhir setelah verifikasi dealer — bukan persetujuan otomatis",
+    };
   if (total >= 60)
-    return { label: "Disetujui", color: "text-primaryDark", bg: "bg-primary10", border: "border-primary30", eta: "Dealer hubungi via WhatsApp dalam 24 jam" };
+    return { label: "Indikasi layak", color: "text-primaryDark", bg: "bg-primary10", border: "border-primary30", eta: "Dealer hubungi via WhatsApp dalam 24 jam" };
   if (total >= 41)
     return { label: "Sedang Direview", color: "text-gold", bg: "bg-lightOrange", border: "border-strokeOrange", eta: "Analisis manual 1-3 hari kerja" };
   if (total >= 21)
@@ -38,8 +44,8 @@ function getDecision(total: number): Decision {
 }
 
 const SCORE_GUIDE = [
-  { range: "80 - 100", label: "Disetujui Otomatis", desc: "Motor siap 1-2 hari kerja", color: "bg-green" },
-  { range: "60 - 79", label: "Disetujui", desc: "Dealer hubungi 24 jam", color: "bg-primary100" },
+  { range: "80 - 100", label: "Review diprioritaskan", desc: "Estimasi lebih cepat; tetap verifikasi", color: "bg-green" },
+  { range: "60 - 79", label: "Indikasi layak", desc: "Dealer hubungi 24 jam", color: "bg-primary100" },
   { range: "41 - 59", label: "Sedang Direview", desc: "Analisis 1-3 hari kerja", color: "bg-orange" },
   { range: "21 - 40", label: "Perlu Penjamin", desc: "Lengkapi penjamin & dokumen", color: "bg-gold" },
   { range: "0 - 20", label: "Tidak Disetujui", desc: "Daftar ulang setelah 30 hari", color: "bg-red" },
@@ -172,8 +178,9 @@ export default function Step6Score({ onBack }: Props) {
 
       <div className="rounded-xl bg-lightOrange border border-strokeOrange p-3">
         <p className="text-xs text-gold">
-          <span className="font-bold">Catatan:</span> Skor dihitung otomatis dari data yang kamu isi.
-          Kamu tetap bisa submit meskipun ada data yang belum lengkap — skor mencerminkan kelengkapan.
+          <span className="font-bold">Catatan:</span> Skor dihitung dari data yang kamu isi sebagai
+          indikasi kelengkapan — bukan kontrak kredit. Skor tinggi membantu prioritas review, tidak
+          menggantikan verifikasi manual atau keputusan dealer.
         </p>
       </div>
 

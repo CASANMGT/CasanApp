@@ -32,6 +32,15 @@ const DEPENDENT_TYPE_OPTIONS = [
 
 const EMPTY_DEPENDENT: Dependent = { name: "", age: 0, type: "Anak" };
 
+/** Teks awal hubungan penjamin ↔ pemohon — pengguna wajib menyesuaikan jika perlu */
+const RELATION_PRESET: Record<Exclude<GuarantorType, "none">, string> = {
+  parent: "Orang tua / wali kandung pemohon",
+  sibling: "Saudara kandung pemohon",
+  spouse: "Pasangan sah pemohon (bukan pisah harta bila diminta surat nikah)",
+  employer: "Atasan langsung pemohon di tempat kerja saat ini",
+  other: "",
+};
+
 function DependentCard({
   dep,
   index,
@@ -187,8 +196,9 @@ export default function Step3Family() {
       <section>
         <SectionHeading>Penjamin (Opsional)</SectionHeading>
         <InfoBox variant="info">
-          Penjamin meningkatkan peluang persetujuan, terutama jika skor di bawah
-          60.
+          Penjamin dapat memperkuat pengajuan. Isi data penjamin di bawah; unggah KTP &amp; bukti
+          penghasilan penjamin hanya di langkah <strong>Dokumen</strong> (supaya satu tempat untuk
+          semua file). Keputusan akhir dari dealer — bukan persetujuan otomatis.
         </InfoBox>
         <div className="mt-3 space-y-4">
           <div>
@@ -197,14 +207,57 @@ export default function Step3Family() {
               value={draft.guarantorType}
               options={GUARANTOR_OPTIONS}
               onChange={(v) => {
-                update({ guarantorType: v });
                 setShowGuarantor(v !== "none");
+                if (v === "none") {
+                  const stripGuarantorDocs = new Set([
+                    "ktp_penjamin",
+                    "slip_gaji_penjamin",
+                  ]);
+                  update({
+                    guarantorType: v,
+                    uploadedDocs: draft.uploadedDocs.filter(
+                      (d) => !stripGuarantorDocs.has(d.docId),
+                    ),
+                  });
+                  return;
+                }
+                const base = draft.guarantor ?? {
+                  name: "",
+                  phone: "",
+                  nik: "",
+                  relation: "",
+                  income: 0,
+                  address: "",
+                };
+                const preset = RELATION_PRESET[v];
+                const relationNext =
+                  v === "other"
+                    ? draft.guarantorType === "other"
+                      ? base.relation
+                      : ""
+                    : preset;
+                update({
+                  guarantorType: v,
+                  guarantor: { ...base, relation: relationNext },
+                });
               }}
             />
           </div>
 
           {showGuarantor && draft.guarantorType !== "none" && (
-            <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
+            <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+              <div>
+                <FieldLabel>Hubungan penjamin dengan pemohon</FieldLabel>
+                <p className="mb-2 text-[10px] leading-relaxed text-gray-500">
+                  Jelaskan secara spesifik (minimal 10 karakter), misalnya &ldquo;Ibu kandung, satu
+                  kartu keluarga dengan pemohon&rdquo; agar bisa diverifikasi.
+                </p>
+                <TextInput
+                  value={draft.guarantor?.relation ?? ""}
+                  onChange={(v) => updateGuarantor("relation", v)}
+                  placeholder="Contoh: Ayah kandung pemohon, alamat domisili sama"
+                />
+              </div>
               <div>
                 <FieldLabel>Nama Penjamin</FieldLabel>
                 <TextInput
@@ -250,8 +303,20 @@ export default function Step3Family() {
                 <TextInput
                   value={draft.guarantor?.address ?? ""}
                   onChange={(v) => updateGuarantor("address", v)}
-                  placeholder="Alamat lengkap"
+                  placeholder="Alamat lengkap sesuai domisili"
                 />
+              </div>
+
+              <div className="border-t border-gray-100 pt-3">
+                <InfoBox variant="warning">
+                  <span className="font-bold">Dokumen penjamin (langkah Dokumen)</span>
+                  <br />
+                  <span className="opacity-95">
+                    KTP dan slip gaji / bukti penghasilan penjamin diunggah nanti di langkah{" "}
+                    <strong>Dokumen</strong> — tidak di halaman ini. Pastikan teks hubungan di atas
+                    konsisten dengan identitas di file. Dokumen palsu dapat membatalkan pengajuan.
+                  </span>
+                </InfoBox>
               </div>
             </div>
           )}
@@ -262,6 +327,18 @@ export default function Step3Family() {
         primaryLabel="Lanjut →"
         onPrimary={() => dispatch(goToStep(4))}
         onBack={() => dispatch(goToStep(2))}
+        disabled={(() => {
+          if (draft.guarantorType === "none") return false;
+          const g = draft.guarantor;
+          const relOk = (g?.relation?.trim().length ?? 0) >= 10;
+          const baseOk =
+            (g?.name?.trim().length ?? 0) >= 2 &&
+            (g?.nik?.length ?? 0) === 16 &&
+            (g?.phone?.replace(/\D/g, "").length ?? 0) >= 10 &&
+            (g?.income ?? 0) > 0 &&
+            (g?.address?.trim().length ?? 0) >= 8;
+          return !(relOk && baseOk);
+        })()}
       />
     </div>
   );

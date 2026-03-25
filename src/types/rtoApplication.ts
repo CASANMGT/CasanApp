@@ -111,6 +111,10 @@ export interface ApplicationForm {
 
   guarantorType: GuarantorType;
   guarantor?: Guarantor;
+  /** Pemohon menyatakan hubungan penjamin–pemohon dijelaskan dengan jujur */
+  guarantorRelationDeclared?: boolean;
+  /** Pemohon menyatakan dokumen penjamin asli dan dapat diverifikasi */
+  guarantorDocsAuthenticDeclared?: boolean;
 
   spouseIncome?: number;
   dependents: Dependent[];
@@ -204,5 +208,7 @@ export const EMPTY_FORM: ApplicationForm = {
   hasPriorCredit: false,
   creditEntries: [],
   monthlyInstallmentTotal: 0,
+  guarantorRelationDeclared: false,
+  guarantorDocsAuthenticDeclared: false,
   uploadedDocs: [],
 };

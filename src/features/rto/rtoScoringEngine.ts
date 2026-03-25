@@ -134,6 +134,11 @@ function scoreFamily(f: Partial<ApplicationForm>): number {
     const gIncome = f.guarantor?.income ?? 0;
     if (gIncome >= 5_000_000) pts += 2;
     else if (gIncome >= 3_000_000) pts += 1;
+
+    const rel = (f.guarantor?.relation ?? "").trim();
+    if (rel.length >= 10) {
+      pts += 1;
+    }
   }
 
   if (f.maritalStatus === "married") {
@@ -191,6 +196,7 @@ function scoreCredit(f: Partial<ApplicationForm>): number {
 
 const REQUIRED_DOC_IDS = ["ktp", "selfie_ktp", "sim"];
 const BOOST_DOC_IDS = ["kk", "slip_gaji", "slik"];
+const GUARANTOR_DOC_IDS = ["ktp_penjamin", "slip_gaji_penjamin"];
 
 function scoreDocuments(f: Partial<ApplicationForm>): number {
   let pts = 0;
@@ -201,6 +207,11 @@ function scoreDocuments(f: Partial<ApplicationForm>): number {
 
   const boostUploaded = BOOST_DOC_IDS.filter((id) => uploaded.includes(id)).length;
   pts += boostUploaded * 1.5;
+
+  if ((f.guarantorType ?? "none") !== "none") {
+    const gUploaded = GUARANTOR_DOC_IDS.filter((id) => uploaded.includes(id)).length;
+    pts += Math.round((gUploaded / GUARANTOR_DOC_IDS.length) * 3);
+  }
 
   return Math.min(15, Math.round(pts * 10) / 10);
 }
