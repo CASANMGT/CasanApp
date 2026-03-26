@@ -71,6 +71,14 @@ export const APP_CHANGELOG: ChangelogRelease[] = [
         ],
       },
       {
+        title: "RTO status screen — UX & visual polish",
+        details: [
+          "Semantic colors per status (slate pending, amber action, green positive, rose rejected); full-height vertical gradients; white content cards.",
+          "Pending: “Menunggu keputusan” card with pulse; full score breakdown only after a decision.",
+          "Horizontal 4-step process tracker; pickup photos in bottom sheet; sticky program footer; rejected: green primary CTA “Jelajahi program lainnya”.",
+        ],
+      },
+      {
         title: "Beranda — kartu pengajuan",
         details: [
           "Menampilkan aplikasi RTO terbaru yang masih berjalan; disembunyikan setelah pickup_done.",
@@ -83,6 +91,13 @@ export const APP_CHANGELOG: ChangelogRelease[] = [
         details: [
           "Isi Daya shows only charging stations.",
           "RTO Status and Ongoing sections appear only in the Rent to Own tab when the user has an active RTO.",
+        ],
+      },
+      {
+        title: "RTO status layout & pickup",
+        details: [
+          "Score block placement unified below summary for non-rejected flows; pending demo banner uses neutral slate.",
+          "Pickup location row simplified before opening the photo bottom sheet.",
         ],
       },
     ],

@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **RTO status screen — UX & visual system** (`/rto-status/:applicationId`):
+  - Semantic color families per status (slate pending, amber action-needed, green positive outcomes, rose rejected); page background uses full-height vertical gradients; content cards stay white with neutral borders.
+  - **Pending (`submitted`, `under_review`):** “Menunggu keputusan” card with pulsing indicator instead of full score breakdown before a decision exists.
+  - **Score + credit decision** shown directly under the summary card once a decision applies (not for rejected — score lives inside rejection summary).
+  - **Process flow:** compact **horizontal** 4-step tracker with connectors and active-state pulse (replaces tall vertical stepper).
+  - **Pickup scheduled:** map row, **photo gallery** in a **bottom sheet**, document checklist in existing modal; paired “Foto (n)” / “Dokumen (n)” actions.
+  - **Sticky program footer:** fixed bottom bar with bike thumb, title, price, and **Detail** CTA on all statuses.
+  - **Rejected:** primary CTA “Jelajahi program lainnya” as solid green; share/support secondary.
 - **Home: 3-card top navigation** — Service cards below search bar to switch between:
   - **Isi Daya** — Charging: shows "Stasiun terdekat" and charging station list only (no RTO/Ongoing in this tab).
   - **Rent to Own** — Shows active RTO program (if logged in), "Jelajahi motor lainnya" with program list and pagination.
@@ -31,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Home content is now tab-driven: Isi Daya shows only charging stations; RTO and Rent show their own content.
 - RTO Status and Ongoing sections are hidden in the Isi Daya tab; they appear only in the Rent to Own tab when the user has an active RTO.
+- **RTO status:** score section position unified (below summary for all non-rejected flows); demo review banner for pending states uses neutral slate styling; pickup location card simplified before opening photo sheet.
 
 ### Fixed
 

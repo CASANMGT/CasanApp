@@ -4,6 +4,38 @@ React + TypeScript + Vite client for the CASAN app (charging, Rent to Own, renta
 
 ---
 
+## RTO application status (`/rto-status/:applicationId`)
+
+Halaman status pengajuan Rent to Own setelah kirim form (demo: review otomatis di Redux).
+
+| Route | Perilaku singkat |
+|-------|------------------|
+| `/rto-status/:id` | Status aplikasi: ringkasan, skor (jika sudah ada keputusan), aksi per status, alur proses, program. |
+| `/rto-status/latest` | Mengambil aplikasi terakhir di daftar. |
+| `/rto-pickup/:id` | Jadwal ambil motor → `pickup_scheduled`. |
+
+**Tema warna (semantic, bukan teal seragam):**
+
+- **Netral (submitted / under_review):** abu-biru slate — menunggu, bukan hasil akhir.
+- **Aksi (need_documents):** amber — perlu tindakan pengguna.
+- **Positif (approved / pickup_scheduled / pickup_done):** hijau — disetujui & lanjut.
+- **Negatif (rejected):** rose/merah — tidak dilanjutkan.
+
+Latar halaman memakai **gradient vertikal** yang konsisten sepanjang scroll; kartu konten putih dengan border netral.
+
+**UX utama:**
+
+- **Menunggu review:** kartu “Menunggu keputusan” dengan indikator pulse (tanpa breakdown skor penuh).
+- **Skor:** setelah ada keputusan, kartu skor + keputusan pengajuan tepat di bawah ringkasan status.
+- **Alur proses:** bilah horizontal (4 langkah) menggantikan stepper vertikal panjang.
+- **Pickup:** peta + alamat; foto cabang di **bottom sheet**; checklist dokumen di modal.
+- **Program:** **sticky footer** mini (thumbnail, nama, harga, tombol Detail) tetap terlihat saat scroll.
+- **Ditolak:** CTA utama hijau “Jelajahi program lainnya”; share & support sebagai sekunder.
+
+Kode utama: `src/pages/RTOStatus/index.tsx`.
+
+---
+
 ## Changelog
 
 | Where | Purpose |
@@ -24,6 +56,7 @@ Keep these in sync when you ship user-facing changes.
 - **RTO program details:** Jelajahi → dealer list (distance / nearest sort) → **dealer** (banner, WA share, branches + km, Maps, hours, call/WA, photos, motor list) → **motor** (gallery, Harian & min gaji, specs, charging + stations, jadwal bayar + estimated finish, benefits, apply + WA). Multi-bike mock data per operator; weekend-excluded payment estimate from “today”.
 - **RTO multi-step apply:** `/rto-apply` (6 langkah + skor live, gate min. gaji, persist).
 - **RTO status & pickup:** `/rto-status/:id` (mock review, need docs / rejected / approved, lanjut edit), `/rto-pickup/:id` (jadwal ambil).
+- **RTO status UX (polish):** tema warna per status, timeline horizontal, kartu menunggu keputusan, foto cabang di sheet, footer program sticky, CTA hijau saat ditolak — lihat [CHANGELOG.md](./CHANGELOG.md) bagian Unreleased.
 - **Home:** kartu aplikasi RTO terbaru (sembunyi jika `pickup_done`).
 
 **Changed**
