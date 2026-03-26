@@ -201,7 +201,6 @@ const neutralPickupPrep = `rounded-[22px] ${NEUTRAL_CARD_BORDER} bg-white p-4 sm
 const neutralEmbeddedScore = `rounded-2xl ${NEUTRAL_CARD_BORDER} bg-white p-5 ${NEUTRAL_CARD_SHADOW}`;
 
 function getStatusVisual(status: string): StatusVisual {
-  const pageNeutral = "to-[#e8eceb]";
   const cards = {
     summaryCardClass: neutralSummaryInset,
     scoreCardClass: neutralScoreCard,
@@ -218,7 +217,7 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-white/20 text-white border border-white/25",
         ringClass: "from-primary30/90 to-primary10",
         heroGradient: "from-[#4DB6AC] via-[#4aa89e] to-[#3d9a91]",
-        pageBg: `bg-gradient-to-b from-[#c5ebe4]/90 via-[#e3f5f1]/70 ${pageNeutral}`,
+        pageBg: "bg-[#dff0ec]",
         glyphIconClass: "bg-gray-50 text-[#2d8a7d] shadow-sm ring-1 ring-gray-200/90",
         ...cards,
       };
@@ -228,7 +227,7 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-white/20 text-white border border-white/25",
         ringClass: "from-primary70/40 to-primary30/60",
         heroGradient: "from-[#45a89e] via-[#3f9d94] to-[#358f87]",
-        pageBg: `bg-gradient-to-b from-[#b8e4dc]/88 via-[#dff5f1]/65 ${pageNeutral}`,
+        pageBg: "bg-[#d5ece6]",
         glyphIconClass: "bg-gray-50 text-[#2a7d72] shadow-sm ring-1 ring-gray-200/90",
         ...cards,
       };
@@ -238,7 +237,7 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-orange/25 text-[#9a6200] border border-orange/40",
         ringClass: "from-orange/35 to-secondary30",
         heroGradient: "from-[#e8a54a] via-[#d99a3c] to-[#c9892e]",
-        pageBg: "bg-gradient-to-b from-[#ffe8c8]/85 via-[#fff5e6]/55 to-[#f0ebe3]",
+        pageBg: "bg-[#fef3e2]",
         glyphIconClass: "bg-gray-50 text-orange shadow-sm ring-1 ring-orange/25",
         ...cards,
       };
@@ -248,7 +247,7 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-green/20 text-green border border-strokeGreen",
         ringClass: "from-strokeGreen to-lightGreen",
         heroGradient: "from-[#3db86b] via-[#2fa65d] to-[#24904f]",
-        pageBg: "bg-gradient-to-b from-[#bbf7d0]/75 via-[#ecfdf5]/50 to-[#e8eceb]",
+        pageBg: "bg-[#e0f8ec]",
         glyphIconClass: "bg-gray-50 text-green shadow-sm ring-1 ring-gray-200/90",
         ...cards,
       };
@@ -258,7 +257,7 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-white/95 text-red border border-strokeRed shadow-sm",
         ringClass: "from-strokeRed/80 to-lightRed",
         heroGradient: "from-[#e85d6f] via-[#d64d5f] to-[#c44452]",
-        pageBg: "bg-gradient-to-b from-[#fecdd3]/80 via-[#fff1f2]/55 to-[#e8eceb]",
+        pageBg: "bg-[#fde8ea]",
         glyphIconClass: "bg-gray-50 text-red shadow-sm ring-1 ring-red-200/50",
         ...cards,
       };
@@ -268,7 +267,7 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-white/20 text-white border border-white/25",
         ringClass: "from-primary50/50 to-primary10",
         heroGradient: "from-[#4DB6AC] via-[#439f96] to-[#3a8f87]",
-        pageBg: `bg-gradient-to-b from-[#b8e8e0]/88 via-[#e0f5f1]/65 ${pageNeutral}`,
+        pageBg: "bg-[#d5ece6]",
         glyphIconClass: "bg-gray-50 text-[#2d8a7d] shadow-sm ring-1 ring-gray-200/90",
         ...cards,
       };
@@ -278,7 +277,7 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-green/15 text-green border border-strokeGreen",
         ringClass: "from-strokeGreen to-lightGreen",
         heroGradient: "from-[#34b56a] via-[#2aa35f] to-[#219152]",
-        pageBg: "bg-gradient-to-b from-[#86efac]/55 via-[#d1fae5]/45 to-[#e8eceb]",
+        pageBg: "bg-[#dcf5e7]",
         glyphIconClass: "bg-gray-50 text-green shadow-sm ring-1 ring-gray-200/90",
         ...cards,
       };
@@ -288,7 +287,7 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-white/15 text-white border border-white/20",
         ringClass: "from-gray-200 to-gray-100",
         heroGradient: "from-[#4DB6AC] to-[#327478]",
-        pageBg: `bg-gradient-to-b from-gray-100/90 via-[#eef2f1]/70 ${pageNeutral}`,
+        pageBg: "bg-[#e5ecea]",
         glyphIconClass: "bg-gray-50 text-[#327478] shadow-sm ring-1 ring-gray-200/90",
         ...cards,
       };
