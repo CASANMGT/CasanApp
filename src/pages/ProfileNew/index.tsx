@@ -227,13 +227,13 @@ const ProfileNew = () => {
             onClick={() => window.open("https://about.casan.id/", "_blank")}
           />
 
-          <Separator className="my-4" />
+          {/* <Separator className="my-4" />
 
           <MenuItem
             icon={MdOutlineHistory}
             label="Changelog"
             onClick={() => setOpenChangelog(true)}
-          />
+          /> */}
         </div>
 
         <div
@@ -244,14 +244,8 @@ const ProfileNew = () => {
           <span className="text-base text-red font-medium">Keluar Akun</span>
         </div>
 
-        <span
-          role="button"
-          tabIndex={0}
-          onClick={() => setOpenChangelog(true)}
-          onKeyDown={(e) => e.key === "Enter" && setOpenChangelog(true)}
-          className="ml-4 text-xs text-black90 cursor-pointer underline decoration-dotted"
-        >
-          {`Version ${VERSION} · Lihat Changelog`}
+        <span className="text-center text-xs text-black90">
+          {`Version ${VERSION}`}
         </span>
 
         <div className="mb-[100px]" />
