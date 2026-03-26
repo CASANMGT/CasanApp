@@ -115,7 +115,7 @@ function decisionHintForStatus(status: Application["status"]): string {
     case "approved":
       return "Skor merangkum hasil verifikasi saat pengajuan disetujui.";
     case "pickup_scheduled":
-      return "Skor dari verifikasi awal. Jadwal & lokasi ada di kartu di atas.";
+      return "Skor dari verifikasi awal. Jadwal, lokasi dealer, dan checklist dokumen ada di bawah.";
     case "pickup_done":
       return "Ringkasan skor dari proses pengajuan Anda.";
     default:
@@ -177,26 +177,40 @@ type StatusVisual = {
   pillClass: string;
   ringClass: string;
   heroGradient: string;
-  /** Halaman: gradient lembut mengikuti warna status (selaras kartu ditolak). */
+  /** Warna status: gradient halaman (bukan kartu). */
   pageBg: string;
-  /** Kartu ringkasan pertama: border + isi seperti kartu utama ditolak. */
+  /** Kartu ringkasan: putih netral (sama semua status). */
   summaryCardClass: string;
-  /** Wadah ikon di kartu ringkasan. */
+  /** Aksen kecil pada ikon ringkasan saja. */
   glyphIconClass: string;
-  /** Kartu skor (standalone). */
   scoreCardClass: string;
-  /** Kartu skor di dalam blok ditolak. */
   embeddedScoreCardClass: string;
-  /** Kartu alur proses. */
   timelineCardClass: string;
-  /** Kartu jadwal pickup (opsional). */
   pickupJadwalCardClass: string;
-  /** Kartu lokasi dealer (opsional). */
   pickupPrepCardClass: string;
 };
 
+/** Kartu konten seragam: putih, border abu — warna hanya dari pageBg + hero. */
+const NEUTRAL_CARD_BORDER = "border border-gray-200/90";
+const NEUTRAL_CARD_SHADOW = "shadow-sm shadow-black/[0.06]";
+const neutralSummaryInset = `${NEUTRAL_CARD_BORDER} bg-white ${NEUTRAL_CARD_SHADOW}`;
+const neutralScoreCard = `rounded-[22px] ${NEUTRAL_CARD_BORDER} bg-white p-5 ${NEUTRAL_CARD_SHADOW}`;
+const neutralTimelineCard = `rounded-[22px] ${NEUTRAL_CARD_BORDER} bg-white p-5 ${NEUTRAL_CARD_SHADOW}`;
+const neutralPickupJadwal = `rounded-[22px] ${NEUTRAL_CARD_BORDER} bg-white p-5 ${NEUTRAL_CARD_SHADOW}`;
+const neutralPickupPrep = `rounded-[22px] ${NEUTRAL_CARD_BORDER} bg-white p-4 sm:p-5 ${NEUTRAL_CARD_SHADOW}`;
+const neutralEmbeddedScore = `rounded-2xl ${NEUTRAL_CARD_BORDER} bg-white p-5 ${NEUTRAL_CARD_SHADOW}`;
+
 function getStatusVisual(status: string): StatusVisual {
-  const pageNeutral = "to-[#eef5f4]";
+  const pageNeutral = "to-[#e8eceb]";
+  const cards = {
+    summaryCardClass: neutralSummaryInset,
+    scoreCardClass: neutralScoreCard,
+    embeddedScoreCardClass: neutralEmbeddedScore,
+    timelineCardClass: neutralTimelineCard,
+    pickupJadwalCardClass: neutralPickupJadwal,
+    pickupPrepCardClass: neutralPickupPrep,
+  };
+
   switch (status) {
     case "submitted":
       return {
@@ -204,19 +218,9 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-white/20 text-white border border-white/25",
         ringClass: "from-primary30/90 to-primary10",
         heroGradient: "from-[#4DB6AC] via-[#4aa89e] to-[#3d9a91]",
-        pageBg: `bg-gradient-to-b from-[#e8f5f3]/95 via-[#f2faf8]/60 ${pageNeutral}`,
-        summaryCardClass:
-          "border border-[#4DB6AC]/30 bg-gradient-to-br from-white via-[#f7fcfb] to-[#e8f5f3]/55 shadow-sm shadow-[#4DB6AC]/5",
-        glyphIconClass: "bg-white text-[#2d8a7d] shadow-sm ring-1 ring-[#4DB6AC]/25",
-        scoreCardClass:
-          "rounded-[22px] border border-[#4DB6AC]/25 bg-gradient-to-b from-[#f4fbfb] to-white shadow-sm shadow-[#4DB6AC]/5",
-        embeddedScoreCardClass: "rounded-2xl border border-[#4DB6AC]/20 bg-gradient-to-b from-white to-[#f4fbfb] p-5 shadow-sm",
-        timelineCardClass:
-          "rounded-[22px] border border-[#4DB6AC]/18 bg-gradient-to-b from-white to-[#f8fdfc]/90 p-5 shadow-sm",
-        pickupJadwalCardClass:
-          "rounded-[22px] border border-[#4DB6AC]/22 bg-gradient-to-b from-[#f4fbfb] to-white p-5 shadow-sm shadow-[#4DB6AC]/5",
-        pickupPrepCardClass:
-          "rounded-[22px] border border-[#4DB6AC]/20 bg-gradient-to-b from-white to-[#f0faf8]/90 p-4 shadow-sm sm:p-5",
+        pageBg: `bg-gradient-to-b from-[#c5ebe4]/90 via-[#e3f5f1]/70 ${pageNeutral}`,
+        glyphIconClass: "bg-gray-50 text-[#2d8a7d] shadow-sm ring-1 ring-gray-200/90",
+        ...cards,
       };
     case "under_review":
       return {
@@ -224,19 +228,9 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-white/20 text-white border border-white/25",
         ringClass: "from-primary70/40 to-primary30/60",
         heroGradient: "from-[#45a89e] via-[#3f9d94] to-[#358f87]",
-        pageBg: `bg-gradient-to-b from-[#dff2ee]/95 via-[#f0faf8]/55 ${pageNeutral}`,
-        summaryCardClass:
-          "border border-[#3d9a91]/35 bg-gradient-to-br from-white via-[#f5fbfa] to-[#dff2ee]/50 shadow-sm shadow-[#3d9a91]/8",
-        glyphIconClass: "bg-white text-[#2a7d72] shadow-sm ring-1 ring-[#3d9a91]/28",
-        scoreCardClass:
-          "rounded-[22px] border border-[#3d9a91]/25 bg-gradient-to-b from-[#f0faf8] to-white shadow-sm",
-        embeddedScoreCardClass: "rounded-2xl border border-[#3d9a91]/22 bg-gradient-to-b from-white to-[#f0faf8] p-5 shadow-sm",
-        timelineCardClass:
-          "rounded-[22px] border border-[#3d9a91]/18 bg-gradient-to-b from-white to-[#f6fcfb]/95 p-5 shadow-sm",
-        pickupJadwalCardClass:
-          "rounded-[22px] border border-[#3d9a91]/22 bg-gradient-to-b from-[#f0faf8] to-white p-5 shadow-sm",
-        pickupPrepCardClass:
-          "rounded-[22px] border border-[#3d9a91]/20 bg-gradient-to-b from-white to-[#f4fbfb]/95 p-4 shadow-sm sm:p-5",
+        pageBg: `bg-gradient-to-b from-[#b8e4dc]/88 via-[#dff5f1]/65 ${pageNeutral}`,
+        glyphIconClass: "bg-gray-50 text-[#2a7d72] shadow-sm ring-1 ring-gray-200/90",
+        ...cards,
       };
     case "need_documents":
       return {
@@ -244,20 +238,9 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-orange/25 text-[#9a6200] border border-orange/40",
         ringClass: "from-orange/35 to-secondary30",
         heroGradient: "from-[#e8a54a] via-[#d99a3c] to-[#c9892e]",
-        pageBg: "bg-gradient-to-b from-[#fff6e8]/95 via-[#fffbf5]/60 to-[#f8f4ed]",
-        summaryCardClass:
-          "border border-strokeOrange/75 bg-gradient-to-br from-white via-[#FFFCF5] to-[#FFF5E6]/70 shadow-sm shadow-orange/10",
-        glyphIconClass: "bg-white text-orange shadow-sm ring-1 ring-orange/35",
-        scoreCardClass:
-          "rounded-[22px] border border-strokeOrange/55 bg-gradient-to-b from-[#FFFAF1] to-white shadow-sm shadow-orange/5",
-        embeddedScoreCardClass:
-          "rounded-2xl border border-strokeOrange/50 bg-gradient-to-b from-white to-[#FFFAF1] p-5 shadow-sm",
-        timelineCardClass:
-          "rounded-[22px] border border-strokeOrange/40 bg-gradient-to-b from-white to-[#FFFCF7]/95 p-5 shadow-sm",
-        pickupJadwalCardClass:
-          "rounded-[22px] border border-strokeOrange/45 bg-gradient-to-b from-[#FFFAF1] to-white p-5 shadow-sm",
-        pickupPrepCardClass:
-          "rounded-[22px] border border-strokeOrange/40 bg-gradient-to-b from-white to-[#FFFAF6]/90 p-4 shadow-sm sm:p-5",
+        pageBg: "bg-gradient-to-b from-[#ffe8c8]/85 via-[#fff5e6]/55 to-[#f0ebe3]",
+        glyphIconClass: "bg-gray-50 text-orange shadow-sm ring-1 ring-orange/25",
+        ...cards,
       };
     case "approved":
       return {
@@ -265,20 +248,9 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-green/20 text-green border border-strokeGreen",
         ringClass: "from-strokeGreen to-lightGreen",
         heroGradient: "from-[#3db86b] via-[#2fa65d] to-[#24904f]",
-        pageBg: "bg-gradient-to-b from-[#ecfdf5]/90 via-[#f4fdf8]/55 to-[#eef5f4]",
-        summaryCardClass:
-          "border border-strokeGreen/65 bg-gradient-to-br from-white via-[#f4fdf7] to-[#ecfdf5]/55 shadow-sm shadow-green/10",
-        glyphIconClass: "bg-white text-green shadow-sm ring-1 ring-strokeGreen/40",
-        scoreCardClass:
-          "rounded-[22px] border border-strokeGreen/55 bg-gradient-to-b from-[#EDF8EF] to-white shadow-sm shadow-green/5",
-        embeddedScoreCardClass:
-          "rounded-2xl border border-strokeGreen/45 bg-gradient-to-b from-white to-[#EDF8EF] p-5 shadow-sm",
-        timelineCardClass:
-          "rounded-[22px] border border-strokeGreen/35 bg-gradient-to-b from-white to-[#f4fdf7]/95 p-5 shadow-sm",
-        pickupJadwalCardClass:
-          "rounded-[22px] border border-strokeGreen/40 bg-gradient-to-b from-[#EDF8EF] to-white p-5 shadow-sm",
-        pickupPrepCardClass:
-          "rounded-[22px] border border-strokeGreen/35 bg-gradient-to-b from-white to-[#f0fdf6]/90 p-4 shadow-sm sm:p-5",
+        pageBg: "bg-gradient-to-b from-[#bbf7d0]/75 via-[#ecfdf5]/50 to-[#e8eceb]",
+        glyphIconClass: "bg-gray-50 text-green shadow-sm ring-1 ring-gray-200/90",
+        ...cards,
       };
     case "rejected":
       return {
@@ -286,20 +258,9 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-white/95 text-red border border-strokeRed shadow-sm",
         ringClass: "from-strokeRed/80 to-lightRed",
         heroGradient: "from-[#e85d6f] via-[#d64d5f] to-[#c44452]",
-        pageBg: "bg-gradient-to-b from-[#fff1f3]/95 via-[#fdf7f8]/70 to-[#eef5f4]",
-        summaryCardClass:
-          "border border-strokeRed/70 bg-gradient-to-b from-[#FCEEF0] to-white shadow-sm shadow-red/10",
-        glyphIconClass: "bg-white text-red shadow-sm ring-1 ring-strokeRed/45",
-        scoreCardClass:
-          "rounded-[22px] border border-strokeRed/55 bg-gradient-to-b from-[#FCEEF0] to-white shadow-sm shadow-red/5",
-        embeddedScoreCardClass:
-          "rounded-2xl border border-strokeRed/40 bg-gradient-to-b from-white to-[#FCEEF0]/90 p-5 shadow-sm",
-        timelineCardClass:
-          "rounded-[22px] border border-strokeRed/25 bg-gradient-to-b from-white to-[#fef7f8]/95 p-5 shadow-sm",
-        pickupJadwalCardClass:
-          "rounded-[22px] border border-strokeRed/30 bg-gradient-to-b from-[#FCEEF0] to-white p-5 shadow-sm",
-        pickupPrepCardClass:
-          "rounded-[22px] border border-strokeRed/28 bg-gradient-to-b from-white to-[#fef7f8]/90 p-4 shadow-sm sm:p-5",
+        pageBg: "bg-gradient-to-b from-[#fecdd3]/80 via-[#fff1f2]/55 to-[#e8eceb]",
+        glyphIconClass: "bg-gray-50 text-red shadow-sm ring-1 ring-red-200/50",
+        ...cards,
       };
     case "pickup_scheduled":
       return {
@@ -307,19 +268,9 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-white/20 text-white border border-white/25",
         ringClass: "from-primary50/50 to-primary10",
         heroGradient: "from-[#4DB6AC] via-[#439f96] to-[#3a8f87]",
-        pageBg: `bg-gradient-to-b from-[#dff5f2]/95 via-[#f0faf9]/55 ${pageNeutral}`,
-        summaryCardClass:
-          "border border-[#4DB6AC]/32 bg-gradient-to-br from-white via-[#f5fcfb] to-[#dff5f2]/45 shadow-sm shadow-[#4DB6AC]/8",
-        glyphIconClass: "bg-white text-[#2d8a7d] shadow-sm ring-1 ring-[#4DB6AC]/28",
-        scoreCardClass:
-          "rounded-[22px] border border-[#4DB6AC]/28 bg-gradient-to-b from-[#f0faf8] to-white shadow-sm shadow-[#4DB6AC]/6",
-        embeddedScoreCardClass: "rounded-2xl border border-[#4DB6AC]/22 bg-gradient-to-b from-white to-[#f0faf8] p-5 shadow-sm",
-        timelineCardClass:
-          "rounded-[22px] border border-[#4DB6AC]/18 bg-gradient-to-b from-white to-[#f8fdfc]/95 p-5 shadow-sm",
-        pickupJadwalCardClass:
-          "rounded-[22px] border border-[#4DB6AC]/24 bg-gradient-to-b from-[#f4fbfb] to-white p-5 shadow-sm shadow-[#4DB6AC]/5",
-        pickupPrepCardClass:
-          "rounded-[22px] border border-[#4DB6AC]/20 bg-gradient-to-b from-white to-[#f0faf8]/92 p-4 shadow-sm sm:p-5",
+        pageBg: `bg-gradient-to-b from-[#b8e8e0]/88 via-[#e0f5f1]/65 ${pageNeutral}`,
+        glyphIconClass: "bg-gray-50 text-[#2d8a7d] shadow-sm ring-1 ring-gray-200/90",
+        ...cards,
       };
     case "pickup_done":
       return {
@@ -327,20 +278,9 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-green/15 text-green border border-strokeGreen",
         ringClass: "from-strokeGreen to-lightGreen",
         heroGradient: "from-[#34b56a] via-[#2aa35f] to-[#219152]",
-        pageBg: "bg-gradient-to-b from-[#d1fae5]/80 via-[#ecfdf5]/50 to-[#eef5f4]",
-        summaryCardClass:
-          "border border-strokeGreen/60 bg-gradient-to-br from-white via-[#f0fdf6] to-[#d1fae5]/40 shadow-sm shadow-green/10",
-        glyphIconClass: "bg-white text-green shadow-sm ring-1 ring-strokeGreen/45",
-        scoreCardClass:
-          "rounded-[22px] border border-strokeGreen/50 bg-gradient-to-b from-[#ecfdf5] to-white shadow-sm",
-        embeddedScoreCardClass:
-          "rounded-2xl border border-strokeGreen/40 bg-gradient-to-b from-white to-[#ecfdf5] p-5 shadow-sm",
-        timelineCardClass:
-          "rounded-[22px] border border-strokeGreen/32 bg-gradient-to-b from-white to-[#f0fdf6]/95 p-5 shadow-sm",
-        pickupJadwalCardClass:
-          "rounded-[22px] border border-strokeGreen/38 bg-gradient-to-b from-[#ecfdf5] to-white p-5 shadow-sm",
-        pickupPrepCardClass:
-          "rounded-[22px] border border-strokeGreen/32 bg-gradient-to-b from-white to-[#f0fdf6]/90 p-4 shadow-sm sm:p-5",
+        pageBg: "bg-gradient-to-b from-[#86efac]/55 via-[#d1fae5]/45 to-[#e8eceb]",
+        glyphIconClass: "bg-gray-50 text-green shadow-sm ring-1 ring-gray-200/90",
+        ...cards,
       };
     default:
       return {
@@ -348,14 +288,9 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-white/15 text-white border border-white/20",
         ringClass: "from-gray-200 to-gray-100",
         heroGradient: "from-[#4DB6AC] to-[#327478]",
-        pageBg: `bg-gradient-to-b from-gray-50/90 via-[#f5f8f9]/60 ${pageNeutral}`,
-        summaryCardClass: "border border-gray-200/80 bg-gradient-to-br from-white to-gray-50/50 shadow-sm",
-        glyphIconClass: "bg-white/90 text-[#2d8a7d] shadow-sm ring-1 ring-gray-200",
-        scoreCardClass: "rounded-[22px] border border-gray-200/80 bg-gradient-to-b from-white to-gray-50/40 p-5 shadow-sm",
-        embeddedScoreCardClass: "rounded-2xl border border-gray-200/70 bg-white p-5 shadow-sm",
-        timelineCardClass: "rounded-[22px] border border-gray-200/60 bg-white p-5 shadow-sm",
-        pickupJadwalCardClass: "rounded-[22px] border border-gray-200/60 bg-white p-5 shadow-sm",
-        pickupPrepCardClass: "rounded-[22px] border border-gray-200/55 bg-white p-4 shadow-sm sm:p-5",
+        pageBg: `bg-gradient-to-b from-gray-100/90 via-[#eef2f1]/70 ${pageNeutral}`,
+        glyphIconClass: "bg-gray-50 text-[#327478] shadow-sm ring-1 ring-gray-200/90",
+        ...cards,
       };
   }
 }
@@ -1009,7 +944,7 @@ export default function RTOStatus() {
         {app.status === "pickup_scheduled" && app.pickup && (
           <section className={visual.pickupJadwalCardClass}>
             <h3 className={rtoSectionTitle}>Jadwal pengambilan</h3>
-            <div className="-mt-1 rounded-2xl border border-gray-100 bg-baseLightGray2/80 p-4">
+            <div className="-mt-1 rounded-2xl border border-gray-100 bg-gray-50/70 p-4">
               <p className="text-base font-bold text-gray-900">
                 {new Date(app.pickup.date + "T12:00:00").toLocaleDateString("id-ID", {
                   weekday: "long",
