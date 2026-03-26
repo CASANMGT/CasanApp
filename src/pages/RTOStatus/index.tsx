@@ -574,6 +574,7 @@ function PickupPrepSection({
   surfaceClassName?: string;
 }) {
   const pickup = app.pickup;
+  const [photosOpen, setPhotosOpen] = useState(false);
   if (!pickup) return null;
 
   const photos = (() => {
@@ -587,78 +588,89 @@ function PickupPrepSection({
   const coords = resolvePickupLatLng(operator, pickup);
   const mapQuery = `${pickup.dealerName} ${pickup.dealerAddress}`.trim();
   const mapSrc = coords ? staticMapThumbnailUrl(coords[0], coords[1]) : null;
-  const showPhotoGallery = photos.length > 1;
 
   return (
-    <section className={surfaceClassName ?? `${rtoCard} p-4 sm:p-5`}>
-      <h3 className={rtoSectionTitle}>Lokasi dealer</h3>
-      <p className="-mt-0.5 text-xs leading-relaxed text-gray-500">Peta &amp; alamat — dokumen lewat satu tombol di bawah.</p>
+    <>
+      <section className={surfaceClassName ?? `${rtoCard} p-4 sm:p-5`}>
+        <h3 className={rtoSectionTitle}>Lokasi dealer</h3>
 
-      <button
-        type="button"
-        onClick={() => openGoogleMapsSearch(mapQuery)}
-        className="group mt-4 flex w-full gap-3 rounded-2xl border border-gray-100 bg-baseLightGray2/50 p-2.5 text-left shadow-sm transition-colors hover:border-[#4DB6AC]/35"
-        aria-label="Buka lokasi di Google Maps"
-      >
-        <div className="relative h-[5.25rem] w-[6.75rem] shrink-0 overflow-hidden rounded-xl bg-gradient-to-br from-[#dff5f2] to-[#c8ebe5]">
-          {mapSrc ? (
-            <img
-              src={mapSrc}
-              alt=""
-              className="h-full w-full object-cover transition group-hover:opacity-95"
-              loading="lazy"
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center text-2xl" aria-hidden>
-              📍
-            </div>
-          )}
-        </div>
-        <div className="flex min-w-0 flex-1 flex-col justify-center py-0.5">
-          <p className="text-sm font-semibold leading-snug text-gray-900">{pickup.dealerName}</p>
-          <p className="mt-0.5 text-[11px] leading-snug text-gray-500">{pickup.dealerAddress}</p>
-          <p className="mt-2 text-xs font-bold text-[#327478]">Buka di Google Maps →</p>
-        </div>
-      </button>
-
-      {showPhotoGallery ? (
-        <details className="group mt-3 rounded-2xl border border-gray-100 bg-white/90 [&_summary::-webkit-details-marker]:hidden">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2.5 text-sm font-semibold text-gray-800">
-            <span>Foto cabang ({photos.length})</span>
-            <span className="text-[10px] font-medium text-[#327478] group-open:hidden">Tampilkan</span>
-            <span className="hidden text-[10px] font-medium text-gray-500 group-open:inline">Sembunyikan</span>
-          </summary>
-          <div className="flex gap-2 overflow-x-auto px-2 pb-3 [-webkit-overflow-scrolling:touch]">
-            {photos.map((src, i) => (
-              <div
-                key={`${src}-${i}`}
-                className="relative h-20 w-28 shrink-0 overflow-hidden rounded-lg bg-gray-100"
-              >
-                <img src={src} alt="" className="h-full w-full object-cover" loading="lazy" />
-              </div>
-            ))}
+        <button
+          type="button"
+          onClick={() => openGoogleMapsSearch(mapQuery)}
+          className="group mt-3 flex w-full gap-3 rounded-2xl border border-gray-100 bg-gray-50/60 p-2.5 text-left shadow-sm transition-colors hover:border-[#4DB6AC]/35"
+          aria-label="Buka lokasi di Google Maps"
+        >
+          <div className="relative h-[4.5rem] w-[5.5rem] shrink-0 overflow-hidden rounded-xl bg-gradient-to-br from-green-50 to-green-100/80">
+            {mapSrc ? (
+              <img src={mapSrc} alt="" className="h-full w-full object-cover" loading="lazy" />
+            ) : (
+              <div className="flex h-full items-center justify-center text-xl" aria-hidden>📍</div>
+            )}
           </div>
-        </details>
-      ) : (
-        <div className="mt-3 overflow-hidden rounded-2xl border border-gray-100">
-          <img src={photos[0]} alt="" className="h-24 w-full object-cover" loading="lazy" />
+          <div className="flex min-w-0 flex-1 flex-col justify-center">
+            <p className="text-sm font-semibold leading-snug text-gray-900">{pickup.dealerName}</p>
+            <p className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-gray-500">{pickup.dealerAddress}</p>
+            <p className="mt-1.5 text-xs font-bold text-[#4DB6AC]">Arahkan di Maps →</p>
+          </div>
+        </button>
+
+        <div className="mt-3 flex gap-2">
+          {photos.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setPhotosOpen(true)}
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-2.5 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <path d="M21 15l-5-5L5 21" />
+              </svg>
+              Foto ({photos.length})
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={onOpenChecklist}
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-amber-200 bg-amber-50/60 py-2.5 text-xs font-semibold text-amber-800 transition-colors hover:bg-amber-50"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 11l3 3L22 4" />
+              <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+            </svg>
+            Dokumen ({docCount})
+          </button>
+        </div>
+      </section>
+
+      {photosOpen && (
+        <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center sm:p-4" role="presentation">
+          <button type="button" className="absolute inset-0 bg-black/50" aria-label="Tutup" onClick={() => setPhotosOpen(false)} />
+          <div className="relative z-10 max-h-[80vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl sm:rounded-3xl">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-base font-bold text-gray-900">Foto cabang</h2>
+              <button
+                type="button"
+                onClick={() => setPhotosOpen(false)}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200"
+                aria-label="Tutup"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+            <div className="space-y-2">
+              {photos.map((src, i) => (
+                <div key={`${src}-${i}`} className="overflow-hidden rounded-2xl">
+                  <img src={src} alt="" className="w-full object-cover" loading="lazy" />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
-
-      <button
-        type="button"
-        onClick={onOpenChecklist}
-        className="mt-4 flex w-full items-center justify-between gap-3 rounded-2xl border border-amber-200/90 bg-amber-50/50 px-4 py-3.5 text-left transition-colors hover:bg-amber-50"
-      >
-        <div>
-          <p className="text-sm font-bold text-gray-900">Checklist dokumen</p>
-          <p className="mt-0.5 text-[11px] text-gray-600">{docCount} item sebelum berangkat</p>
-        </div>
-        <span className="shrink-0 text-lg font-light text-[#327478]" aria-hidden>
-          ›
-        </span>
-      </button>
-    </section>
+    </>
   );
 }
 
@@ -777,7 +789,7 @@ export default function RTOStatus() {
   const headerSolidPill =
     app.status === "need_documents" || app.status === "rejected";
 
-  /** Skor selalu muncul tepat di bawah kartu ringkasan (konsisten semua status). */
+  const isPending = app.status === "submitted" || app.status === "under_review";
   const showScoreAfterSummary = app.status !== "rejected";
 
   return (
@@ -842,13 +854,34 @@ export default function RTOStatus() {
           </div>
         )}
 
-        {showScoreAfterSummary && (
+        {showScoreAfterSummary && !isPending && (
           <ScoreBreakdownPanel
             score={app.score}
             decisionLabel={getCreditDecisionLabel(app.status)}
             decisionHint={decisionHintForStatus(app.status)}
             cardClassName={visual.scoreCardClass}
           />
+        )}
+
+        {isPending && (
+          <div className={`${visual.scoreCardClass} overflow-hidden`}>
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gray-400">Keputusan pengajuan</p>
+                <p className="mt-1.5 text-lg font-bold text-gray-900">Menunggu keputusan</p>
+                <p className="mt-1 text-xs text-gray-500">Tim sedang meninjau kelayakan — hasil muncul di sini.</p>
+              </div>
+              <div className="relative flex h-14 w-14 shrink-0 items-center justify-center">
+                <div className="absolute inset-0 animate-ping rounded-full bg-slate-200/60" />
+                <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-slate-100">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round">
+                    <circle cx="12" cy="12" r="9" className="opacity-30" />
+                    <path d="M12 7v5l3 2" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
 
         {app.status === "need_documents" && (
@@ -1061,9 +1094,9 @@ export default function RTOStatus() {
             <button
               type="button"
               onClick={() => navigate("/rto-program-explore")}
-              className="mt-4 w-full rounded-2xl border-2 border-[#4DB6AC] bg-white py-3.5 text-sm font-bold text-[#4DB6AC] shadow-sm"
+              className="mt-4 w-full rounded-2xl bg-green-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-green-600/25 transition-colors hover:bg-green-700"
             >
-              Lihat program lainnya
+              Jelajahi program lainnya
             </button>
             <a
               href={`https://wa.me/?text=${encodeURIComponent(
@@ -1071,7 +1104,7 @@ export default function RTOStatus() {
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] py-3.5 text-sm font-bold text-white shadow-md shadow-green/20"
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl border border-gray-200 bg-white py-3.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
             >
               <span aria-hidden>💬</span>
               Bagikan ke teman
@@ -1079,132 +1112,77 @@ export default function RTOStatus() {
             <button
               type="button"
               onClick={() => openWhatsApp(CUSTOMER_SERVICES)}
-              className="mt-2 w-full rounded-2xl border border-gray-200 bg-white py-3 text-sm font-semibold text-gray-600"
+              className="mt-2 w-full rounded-2xl border border-gray-200 bg-white py-3 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50"
             >
               Hubungi support CASAN
             </button>
           </section>
         )}
 
-        {/* Score is now always shown right after summary card — no duplicate here */}
-
-        {/* Timeline */}
-        <section>
-          <h3 className={rtoSectionTitle}>Alur proses</h3>
-          <div className={visual.timelineCardClass}>
+        {/* Horizontal progress tracker */}
+        <section className={visual.timelineCardClass}>
+          <div className="flex items-center justify-between" role="list" aria-label="Alur proses">
             {STATUS_STEPS.map((step, i) => {
               const isDone = i < activeIdx;
               const isCurrent = i === activeIdx && activeIdx < STATUS_STEPS.length;
-
+              const isLast = i === STATUS_STEPS.length - 1;
               return (
-                <div key={step.key} className="flex gap-4">
-                  <div className="flex flex-col items-center">
+                <div key={step.key} className="flex flex-1 items-center" role="listitem">
+                  <div className="flex flex-col items-center gap-1.5">
                     <div
-                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[11px] font-bold shadow-sm transition-all ${
+                      className={`flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-bold transition-all ${
                         isDone
-                          ? "bg-[#4DB6AC] text-white shadow-sm shadow-[#4DB6AC]/25"
+                          ? "bg-[#4DB6AC] text-white shadow-sm"
                           : isCurrent
-                            ? "bg-white text-[#4DB6AC] ring-2 ring-[#4DB6AC] ring-offset-2"
+                            ? "bg-white text-[#4DB6AC] ring-2 ring-[#4DB6AC] ring-offset-1 shadow-sm"
                             : "bg-gray-100 text-gray-300"
                       }`}
                     >
-                      {isDone ? "✓" : i + 1}
+                      {isDone ? (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M5 12l5 5L20 7" />
+                        </svg>
+                      ) : (
+                        i + 1
+                      )}
                     </div>
-                    {i < STATUS_STEPS.length - 1 && (
-                      <div
-                        className={`my-0.5 w-0.5 flex-1 min-h-[28px] rounded-full ${
-                          isDone ? "bg-[#4DB6AC]" : "bg-gray-200"
-                        }`}
-                        aria-hidden
-                      />
-                    )}
-                  </div>
-                  <div className={`min-w-0 flex-1 ${i < STATUS_STEPS.length - 1 ? "pb-5" : ""} pt-0.5`}>
-                    <p className={`text-sm font-semibold ${isDone || isCurrent ? "text-gray-900" : "text-gray-400"}`}>
+                    <span
+                      className={`text-center text-[10px] leading-tight ${
+                        isDone || isCurrent ? "font-semibold text-gray-800" : "font-medium text-gray-400"
+                      }`}
+                    >
                       {step.label}
-                    </p>
-                    <p className="text-[11px] leading-snug text-gray-500">{step.hint}</p>
-                    {i === 0 && app.submittedAt && (
-                      <p className="mt-1 text-[10px] text-gray-400">{formatDate(app.submittedAt)}</p>
-                    )}
+                    </span>
                     {isCurrent && (
-                      <p className="mt-1 text-[11px] font-medium text-[#327478]">Berlangsung…</p>
+                      <span className="inline-flex items-center gap-1 text-[9px] font-medium text-[#4DB6AC]">
+                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#4DB6AC]" />
+                        Aktif
+                      </span>
                     )}
                   </div>
+                  {!isLast && (
+                    <div
+                      className={`mx-1 h-0.5 flex-1 rounded-full transition-colors ${isDone ? "bg-[#4DB6AC]" : "bg-gray-200"}`}
+                      aria-hidden
+                    />
+                  )}
                 </div>
               );
             })}
           </div>
+          {app.submittedAt && (
+            <p className="mt-3 text-center text-[10px] text-gray-400">
+              Diajukan {formatDate(app.submittedAt)}
+            </p>
+          )}
         </section>
 
-        {/* Program */}
-        <section>
-          <h3 className={rtoSectionTitle}>Program dipilih</h3>
-          <div className={`${visual.timelineCardClass} !p-0 overflow-hidden`}>
-            <button
-              type="button"
-              onClick={() => navigate(rtoBikePath(app.bikeId))}
-              className="flex w-full items-center gap-3 p-3 text-left transition-colors hover:bg-gray-50/80"
-              aria-label={`Buka katalog program ${app.bikeName}`}
-            >
-              <div className="relative h-12 w-14 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-[#dff5f2] to-[#c8ebe5]">
-                {programExplore?.bike.photoUrl ? (
-                  <img
-                    src={programExplore.bike.photoUrl}
-                    alt=""
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-lg">🛵</div>
-                )}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="line-clamp-1 text-xs font-bold text-gray-900">
-                  {app.bikeName || "Motor listrik"}
-                </p>
-                <p className="mt-0.5 truncate text-[10px] text-gray-500">
-                  {app.operatorName}
-                  {app.pricePerDay > 0 && (
-                    <>
-                      <span className="text-gray-300"> · </span>
-                      Rp {app.pricePerDay.toLocaleString("id-ID")}/hari
-                    </>
-                  )}
-                </p>
-              </div>
-              <span className="shrink-0 text-[#4DB6AC]" aria-hidden>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                  <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-            </button>
-
-            {pickupDocsShortLine && (
-              <div className="border-t border-amber-100/80 bg-amber-50/30 px-3 py-2">
-                <p className="text-[10px] font-bold uppercase tracking-wide text-amber-900/75">
-                  Bawa saat ambil motor
-                </p>
-                <p className="mt-1 text-[10px] leading-relaxed text-gray-700">{pickupDocsShortLine}</p>
-              </div>
-            )}
-
-            <div className="border-t border-gray-100 px-3 py-2">
-              <button
-                type="button"
-                onClick={() => navigate(rtoBikePath(app.bikeId))}
-                className="w-full rounded-lg border border-[#4DB6AC]/40 bg-white py-2 text-[11px] font-semibold text-[#327478] transition-colors hover:bg-primary10/40"
-              >
-                Detail program di katalog
-              </button>
-            </div>
-          </div>
-        </section>
-
+        {/* Bottom actions — before sticky footer */}
         <div className="space-y-3">
           <button
             type="button"
             onClick={() => openWhatsApp(CUSTOMER_SERVICES)}
-            className={`${rtoCardSubtle} w-full border-[#4DB6AC]/25 bg-white py-3.5 text-sm font-bold text-[#327478] shadow-sm transition-colors hover:bg-primary10/40`}
+            className="w-full rounded-2xl border border-gray-200 bg-white py-3.5 text-sm font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
           >
             Hubungi dealer / CASAN
           </button>
@@ -1213,7 +1191,7 @@ export default function RTOStatus() {
             <button
               type="button"
               onClick={handleEditApplication}
-              className="w-full rounded-2xl border-2 border-gray-200 bg-white py-3.5 text-sm font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
+              className="w-full rounded-2xl border border-gray-200 bg-white py-3.5 text-sm font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
             >
               Edit &amp; lengkapi aplikasi
             </button>
@@ -1283,6 +1261,40 @@ export default function RTOStatus() {
           </div>
         )}
       </main>
+
+      {/* Sticky program mini-footer */}
+      <div className="fixed inset-x-0 bottom-0 z-50 border-t border-gray-200/80 bg-white/95 shadow-[0_-4px_24px_rgba(0,0,0,0.08)] backdrop-blur-lg">
+        <div className="mx-auto flex max-w-lg items-center gap-3 px-4 py-2.5">
+          <button
+            type="button"
+            onClick={() => navigate(rtoBikePath(app.bikeId))}
+            className="flex min-w-0 flex-1 items-center gap-3 text-left"
+            aria-label={`Program ${app.bikeName}`}
+          >
+            <div className="relative h-10 w-11 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-green-50 to-green-100/80">
+              {programExplore?.bike.photoUrl ? (
+                <img src={programExplore.bike.photoUrl} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full items-center justify-center text-sm">🛵</div>
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-bold text-gray-900">{app.bikeName || "Motor listrik"}</p>
+              <p className="truncate text-[10px] text-gray-500">
+                {app.operatorName}
+                {app.pricePerDay > 0 && <> · Rp {app.pricePerDay.toLocaleString("id-ID")}/hari</>}
+              </p>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate(rtoBikePath(app.bikeId))}
+            className="shrink-0 rounded-xl bg-[#4DB6AC] px-4 py-2 text-[11px] font-bold text-white shadow-sm"
+          >
+            Detail
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
