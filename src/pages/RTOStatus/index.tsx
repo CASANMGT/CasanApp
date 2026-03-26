@@ -7,10 +7,20 @@ import {
   updateApplicationStatus,
   resumeApplicationEdit,
 } from "../../features/rto/rtoApplicationSlice";
-import { openWhatsApp } from "../../helpers/linking";
-import { getPickupDocumentsShortSummary } from "../../helpers/rtoPickupReminderDocs";
+import { openGoogleMapsSearch, openWhatsApp } from "../../helpers/linking";
+import {
+  getPickupDocumentsShortSummary,
+  getPickupDocumentReminders,
+} from "../../helpers/rtoPickupReminderDocs";
 import { rtoBikePath } from "../../constants/rtoRoutes";
-import { getBikeById } from "../../data/rtoProgramExplore";
+import {
+  getBikeById,
+  getOperatorById,
+  defaultDealershipPhotos,
+  getBranchLatLng,
+  type RTOExploreOperator,
+} from "../../data/rtoProgramExplore";
+import type { PickupBooking } from "../../types/rtoApplication";
 import { CUSTOMER_SERVICES } from "../../common";
 import { rtoCard, rtoCardSubtle, rtoSectionTitle } from "../RTOProgramExplore/rtoUi";
 
@@ -76,14 +86,117 @@ function formatDate(iso: string): string {
   }
 }
 
+/** Keputusan kredit / pengajuan — bukan status operasional (jadwal, pickup). */
+function getCreditDecisionLabel(status: Application["status"]): string {
+  switch (status) {
+    case "approved":
+    case "pickup_scheduled":
+    case "pickup_done":
+      return "Disetujui";
+    case "rejected":
+      return "Belum disetujui";
+    case "need_documents":
+      return "Perlu melengkapi dokumen";
+    case "submitted":
+    case "under_review":
+      return "Menunggu keputusan";
+    default:
+      return "";
+  }
+}
+
+function decisionHintForStatus(status: Application["status"]): string {
+  switch (status) {
+    case "submitted":
+    case "under_review":
+      return "Keputusan kredit mengikuti hasil review tim.";
+    case "need_documents":
+      return "Lengkapi dokumen yang diminta agar keputusan dapat diproses.";
+    case "approved":
+      return "Skor merangkum hasil verifikasi saat pengajuan disetujui.";
+    case "pickup_scheduled":
+      return "Skor dari verifikasi awal. Jadwal & lokasi ada di kartu di atas.";
+    case "pickup_done":
+      return "Ringkasan skor dari proses pengajuan Anda.";
+    default:
+      return "";
+  }
+}
+
+/** Judul kartu ringkasan — hindari mengulang teks pill hero secara persis. */
+function getStatusSummaryHeadline(status: Application["status"]): string {
+  switch (status) {
+    case "submitted":
+      return "Aplikasi sudah masuk";
+    case "under_review":
+      return "Sedang ditinjau tim";
+    case "need_documents":
+      return "Perlu tindakan Anda";
+    case "approved":
+      return "Lanjut jadwal pengambilan";
+    case "pickup_scheduled":
+      return "Persiapan ke dealer";
+    case "pickup_done":
+      return "Proses pengambilan selesai";
+    case "rejected":
+      return "Pengajuan tidak dilanjutkan";
+    default:
+      return "";
+  }
+}
+
+function resolvePickupLatLng(
+  op: RTOExploreOperator | undefined,
+  pickup: PickupBooking,
+): [number, number] | null {
+  if (!op) return null;
+  const addr = pickup.dealerAddress.toLowerCase().trim();
+  const branches = op.branches ?? [];
+  for (const b of branches) {
+    const slice = b.address.slice(0, Math.min(24, b.address.length)).toLowerCase();
+    if (slice.length >= 8 && addr.includes(slice)) {
+      const c = getBranchLatLng(b, op);
+      if (c) return c;
+    }
+  }
+  const first = branches[0];
+  if (first) {
+    const c = getBranchLatLng(first, op);
+    if (c) return c;
+  }
+  if (typeof op.lat === "number" && typeof op.lng === "number") return [op.lat, op.lng];
+  return null;
+}
+
+function staticMapThumbnailUrl(lat: number, lng: number): string {
+  return `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=15&size=640x240&markers=${lat},${lng},red-pushpin`;
+}
+
 type StatusVisual = {
   text: string;
   pillClass: string;
   ringClass: string;
   heroGradient: string;
+  /** Halaman: gradient lembut mengikuti warna status (selaras kartu ditolak). */
+  pageBg: string;
+  /** Kartu ringkasan pertama: border + isi seperti kartu utama ditolak. */
+  summaryCardClass: string;
+  /** Wadah ikon di kartu ringkasan. */
+  glyphIconClass: string;
+  /** Kartu skor (standalone). */
+  scoreCardClass: string;
+  /** Kartu skor di dalam blok ditolak. */
+  embeddedScoreCardClass: string;
+  /** Kartu alur proses. */
+  timelineCardClass: string;
+  /** Kartu jadwal pickup (opsional). */
+  pickupJadwalCardClass: string;
+  /** Kartu lokasi dealer (opsional). */
+  pickupPrepCardClass: string;
 };
 
 function getStatusVisual(status: string): StatusVisual {
+  const pageNeutral = "to-[#eef5f4]";
   switch (status) {
     case "submitted":
       return {
@@ -91,6 +204,19 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-white/20 text-white border border-white/25",
         ringClass: "from-primary30/90 to-primary10",
         heroGradient: "from-[#4DB6AC] via-[#4aa89e] to-[#3d9a91]",
+        pageBg: `bg-gradient-to-b from-[#e8f5f3]/95 via-[#f2faf8]/60 ${pageNeutral}`,
+        summaryCardClass:
+          "border border-[#4DB6AC]/30 bg-gradient-to-br from-white via-[#f7fcfb] to-[#e8f5f3]/55 shadow-sm shadow-[#4DB6AC]/5",
+        glyphIconClass: "bg-white text-[#2d8a7d] shadow-sm ring-1 ring-[#4DB6AC]/25",
+        scoreCardClass:
+          "rounded-[22px] border border-[#4DB6AC]/25 bg-gradient-to-b from-[#f4fbfb] to-white shadow-sm shadow-[#4DB6AC]/5",
+        embeddedScoreCardClass: "rounded-2xl border border-[#4DB6AC]/20 bg-gradient-to-b from-white to-[#f4fbfb] p-5 shadow-sm",
+        timelineCardClass:
+          "rounded-[22px] border border-[#4DB6AC]/18 bg-gradient-to-b from-white to-[#f8fdfc]/90 p-5 shadow-sm",
+        pickupJadwalCardClass:
+          "rounded-[22px] border border-[#4DB6AC]/22 bg-gradient-to-b from-[#f4fbfb] to-white p-5 shadow-sm shadow-[#4DB6AC]/5",
+        pickupPrepCardClass:
+          "rounded-[22px] border border-[#4DB6AC]/20 bg-gradient-to-b from-white to-[#f0faf8]/90 p-4 shadow-sm sm:p-5",
       };
     case "under_review":
       return {
@@ -98,6 +224,19 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-white/20 text-white border border-white/25",
         ringClass: "from-primary70/40 to-primary30/60",
         heroGradient: "from-[#45a89e] via-[#3f9d94] to-[#358f87]",
+        pageBg: `bg-gradient-to-b from-[#dff2ee]/95 via-[#f0faf8]/55 ${pageNeutral}`,
+        summaryCardClass:
+          "border border-[#3d9a91]/35 bg-gradient-to-br from-white via-[#f5fbfa] to-[#dff2ee]/50 shadow-sm shadow-[#3d9a91]/8",
+        glyphIconClass: "bg-white text-[#2a7d72] shadow-sm ring-1 ring-[#3d9a91]/28",
+        scoreCardClass:
+          "rounded-[22px] border border-[#3d9a91]/25 bg-gradient-to-b from-[#f0faf8] to-white shadow-sm",
+        embeddedScoreCardClass: "rounded-2xl border border-[#3d9a91]/22 bg-gradient-to-b from-white to-[#f0faf8] p-5 shadow-sm",
+        timelineCardClass:
+          "rounded-[22px] border border-[#3d9a91]/18 bg-gradient-to-b from-white to-[#f6fcfb]/95 p-5 shadow-sm",
+        pickupJadwalCardClass:
+          "rounded-[22px] border border-[#3d9a91]/22 bg-gradient-to-b from-[#f0faf8] to-white p-5 shadow-sm",
+        pickupPrepCardClass:
+          "rounded-[22px] border border-[#3d9a91]/20 bg-gradient-to-b from-white to-[#f4fbfb]/95 p-4 shadow-sm sm:p-5",
       };
     case "need_documents":
       return {
@@ -105,6 +244,20 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-orange/25 text-[#9a6200] border border-orange/40",
         ringClass: "from-orange/35 to-secondary30",
         heroGradient: "from-[#e8a54a] via-[#d99a3c] to-[#c9892e]",
+        pageBg: "bg-gradient-to-b from-[#fff6e8]/95 via-[#fffbf5]/60 to-[#f8f4ed]",
+        summaryCardClass:
+          "border border-strokeOrange/75 bg-gradient-to-br from-white via-[#FFFCF5] to-[#FFF5E6]/70 shadow-sm shadow-orange/10",
+        glyphIconClass: "bg-white text-orange shadow-sm ring-1 ring-orange/35",
+        scoreCardClass:
+          "rounded-[22px] border border-strokeOrange/55 bg-gradient-to-b from-[#FFFAF1] to-white shadow-sm shadow-orange/5",
+        embeddedScoreCardClass:
+          "rounded-2xl border border-strokeOrange/50 bg-gradient-to-b from-white to-[#FFFAF1] p-5 shadow-sm",
+        timelineCardClass:
+          "rounded-[22px] border border-strokeOrange/40 bg-gradient-to-b from-white to-[#FFFCF7]/95 p-5 shadow-sm",
+        pickupJadwalCardClass:
+          "rounded-[22px] border border-strokeOrange/45 bg-gradient-to-b from-[#FFFAF1] to-white p-5 shadow-sm",
+        pickupPrepCardClass:
+          "rounded-[22px] border border-strokeOrange/40 bg-gradient-to-b from-white to-[#FFFAF6]/90 p-4 shadow-sm sm:p-5",
       };
     case "approved":
       return {
@@ -112,6 +265,20 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-green/20 text-green border border-strokeGreen",
         ringClass: "from-strokeGreen to-lightGreen",
         heroGradient: "from-[#3db86b] via-[#2fa65d] to-[#24904f]",
+        pageBg: "bg-gradient-to-b from-[#ecfdf5]/90 via-[#f4fdf8]/55 to-[#eef5f4]",
+        summaryCardClass:
+          "border border-strokeGreen/65 bg-gradient-to-br from-white via-[#f4fdf7] to-[#ecfdf5]/55 shadow-sm shadow-green/10",
+        glyphIconClass: "bg-white text-green shadow-sm ring-1 ring-strokeGreen/40",
+        scoreCardClass:
+          "rounded-[22px] border border-strokeGreen/55 bg-gradient-to-b from-[#EDF8EF] to-white shadow-sm shadow-green/5",
+        embeddedScoreCardClass:
+          "rounded-2xl border border-strokeGreen/45 bg-gradient-to-b from-white to-[#EDF8EF] p-5 shadow-sm",
+        timelineCardClass:
+          "rounded-[22px] border border-strokeGreen/35 bg-gradient-to-b from-white to-[#f4fdf7]/95 p-5 shadow-sm",
+        pickupJadwalCardClass:
+          "rounded-[22px] border border-strokeGreen/40 bg-gradient-to-b from-[#EDF8EF] to-white p-5 shadow-sm",
+        pickupPrepCardClass:
+          "rounded-[22px] border border-strokeGreen/35 bg-gradient-to-b from-white to-[#f0fdf6]/90 p-4 shadow-sm sm:p-5",
       };
     case "rejected":
       return {
@@ -119,6 +286,20 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-white/95 text-red border border-strokeRed shadow-sm",
         ringClass: "from-strokeRed/80 to-lightRed",
         heroGradient: "from-[#e85d6f] via-[#d64d5f] to-[#c44452]",
+        pageBg: "bg-gradient-to-b from-[#fff1f3]/95 via-[#fdf7f8]/70 to-[#eef5f4]",
+        summaryCardClass:
+          "border border-strokeRed/70 bg-gradient-to-b from-[#FCEEF0] to-white shadow-sm shadow-red/10",
+        glyphIconClass: "bg-white text-red shadow-sm ring-1 ring-strokeRed/45",
+        scoreCardClass:
+          "rounded-[22px] border border-strokeRed/55 bg-gradient-to-b from-[#FCEEF0] to-white shadow-sm shadow-red/5",
+        embeddedScoreCardClass:
+          "rounded-2xl border border-strokeRed/40 bg-gradient-to-b from-white to-[#FCEEF0]/90 p-5 shadow-sm",
+        timelineCardClass:
+          "rounded-[22px] border border-strokeRed/25 bg-gradient-to-b from-white to-[#fef7f8]/95 p-5 shadow-sm",
+        pickupJadwalCardClass:
+          "rounded-[22px] border border-strokeRed/30 bg-gradient-to-b from-[#FCEEF0] to-white p-5 shadow-sm",
+        pickupPrepCardClass:
+          "rounded-[22px] border border-strokeRed/28 bg-gradient-to-b from-white to-[#fef7f8]/90 p-4 shadow-sm sm:p-5",
       };
     case "pickup_scheduled":
       return {
@@ -126,6 +307,19 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-white/20 text-white border border-white/25",
         ringClass: "from-primary50/50 to-primary10",
         heroGradient: "from-[#4DB6AC] via-[#439f96] to-[#3a8f87]",
+        pageBg: `bg-gradient-to-b from-[#dff5f2]/95 via-[#f0faf9]/55 ${pageNeutral}`,
+        summaryCardClass:
+          "border border-[#4DB6AC]/32 bg-gradient-to-br from-white via-[#f5fcfb] to-[#dff5f2]/45 shadow-sm shadow-[#4DB6AC]/8",
+        glyphIconClass: "bg-white text-[#2d8a7d] shadow-sm ring-1 ring-[#4DB6AC]/28",
+        scoreCardClass:
+          "rounded-[22px] border border-[#4DB6AC]/28 bg-gradient-to-b from-[#f0faf8] to-white shadow-sm shadow-[#4DB6AC]/6",
+        embeddedScoreCardClass: "rounded-2xl border border-[#4DB6AC]/22 bg-gradient-to-b from-white to-[#f0faf8] p-5 shadow-sm",
+        timelineCardClass:
+          "rounded-[22px] border border-[#4DB6AC]/18 bg-gradient-to-b from-white to-[#f8fdfc]/95 p-5 shadow-sm",
+        pickupJadwalCardClass:
+          "rounded-[22px] border border-[#4DB6AC]/24 bg-gradient-to-b from-[#f4fbfb] to-white p-5 shadow-sm shadow-[#4DB6AC]/5",
+        pickupPrepCardClass:
+          "rounded-[22px] border border-[#4DB6AC]/20 bg-gradient-to-b from-white to-[#f0faf8]/92 p-4 shadow-sm sm:p-5",
       };
     case "pickup_done":
       return {
@@ -133,6 +327,20 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-green/15 text-green border border-strokeGreen",
         ringClass: "from-strokeGreen to-lightGreen",
         heroGradient: "from-[#34b56a] via-[#2aa35f] to-[#219152]",
+        pageBg: "bg-gradient-to-b from-[#d1fae5]/80 via-[#ecfdf5]/50 to-[#eef5f4]",
+        summaryCardClass:
+          "border border-strokeGreen/60 bg-gradient-to-br from-white via-[#f0fdf6] to-[#d1fae5]/40 shadow-sm shadow-green/10",
+        glyphIconClass: "bg-white text-green shadow-sm ring-1 ring-strokeGreen/45",
+        scoreCardClass:
+          "rounded-[22px] border border-strokeGreen/50 bg-gradient-to-b from-[#ecfdf5] to-white shadow-sm",
+        embeddedScoreCardClass:
+          "rounded-2xl border border-strokeGreen/40 bg-gradient-to-b from-white to-[#ecfdf5] p-5 shadow-sm",
+        timelineCardClass:
+          "rounded-[22px] border border-strokeGreen/32 bg-gradient-to-b from-white to-[#f0fdf6]/95 p-5 shadow-sm",
+        pickupJadwalCardClass:
+          "rounded-[22px] border border-strokeGreen/38 bg-gradient-to-b from-[#ecfdf5] to-white p-5 shadow-sm",
+        pickupPrepCardClass:
+          "rounded-[22px] border border-strokeGreen/32 bg-gradient-to-b from-white to-[#f0fdf6]/90 p-4 shadow-sm sm:p-5",
       };
     default:
       return {
@@ -140,6 +348,14 @@ function getStatusVisual(status: string): StatusVisual {
         pillClass: "bg-white/15 text-white border border-white/20",
         ringClass: "from-gray-200 to-gray-100",
         heroGradient: "from-[#4DB6AC] to-[#327478]",
+        pageBg: `bg-gradient-to-b from-gray-50/90 via-[#f5f8f9]/60 ${pageNeutral}`,
+        summaryCardClass: "border border-gray-200/80 bg-gradient-to-br from-white to-gray-50/50 shadow-sm",
+        glyphIconClass: "bg-white/90 text-[#2d8a7d] shadow-sm ring-1 ring-gray-200",
+        scoreCardClass: "rounded-[22px] border border-gray-200/80 bg-gradient-to-b from-white to-gray-50/40 p-5 shadow-sm",
+        embeddedScoreCardClass: "rounded-2xl border border-gray-200/70 bg-white p-5 shadow-sm",
+        timelineCardClass: "rounded-[22px] border border-gray-200/60 bg-white p-5 shadow-sm",
+        pickupJadwalCardClass: "rounded-[22px] border border-gray-200/60 bg-white p-5 shadow-sm",
+        pickupPrepCardClass: "rounded-[22px] border border-gray-200/55 bg-white p-4 shadow-sm sm:p-5",
       };
   }
 }
@@ -269,36 +485,95 @@ function useMockReviewLifecycle(app: Application | undefined, dispatch: AppDispa
   }, [app?.id, app?.status, app?.score?.total, dispatch]);
 }
 
-function ScoreBreakdownPanel({ score }: { score: ScoreBreakdown }) {
+function ScoreRing({ total }: { total: number }) {
   return (
-    <div className={`${rtoCard} overflow-hidden p-5`}>
-      <div className="mb-5 flex items-end justify-between gap-3">
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gray-400">Skor kelayakan</p>
-          <p className="mt-1 text-2xl font-bold tabular-nums tracking-tight text-gray-900">
-            {score.total}
-            <span className="text-base font-semibold text-gray-400">/100</span>
-          </p>
-        </div>
-        <div className="relative h-14 w-14 shrink-0">
-          <svg className="-rotate-90 transform" viewBox="0 0 36 36" aria-hidden>
-            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#E8F0EF" strokeWidth="3" />
-            <circle
-              cx="18"
-              cy="18"
-              r="15.9155"
-              fill="none"
-              stroke="#4DB6AC"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeDasharray={`${score.total} 100`}
-              pathLength="100"
-            />
-          </svg>
-          <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-primaryDark">
-            {score.total}
-          </span>
-        </div>
+    <div className="relative h-14 w-14 shrink-0">
+      <svg className="-rotate-90 transform" viewBox="0 0 36 36" aria-hidden>
+        <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#E8F0EF" strokeWidth="3" />
+        <circle
+          cx="18"
+          cy="18"
+          r="15.9155"
+          fill="none"
+          stroke="#4DB6AC"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeDasharray={`${total} 100`}
+          pathLength="100"
+        />
+      </svg>
+      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-primaryDark">
+        {total}
+      </span>
+    </div>
+  );
+}
+
+function ScoreBreakdownPanel({
+  score,
+  decisionLabel,
+  decisionHint,
+  hideSectionTitle,
+  embedded,
+  cardClassName,
+  embeddedCardClassName,
+}: {
+  score: ScoreBreakdown;
+  decisionLabel?: string;
+  decisionHint?: string;
+  hideSectionTitle?: boolean;
+  embedded?: boolean;
+  /** Mengganti gaya kartu skor standalone (warna status). */
+  cardClassName?: string;
+  /** Mengganti gaya kartu skor di blok ditolak / tertanam. */
+  embeddedCardClassName?: string;
+}) {
+  const showDecision = Boolean(decisionLabel);
+  const cardClass = embedded
+    ? embeddedCardClassName ?? "rounded-2xl border border-gray-100/90 bg-white/95 p-5 shadow-sm"
+    : cardClassName
+      ? `${cardClassName} overflow-hidden`
+      : `${rtoCard} overflow-hidden p-5`;
+
+  const inner = (
+    <>
+      <div
+        className={
+          showDecision
+            ? "mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+            : "mb-5 flex items-end justify-between gap-3"
+        }
+      >
+        {showDecision ? (
+          <>
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gray-400">Keputusan pengajuan</p>
+              <p className="mt-1 text-lg font-bold leading-snug text-gray-900">{decisionLabel}</p>
+              {decisionHint ? <p className="mt-1 text-xs leading-relaxed text-gray-500">{decisionHint}</p> : null}
+            </div>
+            <div className="flex shrink-0 items-center gap-3 sm:flex-col sm:items-end">
+              <div className="text-right sm:text-right">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gray-400">Skor kelayakan</p>
+                <p className="mt-1 text-2xl font-bold tabular-nums tracking-tight text-gray-900">
+                  {score.total}
+                  <span className="text-base font-semibold text-gray-400">/100</span>
+                </p>
+              </div>
+              <ScoreRing total={score.total} />
+            </div>
+          </>
+        ) : (
+          <>
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gray-400">Skor kelayakan</p>
+              <p className="mt-1 text-2xl font-bold tabular-nums tracking-tight text-gray-900">
+                {score.total}
+                <span className="text-base font-semibold text-gray-400">/100</span>
+              </p>
+            </div>
+            <ScoreRing total={score.total} />
+          </>
+        )}
       </div>
       <div className="space-y-3">
         {SCORE_ROWS.map(({ key, label, max }) => {
@@ -323,7 +598,122 @@ function ScoreBreakdownPanel({ score }: { score: ScoreBreakdown }) {
           );
         })}
       </div>
-    </div>
+    </>
+  );
+
+  if (embedded) {
+    return <div className={cardClass}>{inner}</div>;
+  }
+
+  return (
+    <section>
+      {showDecision && !hideSectionTitle ? <h3 className={rtoSectionTitle}>Skor kelayakan</h3> : null}
+      <div className={cardClass}>{inner}</div>
+    </section>
+  );
+}
+
+function PickupPrepSection({
+  app,
+  operator,
+  programExplore,
+  docCount,
+  onOpenChecklist,
+  surfaceClassName,
+}: {
+  app: Application;
+  operator: RTOExploreOperator | undefined;
+  programExplore: ReturnType<typeof getBikeById>;
+  docCount: number;
+  onOpenChecklist: () => void;
+  surfaceClassName?: string;
+}) {
+  const pickup = app.pickup;
+  if (!pickup) return null;
+
+  const photos = (() => {
+    if (operator?.dealershipPhotos?.length) return operator.dealershipPhotos;
+    const bikeUrl = programExplore?.bike.photoUrl;
+    const extra = operator?.programBanner;
+    if (bikeUrl) return extra ? [bikeUrl, extra] : [bikeUrl];
+    return defaultDealershipPhotos(app.operatorId);
+  })();
+
+  const coords = resolvePickupLatLng(operator, pickup);
+  const mapQuery = `${pickup.dealerName} ${pickup.dealerAddress}`.trim();
+  const mapSrc = coords ? staticMapThumbnailUrl(coords[0], coords[1]) : null;
+  const showPhotoGallery = photos.length > 1;
+
+  return (
+    <section className={surfaceClassName ?? `${rtoCard} p-4 sm:p-5`}>
+      <h3 className={rtoSectionTitle}>Lokasi dealer</h3>
+      <p className="-mt-0.5 text-xs leading-relaxed text-gray-500">Peta &amp; alamat — dokumen lewat satu tombol di bawah.</p>
+
+      <button
+        type="button"
+        onClick={() => openGoogleMapsSearch(mapQuery)}
+        className="group mt-4 flex w-full gap-3 rounded-2xl border border-gray-100 bg-baseLightGray2/50 p-2.5 text-left shadow-sm transition-colors hover:border-[#4DB6AC]/35"
+        aria-label="Buka lokasi di Google Maps"
+      >
+        <div className="relative h-[5.25rem] w-[6.75rem] shrink-0 overflow-hidden rounded-xl bg-gradient-to-br from-[#dff5f2] to-[#c8ebe5]">
+          {mapSrc ? (
+            <img
+              src={mapSrc}
+              alt=""
+              className="h-full w-full object-cover transition group-hover:opacity-95"
+              loading="lazy"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center text-2xl" aria-hidden>
+              📍
+            </div>
+          )}
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col justify-center py-0.5">
+          <p className="text-sm font-semibold leading-snug text-gray-900">{pickup.dealerName}</p>
+          <p className="mt-0.5 text-[11px] leading-snug text-gray-500">{pickup.dealerAddress}</p>
+          <p className="mt-2 text-xs font-bold text-[#327478]">Buka di Google Maps →</p>
+        </div>
+      </button>
+
+      {showPhotoGallery ? (
+        <details className="group mt-3 rounded-2xl border border-gray-100 bg-white/90 [&_summary::-webkit-details-marker]:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2.5 text-sm font-semibold text-gray-800">
+            <span>Foto cabang ({photos.length})</span>
+            <span className="text-[10px] font-medium text-[#327478] group-open:hidden">Tampilkan</span>
+            <span className="hidden text-[10px] font-medium text-gray-500 group-open:inline">Sembunyikan</span>
+          </summary>
+          <div className="flex gap-2 overflow-x-auto px-2 pb-3 [-webkit-overflow-scrolling:touch]">
+            {photos.map((src, i) => (
+              <div
+                key={`${src}-${i}`}
+                className="relative h-20 w-28 shrink-0 overflow-hidden rounded-lg bg-gray-100"
+              >
+                <img src={src} alt="" className="h-full w-full object-cover" loading="lazy" />
+              </div>
+            ))}
+          </div>
+        </details>
+      ) : (
+        <div className="mt-3 overflow-hidden rounded-2xl border border-gray-100">
+          <img src={photos[0]} alt="" className="h-24 w-full object-cover" loading="lazy" />
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={onOpenChecklist}
+        className="mt-4 flex w-full items-center justify-between gap-3 rounded-2xl border border-amber-200/90 bg-amber-50/50 px-4 py-3.5 text-left transition-colors hover:bg-amber-50"
+      >
+        <div>
+          <p className="text-sm font-bold text-gray-900">Checklist dokumen</p>
+          <p className="mt-0.5 text-[11px] text-gray-600">{docCount} item sebelum berangkat</p>
+        </div>
+        <span className="shrink-0 text-lg font-light text-[#327478]" aria-hidden>
+          ›
+        </span>
+      </button>
+    </section>
   );
 }
 
@@ -369,8 +759,13 @@ export default function RTOStatus() {
   }
 
   const programExplore = useMemo(() => getBikeById(app.bikeId), [app.bikeId]);
+  const operator = useMemo(() => getOperatorById(app.operatorId), [app.operatorId]);
+  const pickupDocReminders = useMemo(() => getPickupDocumentReminders(app), [app]);
+  const pickupDocCount = pickupDocReminders.length;
+
+  /** Saat pickup terjadwal, dokumen sudah di kartu lokasi — hindari blok duplikat di program. */
   const pickupDocsShortLine = useMemo(() => {
-    if (app.status !== "approved" && app.status !== "pickup_scheduled") return null;
+    if (app.status !== "approved") return null;
     return getPickupDocumentsShortSummary(app);
   }, [app]);
 
@@ -383,6 +778,7 @@ export default function RTOStatus() {
   const [pendingSupplementaryNames, setPendingSupplementaryNames] = useState<Record<string, string>>(
     {},
   );
+  const [pickupChecklistOpen, setPickupChecklistOpen] = useState(false);
 
   useEffect(() => {
     setPendingSupplementaryNames({});
@@ -436,8 +832,11 @@ export default function RTOStatus() {
   const headerSolidPill =
     app.status === "need_documents" || app.status === "rejected";
 
+  /** Skor lebih atas di layar (pickup terjadwal) — selaras panah di desain. */
+  const scoreSectionEarly = app.status === "pickup_scheduled";
+
   return (
-    <div className="min-h-svh overflow-x-hidden antialiased">
+    <div className={`min-h-svh overflow-x-hidden antialiased ${visual.pageBg}`}>
       {/* Hero */}
       <header
         className={`relative bg-gradient-to-br px-4 pb-14 pt-10 shadow-lg shadow-black/10 rounded-b-[28px] ${visual.heroGradient}`}
@@ -470,25 +869,21 @@ export default function RTOStatus() {
 
       <main className="mx-auto w-full max-w-lg -mt-8 space-y-5 px-4 pb-28">
         {/* Status summary card */}
-        <div className={`${rtoCard} relative overflow-hidden p-6`}>
+        <div className={`relative overflow-hidden rounded-[22px] p-6 ${visual.summaryCardClass}`}>
           <div
             className={`pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-gradient-to-br opacity-[0.85] blur-2xl ${visual.ringClass}`}
             aria-hidden
           />
           <div className="relative flex gap-4">
             <div
-              className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl shadow-inner ${
-                app.status === "rejected"
-                  ? "bg-white text-red"
-                  : app.status === "need_documents"
-                    ? "bg-white text-orange"
-                    : "bg-white/90 text-[#2d8a7d]"
-              }`}
+              className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl shadow-inner ${visual.glyphIconClass}`}
             >
               <StatusGlyph status={app.status} />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-base font-bold leading-snug text-gray-900">{visual.text}</p>
+              <p className="text-base font-bold leading-snug text-gray-900">
+                {getStatusSummaryHeadline(app.status) || visual.text}
+              </p>
               <p className="mt-1.5 text-sm leading-relaxed text-gray-600">{statusSubtitle(app.status)}</p>
             </div>
           </div>
@@ -504,8 +899,17 @@ export default function RTOStatus() {
           </div>
         )}
 
+        {scoreSectionEarly && (
+          <ScoreBreakdownPanel
+            score={app.score}
+            decisionLabel={getCreditDecisionLabel(app.status)}
+            decisionHint={decisionHintForStatus(app.status)}
+            cardClassName={visual.scoreCardClass}
+          />
+        )}
+
         {app.status === "need_documents" && (
-          <section className={`${rtoCard} border-strokeOrange/80 bg-gradient-to-b from-[#FFFAF1] to-white p-5`}>
+          <section className={`rounded-[22px] p-5 ${visual.summaryCardClass}`}>
             <h3 className={rtoSectionTitle}>Yang perlu dilengkapi</h3>
             {app.reviewerNote && <p className="-mt-1 mb-3 text-sm leading-relaxed text-gray-800">{app.reviewerNote}</p>}
             <ul className="space-y-3">
@@ -575,7 +979,7 @@ export default function RTOStatus() {
         )}
 
         {app.status === "approved" && (
-          <section className={`${rtoCard} border-strokeGreen/70 bg-gradient-to-b from-[#EDF8EF] to-white p-5`}>
+          <section className={`rounded-[22px] p-5 ${visual.summaryCardClass}`}>
             <h3 className="text-sm font-bold text-green">Langkah berikutnya</h3>
             <ol className="mt-4 space-y-3">
               {[
@@ -603,7 +1007,7 @@ export default function RTOStatus() {
         )}
 
         {app.status === "pickup_scheduled" && app.pickup && (
-          <section className={`${rtoCard} p-5`}>
+          <section className={visual.pickupJadwalCardClass}>
             <h3 className={rtoSectionTitle}>Jadwal pengambilan</h3>
             <div className="-mt-1 rounded-2xl border border-gray-100 bg-baseLightGray2/80 p-4">
               <p className="text-base font-bold text-gray-900">
@@ -637,8 +1041,19 @@ export default function RTOStatus() {
           </section>
         )}
 
+        {app.status === "pickup_scheduled" && app.pickup && (
+          <PickupPrepSection
+            app={app}
+            operator={operator}
+            programExplore={programExplore}
+            docCount={pickupDocCount}
+            onOpenChecklist={() => setPickupChecklistOpen(true)}
+            surfaceClassName={visual.pickupPrepCardClass}
+          />
+        )}
+
         {app.status === "pickup_done" && (
-          <section className={`${rtoCard} border-strokeGreen/60 bg-gradient-to-br from-lightGreen to-white p-5 text-center`}>
+          <section className={`rounded-[22px] p-5 text-center ${visual.summaryCardClass}`}>
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm text-green">
               <StatusGlyph status="pickup_done" />
             </div>
@@ -650,9 +1065,19 @@ export default function RTOStatus() {
         )}
 
         {app.status === "rejected" && (
-          <section className={`${rtoCard} border-strokeRed/70 bg-gradient-to-b from-[#FCEEF0] to-white p-5`}>
+          <section className={`rounded-[22px] p-5 ${visual.summaryCardClass}`}>
             <h3 className="text-sm font-bold text-red">Ringkasan keputusan</h3>
             <p className="mt-2 text-sm leading-relaxed text-gray-800">{app.rejectionReason ?? "Tidak memenuhi syarat program."}</p>
+            <div className="mt-4">
+              <ScoreBreakdownPanel
+                score={app.score}
+                decisionLabel={getCreditDecisionLabel("rejected")}
+                decisionHint="Skor merangkum kelayakan saat review; keputusan mengikuti kebijakan program."
+                hideSectionTitle
+                embedded
+                embeddedCardClassName={visual.embeddedScoreCardClass}
+              />
+            </div>
             <div className="mt-4 rounded-2xl border border-strokeRed/40 bg-white/90 p-4">
               <p className="text-xs font-bold uppercase tracking-wide text-gray-700">Tips meningkatkan peluang</p>
               <ul className="mt-2 space-y-2 text-xs leading-relaxed text-gray-600">
@@ -718,10 +1143,19 @@ export default function RTOStatus() {
           </section>
         )}
 
+        {app.status !== "rejected" && !scoreSectionEarly && (
+          <ScoreBreakdownPanel
+            score={app.score}
+            decisionLabel={getCreditDecisionLabel(app.status)}
+            decisionHint={decisionHintForStatus(app.status)}
+            cardClassName={visual.scoreCardClass}
+          />
+        )}
+
         {/* Timeline */}
         <section>
           <h3 className={rtoSectionTitle}>Alur proses</h3>
-          <div className={`${rtoCard} p-5`}>
+          <div className={visual.timelineCardClass}>
             {STATUS_STEPS.map((step, i) => {
               const isDone = i < activeIdx;
               const isCurrent = i === activeIdx && activeIdx < STATUS_STEPS.length;
@@ -767,12 +1201,10 @@ export default function RTOStatus() {
           </div>
         </section>
 
-        <ScoreBreakdownPanel score={app.score} />
-
         {/* Program */}
         <section>
           <h3 className={rtoSectionTitle}>Program dipilih</h3>
-          <div className={`${rtoCard} overflow-hidden p-0`}>
+          <div className={`${visual.timelineCardClass} !p-0 overflow-hidden`}>
             <button
               type="button"
               onClick={() => navigate(rtoBikePath(app.bikeId))}
@@ -851,6 +1283,69 @@ export default function RTOStatus() {
             </button>
           )}
         </div>
+
+        {pickupChecklistOpen && (
+          <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center sm:p-4" role="presentation">
+            <button
+              type="button"
+              className="absolute inset-0 bg-black/45"
+              aria-label="Tutup modal"
+              onClick={() => setPickupChecklistOpen(false)}
+            />
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="pickup-checklist-title"
+              className="relative z-10 max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl sm:rounded-3xl"
+            >
+              <div className="mb-4 flex items-start justify-between gap-3">
+                <div>
+                  <h2 id="pickup-checklist-title" className="text-lg font-bold text-gray-900">
+                    Dokumen bawa ambil motor
+                  </h2>
+                  <p className="mt-1 text-xs text-gray-500">
+                    {pickupDocCount} item — siapkan sebelum ke dealer.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPickupChecklistOpen(false)}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200"
+                  aria-label="Tutup"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
+                  </svg>
+                </button>
+              </div>
+              <ul className="space-y-3">
+                {pickupDocReminders.map((item, idx) => (
+                  <li
+                    key={`${item.title}-${idx}`}
+                    className="flex gap-3 rounded-xl border border-gray-100 bg-baseLightGray2/50 p-3"
+                  >
+                    <span className="text-base leading-none" aria-hidden>
+                      {item.icon}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-gray-900">{item.title}</p>
+                      {item.detail ? (
+                        <p className="mt-1 text-xs leading-relaxed text-gray-600">{item.detail}</p>
+                      ) : null}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                onClick={() => setPickupChecklistOpen(false)}
+                className="mt-6 w-full rounded-2xl bg-[#4DB6AC] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#4DB6AC]/25"
+              >
+                Mengerti
+              </button>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
