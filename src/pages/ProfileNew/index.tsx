@@ -174,7 +174,7 @@ const ProfileNew = () => {
 
           <MenuItem
             icon={IcPasswordBlack}
-            label="Atur Pin Cazz"
+            label="Atur Pin Casan"
             onClick={() => onNext("setting-pin")}
           />
         </div>
@@ -256,7 +256,7 @@ const ProfileNew = () => {
         visible={openNotAvailable}
         icon={ILNotFound}
         title="Fitur Tidak Tersedia"
-        description="Maaf, saat ini fitur sedang dalam proses perbaikan maksimal sampai 5 Januari 2026. Silakan cek berkala."
+        description="Maaf, saat ini fitur sedang dalam proses perbaikan. Silakan cek berkala."
         typeButtonRight="primary"
         labelButtonRight="Tutup"
         onDismiss={() => setOpenNotAvailable(false)}
