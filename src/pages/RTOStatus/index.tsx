@@ -200,6 +200,17 @@ const neutralPickupJadwal = `rounded-[22px] ${NEUTRAL_CARD_BORDER} bg-white p-5 
 const neutralPickupPrep = `rounded-[22px] ${NEUTRAL_CARD_BORDER} bg-white p-4 sm:p-5 ${NEUTRAL_CARD_SHADOW}`;
 const neutralEmbeddedScore = `rounded-2xl ${NEUTRAL_CARD_BORDER} bg-white p-5 ${NEUTRAL_CARD_SHADOW}`;
 
+/*
+ * Color system — 4 semantic families:
+ *   NEUTRAL (submitted, under_review)  → slate-blue-gray  #6b7c93-family
+ *   ACTION  (need_documents)           → amber            #d97706-family
+ *   POSITIVE (approved, pickup_sched, pickup_done) → green #16a34a-family
+ *   NEGATIVE (rejected)                → rose             #e11d48-family
+ *
+ * Color shows in: hero gradient + page gradient background.
+ * Cards stay white. Glyph tile has a tiny ring tint only.
+ */
+
 function getStatusVisual(status: string): StatusVisual {
   const cards = {
     summaryCardClass: neutralSummaryInset,
@@ -215,70 +226,70 @@ function getStatusVisual(status: string): StatusVisual {
       return {
         text: "Aplikasi terkirim",
         pillClass: "bg-white/20 text-white border border-white/25",
-        ringClass: "from-primary30/90 to-primary10",
-        heroGradient: "from-[#4DB6AC] via-[#4aa89e] to-[#3d9a91]",
-        pageBg: "bg-[#dff0ec]",
-        glyphIconClass: "bg-gray-50 text-[#2d8a7d] shadow-sm ring-1 ring-gray-200/90",
+        ringClass: "from-[#94a3b8]/40 to-[#cbd5e1]/50",
+        heroGradient: "from-[#64748b] via-[#5b6d82] to-[#475569]",
+        pageBg: "bg-gradient-to-b from-[#e2e8f0] to-[#eef1f5]",
+        glyphIconClass: "bg-gray-50 text-[#475569] shadow-sm ring-1 ring-slate-200",
         ...cards,
       };
     case "under_review":
       return {
         text: "Sedang direview",
         pillClass: "bg-white/20 text-white border border-white/25",
-        ringClass: "from-primary70/40 to-primary30/60",
-        heroGradient: "from-[#45a89e] via-[#3f9d94] to-[#358f87]",
-        pageBg: "bg-[#d5ece6]",
-        glyphIconClass: "bg-gray-50 text-[#2a7d72] shadow-sm ring-1 ring-gray-200/90",
+        ringClass: "from-[#94a3b8]/50 to-[#cbd5e1]/40",
+        heroGradient: "from-[#5b6d82] via-[#526275] to-[#475569]",
+        pageBg: "bg-gradient-to-b from-[#dce4ed] to-[#eaeff4]",
+        glyphIconClass: "bg-gray-50 text-[#475569] shadow-sm ring-1 ring-slate-200",
         ...cards,
       };
     case "need_documents":
       return {
         text: "Perlu dokumen",
-        pillClass: "bg-orange/25 text-[#9a6200] border border-orange/40",
-        ringClass: "from-orange/35 to-secondary30",
-        heroGradient: "from-[#e8a54a] via-[#d99a3c] to-[#c9892e]",
-        pageBg: "bg-[#fef3e2]",
-        glyphIconClass: "bg-gray-50 text-orange shadow-sm ring-1 ring-orange/25",
+        pillClass: "bg-amber-100/90 text-amber-800 border border-amber-300/70",
+        ringClass: "from-amber-300/50 to-amber-100/60",
+        heroGradient: "from-[#d97706] via-[#c2690a] to-[#b45309]",
+        pageBg: "bg-gradient-to-b from-[#fef3c7] to-[#fef9ee]",
+        glyphIconClass: "bg-gray-50 text-amber-600 shadow-sm ring-1 ring-amber-200/70",
         ...cards,
       };
     case "approved":
       return {
         text: "Disetujui",
-        pillClass: "bg-green/20 text-green border border-strokeGreen",
-        ringClass: "from-strokeGreen to-lightGreen",
-        heroGradient: "from-[#3db86b] via-[#2fa65d] to-[#24904f]",
-        pageBg: "bg-[#e0f8ec]",
-        glyphIconClass: "bg-gray-50 text-green shadow-sm ring-1 ring-gray-200/90",
+        pillClass: "bg-green-100/90 text-green-800 border border-green-300/70",
+        ringClass: "from-green-300/50 to-green-100/60",
+        heroGradient: "from-[#16a34a] via-[#15803d] to-[#166534]",
+        pageBg: "bg-gradient-to-b from-[#dcfce7] to-[#f0fdf4]",
+        glyphIconClass: "bg-gray-50 text-green-600 shadow-sm ring-1 ring-green-200/70",
         ...cards,
       };
     case "rejected":
       return {
         text: "Belum disetujui",
-        pillClass: "bg-white/95 text-red border border-strokeRed shadow-sm",
-        ringClass: "from-strokeRed/80 to-lightRed",
-        heroGradient: "from-[#e85d6f] via-[#d64d5f] to-[#c44452]",
-        pageBg: "bg-[#fde8ea]",
-        glyphIconClass: "bg-gray-50 text-red shadow-sm ring-1 ring-red-200/50",
+        pillClass: "bg-rose-100/95 text-rose-800 border border-rose-300/70 shadow-sm",
+        ringClass: "from-rose-300/55 to-rose-100/65",
+        heroGradient: "from-[#e11d48] via-[#c81e3e] to-[#be123c]",
+        pageBg: "bg-gradient-to-b from-[#ffe4e6] to-[#fff5f6]",
+        glyphIconClass: "bg-gray-50 text-rose-600 shadow-sm ring-1 ring-rose-200/60",
         ...cards,
       };
     case "pickup_scheduled":
       return {
         text: "Pickup dijadwalkan",
-        pillClass: "bg-white/20 text-white border border-white/25",
-        ringClass: "from-primary50/50 to-primary10",
-        heroGradient: "from-[#4DB6AC] via-[#439f96] to-[#3a8f87]",
-        pageBg: "bg-[#d5ece6]",
-        glyphIconClass: "bg-gray-50 text-[#2d8a7d] shadow-sm ring-1 ring-gray-200/90",
+        pillClass: "bg-green-100/85 text-green-800 border border-green-300/60",
+        ringClass: "from-green-300/45 to-green-100/55",
+        heroGradient: "from-[#22c55e] via-[#16a34a] to-[#15803d]",
+        pageBg: "bg-gradient-to-b from-[#d1fae5] to-[#ecfdf5]",
+        glyphIconClass: "bg-gray-50 text-green-600 shadow-sm ring-1 ring-green-200/65",
         ...cards,
       };
     case "pickup_done":
       return {
         text: "Selesai",
-        pillClass: "bg-green/15 text-green border border-strokeGreen",
-        ringClass: "from-strokeGreen to-lightGreen",
-        heroGradient: "from-[#34b56a] via-[#2aa35f] to-[#219152]",
-        pageBg: "bg-[#dcf5e7]",
-        glyphIconClass: "bg-gray-50 text-green shadow-sm ring-1 ring-gray-200/90",
+        pillClass: "bg-green-100/85 text-green-800 border border-green-300/70",
+        ringClass: "from-green-300/50 to-green-100/60",
+        heroGradient: "from-[#15803d] via-[#166534] to-[#14532d]",
+        pageBg: "bg-gradient-to-b from-[#bbf7d0] to-[#ecfdf5]",
+        glyphIconClass: "bg-gray-50 text-green-700 shadow-sm ring-1 ring-green-200/70",
         ...cards,
       };
     default:
@@ -286,9 +297,9 @@ function getStatusVisual(status: string): StatusVisual {
         text: "Diproses",
         pillClass: "bg-white/15 text-white border border-white/20",
         ringClass: "from-gray-200 to-gray-100",
-        heroGradient: "from-[#4DB6AC] to-[#327478]",
-        pageBg: "bg-[#e5ecea]",
-        glyphIconClass: "bg-gray-50 text-[#327478] shadow-sm ring-1 ring-gray-200/90",
+        heroGradient: "from-[#64748b] to-[#475569]",
+        pageBg: "bg-gradient-to-b from-[#e2e8f0] to-[#f1f5f9]",
+        glyphIconClass: "bg-gray-50 text-slate-600 shadow-sm ring-1 ring-slate-200",
         ...cards,
       };
   }
@@ -766,8 +777,8 @@ export default function RTOStatus() {
   const headerSolidPill =
     app.status === "need_documents" || app.status === "rejected";
 
-  /** Skor lebih atas di layar (pickup terjadwal) — selaras panah di desain. */
-  const scoreSectionEarly = app.status === "pickup_scheduled";
+  /** Skor selalu muncul tepat di bawah kartu ringkasan (konsisten semua status). */
+  const showScoreAfterSummary = app.status !== "rejected";
 
   return (
     <div className={`min-h-svh overflow-x-hidden antialiased ${visual.pageBg}`}>
@@ -824,16 +835,14 @@ export default function RTOStatus() {
         </div>
 
         {(app.status === "submitted" || app.status === "under_review") && (
-          <div
-            className={`${rtoCardSubtle} border-primary30/60 bg-gradient-to-r from-primary10 to-white px-4 py-3.5`}
-          >
-            <p className="text-xs leading-relaxed text-primaryDark">
-              <span className="font-bold">Demo review:</span> status berubah otomatis dalam beberapa detik — mirip notifikasi dari dealer.
+          <div className="rounded-2xl border border-slate-200/80 bg-white px-4 py-3.5 shadow-sm">
+            <p className="text-xs leading-relaxed text-slate-600">
+              <span className="font-bold text-slate-700">Demo review:</span> status berubah otomatis dalam beberapa detik — mirip notifikasi dari dealer.
             </p>
           </div>
         )}
 
-        {scoreSectionEarly && (
+        {showScoreAfterSummary && (
           <ScoreBreakdownPanel
             score={app.score}
             decisionLabel={getCreditDecisionLabel(app.status)}
@@ -853,10 +862,10 @@ export default function RTOStatus() {
                 return (
                   <li
                     key={id}
-                    className="rounded-xl border border-strokeOrange/55 bg-white/95 p-3 shadow-sm shadow-orange/5"
+                    className="rounded-xl border border-amber-200/80 bg-white p-3 shadow-sm shadow-amber-500/5"
                   >
                     <div className="flex items-start gap-3">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange/15 text-sm text-[#b37400]">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-sm text-amber-700">
                         📄
                       </span>
                       <div className="min-w-0 flex-1">
@@ -914,7 +923,7 @@ export default function RTOStatus() {
 
         {app.status === "approved" && (
           <section className={`rounded-[22px] p-5 ${visual.summaryCardClass}`}>
-            <h3 className="text-sm font-bold text-green">Langkah berikutnya</h3>
+            <h3 className="text-sm font-bold text-green-700">Langkah berikutnya</h3>
             <ol className="mt-4 space-y-3">
               {[
                 "Jadwalkan pengambilan motor",
@@ -923,7 +932,7 @@ export default function RTOStatus() {
                 "Motor siap dibawa",
               ].map((item, i) => (
                 <li key={item} className="flex gap-3 text-sm text-gray-700">
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-green/15 text-xs font-bold text-green">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">
                     {i + 1}
                   </span>
                   <span className="pt-0.5 leading-snug">{item}</span>
@@ -1000,7 +1009,7 @@ export default function RTOStatus() {
 
         {app.status === "rejected" && (
           <section className={`rounded-[22px] p-5 ${visual.summaryCardClass}`}>
-            <h3 className="text-sm font-bold text-red">Ringkasan keputusan</h3>
+            <h3 className="text-sm font-bold text-rose-600">Ringkasan keputusan</h3>
             <p className="mt-2 text-sm leading-relaxed text-gray-800">{app.rejectionReason ?? "Tidak memenuhi syarat program."}</p>
             <div className="mt-4">
               <ScoreBreakdownPanel
@@ -1012,7 +1021,7 @@ export default function RTOStatus() {
                 embeddedCardClassName={visual.embeddedScoreCardClass}
               />
             </div>
-            <div className="mt-4 rounded-2xl border border-strokeRed/40 bg-white/90 p-4">
+            <div className="mt-4 rounded-2xl border border-rose-200/60 bg-white p-4">
               <p className="text-xs font-bold uppercase tracking-wide text-gray-700">Tips meningkatkan peluang</p>
               <ul className="mt-2 space-y-2 text-xs leading-relaxed text-gray-600">
                 <li className="flex gap-2">
@@ -1034,7 +1043,7 @@ export default function RTOStatus() {
                 <p className="font-semibold text-gray-900">Masa tunggu pengajuan baru</p>
                 <p className="mt-1">
                   Setelah{" "}
-                  <span className="font-bold text-red">
+                  <span className="font-bold text-rose-600">
                     {new Date(app.rejectionCooldownUntil).toLocaleDateString("id-ID", {
                       weekday: "long",
                       day: "numeric",
@@ -1077,14 +1086,7 @@ export default function RTOStatus() {
           </section>
         )}
 
-        {app.status !== "rejected" && !scoreSectionEarly && (
-          <ScoreBreakdownPanel
-            score={app.score}
-            decisionLabel={getCreditDecisionLabel(app.status)}
-            decisionHint={decisionHintForStatus(app.status)}
-            cardClassName={visual.scoreCardClass}
-          />
-        )}
+        {/* Score is now always shown right after summary card — no duplicate here */}
 
         {/* Timeline */}
         <section>
