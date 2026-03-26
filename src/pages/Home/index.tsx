@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CiSearch } from "react-icons/ci";
-import { FiInfo } from "react-icons/fi";
+import { FiInfo, FiAlertTriangle } from "react-icons/fi";
 import { IoFlash, IoTimeOutline } from "react-icons/io5";
 
 /** Brand teal — aligned with RTO / app primary */
@@ -439,9 +439,9 @@ const Home = () => {
 
   const headerBg = useMemo(() => {
     return [
-      "radial-gradient(ellipse 130% 50% at 20% -5%, rgba(77,182,172,0.3) 0%, transparent 60%)",
-      "radial-gradient(ellipse 90% 45% at 80% 5%, rgba(77,182,172,0.18) 0%, transparent 55%)",
-      "linear-gradient(180deg, #c8ebe7 0%, #daf0ed 35%, #ecf2f0 65%, #f4f6f5 100%)",
+      "radial-gradient(ellipse 130% 50% at 20% -5%, rgba(38,166,154,0.7) 0%, transparent 60%)",
+      "radial-gradient(ellipse 90% 45% at 80% 5%, rgba(38,166,154,0.5) 0%, transparent 55%)",
+      "linear-gradient(180deg, #26a69a 0%, #4DB6AC 40%, #b2dfdb 70%, #f4f6f5 100%)",
     ].join(", ");
   }, [activeTab]);
 
@@ -458,9 +458,9 @@ const Home = () => {
         <IcLogo />
         <button
           onClick={() => window.open("https://about.casan.id/", "_blank")}
-          className="row gap-2 text-blackBold/70 font-semibold text-sm"
+          className="row gap-2 text-white font-semibold text-sm"
         >
-          <FiInfo size={18} className="text-blackBold/50" />
+          <FiInfo size={18} className="text-white/80" />
           Tentang Casan →
         </button>
       </div>
@@ -512,19 +512,19 @@ const Home = () => {
                 }}
                 className={`relative flex-1 flex flex-col items-center gap-2 p-3 rounded-[14px] border-2 transition-all duration-200 ease-out ${
                   isActive
-                    ? "cursor-default bg-white border-[#4DB6AC] shadow-[0_4px_16px_rgba(77,182,172,0.12)]"
-                    : "cursor-pointer bg-white/50 backdrop-blur-sm border-transparent opacity-55 hover:opacity-100"
+                    ? "cursor-default bg-white border-[#4DB6AC] shadow-[0_4px_20px_rgba(77,182,172,0.25)]"
+                    : "cursor-pointer bg-white/70 backdrop-blur-sm border-transparent opacity-85 hover:opacity-100"
                 }`}
               >
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
                   isActive
-                    ? "bg-gradient-to-br from-[#b2dfdb] to-[#80cbc4] shadow-[0_2px_8px_rgba(77,182,172,0.25)]"
+                    ? "bg-gradient-to-br from-[#4DB6AC] to-[#26a69a] shadow-[0_0_12px_rgba(77,182,172,0.4)]"
                     : tab.bgClass
                 }`}>
                   <Icon size={28} />
                 </div>
-                <span className={`text-[11px] font-bold leading-tight ${isActive ? "text-blackBold" : "text-black50"}`}>{tab.label}</span>
-                <span className={`text-[9px] ${isActive ? "text-black70" : "text-black30"}`}>{tab.sub}</span>
+                <span className={`font-bold leading-tight ${isActive ? "text-[13px] text-[#4DB6AC] tracking-wide" : "text-[11px] text-black70"}`}>{tab.label}</span>
+                <span className={`text-[9px] ${isActive ? "text-blackBold" : "text-black50"}`}>{tab.sub}</span>
               </button>
             );
           })}
@@ -541,7 +541,7 @@ const Home = () => {
           <div id="home-tabpanel-isi-daya" role="tabpanel" aria-labelledby="home-tab-isi-daya" className="space-y-4">
             {/* SECTION HEADER */}
             <div className="flex justify-between items-center">
-              <span className="text-[15px] font-bold text-blackBold">Stasiun terdekat</span>
+              <span className="text-[15px] font-medium text-blackBold">Stasiun terdekat</span>
               <span
                 className="text-xs font-semibold text-primary100 cursor-pointer"
                 onClick={() => navigate("/location-list")}
@@ -653,7 +653,7 @@ const Home = () => {
             {isAuthenticated && dataRTO?.ID ? (
               <>
                 <div className="flex justify-between items-center">
-                  <span className="text-[15px] font-bold text-blackBold">Program sekarang</span>
+                  <span className="text-[15px] font-medium text-blackBold">Program sekarang</span>
                   <span
                     className="text-xs font-semibold text-[#4DB6AC] cursor-pointer"
                     onClick={() => navigate("/rto-history")}
@@ -665,28 +665,15 @@ const Home = () => {
                 {(() => {
               const creditLeft = dataRTO?.CreditLeft ?? 0;
               const creditPaid = dataRTO?.CreditPaid ?? 0;
-              const totalCredits = creditLeft + creditPaid;
-              const completedCredits = creditPaid;
+              const totalCredits = dataRTO?.Payment ?? (creditLeft + creditPaid);
               const progressPct =
-                totalCredits > 0 ? Math.round((completedCredits / totalCredits) * 100) : 0;
-              /** Brand/model dari nested API (VehicleModel), fallback ke field lama jika ada */
-              const v = dataRTO?.Vehicle;
-              const vehicleName = (() => {
-                if (!v) return "Motor listrik";
-                const fromModel = [
-                  v.VehicleModel?.VehicleBrand?.Name,
-                  v.VehicleModel?.ModelName,
-                ]
-                  .filter((s): s is string => Boolean(s && String(s).trim()))
-                  .join(" ");
-                if (fromModel.trim()) return fromModel.trim();
-                const legacy = v as VehicleProps & { Brand?: string; Model?: string };
-                const alt = [legacy.Brand, legacy.Model].filter(Boolean).join(" ").trim();
-                return alt || "Motor listrik";
-              })();
+                totalCredits > 0 ? Math.round((creditPaid / totalCredits) * 100) : 0;
+              const brand = dataRTO?.Vehicle?.VehicleModel?.VehicleBrand || "";
+              const model = dataRTO?.Vehicle?.VehicleModel?.ModelName || "";
+              const vehicleName = [brand, model].filter(Boolean).join(" ");
               const colorData = dataRTO?.Vehicle?.Colors?.[0];
               const imageUrl = colorData?.ImageURL || ILNoImage;
-              const licensePlate = dataRTO?.LicensePlate || "-";
+              const licensePlate = dataRTO?.LicensePlate;
               const status = dataRTO?.Status;
               const nextPay = dataRTO?.NextPaymentDate;
               const targetFinish = dataRTO?.TargetFinishDate;
@@ -722,19 +709,30 @@ const Home = () => {
                   <div className="border-b border-gray-100 px-4 pb-3 pt-4">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="truncate text-[15px] font-bold leading-tight text-gray-900">
-                          {vehicleName}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <p className="truncate text-[15px] font-bold leading-tight text-gray-900">
+                            {vehicleName}
+                          </p>
+                          {licensePlate && (
+                            <span className="shrink-0 text-[11px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                              {licensePlate}
+                            </span>
+                          )}
+                        </div>
                         <p className="mt-1 text-[11px] leading-snug text-gray-500">
                           {dataRTO?.Program?.Name || "Program RTO"}
                           <span className="text-gray-300"> · </span>
                           {dataRTO?.Admin?.Name || dataRTO?.Dealer || "-"}
                         </p>
-                        <p className="mt-0.5 text-[11px] text-gray-400">{licensePlate}</p>
                       </div>
                       <span
-                        className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold ${statusBg} ${statusText}`}
+                        className={`shrink-0 rounded-md px-2.5 py-1 text-[10px] font-semibold flex items-center gap-1 ${statusBg} ${statusText}`}
+                        style={{ 
+                          backgroundColor: isSuspended ? '#ef4444' : isOverdue ? '#fee2e2' : status === 5 ? '#fef3c7' : '#d1fae5',
+                          color: isSuspended ? '#ffffff' : isOverdue ? '#dc2626' : status === 5 ? '#b45309' : '#047857'
+                        }}
                       >
+                        {(isSuspended || isOverdue) && <FiAlertTriangle size={12} />}
                         {statusLabel}
                       </span>
                     </div>
@@ -748,20 +746,19 @@ const Home = () => {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-end gap-1.5">
                         <span
-                          className={`text-2xl font-extrabold leading-none tabular-nums ${
-                            isLowCredit || isSuspended ? "text-red-500" : "text-[#4DB6AC]"
-                          }`}
+                          className="text-2xl font-extrabold leading-none tabular-nums"
+                          style={{ color: isLowCredit || isSuspended ? '#ef4444' : '#4DB6AC' }}
                         >
                           {creditLeft}
                         </span>
-                        <span className="pb-0.5 text-[12px] text-gray-600">hari tersisa</span>
+                        <span className="pb-0.5 text-[12px] text-gray-600">Kredit Hari Tersisa</span>
                       </div>
 
                       {totalCredits > 0 && (
                         <div className="mt-3">
                           <div className="mb-1 flex items-center justify-between text-[11px] text-gray-500">
                             <span>
-                              {completedCredits}/{totalCredits} hari dibayar
+                              {creditPaid}/{totalCredits} hari terbayar
                             </span>
                             <span className="font-semibold tabular-nums text-gray-800">{progressPct}%</span>
                           </div>
@@ -774,10 +771,11 @@ const Home = () => {
                             aria-label="Progres cicilan"
                           >
                             <div
-                              className={`h-full rounded-full transition-[width] ${
-                                isSuspended || isOverdue ? "bg-red-400" : "bg-[#4DB6AC]"
-                              }`}
-                              style={{ width: `${progressPct}%` }}
+                              className={`h-full rounded-full transition-[width]`}
+                              style={{ 
+                                width: `${progressPct}%`,
+                                backgroundColor: isSuspended || isOverdue ? '#f87171' : status === 5 ? '#fbbf24' : '#4DB6AC'
+                              }}
                             />
                           </div>
                         </div>
@@ -789,14 +787,23 @@ const Home = () => {
                     <div className="flex min-w-0 flex-1 flex-col gap-1 text-[11px]">
                       {nextPay && (
                         <div className="flex flex-wrap items-baseline gap-x-1.5">
-                          <span className="text-gray-500">
-                            {isOverdue ? "Akan di-suspend:" : "Bayar selanjutnya:"}
-                          </span>
-                          <span
-                            className={`font-semibold ${isOverdue ? "text-red-600" : "text-gray-900"}`}
-                          >
-                            {moments(nextPay).format("ddd, DD MMM HH:mm")} WIB
-                          </span>
+                          {isSuspended ? (
+                            <span style={{ color: '#dc2626' }}>
+                              Lunasi tagihan terlebih dahulu
+                              {dataRTO?.OverdueCount > 0 && (
+                                <span className="font-semibold"> ({dataRTO.OverdueCount} hari di-suspend)</span>
+                              )}
+                            </span>
+                          ) : (
+                            <>
+                              <span className="text-gray-500">Bayar selanjutnya:</span>
+                              <span
+                                className={`font-semibold ${isOverdue ? "text-red-600" : "text-gray-900"}`}
+                              >
+                                {moments(nextPay).format("ddd, DD MMM HH:mm")} WIB
+                              </span>
+                            </>
+                          )}
                         </div>
                       )}
                       {targetFinish && (
@@ -807,11 +814,7 @@ const Home = () => {
                           </span>
                         </div>
                       )}
-                      {isSuspended && dataRTO?.OverdueCount > 0 && (
-                        <span className="font-semibold text-red-500">
-                          {dataRTO.OverdueCount} hari di-suspend
-                        </span>
-                      )}
+
                     </div>
                     <span className="shrink-0 text-xs font-bold text-[#4DB6AC]">Detail →</span>
                   </div>
@@ -823,7 +826,7 @@ const Home = () => {
 
             {/* RTO PROGRAMS */}
             <div className="px-0.5">
-              <span className="text-[15px] font-bold text-blackBold">
+              <span className="text-[15px] font-medium text-blackBold">
                 {isAuthenticated ? "Lihat RTO program lainnya" : "Program RTO yang ada"}
               </span>
             </div>
@@ -856,18 +859,13 @@ const Home = () => {
                         <p className="text-[12px] text-gray-500 mt-0.5">{op.area}</p>
                       </div>
                       <div className="text-right shrink-0">
-                        <div className="flex items-center gap-1 text-amber-500 text-[12px] font-semibold">
-                          <span>★</span>
-                          <span>{op.rating}</span>
-                          <span className="text-gray-400 font-normal">({op.reviewCount})</span>
-                        </div>
-                        <p className="text-[11px] font-semibold text-[#4DB6AC] mt-0.5">{distLabel}</p>
+                        <p className="text-[11px] font-semibold text-[#4DB6AC]">{distLabel}</p>
                         <p className="text-[10px] text-gray-400">
                           {dKm != null
                             ? nCabang > 1
                               ? `Cabang terdekat · ${nCabang} lokasi`
                               : "Dari lokasi kamu"
-                            : "Perkiraan"}
+                            : ""}
                         </p>
                       </div>
                     </div>
@@ -885,7 +883,7 @@ const Home = () => {
                     </div>
                     <div className="flex items-center justify-between mt-2.5 pt-2.5 border-t border-gray-100">
                       <span className="text-[12px] text-gray-600">
-                        Min. gaji <span className="font-semibold text-gray-900">{rupiah(op.minSalary)}</span>
+                        Min. gaji <span className="font-semibold text-gray-900">Rp{rupiah(op.minSalary)}</span>
                       </span>
                       <span className="text-[12px] font-semibold text-[#4DB6AC] flex items-center gap-0.5">
                         {op.bikes.length} motor <span aria-hidden>›</span>
@@ -919,7 +917,7 @@ const Home = () => {
           >
             {/* SECTION HEADER */}
             <div className="flex justify-between items-center">
-              <span className="text-[15px] font-bold text-blackBold">Sewa motor listrik</span>
+              <span className="text-[15px] font-medium text-blackBold">Sewa motor listrik</span>
               <span className="text-xs font-semibold text-[#4DB6AC] cursor-pointer">
                 Filter →
               </span>

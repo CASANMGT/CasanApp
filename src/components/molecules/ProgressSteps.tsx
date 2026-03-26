@@ -20,7 +20,7 @@ const ProgressSteps: React.FC<Props> = ({ currentStep, dataMilestone }) => {
           return (
             <div key={step.ID} className={`flex  ${!isLast && "flex-1"}`}>
               {/* Step */}
-              <div className="flex flex-col items-center text-center w-10">
+              <div className="flex flex-col items-center text-center w-14">
                 <div
                   className={`flex items-center justify-center w-8 h-8 rounded-full
                 bg-${
@@ -43,7 +43,7 @@ const ProgressSteps: React.FC<Props> = ({ currentStep, dataMilestone }) => {
                   />
                 </div>
                 <span
-                  className={`text-[10px] font-medium mt-1 mb-0.5 text-${
+                  className={`text-[10px] font-medium mt-1 mb-0.5 line-clamp-2 text-${
                     isActive
                       ? "primary100"
                       : isRightActive
@@ -53,7 +53,7 @@ const ProgressSteps: React.FC<Props> = ({ currentStep, dataMilestone }) => {
                 >
                   {step?.Name}
                 </span>
-                <span className="text-[10px] text-black70">
+                <span className="text-[10px] text-black70 whitespace-nowrap">
                   {step?.MinCO2Saved} Kg
                 </span>
               </div>
