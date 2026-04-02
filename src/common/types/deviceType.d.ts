@@ -1,4 +1,4 @@
-export {};
+export { };
 
 declare global {
   type Device = {
@@ -21,6 +21,7 @@ declare global {
     Rating: number;
     SocketRating: number;
     Sockets: Socket[];
+    IsActive: boolean;
     ChargingStation: ChargingStation;
     DeletedAt: any;
     CreatedAt: string;

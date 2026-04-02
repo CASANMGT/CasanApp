@@ -31,6 +31,7 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
     if (data?.Sockets && data.Sockets.length) {
       data?.Sockets.forEach((element) => {
         if (
+          data.IsActive &&
           data.SignalValue > 0 &&
           element.IsCharging === 0 &&
           element?.SessionStatus !== 1 &&
@@ -105,8 +106,8 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
               isUltraFast
                 ? "bg-gradient-to-r from-[#C0D749] to-[#DE0E11] bg-clip-text text-transparent"
                 : isSuperFast
-                ? "bg-gradient-to-r from-[#0088FF] to-[#DE0E11] bg-clip-text text-transparent"
-                : "text-primary100"
+                  ? "bg-gradient-to-r from-[#0088FF] to-[#DE0E11] bg-clip-text text-transparent"
+                  : "text-primary100"
             }`}
           >
             {isUltraFast ? "ULTRA" : isSuperFast ? "SUPER" : "FAST"}
