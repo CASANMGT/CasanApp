@@ -198,7 +198,7 @@ const StationDetails = () => {
           </div>
         )}
 
-        <div className="bg-white p-4 mb-[1px]">
+        <div className="bg-white p-4 mb-[1px] between-x">
           <span className="font-medium text-blackBold">
             {data?.Name || "-"}
           </span>

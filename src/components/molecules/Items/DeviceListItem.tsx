@@ -5,7 +5,7 @@ import {
   IcFlash,
   IcFuel,
 } from "../../../assets";
-import { moments } from "../../../helpers";
+import { getFormattedBrand, moments } from "../../../helpers";
 import { Separator, Signal } from "../../atoms";
 
 interface DeviceListItemProps {
@@ -51,6 +51,8 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
   let total = getTotalSocketAvailable();
   const isSuperFast: boolean = data?.Type === 2;
   const isUltraFast: boolean = data?.Type === 3;
+  const formattedBrand = getFormattedBrand(data?.Brand || 0);
+  const IconBrand = formattedBrand.icon;
   let isFull: boolean =
     data?.Sockets && data?.Sockets.length
       ? !data?.Sockets.some((e) => e.IsCharging !== 1)
@@ -91,6 +93,16 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
           {`${data.Name}`}{" "}
           <span className="text-black50">({data?.TotalSocket})</span>
         </p>
+
+        {/* Brand Logo */}
+        {data?.Brand && data?.Brand > 0 && (
+          <div
+            className="w-6 h-6 rounded-full flex items-center justify-center"
+            style={{ backgroundColor: formattedBrand?.bgColor }}
+          >
+            <IconBrand className="text-white w-4 h-4" />
+          </div>
+        )}
 
         <div className="row gap-1.5">
           {isUltraFast ? (
