@@ -264,6 +264,38 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
             )}/${priceType === 2 ? "kWh" : "jam"}`}</p>
           </div>
 
+          {/* Brand Logos - Multiple from Devices */}
+          <div className="flex items-center gap-1">
+            {/* Overlapping Brand Logos */}
+            <div className="flex items-center">
+              {data?.Devices?.filter((d) => d?.Brand && d?.Brand > 0).slice(0, 2).map((device, index) => {
+                const deviceBrand = getFormattedBrand(device?.Brand || 0);
+                const DeviceIcon = deviceBrand.icon;
+                return (
+                  <div
+                    key={index}
+                    className="w-7 h-7 rounded-full flex items-center justify-center overflow-hidden -ml-3 first:ml-0 shadow-md"
+                    style={{ backgroundColor: deviceBrand.bgColor }}
+                  >
+                    <DeviceIcon className="text-white w-4 h-4" />
+                  </div>
+                );
+              })}
+              {data?.Devices?.filter((d) => d?.Brand && d?.Brand > 0).length > 2 && (
+                <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-[11px] text-gray-500 font-medium -ml-3 shadow-md">
+                  +{data?.Devices?.filter((d) => d?.Brand && d?.Brand > 0).length - 2}
+                </div>
+              )}
+            </div>
+
+            {/* Watt Label */}
+            <div className="text-primary100 bg-primary10 px-2 rounded-md rounded-l-[40px] gap-1 flex items-center py-0.5 ml-1">
+              <span className="font-medium text-sm">{labelWatt}</span>
+            </div>
+          </div>
+
+          {/* 
+          // Fallback: Single Brand Style (from station brand)
           <div
             className="rounded-md row"
             style={{ backgroundColor: formattedBrand.bgColor }}
@@ -271,11 +303,11 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
             <div className="center px-2">
               <IconBrand className="text-white" />
             </div>
-
             <div className="text-primary100 bg-primary10 px-1 rounded-md rounded-l-[40px] gap-1 flex items-center py-0.5">
               <span className="font-medium">{labelWatt}</span>
             </div>
           </div>
+          */}
         </div>
       </div>
 
