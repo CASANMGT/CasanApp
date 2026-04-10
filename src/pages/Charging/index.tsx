@@ -443,7 +443,7 @@ const Charging = () => {
       <AlertModal
         visible={openFinished}
         icon={IcSuccessGreen}
-        title="Sesi Selesai"
+        title="Sesi Selesai Test"
         description="Sesi Pengisian daya anda telah selesai berdasarkan durasi yang anda pesan"
         labelButtonLeft="Balik ke Beranda"
         labelButtonRight="Lihat detail sesi"

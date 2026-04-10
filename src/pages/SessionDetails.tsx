@@ -152,7 +152,7 @@ const SessionDetails = () => {
 
   return (
     <div className="background-1 overflow-hidden justify-between flex flex-col">
-      <Header type="secondary" title="Detail Sesi" onDismiss={onDismiss} />
+      <Header type="secondary" title="Detail Sesi Test" onDismiss={onDismiss} />
 
       <LoadingPage loading={loading}>
         <div
