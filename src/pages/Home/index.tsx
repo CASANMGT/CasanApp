@@ -384,7 +384,7 @@ const Home = () => {
           className="row gap-2 text-white font-semibold text-sm"
         >
           <FiInfo size={18} className="text-white/80" />
-          Tentang Casans →
+          Tentangs Casan →
         </button>
       </div>
 
