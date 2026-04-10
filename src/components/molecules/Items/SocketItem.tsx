@@ -59,16 +59,18 @@ const SocketItem: React.FC<SocketItemProps> = ({
       className={`relative h-[44px] center rounded-xl border text-xs text-blackBold font-medium whitespace-pre-line text-center  ${getSocketStyle()}`}
     >
       {/* Brand Logo - Dummy Image */}
-      <div className="absolute top-0 right-0 w-8 h-8 rounded-tr-xl rounded-bl-xl bg-gray-100 flex items-center justify-center overflow-hidden">
-        <img
-          src={brandImages[0]}
-          alt="Brand"
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            e.currentTarget.style.display = 'none';
-          }}
-        />
-      </div>
+      {data?.VehicleBrand?.Logo ? (
+        <div className="absolute top-0 right-0 w-8 h-8 rounded-tr-xl rounded-bl-xl bg-gray-100 flex items-center justify-center overflow-hidden">
+          <img
+            src={data?.VehicleBrand?.Logo}
+            alt="Brand"
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
+          />
+        </div>
+      ) : null}
       {getLabelSocket()}
     </div>
   );

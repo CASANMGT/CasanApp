@@ -53,8 +53,6 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
   let total = getTotalSocketAvailable();
   const isSuperFast: boolean = data?.Type === 2;
   const isUltraFast: boolean = data?.Type === 3;
-  const formattedBrand = getFormattedBrand(data?.Brand || 0);
-  const IconBrand = formattedBrand.icon;
   let isFull: boolean =
     data?.Sockets && data?.Sockets.length
       ? !data?.Sockets.some((e) => e.IsCharging !== 1)
@@ -73,6 +71,20 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
       timeFinished = Math.floor((diff % 3600) / 60);
     }
   }
+
+  const logos: string[] = Array.from(
+    new Map(
+      (data?.Sockets ?? [])
+        .filter(
+          (
+            s,
+          ): s is typeof s & {
+            VehicleBrand: { ID: number; Logo: string };
+          } => Boolean(s?.VehicleBrand?.ID && s?.VehicleBrand?.Logo),
+        )
+        .map((s) => [s.VehicleBrand.ID, s.VehicleBrand.Logo]),
+    ).values(),
+  );
 
   return (
     <div
@@ -96,17 +108,25 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
           <span className="text-black50">({data?.TotalSocket})</span>
         </p>
 
-        {/* Brand Logo - Dummy Image */}
-        <div className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden bg-gray-200">
-          <img
-            src={brandImages[0]}
-            alt="Brand"
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-        </div>
+        {logos?.length ? (
+          <div className="flex items-center">
+            {logos.map((img, index) => (
+              <div
+                key={index}
+                className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden -ml-3 first:ml-0 shadow-md bg-gray-200"
+              >
+                <img
+                  src={img}
+                  alt="Brand"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        ) : null}
 
         <div className="row gap-1.5">
           {isUltraFast ? (
