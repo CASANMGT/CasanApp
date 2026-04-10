@@ -5,7 +5,8 @@ import {
   IcFlash,
   IcFuel,
 } from "../../../assets";
-import { moments } from "../../../helpers";
+import { brandImages } from "../../../mocks/brandImages";
+import { getFormattedBrand, moments } from "../../../helpers";
 import { Separator, Signal } from "../../atoms";
 
 interface DeviceListItemProps {
@@ -52,6 +53,8 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
   let total = getTotalSocketAvailable();
   const isSuperFast: boolean = data?.Type === 2;
   const isUltraFast: boolean = data?.Type === 3;
+  const formattedBrand = getFormattedBrand(data?.Brand || 0);
+  const IconBrand = formattedBrand.icon;
   let isFull: boolean =
     data?.Sockets && data?.Sockets.length
       ? !data?.Sockets.some((e) => e.IsCharging !== 1)
@@ -92,6 +95,18 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
           {`${data.Name}`}{" "}
           <span className="text-black50">({data?.TotalSocket})</span>
         </p>
+
+        {/* Brand Logo - Dummy Image */}
+        <div className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden bg-gray-200">
+          <img
+            src={brandImages[0]}
+            alt="Brand"
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+        </div>
 
         <div className="row gap-1.5">
           {isUltraFast ? (
