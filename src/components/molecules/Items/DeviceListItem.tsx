@@ -5,6 +5,7 @@ import {
   IcFlash,
   IcFuel,
 } from "../../../assets";
+import { brandImages } from "../../../mocks/brandImages";
 import { getFormattedBrand, moments } from "../../../helpers";
 import { Separator, Signal } from "../../atoms";
 
@@ -94,15 +95,17 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
           <span className="text-black50">({data?.TotalSocket})</span>
         </p>
 
-        {/* Brand Logo */}
-        {data?.Brand && data?.Brand > 0 && (
-          <div
-            className="w-6 h-6 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: formattedBrand?.bgColor }}
-          >
-            <IconBrand className="text-white w-4 h-4" />
-          </div>
-        )}
+        {/* Brand Logo - Dummy Image */}
+        <div className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden bg-gray-200">
+          <img
+            src={brandImages[0]}
+            alt="Brand"
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+        </div>
 
         <div className="row gap-1.5">
           {isUltraFast ? (

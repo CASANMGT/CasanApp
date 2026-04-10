@@ -2,6 +2,7 @@ import { CiWifiOff } from "react-icons/ci";
 import { FaMotorcycle } from "react-icons/fa6";
 import { FiSlash } from "react-icons/fi";
 import { IcBattery2, IcBike, IcLineDown, ILNoImage } from "../../../assets";
+import { brandImages } from "../../../mocks/brandImages";
 import {
   getDistanceFromLatLonInKm,
   getFormattedBrand,
@@ -264,28 +265,28 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
             )}/${priceType === 2 ? "kWh" : "jam"}`}</p>
           </div>
 
-          {/* Brand Logos - Multiple from Devices */}
+          {/* Brand Logos - Dummy Images */}
           <div className="flex items-center gap-1">
             {/* Overlapping Brand Logos */}
             <div className="flex items-center">
-              {data?.Devices?.filter((d) => d?.Brand && d?.Brand > 0).slice(0, 2).map((device, index) => {
-                const deviceBrand = getFormattedBrand(device?.Brand || 0);
-                const DeviceIcon = deviceBrand.icon;
-                return (
-                  <div
-                    key={index}
-                    className="w-7 h-7 rounded-full flex items-center justify-center overflow-hidden -ml-3 first:ml-0 shadow-md"
-                    style={{ backgroundColor: deviceBrand.bgColor }}
-                  >
-                    <DeviceIcon className="text-white w-4 h-4" />
-                  </div>
-                );
-              })}
-              {data?.Devices?.filter((d) => d?.Brand && d?.Brand > 0).length > 2 && (
-                <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-[11px] text-gray-500 font-medium -ml-3 shadow-md">
-                  +{data?.Devices?.filter((d) => d?.Brand && d?.Brand > 0).length - 2}
+              {brandImages.slice(0, 2).map((img, index) => (
+                <div
+                  key={index}
+                  className="w-7 h-7 rounded-full flex items-center justify-center overflow-hidden -ml-3 first:ml-0 shadow-md bg-gray-200"
+                >
+                  <img
+                    src={img}
+                    alt="Brand"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
                 </div>
-              )}
+              ))}
+              <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-[11px] text-gray-500 font-medium -ml-3 shadow-md">
+                +{brandImages.length - 2}
+              </div>
             </div>
 
             {/* Watt Label */}

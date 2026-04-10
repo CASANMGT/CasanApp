@@ -91,6 +91,7 @@ import {
 } from "../../data/rtoProgramExplore";
 import { rupiah, moments } from "../../helpers";
 import StatusRTO from "./StatusRTO";
+import { mockStationForPreview } from "../../mocks/brandImages";
 
 type ResponseProps = {
   status: string;
@@ -473,7 +474,16 @@ const Home = () => {
               </span>
             </div>
 
-            {/* CHARGING LIST */}
+            {/* CHARGING LIST - PREVIEW WITH DUMMY DATA */}
+            <ChargingLocationCard
+              data={mockStationForPreview as ChargingStation}
+              loading={false}
+              currentLocation={currentLocation}
+              isLast={false}
+              onClick={() => {}}
+            />
+            
+            {/* Real data below */}
             <LoadingPage loading={!data?.data && loading} color="primary100">
               {data?.data &&
                 data?.data.map((item, index: number) => (
