@@ -4,6 +4,7 @@ import {
   BalanceHistory,
   BankAccount,
   BuyCredit,
+  Charging,
   ComingSoon,
   ConfirmationPin,
   EditProfile,
@@ -24,9 +25,9 @@ import {
   RentToBuyDetails,
   RTOBookingDetails,
   RTOHistory,
-  RTOMotorbikeProgram,
-  RTOOperatorDetail,
   RTOProgramExplore,
+  RTOOperatorDetail,
+  RTOMotorbikeProgram,
   Scan,
   SearchStation,
   SelectBank,
@@ -48,7 +49,7 @@ import {
   Voucher,
   VoucherDetails,
   WithdrawalDetails,
-  WithdrawalHistory
+  WithdrawalHistory,
 } from "../pages";
 import { useAxiosInterceptor } from "../services/ApiClient";
 import ProtectedRoute from "./ProtectedRoute";
@@ -63,8 +64,7 @@ const RoutesPage = () => {
 
       <Route
         path="charging/:id"
-        element={<ComingSoon />}
-        // element={<ProtectedRoute element={<Charging />} />}
+        element={<ProtectedRoute element={<Charging />} />}
       />
       <Route path="search-station" element={<SearchStation />} />
       <Route path="station-details/:id" element={<StationDetails />} />

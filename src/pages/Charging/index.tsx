@@ -246,7 +246,7 @@ const Charging = () => {
           </div>
 
           {/* LOCATION */}
-          <div className="flex justify-center mt-8">
+          {/* <div className="flex justify-center mt-8">
             <div className="flex items-center gap-2 bg-white rounded-full px-2.5 py-1.5">
               <IcMarkerSmall />
 
@@ -256,16 +256,16 @@ const Charging = () => {
 
               <Signal signalValue={data?.Device?.SignalValue} />
             </div>
-          </div>
+          </div> */}
 
-          <ChargeProgress
+          {/* <ChargeProgress
               currentKwh={data?.TotalKwhUsed || 0}
               totalKwh={data?.PaidKWH || 0}
               onFinish={getData}
-            />
+            /> */}
 
           {/* Charging Status */}
-          {(status === 5 && (data?.MaxWatt || 0) > 1) || status === 6 ? (
+          {/* {(status === 5 && (data?.MaxWatt || 0) > 1) || status === 6 ? (
             <ChargeProgress
               currentKwh={data?.TotalKwhUsed || 0}
               totalKwh={data?.PaidKWH || 0}
@@ -279,9 +279,9 @@ const Charging = () => {
               onFinish={getData}
               className="my-5"
             />
-          )}
+          )} */}
 
-          <div className="flex justify-center mb-5 ">
+          {/* <div className="flex justify-center mb-5 ">
             <div
               className={`rounded-full h-6 px-2.5 space-x-2 flex items-center shadow bg-white ${
                 isCharging ? "border border-primary10" : ""
@@ -296,9 +296,9 @@ const Charging = () => {
                 {isCharging ? "Charging" : "Stand By"}
               </span>
             </div>
-          </div>
+          </div> */}
 
-          {(data?.MaxWatt || 0) > 1 &&
+          {/* {(data?.MaxWatt || 0) > 1 &&
             dataVoucher?.Status === 2 &&
             dataVoucher?.VoucherDetails?.VoucherType === 2 && (
               <div className="bg-white shadow px-2.5 py-3 rounded-md mb-5 mx-4">
@@ -319,10 +319,10 @@ const Charging = () => {
                   <FaChevronRight size={16} className="text-white" />
                 </div>
               </div>
-            )}
+            )} */}
 
           {/* DETAILS */}
-          <div className="rounded-lg p-3 mb-4 bg-white drop-shadow">
+          {/* <div className="rounded-lg p-3 mb-4 bg-white drop-shadow">
             <div className="row gap-2 mb-3">
               <div className="w-[30px] h-[30px] center bg-primary10 rounded-full">
                 <IcInfoCircleGreen />
@@ -369,11 +369,11 @@ const Charging = () => {
                 className="bg-baseLightGray p-3"
               />
             )}
-          </div>
+          </div> */}
         </div>
 
         {/* FOOTER */}
-        <div className="container-button-footer">
+        {/* <div className="container-button-footer">
           {status === 2 && data?.Device?.Protocol === -999 ? ( // hide
             <button
               type="button"
@@ -401,7 +401,7 @@ const Charging = () => {
               onClick={onStartStop}
             />
           )}
-        </div>
+        </div> */}
       </LoadingPage>
 
       {/* MODAL */}
