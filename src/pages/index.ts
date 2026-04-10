@@ -14,6 +14,7 @@ import Main from "./Main";
 import NotFound from "./NotFound";
 import Order from "./Order";
 import PaymentSuccess from "./PaymentSuccess";
+import ChargingNew from './ChargingNew'
 import PrivacyPolice from "./PrivacyPolice";
 import ProfileNew from "./ProfileNew";
 import ProgressDetails from "./ProgressDetails";
@@ -101,6 +102,7 @@ export {
   VoucherDetails,
   Withdraw,
   WithdrawalDetails,
-  WithdrawalHistory
+  WithdrawalHistory,
+  ChargingNew
 };
 

@@ -43,7 +43,7 @@ import { formatDuration, moments, openWhatsApp, rupiah } from "../../helpers";
 import { Api } from "../../services";
 import { AppDispatch, RootState } from "../../store";
 import NotFound from "../NotFound";
-import ChargeProgress from "./ChargeProgress";
+import ChargeProgress from "../Charging/ChargeProgress";
 
 const Charging = () => {
   const navigate = useNavigate();
