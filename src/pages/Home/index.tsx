@@ -475,13 +475,13 @@ const Home = () => {
             </div>
 
             {/* CHARGING LIST - PREVIEW WITH DUMMY DATA */}
-            <ChargingLocationCard
+            {/* <ChargingLocationCard
               data={mockStationForPreview as ChargingStation}
               loading={false}
               currentLocation={currentLocation}
               isLast={false}
               onClick={() => {}}
-            />
+            /> */}
             
             {/* Real data below */}
             <LoadingPage loading={!data?.data && loading} color="primary100">

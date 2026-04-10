@@ -2,7 +2,6 @@ import { CiWifiOff } from "react-icons/ci";
 import { FaMotorcycle } from "react-icons/fa6";
 import { FiSlash } from "react-icons/fi";
 import { IcBattery2, IcBike, IcLineDown, ILNoImage } from "../../../assets";
-import { brandImages } from "../../../mocks/brandImages";
 import {
   getDistanceFromLatLonInKm,
   getFormattedBrand,
@@ -14,7 +13,7 @@ import {
 import { Button } from "../../atoms";
 
 interface ChargingLocationCardProps {
-  className?:string
+  className?: string;
   type?: "location-list";
   data: ChargingStation;
   currentLocation: LatLng | undefined;
@@ -151,6 +150,23 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
       />
     ) : null;
 
+  const uniqueVehicleBrandImages: string[] = Array.from(
+    new Map(
+      (data?.Devices ?? [])
+        .reduce((acc: any[], device) => {
+          return acc.concat(device?.Sockets ?? []);
+        }, [])
+        .filter(
+          (socket) => socket?.VehicleBrand?.ID && socket?.VehicleBrand?.Logo,
+        )
+        .map((socket) => [socket.VehicleBrand.ID, socket.VehicleBrand.Logo]),
+    ).values(),
+  );
+
+  const images = uniqueVehicleBrandImages ?? [];
+  const visibleImages = images.slice(0, 2);
+  const remaining = images.length - 2;
+
   return (
     <>
       <div
@@ -268,26 +284,31 @@ const ChargingLocationCard: React.FC<ChargingLocationCardProps> = ({
           {/* Brand Logos - Dummy Images */}
           <div className="flex items-center gap-1">
             {/* Overlapping Brand Logos */}
-            <div className="flex items-center">
-              {brandImages.slice(0, 2).map((img, index) => (
-                <div
-                  key={index}
-                  className="w-7 h-7 rounded-full flex items-center justify-center overflow-hidden -ml-3 first:ml-0 shadow-md bg-gray-200"
-                >
-                  <img
-                    src={img}
-                    alt="Brand"
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                </div>
-              ))}
-              <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-[11px] text-gray-500 font-medium -ml-3 shadow-md">
-                +{brandImages.length - 2}
+            {images.length ? (
+              <div className="flex items-center">
+                {visibleImages.map((img, index) => (
+                  <div
+                    key={index}
+                    className="w-7 h-7 rounded-full flex items-center justify-center overflow-hidden -ml-3 first:ml-0 shadow-md bg-gray-200"
+                  >
+                    <img
+                      src={img}
+                      alt="Brand"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
+                  </div>
+                ))}
+
+                {images.length > 2 && (
+                  <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-[11px] text-gray-500 font-medium -ml-3 shadow-md">
+                    +{remaining}
+                  </div>
+                )}
               </div>
-            </div>
+            ) : null}
 
             {/* Watt Label */}
             <div className="text-primary100 bg-primary10 px-2 rounded-md rounded-l-[40px] gap-1 flex items-center py-0.5 ml-1">
