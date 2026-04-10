@@ -43,7 +43,7 @@ import { formatDuration, moments, openWhatsApp, rupiah } from "../../helpers";
 import { Api } from "../../services";
 import { AppDispatch, RootState } from "../../store";
 import NotFound from "../NotFound";
-import ChargeProgress from "../Charging/ChargeProgress";
+import ChargeProgress from "./ChargeProgress";
 
 const Charging = () => {
   const navigate = useNavigate();
@@ -199,7 +199,7 @@ const Charging = () => {
     <div className="background-1 pt-3 overflow-hidden flex flex-col justify-between">
       <Header
         type={data?.Status !== 5 ? "cancel" : "charging"}
-        title="Halaman Pengisian Test 2"
+        title="Halaman Pengisian"
         onDismiss={onDismiss}
         className="mx-4 mb-4"
         onPress={() => {
@@ -257,12 +257,6 @@ const Charging = () => {
               <Signal signalValue={data?.Device?.SignalValue} />
             </div>
           </div>
-
-          <ChargeProgress
-              currentKwh={data?.TotalKwhUsed || 0}
-              totalKwh={data?.PaidKWH || 0}
-              onFinish={getData}
-            />
 
           {/* Charging Status */}
           {(status === 5 && (data?.MaxWatt || 0) > 1) || status === 6 ? (
@@ -443,7 +437,7 @@ const Charging = () => {
       <AlertModal
         visible={openFinished}
         icon={IcSuccessGreen}
-        title="Sesi Selesai Test"
+        title="Sesi Selesai"
         description="Sesi Pengisian daya anda telah selesai berdasarkan durasi yang anda pesan"
         labelButtonLeft="Balik ke Beranda"
         labelButtonRight="Lihat detail sesi"

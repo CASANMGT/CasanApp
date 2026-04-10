@@ -49,7 +49,7 @@ import {
   Voucher,
   VoucherDetails,
   WithdrawalDetails,
-  WithdrawalHistory
+  WithdrawalHistory,
 } from "../pages";
 import { useAxiosInterceptor } from "../services/ApiClient";
 import ProtectedRoute from "./ProtectedRoute";
