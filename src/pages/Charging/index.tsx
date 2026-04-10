@@ -199,7 +199,7 @@ const Charging = () => {
     <div className="background-1 pt-3 overflow-hidden flex flex-col justify-between">
       <Header
         type={data?.Status !== 5 ? "cancel" : "charging"}
-        title="Halaman Pengisian Test"
+        title="Halaman Pengisian Test 2"
         onDismiss={onDismiss}
         className="mx-4 mb-4"
         onPress={() => {
