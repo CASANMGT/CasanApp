@@ -199,7 +199,7 @@ const Charging = () => {
     <div className="background-1 pt-3 overflow-hidden flex flex-col justify-between">
       <Header
         type={data?.Status !== 5 ? "cancel" : "charging"}
-        title="Halaman Pengisian"
+        title="Halaman Pengisian Test 2"
         onDismiss={onDismiss}
         className="mx-4 mb-4"
         onPress={() => {
@@ -258,7 +258,13 @@ const Charging = () => {
             </div>
           </div>
 
-          {/* STATUS */}
+          <ChargeProgress
+              currentKwh={data?.TotalKwhUsed || 0}
+              totalKwh={data?.PaidKWH || 0}
+              onFinish={getData}
+            />
+
+          {/* Charging Status */}
           {(status === 5 && (data?.MaxWatt || 0) > 1) || status === 6 ? (
             <ChargeProgress
               currentKwh={data?.TotalKwhUsed || 0}
