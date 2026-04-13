@@ -258,7 +258,7 @@ const Charging = () => {
             </div>
           </div>
 
-          {/* STATUS */}
+          {/* Charging Status */}
           {(status === 5 && (data?.MaxWatt || 0) > 1) || status === 6 ? (
             <ChargeProgress
               currentKwh={data?.TotalKwhUsed || 0}

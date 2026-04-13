@@ -5,7 +5,8 @@ import {
   IcFlash,
   IcFuel,
 } from "../../../assets";
-import { moments } from "../../../helpers";
+import { brandImages } from "../../../mocks/brandImages";
+import { getFormattedBrand, moments } from "../../../helpers";
 import { Separator, Signal } from "../../atoms";
 
 interface DeviceListItemProps {
@@ -71,6 +72,20 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
     }
   }
 
+  const logos: string[] = Array.from(
+    new Map(
+      (data?.Sockets ?? [])
+        .filter(
+          (
+            s,
+          ): s is typeof s & {
+            VehicleBrand: { ID: number; Logo: string };
+          } => Boolean(s?.VehicleBrand?.ID && s?.VehicleBrand?.Logo),
+        )
+        .map((s) => [s.VehicleBrand.ID, s.VehicleBrand.Logo]),
+    ).values(),
+  );
+
   return (
     <div
       onClick={() => {
@@ -92,6 +107,26 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
           {`${data.Name}`}{" "}
           <span className="text-black50">({data?.TotalSocket})</span>
         </p>
+
+        {logos?.length ? (
+          <div className="flex items-center">
+            {logos.map((img, index) => (
+              <div
+                key={index}
+                className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden -ml-3 first:ml-0 shadow-md bg-gray-200"
+              >
+                <img
+                  src={img}
+                  alt="Brand"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        ) : null}
 
         <div className="row gap-1.5">
           {isUltraFast ? (

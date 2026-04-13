@@ -2,7 +2,7 @@ import BalanceDetails from "./BalanceDetails";
 import BalanceHistory from "./BalanceHistory";
 import BankAccount from "./BankAccount";
 import BuyCredit from "./BuyCredit";
-import Charging from "./Charging";
+import ChargingNew from "./ChargingNew";
 import ComingSoon from "./ComingSoon";
 import ConfirmationPin from "./ConfirmationPin";
 import EditProfile from "./EditProfile";
@@ -24,8 +24,8 @@ import RentToBuyDetails from "./RentToBuyDetails";
 import RTOBookingDetails from "./RTOBookingDetails";
 import RTOHistory from "./RTOHistory";
 import RTOProgramExplore from "./RTOProgramExplore";
-import RTOOperatorDetail from "./RTOProgramExplore/RTOOperatorDetail";
 import RTOMotorbikeProgram from "./RTOProgramExplore/RTOMotorbikeProgram";
+import RTOOperatorDetail from "./RTOProgramExplore/RTOOperatorDetail";
 import Scan from "./Scan";
 import SearchStation from "./SearchStation";
 import SelectBank from "./SelectBank";
@@ -54,9 +54,7 @@ export {
   BalanceDetails,
   BalanceHistory,
   BankAccount,
-  BuyCredit,
-  Charging,
-  ComingSoon,
+  BuyCredit, ChargingNew, ComingSoon,
   ConfirmationPin,
   EditProfile,
   Home,
@@ -75,11 +73,7 @@ export {
   RentToBuy,
   RentToBuyDetails,
   RTOBookingDetails,
-  RTOHistory,
-  RTOProgramExplore,
-  RTOOperatorDetail,
-  RTOMotorbikeProgram,
-  Scan,
+  RTOHistory, RTOMotorbikeProgram, RTOOperatorDetail, RTOProgramExplore, Scan,
   SearchStation,
   SelectBank,
   SelectDealer,

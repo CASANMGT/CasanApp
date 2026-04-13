@@ -43,7 +43,7 @@ declare global {
     VehicleModelID: number;
     VehicleStatus: number;
   };
-  
+
   type VehicleModelProps = {
     ID: number;
     Ampere: number;
@@ -65,7 +65,7 @@ declare global {
     VehicleBrandID: number;
   };
 
-   type ColorVehicleModelProps = {
+  type ColorVehicleModelProps = {
     ID: number;
     VehicleModelID: number;
     ColorName: string;
@@ -79,6 +79,9 @@ declare global {
     ID: number;
     Name: string;
     Logo: string;
+    IsCharging: boolean;
+    IsRTO: boolean;
+    MinimumWatt: number;
     CreatedAt: string;
     UpdatedAt: string;
     DeletedAt: string | null;

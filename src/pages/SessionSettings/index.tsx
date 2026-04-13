@@ -100,7 +100,7 @@ const SessionSettings = () => {
     useState<CalculateGrossProps>();
   const [isNotFound, setIsNotFound] = useState<boolean>(false);
   const [selectedDevice, setSelectedDevice] = useState<Device>(
-    location?.state?.selectedDevice
+    location?.state?.selectedDevice,
   );
   const [channel, setChannel] = useState<number>(2);
   const [valueCalculate, setValueCalculate] = useState<number>(0);
@@ -171,7 +171,8 @@ const SessionSettings = () => {
         }
       } else {
         const filtered: Socket | null = sockets?.length
-          ? sockets.filter((e) => e?.IsCharging === 0 && e?.IsActive)[0] ?? null
+          ? (sockets.filter((e) => e?.IsCharging === 0 && e?.IsActive)[0] ??
+            null)
           : null;
 
         if (filtered?.ID) {
@@ -202,7 +203,7 @@ const SessionSettings = () => {
           {
             replace: true,
             state: { isGoOrder: true },
-          }
+          },
         );
     }
   }, [addSession]);
@@ -313,19 +314,19 @@ const SessionSettings = () => {
       form?.selectedTab === "nominal"
         ? valueCalculate
         : form?.selectedTab === "power"
-        ? Number(form?.value.replace(" kWh", ""))
-        : Number(
-            (
-              Number(form?.voltage?.value || 0) *
-              Number(form?.ampere?.value || 0)
-            ).toFixed(0) || 0
-          );
+          ? Number(form?.value.replace(" kWh", ""))
+          : Number(
+              (
+                Number(form?.voltage?.value || 0) *
+                Number(form?.ampere?.value || 0)
+              ).toFixed(0) || 0,
+            );
 
     const dataOtherFee: OtherFeesProps[] | undefined =
       data?.PriceSetting?.OtherFees;
     const selectedBaseRule: PriceBaseRule | null =
       data?.PriceSetting?.PriceBaseRules.find(
-        (item) => power >= item.From && power <= item.To
+        (item) => power >= item.From && power <= item.To,
       ) ?? null;
     const selectedPriceTimeRule: PriceBaseTime | undefined =
       getCurrentSlot(selectedBaseRule);
@@ -334,7 +335,7 @@ const SessionSettings = () => {
       ? dataOtherFee.reduce(
           (sum, item) =>
             sum + (item?.Type === 1 ? item.Value : (item.Value * value) / 100),
-          0
+          0,
         )
       : 0;
 
@@ -350,17 +351,17 @@ const SessionSettings = () => {
       form?.selectedTab === "nominal"
         ? valueCalculate
         : form?.selectedTab === "power"
-        ? Number(form?.value.replace(" kWh", ""))
-        : Number(
-            (
-              Number(form?.voltage?.value || 0) *
-              Number(form?.ampere?.value || 0)
-            ).toFixed(0) || 0
-          );
+          ? Number(form?.value.replace(" kWh", ""))
+          : Number(
+              (
+                Number(form?.voltage?.value || 0) *
+                Number(form?.ampere?.value || 0)
+              ).toFixed(0) || 0,
+            );
 
     const selectedBaseRule: PriceBaseRule | null =
       data?.PriceSetting?.PriceBaseRules.find(
-        (item) => power >= item.From && power <= item.To
+        (item) => power >= item.From && power <= item.To,
       ) ?? null;
     const selectedPriceTimeRule: PriceBaseTime | undefined =
       getCurrentSlot(selectedBaseRule);
@@ -377,7 +378,7 @@ const SessionSettings = () => {
             (item?.Type === 1
               ? item.Value
               : (item.Value * totalBasicEnergyPrice) / 100),
-          0
+          0,
         )
       : 0;
     const milestone: number =
@@ -395,8 +396,8 @@ const SessionSettings = () => {
         : 0;
     const pju: number = Number(
       ((totalBasicEnergyPrice * (data?.PriceSetting?.PJU || 0)) / 100).toFixed(
-        0
-      )
+        0,
+      ),
     );
     const subTotal: number = Number(
       (
@@ -406,10 +407,10 @@ const SessionSettings = () => {
         milestone -
         voucher +
         pju
-      ).toFixed(0)
+      ).toFixed(0),
     );
     const ppn: number = Number(
-      ((subTotal * (data?.PriceSetting?.PPN || 0)) / 100).toFixed(0)
+      ((subTotal * (data?.PriceSetting?.PPN || 0)) / 100).toFixed(0),
     );
     const total: number = subTotal + ppn;
 
@@ -471,7 +472,7 @@ const SessionSettings = () => {
             (
               Number(form?.voltage?.value || 0) *
               Number(form?.ampere?.value || 0)
-            ).toFixed(0)
+            ).toFixed(0),
           );
         } else if (priceType === 2) {
           url = "sessions/calculate-energy";
@@ -499,7 +500,7 @@ const SessionSettings = () => {
             (
               Number(form?.voltage?.value || 0) *
               Number(form?.ampere?.value || 0)
-            ).toFixed(0)
+            ).toFixed(0),
           ),
         };
         const res = await Api.post({
@@ -538,15 +539,15 @@ const SessionSettings = () => {
         type === "quick"
           ? dataCalculateGross?.ChargingUsage || 0
           : form.selectedTab === "nominal"
-          ? Number(form.value.replace("Rp", "").replace(/\./g, ""))
-          : valueCalculate || 0;
+            ? Number(form.value.replace("Rp", "").replace(/\./g, ""))
+            : valueCalculate || 0;
 
       const paid_kwh: number =
         type === "quick"
           ? dataCalculateGross?.KwhUsed || 0
           : form.selectedTab === "power"
-          ? Number(form.value.replace(" kWh", ""))
-          : valueCalculate || 0;
+            ? Number(form.value.replace(" kWh", ""))
+            : valueCalculate || 0;
 
       const body: AddSessionBody = {
         ab_test: type === "quick" ? "quick_charge" : "normal_charge",
@@ -557,8 +558,8 @@ const SessionSettings = () => {
           type === "quick"
             ? "BALANCE_FU"
             : totalPrice > 0 && select.paymentMethod?.key
-            ? select.paymentMethod?.key
-            : "BALANCE_FU",
+              ? select.paymentMethod?.key
+              : "BALANCE_FU",
         session_method: select?.selectedTab === "duration" ? 2 : 1,
         socket_id: select?.selectedSocket || 0,
         station_id: data?.ID,
@@ -566,7 +567,7 @@ const SessionSettings = () => {
         wallet_used_amount: Math.floor(
           type === "quick"
             ? dataCalculateGross?.Total || 0
-            : select?.balance || 0
+            : select?.balance || 0,
         ),
       };
 
@@ -577,13 +578,13 @@ const SessionSettings = () => {
   const isShowTotal = useMemo(
     () =>
       Number(
-        form?.value.replace("Rp", "").replace(/\./g, "").replace(" kWh", "")
+        form?.value.replace("Rp", "").replace(/\./g, "").replace(" kWh", ""),
       ) > 0,
-    [form?.value]
+    [form?.value],
   );
   const chargingNominal: number = getChargingNominal();
   const totalPrice: number = getTotalPrice();
-  const brand: number = selectedDevice?.Brand || 0;
+  const brand: number = Number(selectedDevice?.Brand || 0);
   const formattedBrand = getFormattedBrand(brand);
   const IconBrand = formattedBrand.icon;
 
@@ -605,7 +606,7 @@ const SessionSettings = () => {
       setFromGlobal({
         type,
         value: false,
-      })
+      }),
     );
   };
 
@@ -632,7 +633,7 @@ const SessionSettings = () => {
                   onClick={() =>
                     openGoogleMaps(
                       data?.Location?.Latitude,
-                      data?.Location?.Longitude
+                      data?.Location?.Longitude,
                     )
                   }
                 />
@@ -861,7 +862,7 @@ const SessionSettings = () => {
             <p className="text-base text-black100/70">
               Total:{" "}
               <a className="text-blackBold font-bold">{`Rp${rupiah(
-                totalPrice
+                totalPrice,
               )}`}</a>
             </p>
 
@@ -976,7 +977,7 @@ const SessionSettings = () => {
             onDismiss={() => setOpenRequestOTP(false)}
             onClick={async () => {
               const formatPhone: string = formatPhoneNumber(
-                `0${form.phoneNumber}`
+                `0${form.phoneNumber}`,
               );
 
               await Api.post({
@@ -1078,13 +1079,13 @@ const SessionSettings = () => {
               form?.selectedTab === "nominal"
                 ? valueCalculate
                 : form?.selectedTab === "power"
-                ? form?.value.replace(" kWh", "")
-                : Number(
-                    (
-                      Number(form?.voltage?.value || 0) *
-                      Number(form?.ampere?.value || 0)
-                    ).toFixed(0) || 0
-                  )
+                  ? form?.value.replace(" kWh", "")
+                  : Number(
+                      (
+                        Number(form?.voltage?.value || 0) *
+                        Number(form?.ampere?.value || 0)
+                      ).toFixed(0) || 0,
+                    )
             }
             duration={
               form.selectedTab === "duration"
@@ -1139,7 +1140,7 @@ const formatDiscount = (data: OptionsProps | undefined, nominal: number) => {
       value = `${dataVoucher?.VoucherName} (disc Rp${rupiah(
         dataVoucher?.DiscountType === 1
           ? dataVoucher?.DiscountValue
-          : (nominal * dataVoucher?.DiscountValue) / 100
+          : (nominal * dataVoucher?.DiscountValue) / 100,
       )})`;
     } else {
       value = dataVoucher?.VoucherName;
