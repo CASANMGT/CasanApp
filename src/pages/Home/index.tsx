@@ -139,16 +139,16 @@ const TAB_CONFIG: {
     activeBorder: "border-[#4DB6AC]",
     activeBg: "bg-[#e0f2f1]",
   },
-  {
-    id: "rent",
-    label: "Rent",
-    sub: "Sewa harian / bulanan",
-    ariaLabel: "Rent — sewa motor harian atau bulanan",
-    icon: IcRent,
-    bgClass: "bg-[#e0f2f1]",
-    activeBorder: "border-[#4DB6AC]",
-    activeBg: "bg-[#e0f2f1]",
-  },
+  // {
+  //   id: "rent",
+  //   label: "Rent",
+  //   sub: "Sewa harian / bulanan",
+  //   ariaLabel: "Rent — sewa motor harian atau bulanan",
+  //   icon: IcRent,
+  //   bgClass: "bg-[#e0f2f1]",
+  //   activeBorder: "border-[#4DB6AC]",
+  //   activeBg: "bg-[#e0f2f1]",
+  // },
 ];
 
 const MOCK_RENTALS = [
@@ -390,7 +390,7 @@ const Home = () => {
         />
       </div>
 
-      <div className="h-full overflow-y-auto overscroll-contain scrollbar-none transition-all duration-300 px-3 space-y-4 z-10">
+      <div className="h-full overflow-y-auto overscroll-contain scrollbar-none transition-all duration-300 px-3 space-y-4 z-10 flex flex-col">
         {/* SERVICE TAB CARDS */}
         <div
           role="tablist"
@@ -415,7 +415,7 @@ const Home = () => {
                     setSearchParams({}, { replace: true });
                   }
                 }}
-                className={`relative flex-1 flex flex-col items-center gap-2 p-3 rounded-[14px] border-2 transition-all duration-200 ease-out ${
+                className={`relative flex-1 flex items-center gap-2 p-2 rounded-[14px] border-2 transition-all duration-200 ease-out ${
                   isActive
                     ? "cursor-default bg-white border-[#4DB6AC] shadow-[0_4px_20px_rgba(77,182,172,0.25)]"
                     : "cursor-pointer bg-white/70 backdrop-blur-sm border-transparent opacity-85 hover:opacity-100"
@@ -467,7 +467,7 @@ const Home = () => {
               </span>
               <span
                 className="text-xs font-semibold text-primary100 cursor-pointer"
-                onClick={() => navigate("/location-list")}
+                onClick={() => navigate("/home/location")}
               >
                 Lihat peta →
               </span>
@@ -513,7 +513,7 @@ const Home = () => {
             id="home-tabpanel-rent-to-own"
             role="tabpanel"
             aria-labelledby="home-tab-rent-to-own"
-            className="space-y-4"
+            className="space-y-4 flex-1"
           >
             {/* PROGRAM SEKARANG — hanya login + ada program RTO aktif */}
             {isAuthenticated && dataRTO?.ID ? (
@@ -737,10 +737,46 @@ const Home = () => {
                   );
                 })()}
               </>
-            ) : null}
+            ) : isAuthenticated ? (
+              <div className="bg-white rounded-xl p-6 text-center space-y-3 shadow-sm">
+                <div className="w-16 h-16 mx-auto rounded-full bg-[#e0f2f1] flex items-center justify-center">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-[#4DB6AC]">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-[15px] font-medium text-blackBold">Belum ada program RTO</p>
+                  <p className="text-xs text-black50 mt-1">Anda belum memiliki program Rent to Own yang sedang berlangsung</p>
+                </div>
+                <button
+                  onClick={() => navigate("/rto-explore")}
+                  className="w-full py-2.5 bg-[#4DB6AC] text-white text-xs font-semibold rounded-lg"
+                >
+                  Lihat Program RTO
+                </button>
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl p-6 text-center space-y-3 shadow-sm">
+                <div className="w-16 h-16 mx-auto rounded-full bg-[#e0f2f1] flex items-center justify-center">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-[#4DB6AC]">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-[15px] font-medium text-blackBold">Masuk untuk melihat program</p>
+                  <p className="text-xs text-black50 mt-1">Silakan masuk untuk melihat program Rent to Own Anda</p>
+                </div>
+                <button
+                  onClick={() => navigate("/login")}
+                  className="w-full py-2.5 bg-[#4DB6AC] text-white text-xs font-semibold rounded-lg"
+                >
+                  Masuk
+                </button>
+              </div>
+            )}
 
-            {/* RTO PROGRAMS */}
-            <div className="px-0.5">
+            {/* RTO PROGRAMS - HIDDEN */}
+            {/* <div className="px-0.5">
               <span className="text-[15px] font-medium text-blackBold">
                 {isAuthenticated
                   ? "Lihat RTO program lainnya"
@@ -827,7 +863,6 @@ const Home = () => {
               );
             })}
 
-            {/* LOAD MORE */}
             {programHasMore && (
               <button
                 onClick={() => setProgramPage((prev) => prev + 1)}
@@ -835,7 +870,7 @@ const Home = () => {
               >
                 Lihat program lainnya →
               </button>
-            )}
+            )} */}
           </div>
         )}
 
