@@ -34,10 +34,18 @@ const ModalChargingStation: React.FC<ModalChargingStationProps> = ({
     setCurrentLocation(check);
   };
 
-  let dataFiltered = data;
-  if (filter?.length) {
-    dataFiltered = data?.filter((e) => filter.includes(e?.Brand || 0));
-  }
+  const dataFiltered = (data || []).filter((station) => {
+    // jika filter kosong → return semua
+    if (!filter || filter.length === 0) return true;
+
+    return (station.Devices || []).some((device) =>
+      (device.Sockets || []).some(
+        (socket) =>
+          socket?.VehicleBrandID !== undefined &&
+          filter.includes(socket?.VehicleBrandID),
+      ),
+    );
+  });
 
   return (
     <ModalContainer
