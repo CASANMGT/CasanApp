@@ -78,7 +78,7 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ data }) => {
   const iconMarker = getIconMarker();
 
   const customMyLocationIcon = L.icon({
-    iconUrl: iconMarker,
+    iconUrl: IcCasanMarker,
     iconSize: [36, 36],
     iconAnchor: [18, 36],
   });

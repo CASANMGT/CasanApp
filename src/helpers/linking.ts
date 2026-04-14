@@ -3,6 +3,12 @@ export const openGoogleMaps = (lat: number, lon: number) => {
   window.open(url, "_blank");
 };
 
+/** Open Google Maps search (address or place name) */
+export const openGoogleMapsSearch = (query: string) => {
+  const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query.trim())}`;
+  window.open(url, "_blank");
+};
+
 export const openWhatsApp = (phone: string) => {
   let newPhone: string = "";
 

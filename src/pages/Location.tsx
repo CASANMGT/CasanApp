@@ -31,16 +31,21 @@ const Location = () => {
   const global = useSelector((state: RootState) => state?.global);
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [loadingLocation, setLoadingLocation] = useState(false);
   const [data, setData] = useState<ChargingStation[]>();
   const [currentLocation, setCurrentLocation] = useState<LatLng>();
   const [centerLocation, setCenterLocation] = useState<LatLng>([
     -6.208763, 106.845599,
   ]);
+  const [brandOptions, setBrandOptions] = useState<OptionsProps[]>([]);
 
   useEffect(() => {
     getData();
   }, [filterParams]);
+
+  useEffect(() => {
+    getBrands()
+  }, [])
+  
 
   const getData = async () => {
     try {
@@ -70,6 +75,24 @@ const Location = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const getBrands = async () => {
+    try {
+      const res = await Api.get({
+        url: "vehicle-brands",
+        params: { is_charging: true },
+      });
+
+      if (res?.data?.length) {
+        setBrandOptions(
+          res.data.map((e: VehicleBrandProps) => ({
+            value: e?.ID,
+            name: e?.Name || "-",
+          })),
+        );
+      }
+    } catch (error) {}
   };
 
   const getMyLocation = async () => {
@@ -115,7 +138,7 @@ const Location = () => {
 
   return (
     <div className="container-screen relative">
-      <LoadingPage loading={loading || loadingLocation} color="primary100">
+      <LoadingPage loading={loading } color="primary100">
         <div className=" w-full h-full relative">
           {/* MAP */}
           <Map
@@ -146,7 +169,7 @@ const Location = () => {
             <DropdownCheckbox
               selected={JSON.parse(filterParams)}
               isIconOnly
-              options={ChargeBrandOption}
+              options={brandOptions}
               onApply={(s) => setSearchParams({ filter: JSON.stringify(s) })}
             />
           </div>

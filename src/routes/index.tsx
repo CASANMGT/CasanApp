@@ -4,7 +4,7 @@ import {
   BalanceHistory,
   BankAccount,
   BuyCredit,
-  Charging,
+  ChargingNew,
   ComingSoon,
   ConfirmationPin,
   EditProfile,
@@ -25,6 +25,9 @@ import {
   RentToBuyDetails,
   RTOBookingDetails,
   RTOHistory,
+  RTOMotorbikeProgram,
+  RTOOperatorDetail,
+  RTOProgramExplore,
   Scan,
   SearchStation,
   SelectBank,
@@ -61,7 +64,7 @@ const RoutesPage = () => {
 
       <Route
         path="charging/:id"
-        element={<ProtectedRoute element={<Charging />} />}
+        element={<ProtectedRoute element={<ChargingNew />} />}
       />
       <Route path="search-station" element={<SearchStation />} />
       <Route path="station-details/:id" element={<StationDetails />} />
@@ -109,6 +112,18 @@ const RoutesPage = () => {
       <Route
         path="rent-to-buy-details"
         element={<ProtectedRoute element={<RentToBuyDetails />} />}
+      />
+      <Route
+        path="rto-program-explore"
+        element={<ProtectedRoute element={<RTOProgramExplore />} />}
+      />
+      <Route
+        path="rto-program-explore/operator/:operatorId"
+        element={<ProtectedRoute element={<RTOOperatorDetail />} />}
+      />
+      <Route
+        path="rto-program-explore/bike/:bikeId"
+        element={<ProtectedRoute element={<RTOMotorbikeProgram />} />}
       />
 
       <Route path="vehicle" element={<Vehicle />} />

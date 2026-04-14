@@ -37,12 +37,15 @@ declare global {
     ID: number;
     Port: number;
     DeviceID: number;
-    StartChargingTime: string | null;
-    StopChargingTime: string | null;
+    Device: Device;
+    VehicleBrandID?: number;
+    VehicleBrand?: VehicleBrandProps;
+    StartChargingTime: string|null;
+    StopChargingTime: string|null;
     IsCharging: number;
     SessionStatus: number;
-    IsActive: boolean
-    DeletedAt: string | null;
+    IsActive: boolean;
+    DeletedAt: any;
     CreatedAt: string;
     UpdatedAt: string;
   };
@@ -99,24 +102,31 @@ declare global {
   type ChargingStation = {
     ID: number;
     Name: string;
-    Infrastructure: string;
-    Brand: number | null;
     Image: string;
+    Infrastructure: string;
     Phone: string;
     IsParkingFee: boolean;
     IsClosed: boolean;
-    IsVisibleToUser: boolean;
     PriceSettingID: number;
     AdminID: number;
     LocationID: number;
-    Location: LocationResponse;
+    IsChargingStation: boolean;
+    IsRental: boolean;
+    IsVisibleToUser: boolean;
+    IGLink: string;
+    TikTokLink: string;
+    Sessions: Session[];
+    Vouchers: Voucher[];
+    DeletedAt: any;
+    CreatedAt: string;
+    UpdatedAt: string;
+    Brand: number;
+
     Admin: AdminProps;
     OperationalHours: OperationalHour[];
     Devices: Device[] | null;
     PriceSetting: PriceSetting;
-    DeletedAt: string | null;
-    CreatedAt: string;
-    UpdatedAt: string;
+    Location: LocationResponse;
   };
 
   type OtherFeesProps = {

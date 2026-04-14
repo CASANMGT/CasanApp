@@ -45,10 +45,15 @@ const Package: React.FC<Props> = ({ data }) => {
   };
 
   return (
-    <div className="bg-[#F5F8F9]/24 flex-1 h-full px-4 py-6">
-      <p className="text-base font-semibold mb-4">Pilih Paket Pembayaran</p>
+    <div className="flex-1 bg-gradient-to-b from-[#f0faf8] to-[#f5f8f9] px-4 py-6">
+      <div className="mb-5">
+        <h2 className="text-base font-bold text-gray-900">Pilih paket pembayaran</h2>
+        <p className="mt-1 text-[13px] leading-snug text-gray-500">
+          Paket lebih banyak hari biasanya lebih hemat per hari. Tap kartu untuk lanjut bayar.
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
         {isShow ? (
           data?.DayCredits.map((item, i) => (
             <PaymentPackageCard
@@ -62,7 +67,12 @@ const Package: React.FC<Props> = ({ data }) => {
             />
           ))
         ) : (
-          <span>No Data</span>
+          <div className="col-span-full rounded-2xl border border-dashed border-gray-200 bg-white/80 px-4 py-10 text-center">
+            <p className="text-sm font-semibold text-gray-700">Belum ada paket kredit</p>
+            <p className="mt-1 text-xs text-gray-500">
+              Hubungi dealer atau cek lagi nanti. Paket akan muncul di sini.
+            </p>
+          </div>
         )}
       </div>
 
@@ -97,35 +107,50 @@ const PaymentPackageCard: React.FC<PaymentPackageCardProps> = ({
   originalPrice,
   onClick,
 }) => {
+  const listPrice = originalPrice * (data?.DayCount ?? 1);
+  const hasDiscount = Boolean(data?.DiscountRate && listPrice > (data?.Price ?? 0));
+  const savings = hasDiscount ? Math.max(0, listPrice - (data?.Price ?? 0)) : 0;
+
   return (
-    <div
+    <button
+      type="button"
       onClick={onClick}
-      className="rounded-lg overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer"
+      className="w-full overflow-hidden rounded-2xl border border-gray-100 bg-white text-left shadow-sm transition-all hover:border-[#4DB6AC]/35 hover:shadow-md active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4DB6AC] focus-visible:ring-offset-2"
     >
-      {/* Header */}
       <div
-        className="bg-teal-700 text-white p-2.5 flex items-center justify-between"
+        className="flex items-center justify-between px-3 py-2.5 text-white"
         style={{
           background: `linear-gradient(270deg, #21927B, #327478)`,
         }}
       >
-        <p className="font-semibold">{`Beli ${data?.DayCount} hari kredit`}</p>
-        <FaChevronRight size={16} />
+        <span className="text-sm font-semibold">{`Beli ${data?.DayCount} hari kredit`}</span>
+        <FaChevronRight size={14} className="opacity-90" aria-hidden />
       </div>
 
-      {/* Content */}
-      <div className="px-2.5 py-2 bg-white">
-        <p className="text-blackBold font-semibold text-base">
-          {`Rp${rupiah(data?.Price)}`}
+      <div className="relative space-y-1 px-3 py-3">
+        {hasDiscount && data.DayCount > 1 && (
+          <span className="absolute right-2 top-2 rounded-full bg-amber-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-800 ring-1 ring-amber-100">
+            Hemat
+          </span>
+        )}
+        <p className="text-lg font-bold tabular-nums text-gray-900">
+          Rp{rupiah(data?.Price)}
         </p>
-        {data?.DiscountRate ? (
-          <p className="text-[10px] text-black70 line-through">
-            {`Rp${rupiah(originalPrice * data?.DayCount)}`}
-          </p>
+        {hasDiscount ? (
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+            <p className="text-[11px] text-gray-400 line-through">
+              Rp{rupiah(listPrice)}
+            </p>
+            {savings > 0 && (
+              <span className="text-[10px] font-semibold text-[#2E7D32]">
+                Hemat Rp{rupiah(savings)}
+              </span>
+            )}
+          </div>
         ) : (
-          <p className="text-[10px] text-black70">Harga Normal</p>
+          <p className="text-[11px] text-gray-500">Harga normal</p>
         )}
       </div>
-    </div>
+    </button>
   );
 };

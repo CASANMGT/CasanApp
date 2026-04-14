@@ -2,7 +2,6 @@ import { IoIosInformationCircleOutline } from "react-icons/io";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IcBackWhite } from "../../assets";
 import { ProgressBar2, TabSwipe } from "../../components";
-import { moments } from "../../helpers";
 import History from "./History";
 import Package from "./Package";
 import { useEffect, useState } from "react";
@@ -41,10 +40,14 @@ const BuyCredit = () => {
     }
   }, [addTransactionRTO?.data]);
 
-  const dataDayCredit: RTOCreditProps | null =
-    data?.DayCredits.filter((e) => e?.DayCount === 1)[0] ?? null;
-  const current = data?.CreditPaid || 1;
-  const total = data?.Payment || 1;
+  const paidDays = data?.CreditPaid ?? 0;
+  const leftDays = data?.CreditLeft ?? 0;
+  const totalHariProgram = paidDays + leftDays > 0 ? paidDays + leftDays : data?.Payment || 1;
+  /** Bar selaras dengan teks "X/Y hari terbayar" */
+  const progressPercent =
+    totalHariProgram > 0
+      ? Math.min(100, Math.max(0, (paidDays / totalHariProgram) * 100))
+      : 0;
 
   return (
     <div className="container-screen overflow-hidden justify-between flex flex-col">
@@ -70,25 +73,47 @@ const BuyCredit = () => {
             Beli Kredit
           </h4>
 
-          <div
+          <button
+            type="button"
+            title="Informasi paket kredit dan pembayaran"
+            aria-label="Informasi paket kredit"
+            className="cursor-pointer rounded-full p-1 transition-opacity hover:opacity-90"
             onClick={(e) => {
               e.stopPropagation();
-              alert("Info clicked");
+              // TODO: buka bottom sheet / halaman bantuan jika tersedia
             }}
-            className="cursor-pointer"
           >
-            <IoIosInformationCircleOutline size={20} className="text-white" />
-          </div>
+            <IoIosInformationCircleOutline size={22} className="text-white" />
+          </button>
         </div>
 
-        <div className="space-y-1">
-          <span className="text-white text-xs font-semibold">Saldo Kredit</span>
-          <div className="row gap-1.5 text-white">
-            <span className="2xl font-bold">{data?.CreditLeft || 0}</span>
-            <span className="font-medium">Kredit Hari</span>
+        <div className="space-y-2">
+          <span className="text-xs font-semibold text-white/90">Saldo kredit</span>
+          <div className="row items-baseline gap-1.5 text-white">
+            <span className="text-3xl font-bold tabular-nums">{data?.CreditLeft ?? 0}</span>
+            <span className="text-sm font-medium">hari tersisa</span>
           </div>
+          <p className="text-[11px] leading-snug text-white/75">
+            Beli paket di bawah untuk menambah hari kredit sebelum jatuh tempo.
+          </p>
 
-          <ProgressBar2 percent={(current / total) * 100} />
+          <div className="space-y-1.5 pt-1">
+            <div className="flex items-center justify-between text-[10px] text-white/80">
+              <span>Progres program</span>
+              <span className="tabular-nums font-medium text-white">
+                {paidDays}/{totalHariProgram} hari terbayar
+              </span>
+            </div>
+            <div
+              role="progressbar"
+              aria-valuenow={Math.round(progressPercent)}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label="Progres pembayaran program"
+            >
+              <ProgressBar2 percent={progressPercent} />
+            </div>
+          </div>
 
           {/* <div className="row gap-1.5 text-white">
             <span className="text-xs">Kredit Habis:</span>

@@ -1,4 +1,5 @@
 import AlertModal from "./AlertModal";
+import ModalChangelog from "./ModalChangelog";
 import DiagnosisModal from "./DiagnosisModal";
 import InputOTPModal from "./InputOTPModal";
 import InputPhoneNumberModal from "./InputPhoneNumberModal";
@@ -23,6 +24,7 @@ import RequestOTPModal from "./RequestOTPModal";
 
 export {
   AlertModal,
+  ModalChangelog,
   DiagnosisModal,
   InputOTPModal,
   InputPhoneNumberModal,
