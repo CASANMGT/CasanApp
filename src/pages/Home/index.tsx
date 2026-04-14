@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { CiSearch } from "react-icons/ci";
+import { FaChevronRight } from "react-icons/fa6";
 import { FiAlertTriangle, FiInfo } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
@@ -10,6 +11,7 @@ import {
   DropdownCheckbox,
   LoadingPage,
   ModalCarouselDetails,
+  OrderCard,
   Separator,
 } from "../../components";
 import { rtoOperatorPath } from "../../constants/rtoRoutes";
@@ -183,6 +185,9 @@ const Home = () => {
   const { isAuthenticated } = useAuth();
 
   const global = useSelector((state: RootState) => state.global);
+  const onGoingSessionList = useSelector(
+    (state: RootState) => state.onGoingSessionList,
+  );
 
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -328,6 +333,25 @@ const Home = () => {
     dispatch(fetchOnGoingSessionList(body));
   };
 
+  const onNextSession = (select: Session) => {
+    let url: string;
+    let id: number = select?.ID;
+
+    if (select?.Status === 1) {
+      id = select?.TransactionID;
+      url = "/transaction-history/details";
+    } else if (
+      select?.Status === 2 ||
+      select?.Status === 3 ||
+      select?.Status === 4 ||
+      select?.Status === 5
+    )
+      url = "/charging";
+    else url = "/session-details";
+
+    navigate(`${url}/${id}`);
+  };
+
   const getDataRTO = async () => {
     try {
       setLoadingRTO(true);
@@ -460,6 +484,56 @@ const Home = () => {
             aria-labelledby="home-tab-isi-daya"
             className="space-y-4"
           >
+            {/* ONGOING SESSIONS */}
+            {isAuthenticated &&
+              onGoingSessionList?.data?.data &&
+              onGoingSessionList.data.data.length > 0 && (
+                <div className="space-y-3 bg-white rounded-2xl p-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[15px] font-medium text-blackBold">
+                      Sedang berlangsung
+                    </span>
+                    <span
+                      className="text-xs font-semibold text-primary100 cursor-pointer"
+                      onClick={() => navigate("/home/order")}
+                    >
+                      Lihat semua →
+                    </span>
+                  </div>
+
+                  <div className="flex gap-3 overflow-x-auto scrollbar-none pb-1">
+                    {onGoingSessionList.data.data.map(
+                      (item: Session, index: number) => (
+                        <button
+                          key={index}
+                          type="button"
+                          onClick={() => onNextSession(item)}
+                          className="w-[calc(50%-6px)] shrink-0 bg-white rounded-lg p-2.5 flex items-center gap-2 border border-gray-200 shadow-sm active:scale-[0.99] transition-transform"
+                        >
+                          <img
+                            src={item?.ChargingStation?.Image || ILNoImage}
+                            alt={item?.ChargingStation?.Name || "Station"}
+                            className="w-10 h-10 rounded-md object-cover shrink-0"
+                          />
+                          <div className="flex-1 min-w-0 text-left">
+                            <p className="text-xs font-medium text-blackBold truncate">
+                              {item?.ChargingStation?.Name || "-"}
+                            </p>
+                            <p className="text-[10px] text-black70 mt-0.5">
+                              ID {item?.ID} - {item?.TransactionID}
+                            </p>
+                          </div>
+                          <FaChevronRight
+                            size={14}
+                            className="text-black50 shrink-0"
+                          />
+                        </button>
+                      ),
+                    )}
+                  </div>
+                </div>
+              )}
+
             {/* SECTION HEADER */}
             <div className="flex justify-between items-center">
               <span className="text-[15px] font-medium text-blackBold">
