@@ -454,27 +454,22 @@ const Home = () => {
                 >
                   <Icon size={28} />
                 </div>
-                <span
-                  className={`font-bold leading-tight ${isActive ? "text-[13px] text-[#4DB6AC] tracking-wide" : "text-[11px] text-black70"}`}
-                >
-                  {tab.label}
-                </span>
-                <span
-                  className={`text-[9px] ${isActive ? "text-blackBold" : "text-black50"}`}
-                >
-                  {tab.sub}
-                </span>
+                <div className="flex flex-col items-start leading-tight">
+                  <span
+                    className={`font-bold ${isActive ? "text-[13px] text-[#4DB6AC] tracking-wide" : "text-[11px] text-black70"}`}
+                  >
+                    {tab.label}
+                  </span>
+                  <span
+                    className={`text-[9px] ${isActive ? "text-blackBold" : "text-black50"}`}
+                  >
+                    {tab.sub}
+                  </span>
+                </div>
               </button>
             );
           })}
         </div>
-
-        {activeTab === "rent-to-own" && (
-          <p className="-mt-1 px-1 text-center text-[10px] leading-snug text-gray-500">
-            Cicilan sampai motor jadi milik kamu — berbeda dengan sewa harian di
-            tab Rent.
-          </p>
-        )}
 
         {/* ===== ISI DAYA TAB ===== */}
         {activeTab === "isi-daya" && (
@@ -520,7 +515,7 @@ const Home = () => {
                               {item?.ChargingStation?.Name || "-"}
                             </p>
                             <p className="text-[10px] text-black70 mt-0.5">
-                              ID {item?.ID} - {item?.TransactionID}
+                              ID sesi {item?.ID}
                             </p>
                           </div>
                           <FaChevronRight
