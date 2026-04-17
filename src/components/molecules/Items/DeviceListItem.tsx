@@ -26,13 +26,14 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
   closed,
   onClick,
 }) => {
+  console.log('cek d', data);
+  
   const getTotalSocketAvailable = () => {
     let value: number = 0;
 
     if (data?.Sockets && data.Sockets.length) {
       data?.Sockets.forEach((element) => {
         if (
-          data.IsActive &&
           data.SignalValue > 0 &&
           element.IsCharging === 0 &&
           element?.SessionStatus !== 1 &&
